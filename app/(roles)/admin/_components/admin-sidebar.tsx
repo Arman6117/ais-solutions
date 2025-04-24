@@ -1,14 +1,53 @@
-import React from 'react'
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import { adminSidebarLinks } from "@/lib/static";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 const AdminSidebar = () => {
-  return (
-    <div className='h-full  w-12  md:w-24 fixed bg-primary-bg '>
-        <div className='flex flex-col gap-17 items-center justify-center p-10 '>
-            <div className='text-white '>Logo</div>
-            <div className='flex flex-col gap-6'>List</div>
-        </div>
-    </div>
-  )
-}
+  // const [active, setActive] = useState(false);
 
-export default AdminSidebar
+  const url = usePathname();
+
+
+
+  return (
+    <div className="h-full  w-12  md:w-24 fixed bg-primary-bg ">
+      <div className="flex flex-col gap-17 items-center justify-center px-0 py-10 md:p-10 ">
+        <div className="text-white ">Logo</div>
+        <div className="flex flex-col gap-10">
+          {adminSidebarLinks.map(({ label, link, icon: Icon }) => {
+           const isActive = url.includes(link)
+            
+            return (
+              <div key={label} className="flex justify-center">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Link href={link}>
+                        <Icon className={cn( "transition-all" ,!isActive ? "size-5 text-white/40 " : "size-6 text-white")}/>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <span className="">{label}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminSidebar;

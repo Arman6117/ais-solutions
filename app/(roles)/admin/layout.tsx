@@ -5,7 +5,7 @@ const AdminDashboardLayout = ({children}:{children:React.ReactNode}) => {
   return (
     <main className='h-screen  bg-primary-bg'>
         <AdminSidebar/>
-        <section className='h-full  px-2 py-2 md:py-4'>
+        <section className='h-full  px-2 py-2 md:py-3'>
             {children}
         </section>
     </main>

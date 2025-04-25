@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-soft-white:#f8f9fd;
   --color-primary-bg:#5840ba;
   --color-background: var(--background);
   --color-foreground: var(--foreground);

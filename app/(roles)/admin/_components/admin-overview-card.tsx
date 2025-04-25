@@ -43,20 +43,20 @@ const AdminOverviewCard = ({
 
   return (
     <div
-      className={`w-60 rounded-xl  ${style.ring} inset-ring-2 p-5 shadow-xl shadow-[#ececf3]`}
+      className={`md:w-60 w-60 2xl:w-xl xl:w-80  rounded-xl  ${style.ring} inset-ring-2 p-5 2xl:p-7 shadow-xl shadow-[#ececf3]`}
       style={{ backgroundColor: style.bg }}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center xl:justify-center justify-center xl:gap-10 md:justify-between">
         <span
-          className={`text-sm  font-medium uppercase `}
+          className={`md:text-sm text-base xl:text-xl   font-medium uppercase `}
           style={{ color: style.labelText }}
         >
           {label}
         </span>
         {icon && <div style={{ color: style.labelText }}>{icon}</div>}
       </div>
-      <div className="mt-4">
-        <span className={`font-bold text-4xl`} style={{ color: style.text }}>
+      <div className="mt-4 xl:text-center md:text-left  text-center ">
+        <span className={`font-bold text-4xl xl:text-6xl`} style={{ color: style.text }}>
           {value}
         </span>
       </div>

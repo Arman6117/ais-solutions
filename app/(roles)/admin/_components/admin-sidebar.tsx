@@ -33,7 +33,7 @@ const AdminSidebar = () => {
                   <Tooltip>
                     <TooltipTrigger>
                       <Link href={link}>
-                        <Icon className={cn( "transition-all" ,!isActive ? "size-5 text-white/40 " : "size-6 text-white")}/>
+                        <Icon className={cn( "transition-all" ,!isActive ? "size-5 lg:size-6 text-white/40 " : "size-6 lg:size-8 text-white")}/>
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent>

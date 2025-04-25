@@ -56,7 +56,10 @@ const AdminOverviewCard = ({
         {icon && <div style={{ color: style.labelText }}>{icon}</div>}
       </div>
       <div className="mt-4 xl:text-center md:text-left  text-center ">
-        <span className={`font-bold text-4xl xl:text-6xl`} style={{ color: style.text }}>
+        <span
+          className={`font-bold text-4xl xl:text-6xl`}
+          style={{ color: style.text }}
+        >
           {value}
         </span>
       </div>

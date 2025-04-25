@@ -1,9 +1,11 @@
-import Greetings from "@/components/greetings";
 import React from "react";
+
 import AdminOverviewCard from "./admin-overview-card";
-import { Award, BookOpen, Users } from "lucide-react";
-import { RiArtboardLine } from "react-icons/ri";
+import Greetings from "@/components/greetings";
+
 import { FaChalkboardTeacher } from "react-icons/fa";
+import { RiArtboardLine } from "react-icons/ri";
+import {  BookOpen, Users } from "lucide-react";
 
 const AdminPanelOverview = () => {
   return (
@@ -28,13 +30,13 @@ const AdminPanelOverview = () => {
           value="300"
           label="TOTAL BATCHES"
           icon={<RiArtboardLine size={20} />}
-          variant="revenue"
+          variant="batches"
         />
         <AdminOverviewCard
           value="325"
           label="LECTURES CONDUCTED"
           icon={<FaChalkboardTeacher size={20} />}
-          variant="certifications"
+          variant="lectures"
         />
       </div>
     </div>

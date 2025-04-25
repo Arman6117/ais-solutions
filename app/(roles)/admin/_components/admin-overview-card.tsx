@@ -4,7 +4,7 @@ interface AdminOverviewCardProps {
   value: string | number;
   label: string;
   icon?: React.ReactNode;
-  variant: "students" | "courses" | "revenue" | "certifications";
+  variant: "students" | "courses" | "batches" | "lectures";
 }
 
 const AdminOverviewCard = ({
@@ -26,13 +26,13 @@ const AdminOverviewCard = ({
       labelText: "#FFF",
       ring: "inset-ring-teal-500",
     },
-    revenue: {
+    batches: {
       bg: "#FFB547",
       text: "#FFF",
       labelText: "#FFF",
       ring: "inset-ring-yellow-500",
     },
-    certifications: {
+    lectures: {
       bg: "#FF5C8D",
       text: "#FFF",
       labelText: "#FFF",

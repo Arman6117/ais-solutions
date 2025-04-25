@@ -16,7 +16,7 @@ const ScheduleCalender = () => {
 
   return (
     <div className="w-full flex-col h-full bg-white border z-10 border-neutral-700 rounded-2xl flex shadow-sm">
-      <div className="flex w-full px-4 py-3 justify-between items-center border-b border-neutral-200">
+      <div className="flex w-full px-4 py-3 justify-between items-center border-b border-neutral-700">
         <h1 className="text-lg font-medium">Your Schedule</h1>
         <div className="flex">
           <h1 className="text-sm font-medium text-neutral-600">
@@ -37,7 +37,7 @@ const ScheduleCalender = () => {
             <div
               key={date.toISOString()}
               className={`border-t overflow-y-auto no-scrollbar  border-neutral-700 p-2 ${
-                hasMeetings ? "bg-teal-300" : ""
+                hasMeetings ? "bg-teal-200" : ""
               }  flex flex-col items-ceter justify-between`}
                 style={{borderBottomLeftRadius: i == 5 ? " 1rem" : "0", borderBottomRightRadius: i == 9 ? " 1rem" : "0" }}
             >
@@ -45,7 +45,7 @@ const ScheduleCalender = () => {
               {daysMeetings.length > 0 ? (
                 daysMeetings.map((m, i) => (
                   <div
-                    className="mb-2 text-sm flex flex-col gap-1 bg-green-50 p-2 rounded-md shadow-sm"
+                    className="mb-2 text-sm flex flex-col gap-1 bg-white p-2 rounded-md shadow-sm"
                     key={i}
                   >
                     <div>

@@ -11,7 +11,7 @@ const AdminDashboardPage = () => {
           <ScheduleCalender />
         </div>
       </div>
-      <div className="w-[70%] md:flex hidden bg-red-100">s</div>
+      <div className="w-[70%] md:flex hidden bg-red100">s</div>
     </div>
   );
 };

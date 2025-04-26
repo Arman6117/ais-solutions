@@ -17,13 +17,15 @@ const AdminPanelOverview = () => {
           label="TOTAL STUDENTS"
           icon={<Users size={20} />}
           variant="students"
-        />
+        /> 
+        {/*//TODO:Make dynamic */}
         <AdminOverviewCard
           value="42"
           label="TOTAL COURSES"
           icon={<BookOpen size={20} />}
           variant="courses"
         />
+
       </div>
       <div className="flex  drop-shadow-xl drop-shadow-indigo-600/10  gap-10 md:flex-row flex-col items-center ">
         <AdminOverviewCard
@@ -32,6 +34,7 @@ const AdminPanelOverview = () => {
           icon={<RiArtboardLine size={20} />}
           variant="batches"
         />
+          {/*//TODO:Make dynamic */}
         <AdminOverviewCard
           value="325"
           label="LECTURES CONDUCTED"

@@ -40,6 +40,7 @@ const ScheduleCalender = () => {
     }
   };
 
+  //TODO:Make this component dynamic
   return (
     <div className="w-full transition-all flex-col h-full bg-white border border-gray-200 rounded-xl flex shadow-md overflow-hidden">
       <div className="flex w-full px-4 py-3 justify-between items-center border-b border-gray-200 bg-gray-50">

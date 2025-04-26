@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import { ongoingCourses } from "@/lib/static";
 
@@ -9,7 +9,7 @@ const CourseCards = () => {
         <div
           key={i}
           className="w-full h-auto p-4 bg-white border-violet-300 border rounded-lg cursor-pointer flex flex-col  hover:bg-violet-50  justify-center gap-4 hover:shadow-sm transition-all duration-200 group"
-          onClick={()=> {}}
+          onClick={() => {}}
         >
           <div className="flex gap-3">
             <div className="w-1 h-8 rounded-3xl bg-primary-bg"></div>
@@ -36,9 +36,9 @@ const CourseCards = () => {
             </div>
           </div>
           <div className="flex justify-between max-w-[9 items-center">
-          <div className="flex flex-col">
+            <div className="flex flex-col">
               <span className="text-neutral-600 text-xs font-medium">
-                Lecture 
+                Lecture
               </span>
               <span className="text-neutral-900 font-medium">
                 {course.lectureNumber}

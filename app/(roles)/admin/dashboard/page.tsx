@@ -13,7 +13,7 @@ const AdminDashboardPage = () => {
           <ScheduleCalender />
         </div>
       </div>
-      <div className="w-1/3 md:flex hidden h-full p-5 bg-soft-white rounded-4xl">
+      <div className="w-1/3 md:flex hiddenh-full p-5 bg-soft-white rounded-4xl">
         <OngoingBatches/>
       </div>
     </div>

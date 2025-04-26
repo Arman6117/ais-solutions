@@ -90,4 +90,40 @@ export const sampleMeetings = [
   },
 ];
 
-export const sampleOngoingCourse = [{}];
+export const ongoingCourses = [
+  {
+    courseName: "JavaScript Bootcamp",
+    batchName: "Batch A",
+    lectureNumber: 12,
+    module: "Promise",
+    instructor: "Mr. Arman Patel",
+  },
+  {
+    courseName: "React.js Mastery",
+    batchName: "Batch B",
+    lectureNumber: 8,
+    module: "useState",
+    instructor: "Ms. Robin Teach",
+  },
+  {
+    courseName: "Python for Data Science",
+    batchName: "Batch C",
+    lectureNumber: 5,
+    module: "Datatypes",
+    instructor: "Mr. Zoro Bytes",
+  },
+  {
+    courseName: "MongoDB Essentials",
+    batchName: "Batch D",
+    lectureNumber: 15,
+    module: "Indexing",
+    instructor: "Dr. Nami Data",
+  },
+  {
+    courseName: "Node.js API Development",
+    batchName: "Batch E",
+    lectureNumber: 9,
+    module: "Dynamic Routing",
+    instructor: "Sanji Dev",
+  },
+];

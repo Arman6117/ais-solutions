@@ -25,7 +25,7 @@ const AdminPanelOverview = () => {
           variant="courses"
         />
       </div>
-      <div className="flex  gap-10 md:flex-row flex-col items-center ">
+      <div className="flex  drop-shadow-xl drop-shadow-indigo-600/10  gap-10 md:flex-row flex-col items-center ">
         <AdminOverviewCard
           value="300"
           label="TOTAL BATCHES"

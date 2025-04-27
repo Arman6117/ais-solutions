@@ -28,11 +28,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const CoursesTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedCourses,setSelectedCourses] = useState<Number[]>([])
+  const [toggleSelectAll,setToggleSelectAll] = useState(false)
 
   const pageSize = 3; //TODO:Later make 10-20
 
@@ -120,7 +123,7 @@ const CoursesTable = () => {
         <Table>
           <TableHeader>
             <TableRow className="text-center">
-              <TableHead>Select</TableHead>
+              <TableHead><Checkbox  onCheckedChange={(prev)=>setToggleSelectAll(!!prev)}/></TableHead>
               <TableHead>Course Name</TableHead>
               <TableHead>Created On</TableHead>
               <TableHead>No. of Students</TableHead>
@@ -134,7 +137,7 @@ const CoursesTable = () => {
               paginatedCourses.map((course, i) => (
                 <TableRow key={i}>
                   <TableCell className="font-semibold ">
-                    {course.name}
+                    <Checkbox checked={toggleSelectAll}/>
                   </TableCell>
                   <TableCell className="font-semibold ">
                     {course.name}

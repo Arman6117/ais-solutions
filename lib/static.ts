@@ -130,14 +130,14 @@ export const ongoingCourses = [
 
 export const coursesData = [
   {
-    id: 1,
+    id: "1",
     name: "JavaScript Bootcamp",
     createdAt: "2024-04-10",
     students: 120,
     batches: 5,
   },
   {
-    id: 2,
+    id: "2",
     name: "React Essentials",
     createdAt: "2024-03-15",
     students: 80,
@@ -145,7 +145,7 @@ export const coursesData = [
     batchesCompleted:2,
   },
   {
-    id: 3,
+    id: "3",
     name: "Data Structures",
     createdAt: "2024-02-05",
     students: 60,
@@ -153,7 +153,7 @@ export const coursesData = [
     batchesCompleted:2,
   },
   {
-    id: 4,
+    id: "4",
     name: "Python Mastery",
     createdAt: "2024-01-22",
     students: 100,
@@ -161,7 +161,7 @@ export const coursesData = [
     batchesCompleted:1,
   },
   {
-    id: 5,
+    id: "5",
     name: "MongoDB Crash Course",
     createdAt: "2024-01-10",
     students: 70,
@@ -169,7 +169,7 @@ export const coursesData = [
     batchesCompleted:2,
   },
   {
-    id: 6,
+    id: "6",
     name: "Fullstack Development",
     createdAt: "2024-01-02",
     students: 90,

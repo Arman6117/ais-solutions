@@ -142,6 +142,7 @@ export const coursesData = [
     createdAt: "2024-03-15",
     students: 80,
     batches: 3,
+    batchesCompleted:2,
   },
   {
     id: 3,
@@ -149,6 +150,7 @@ export const coursesData = [
     createdAt: "2024-02-05",
     students: 60,
     batches: 4,
+    batchesCompleted:2,
   },
   {
     id: 4,
@@ -156,6 +158,7 @@ export const coursesData = [
     createdAt: "2024-01-22",
     students: 100,
     batches: 6,
+    batchesCompleted:1,
   },
   {
     id: 5,
@@ -163,6 +166,7 @@ export const coursesData = [
     createdAt: "2024-01-10",
     students: 70,
     batches: 2,
+    batchesCompleted:2,
   },
   {
     id: 6,
@@ -170,5 +174,6 @@ export const coursesData = [
     createdAt: "2024-01-02",
     students: 90,
     batches: 5,
+    batchesCompleted:4,
   },
 ];

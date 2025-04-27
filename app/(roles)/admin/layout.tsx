@@ -1,5 +1,5 @@
 import React from "react";
-import AdminSidebar from "./_components/admin-sidebar";
+import AdminSidebar from "./dashboard/_components/admin-sidebar";
 import PageContainer from "@/components/page-container";
 
 const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {

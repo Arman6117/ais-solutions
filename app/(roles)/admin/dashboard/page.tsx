@@ -1,8 +1,7 @@
 import React from "react";
-import AdminPanelOverview from "../_components/admin-panel-overview";
-import ScheduleCalender from "../_components/schedule-calender";
-import OngoingBatches from "../_components/ongoing-batches";
-import PageContainer from "@/components/page-container";
+import AdminPanelOverview from "./_components/admin-panel-overview";
+import ScheduleCalender from "./_components/schedule-calender";
+import OngoingBatches from "./_components/ongoing-batches";
 
 const AdminDashboardPage = () => {
   return (

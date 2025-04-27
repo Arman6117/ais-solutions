@@ -127,3 +127,48 @@ export const ongoingCourses = [
     instructor: "Sanji Dev",
   },
 ];
+
+export const coursesData = [
+  {
+    id: 1,
+    name: "JavaScript Bootcamp",
+    createdAt: "2024-04-10",
+    students: 120,
+    batches: 5,
+  },
+  {
+    id: 2,
+    name: "React Essentials",
+    createdAt: "2024-03-15",
+    students: 80,
+    batches: 3,
+  },
+  {
+    id: 3,
+    name: "Data Structures",
+    createdAt: "2024-02-05",
+    students: 60,
+    batches: 4,
+  },
+  {
+    id: 4,
+    name: "Python Mastery",
+    createdAt: "2024-01-22",
+    students: 100,
+    batches: 6,
+  },
+  {
+    id: 5,
+    name: "MongoDB Crash Course",
+    createdAt: "2024-01-10",
+    students: 70,
+    batches: 2,
+  },
+  {
+    id: 6,
+    name: "Fullstack Development",
+    createdAt: "2024-01-02",
+    students: 90,
+    batches: 5,
+  },
+];

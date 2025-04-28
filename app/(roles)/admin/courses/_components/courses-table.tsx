@@ -2,6 +2,7 @@
 import { DataTable } from "@/components/data-table";
 import { coursesData } from "@/lib/static";
 import React from "react";
+import { toast } from "sonner";
 
 const CoursesTable = () => {
   return (
@@ -55,7 +56,7 @@ const CoursesTable = () => {
         ]}
         getRowId={(row)=>row.id}
         onDeleteSelected={(ids)=> {
-          console.log("Deleted")
+          toast.success(`${ids.length} courses deleted successfully`); //TODO: make delete API call
         }}
         searchPlaceholder="Search by Course Name"
         

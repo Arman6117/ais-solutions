@@ -28,6 +28,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 import { ArrowRight, EllipsisVertical, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 type DataTableProps<T> = {
   data: T[];
@@ -93,6 +94,7 @@ export function DataTable<T>({
         ...allIds.filter((id) => !prev.includes(id)),
       ]);
     }
+    toast.success(`${allIds.length} items selected`);
   };
 
   const handleReset = () => {
@@ -156,10 +158,11 @@ export function DataTable<T>({
             </Button>
             {selectedIds.length > 0 && (
               <Button
+                className="cursor-pointer"
                 variant="destructive"
                 onClick={() => onDeleteSelected(selectedIds)}
               >
-                <Trash2/>({selectedIds.length})
+                <Trash2 />({selectedIds.length})
               </Button>
             )}
           </div>
@@ -223,11 +226,13 @@ export function DataTable<T>({
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
+              className="cursor-pointer"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
               />
             </PaginationItem>
             <PaginationItem>
               <PaginationNext
+               className="cursor-pointer"
                 onClick={() =>
                   setCurrentPage((prev) =>
                     prev + 1 < totalPages ? prev + 1 : prev

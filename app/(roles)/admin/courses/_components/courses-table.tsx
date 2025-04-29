@@ -10,6 +10,8 @@ const CoursesTable = () => {
   const handleDialogOpen = () => {
     setOpen((prev) => !prev);
   };
+
+  //TODO:Make API Call for data fetching
   return (
     <>
       <DataTable
@@ -40,6 +42,11 @@ const CoursesTable = () => {
             header: "Batches Completed",
             accessor: (row) => row.batchesCompleted,
           },
+          {
+            id: "price",
+            header: "Price",
+            accessor: (row) => row.price,
+          },
         ]}
         filterOptions={[
           {
@@ -65,9 +72,12 @@ const CoursesTable = () => {
         }}
         searchPlaceholder="Search by Course Name"
         openDialog={handleDialogOpen}
-        
       />
-      <EditCourseDialog open={open} onClose={()=> setOpen(false)}/>
+      <EditCourseDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        data={coursesData}
+      />
     </>
   );
 };

@@ -7,21 +7,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Course } from "@/lib/types";
 import React from "react";
 
-const EditCourseDialog = ({ open ,onClose}: { open: boolean,onClose:()=> void }) => {
+type EditCourseDialogProps = {
+  open: boolean;
+  onClose: () => void;
+  data: Course[];
+};
+const EditCourseDialog = ({ open, onClose, data }: EditCourseDialogProps) => {
   return (
-    <Dialog open={open} onOpenChange={(isOpen)=> !isOpen && onClose()}>
-      {/* <DialogTrigger>Open</DialogTrigger> */}
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>Edit Course</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Edit the course details here. You can change the name,
+            description,price and View the modules and batches
           </DialogDescription>
         </DialogHeader>
-        <DialogClose>Close</DialogClose>
+        {/* <DialogClose>Close</DialogClose> */}
       </DialogContent>
     </Dialog>
   );

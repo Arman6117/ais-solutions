@@ -29,6 +29,8 @@ import { Button } from "./ui/button";
 
 import { ArrowRight, PencilIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 type DataTableProps<T> = {
   data: T[];
@@ -54,6 +56,8 @@ export function DataTable<T>({
   const [sortType, setSortType] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const pathname = usePathname();
 
   const pageSize = 3; //TODO:Later make 10-20
 
@@ -198,7 +202,11 @@ export function DataTable<T>({
                     />
                   </TableCell>
                   {columns.map((col) => (
-                    <TableCell className="text-center" key={col.id}>{col.accessor(item)}</TableCell>
+                    <TableCell className="text-center" key={col.id}>
+                      <Link href={`${pathname}/details/${getRowId(item)}`}>
+                      {col.accessor(item)}
+                      </Link>
+                    </TableCell>
                   ))}
                   <TableCell className="text-center flex gap-2 justify-center items-center">
                     <Button

@@ -29,7 +29,7 @@ import { Button } from "./ui/button";
 
 import { ArrowRight, PencilIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 type DataTableProps<T> = {
@@ -40,7 +40,7 @@ type DataTableProps<T> = {
   onDeleteSelected: (selectedIds: string[]) => void;
   getRowId: (row: T) => string;
   // actions:[]
-  openDialog: () => void
+  openDialog: (item:T) => void
 };
 
 export function DataTable<T>({
@@ -56,7 +56,7 @@ export function DataTable<T>({
   const [sortType, setSortType] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
+  const router  = useRouter();
   const pathname = usePathname();
 
   const pageSize = 3; //TODO:Later make 10-20
@@ -212,7 +212,7 @@ export function DataTable<T>({
                     <Button
                       className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-primary-bg hover:text-white"
                       variant={"outline"}
-                      onClick={openDialog}
+                      onClick={()=>router.push(`/admin/courses/edit/${getRowId(item)}`)}
                     >
                       <PencilIcon className="size-4" />
                     </Button>

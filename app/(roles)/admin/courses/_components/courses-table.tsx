@@ -1,14 +1,17 @@
 "use client";
 import { DataTable } from "@/components/data-table";
 import { coursesData } from "@/lib/static";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { toast } from "sonner";
-import EditCourseDialog from "./edit-course-dialog";
+// import EditCourseDialog from "./edit-course-dialog";
+import { Course } from "@/lib/types";
 
 const CoursesTable = () => {
   const [open, setOpen] = useState(false);
-  const handleDialogOpen = () => {
+  const [currCourse, setCurrCourse] = useState<Course>();
+  const handleDialogOpen = (course: Course) => {
     setOpen((prev) => !prev);
+    setCurrCourse(course);
   };
 
   //TODO:Make API Call for data fetching
@@ -73,11 +76,11 @@ const CoursesTable = () => {
         searchPlaceholder="Search by Course Name"
         openDialog={handleDialogOpen}
       />
-      <EditCourseDialog
+      {/* <EditCourseDialog
         open={open}
         onClose={() => setOpen(false)}
-        data={coursesData}
-      />
+        data={currCourse}
+      /> */}
     </>
   );
 };

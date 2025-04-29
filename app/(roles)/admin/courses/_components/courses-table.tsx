@@ -1,10 +1,15 @@
-'use client'
+"use client";
 import { DataTable } from "@/components/data-table";
 import { coursesData } from "@/lib/static";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
+import EditCourseDialog from "./edit-course-dialog";
 
 const CoursesTable = () => {
+  const [open, setOpen] = useState(false);
+  const handleDialogOpen = () => {
+    setOpen((prev) => !prev);
+  };
   return (
     <>
       <DataTable
@@ -54,13 +59,15 @@ const CoursesTable = () => {
             value: "batches-desc",
           },
         ]}
-        getRowId={(row)=>row.id}
-        onDeleteSelected={(ids)=> {
+        getRowId={(row) => row.id}
+        onDeleteSelected={(ids) => {
           toast.success(`${ids.length} courses deleted successfully`); //TODO: make delete API call
         }}
         searchPlaceholder="Search by Course Name"
+        openDialog={handleDialogOpen}
         
       />
+      <EditCourseDialog open={open} onClose={()=> setOpen(false)}/>
     </>
   );
 };

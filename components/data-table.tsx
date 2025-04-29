@@ -27,7 +27,7 @@ import { Column, FilterOption } from "@/lib/types";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
-import { ArrowRight, EllipsisVertical, Trash2 } from "lucide-react";
+import { ArrowRight, PencilIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 type DataTableProps<T> = {
@@ -37,6 +37,8 @@ type DataTableProps<T> = {
   filterOptions: FilterOption[];
   onDeleteSelected: (selectedIds: string[]) => void;
   getRowId: (row: T) => string;
+  // actions:[]
+  openDialog: () => void
 };
 
 export function DataTable<T>({
@@ -46,6 +48,7 @@ export function DataTable<T>({
   getRowId,
   onDeleteSelected,
   searchPlaceholder = "Search...",
+  openDialog
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("");
@@ -172,38 +175,44 @@ export function DataTable<T>({
         <Table>
           <TableHeader>
             <TableRow className="text-center">
-              <TableHead>
+              <TableHead className="text-center">
                 <Checkbox
                   checked={isAllSelected}
                   onCheckedChange={handleSelectAll}
                 />
-              </TableHead>
+              </TableHead >
               {columns.map((column) => (
-                <TableHead key={column.id}>{column.header}</TableHead>
+                <TableHead className="text-center" key={column.id}>{column.header}</TableHead>
               ))}
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedData.length > 0 ? (
               paginatedData.map((item, i) => (
                 <TableRow key={i}>
-                  <TableCell className="font-semibold ">
+                  <TableCell className="font-semibold text-center ">
                     <Checkbox
                       checked={selectedIds.includes(getRowId(item))}
                       onCheckedChange={() => handleToggleSelect(getRowId(item))}
                     />
                   </TableCell>
                   {columns.map((col) => (
-                    <TableCell key={col.id}>{col.accessor(item)}</TableCell>
+                    <TableCell className="text-center" key={col.id}>{col.accessor(item)}</TableCell>
                   ))}
-                  <TableCell className="text-center">
+                  <TableCell className="text-center flex gap-2 justify-center items-center">
                     <Button
-                      className="rounded-full
-                    cursor-pointer"
-                      variant={"ghost"}
+                      className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-primary-bg hover:text-white"
+                      variant={"outline"}
+                      onClick={openDialog}
                     >
-                      <EllipsisVertical className="text-black" size={20} />
+                      <PencilIcon className="size-4" />
+                    </Button>
+                    <Button
+                      className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-destructive hover:text-white"
+                      variant={"outline"}
+                    >
+                      <Trash2 className="size-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -226,13 +235,13 @@ export function DataTable<T>({
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-              className="cursor-pointer"
+                className="cursor-pointer"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
               />
             </PaginationItem>
             <PaginationItem>
               <PaginationNext
-               className="cursor-pointer"
+                className="cursor-pointer"
                 onClick={() =>
                   setCurrentPage((prev) =>
                     prev + 1 < totalPages ? prev + 1 : prev

@@ -135,6 +135,7 @@ export const coursesData = [
     createdAt: "2024-04-10",
     students: 120,
     batches: 5,
+    
   },
   {
     id: "2",
@@ -159,6 +160,7 @@ export const coursesData = [
     students: 100,
     batches: 6,
     batchesCompleted:1,
+
   },
   {
     id: "5",

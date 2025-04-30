@@ -15,6 +15,7 @@ const CoursesTable = () => {
   };
 
   //TODO:Make API Call for data fetching
+  //TODO:Instead of batches and batchesCompleted show price discount and offer price
   return (
     <>
       <DataTable

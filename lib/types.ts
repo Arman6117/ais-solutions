@@ -14,6 +14,7 @@ export type Course = {
   id: string;
   name: string;
   description: string;
+  discount:number
   createdAt: string;
   students: number;
   batches: number;

@@ -16,6 +16,10 @@ import {
   Users,
   Plus,
   Trash2,
+  RefreshCcw,
+  Save,
+  X,
+  Upload,
 } from "lucide-react";
 import {
   Card,
@@ -26,83 +30,50 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import CourseStatusCard from "./course-status-card";
+import CourseModulesCard from "./course-modules-card";
+import CourseBatchesCards from "./course-batches-cards";
+import CourseInstructorsCards from "./course-instructors-cards";
+import { dummyBatches, dummyInstructors } from "@/lib/static";
 
 type EditCourseProps = {
   course: Course | undefined;
 };
 
-const dummyInstructors = [
-  {
-    id: 1,
-    name: "John Doe",
-    role: "Lead Instructor",
-    avatar: "https://placehold.co/32x32.png",
-    email: "john@example.com",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    role: "Assistant Instructor",
-    avatar: "/api/placeholder/32/32",
-    email: "jane@example.com",
-  },
-  {
-    id: 3,
-    name: "Robert Johnson",
-    role: "Teaching Assistant",
-    avatar: "/api/placeholder/32/32",
-    email: "robert@example.com",
-  },
-];
 
-const dummyBatches = [
-  {
-    id: 1,
-    name: "Morning Batch",
-    schedule: "Mon-Wed-Fri",
-    time: "9:00 AM - 11:00 AM",
-    students: 25,
-    startDate: "May 15, 2025",
-  },
-  {
-    id: 2,
-    name: "Evening Batch",
-    schedule: "Tue-Thu",
-    time: "6:00 PM - 8:30 PM",
-    students: 18,
-    startDate: "June 1, 2025",
-  },
-  {
-    id: 3,
-    name: "Weekend Batch",
-    schedule: "Sat-Sun",
-    time: "10:00 AM - 2:00 PM",
-    students: 22,
-    startDate: "May 20, 2025",
-  },
-];
 
 const EditCourse = ({ course }: EditCourseProps) => {
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [offerPrice, setOfferPrice] = useState(0);
+  if (!course) {
+    return (
+      <div className="p-8 flex items-center justify-center h-full">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">No Course Selected</h2>
+          <p className="text-muted-foreground">
+            Please select a course to edit
+          </p>
+          <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const [name, setName] = useState(course.name || "");
+  const [description, setDescription] = useState(course.description || "");
+  const [price, setPrice] = useState(course.price || 0);
+  const [discount, setDiscount] = useState(course.discount || 0);
+  const [offerPrice, setOfferPrice] = useState(price - (price * Number(course.discount)) / 100 || 0);
   const [instructors, setInstructors] = useState(dummyInstructors);
   const [batches, setBatches] = useState(dummyBatches);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (course) {
-      setName(course.name || "");
-      setDescription(course.description || "");
-      setPrice(course.price || 0);
-      setDiscount(course.discount || 0);
-      setOfferPrice(price - (price * Number(course.discount)) / 100 || 0)
-    }
-
+    
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);
     };
@@ -110,228 +81,172 @@ const EditCourse = ({ course }: EditCourseProps) => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [course]);
+  }, [course, price, discount]);
 
-  if (!course) {
-    return <div className="p-8 text-lg">No course selected.</div>;
-  }
+  //! Calculate offer price whenever price or discount changes
+  useEffect(() => {
+    setOfferPrice(price - (price * discount) / 100);
+  }, [price, discount]);
 
+ 
   const handleSave = () => {
-    // Handle saving logic here
-    console.log({ name, description, price, instructors, batches });
-    toast.success("Changes saved successfully!");
+    //TODO: Handle saving logic here
+    setIsLoading(true);
+    setTimeout(() => {
+      console.log({ name, description, price, instructors, batches });
+      setIsLoading(false);
+      toast.success("Changes saved successfully!");
+    }, 800);
   };
 
-  const removeInstructor = (id: number) => {
-    setInstructors(instructors.filter((instructor) => instructor.id !== id));
-    toast.success("Instructor removed");
-  };
+ 
 
-  const removeBatch = (id: number) => {
-    setBatches(batches.filter((batch) => batch.id !== id));
-    toast.success("Batch removed");
+  // Helper function to format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-1">
+    <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
       <div className="w-full lg:w-2/3 flex-grow">
-        <div className="p-4 lg:p-8 space-y-6 bg-white rounded-xl shadow-sm">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">Edit Course</h1>
-            <p className="text-muted-foreground">
-              Edit the course details. You can update name, description, price,
-              and more.
-            </p>
-          </div>
+        <Card className="border-0 shadow-md">
+          <CardHeader className="bg-gray-50 border-b">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-2xl md:text-3xl font-bold">
+                  Edit Course
+                </CardTitle>
+                <p className="text-muted-foreground mt-1">
+                  Edit the course details. You can update name, description,
+                  price, and more.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  className="bg-primary-bg hover:bg-primary-bg/90 gap-2"
+                  onClick={handleSave}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <RefreshCcw size={16} className="animate-spin" />
+                  ) : (
+                    <Save size={16} />
+                  )}
+                  Save Changes
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-gray-300"
+                  onClick={() => router.back()}
+                >
+                  <X size={16} className="mr-1" /> Cancel
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-base font-medium">Course Name</Label>
+                <Input
+                  placeholder="Enter Course Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="font-medium"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-base font-medium">Regular Price</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                  ₹
+                  </span>
+                  <Input
+                    type="number"
+                    placeholder="Enter Price"
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                    className="font-medium pl-8"
+                  />
+                </div>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-base font-medium">Discount (%)</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    placeholder="Enter Discount in %"
+                    value={discount}
+                    onChange={(e) => setDiscount(Number(e.target.value))}
+                    className="font-medium pr-8"
+                    min="0"
+                    max="100"
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                    %
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-base font-medium">Offer Price</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                    ₹
+                  </span>
+                  <Input
+                    type="number"
+                    readOnly
+                    placeholder="Offer Price"
+                    value={offerPrice}
+                    className="font-medium pl-8 bg-gray-50"
+                  />
+                </div>
+                {discount > 0 && (
+                  <p className="text-sm text-green-600">
+                    {discount}% off ({formatCurrency(price - offerPrice)}{" "}
+                    discount)
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label className="text-base font-medium">Name</Label>
-              <Input
-                placeholder="Enter Course Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="font-medium"
+              <Label className="text-base font-medium">Description</Label>
+              <Textarea
+                placeholder="Enter Course Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="font-medium min-h-[150px]"
               />
             </div>
-            <div className="space-y-2">
-              <Label className="text-base font-medium">Price</Label>
-              <Input
-                type="number"
-                placeholder="Enter Price"
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-                className="font-medium"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="text-base font-medium">Discount</Label>
-              <Input
-                placeholder="Enter Discount in %"
-                value={discount}
-                onChange={(e) => {
-                  setDiscount(Number(e.target.value));
-                  setOfferPrice(price - (price * Number(e.target.value)) / 100);
-                }}
-                className="font-medium"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-base font-medium">Offer Price</Label>
-              <Input
-                type="number"
-                readOnly
-                placeholder="Offer Price"
-                value={offerPrice}
-                className="font-medium"
-              />
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label className="text-base font-medium">Description</Label>
-            <Textarea
-              placeholder="Enter Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="font-medium min-h-[150px]"
-            />
-          </div>
+            <Separator className="my-6" />
 
-          <div className="pt-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Instructors</h2>
-              <Button
-                size="sm"
-                
-                className="flex items-center gap-1 cursor-pointer bg-primary-bg"
+            <CourseInstructorsCards instructors={instructors} />
+            <Separator className="my-6" />
 
-              >
-                <Plus size={16} /> Add Instructor
-              </Button>
+            <div>
+              <CourseBatchesCards batches={batches} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {instructors.map((instructor) => (
-                <Card key={instructor.id} className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage
-                          src={instructor.avatar}
-                          alt={instructor.name}
-                        />
-                        <AvatarFallback>
-                          {instructor.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-grow">
-                        <h3 className="font-semibold">{instructor.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {instructor.email}
-                        </p>
-                        <Badge variant="outline" className="mt-1">
-                          {instructor.role}
-                        </Badge>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className=" h-8 w-8 p-0 cursor-pointer"
-                        onClick={() => removeInstructor(instructor.id)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Batches</h2>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex items-center gap-1"
-              >
-                <Plus size={16} /> Add Batch
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {batches.map((batch) => (
-                <Card key={batch.id} className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex flex-col md:flex-row md:items-center gap-4">
-                      <div className="flex-grow">
-                        <h3 className="font-semibold text-lg">{batch.name}</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar size={14} />
-                            <span>{batch.schedule}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Clock size={14} />
-                            <span>{batch.time}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar size={14} />
-                            <span>Starts: {batch.startDate}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Users size={14} />
-                            <span>{batch.students} Students</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 md:self-start">
-                        <Button size="sm" variant="outline" className="h-8 cursor-pointer">
-                          <PencilIcon size={14} className="mr-1 cursor-pointer" /> Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                           className=" h-8 w-8 p-0 cursor-pointer"
-                          onClick={() => removeBatch(batch.id)}
-                        >
-                          <Trash2 size={14} />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-4 pt-6">
-            <Button
-              className=" hover:bg-primary-bg/90 bg-primary-bg cursor-pointer"
-              onClick={handleSave}
-            >
-              Save Changes
-            </Button>
-            <Button
-              variant="destructive"
-              className="hover:bg-red-700"
-              onClick={() => router.back()}
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="w-full lg:w-1/3 space-y-6">
-        <Card className="overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-xl">Thumbnail</CardTitle>
+        <Card className="overflow-hidden border-0 shadow-md">
+          <CardHeader className="pb-3 bg-gray-50 border-b">
+            <CardTitle className="text-xl">Course Thumbnail</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center gap-3">
-            <div className="relative w-full aspect-video overflow-hidden rounded-lg">
+          <CardContent className="flex flex-col items-center gap-3 p-6">
+            <div className="relative w-full aspect-video overflow-hidden rounded-lg border shadow-sm">
               <Image
                 src="https://placehold.co/600x400.png"
                 alt="Course Thumbnail"
@@ -339,55 +254,15 @@ const EditCourse = ({ course }: EditCourseProps) => {
                 className="object-cover"
               />
             </div>
-            <Button
-              className="w-full flex items-center bg-primary-bg cursor-pointer justify-center gap-2"
-              
-            >
-              <PencilIcon size={16} /> Edit Thumbnail
+            <Button className="w-full flex items-center bg-primary-bg hover:bg-primary-bg/90 justify-center gap-2">
+              <Upload size={16} /> Change Thumbnail
             </Button>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-xl">Modules</CardTitle>
-            <Button
-              size="sm"
-              className="flex bg-primary-bg cursor-pointer  items-center gap-1"
-            >
-              <Plus size={16} /> Add Module
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {course.modules?.map((mod, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50"
-              >
-                <span className="text-sm font-medium">{mod}</span>
-                <div className="flex items-center gap-1">
-                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                    <PencilIcon size={14} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                     className=" h-8 w-8 p-0 cursor-pointer"
-                  >
-                    <Trash2 size={14} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-          <CardFooter className="pt-0">
-            {course.modules?.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                No modules added yet.
-              </p>
-            )}
-          </CardFooter>
-        </Card>
+        <CourseModulesCard modules={course.modules} />
+
+        <CourseStatusCard batches={batches} course={course} />
       </div>
     </div>
   );

@@ -221,3 +221,58 @@ export const coursesData: Course[] = [
     instructors: ["Arman Patel", "Robin Teach"],
   },
 ];
+export const dummyInstructors = [
+  {
+    id: 1,
+    name: "John Doe",
+    role: "Lead Instructor",
+    avatar: "https://placehold.co/32x32.png",
+    email: "john@example.com",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    role: "Assistant Instructor",
+    avatar: "/api/placeholder/32/32",
+    email: "jane@example.com",
+  },
+  {
+    id: 3,
+    name: "Robert Johnson",
+    role: "Teaching Assistant",
+    avatar: "/api/placeholder/32/32",
+    email: "robert@example.com",
+  },
+];
+export const dummyBatches = [
+  {
+    id: 1,
+    name: "Morning Batch",
+    schedule: "Mon-Wed-Fri",
+    time: "9:00 AM - 11:00 AM",
+    students: 25,
+    startDate: "May 15, 2025",
+    endDate: "Aug 15, 2025",
+    status: "Ongoing",
+  },
+  {
+    id: 2,
+    name: "Evening Batch",
+    schedule: "Tue-Thu",
+    time: "6:00 PM - 8:30 PM",
+    students: 18,
+    startDate: "June 1, 2025",
+    endDate: "Sep 1, 2025",
+    status: "Ongoing",
+  },
+  {
+    id: 3,
+    name: "Weekend Batch",
+    schedule: "Sat-Sun",
+    time: "10:00 AM - 2:00 PM",
+    students: 22,
+    startDate: "May 20, 2025",
+    endDate: "Aug 20, 2025",
+    status: "Ongoing",
+  },
+];

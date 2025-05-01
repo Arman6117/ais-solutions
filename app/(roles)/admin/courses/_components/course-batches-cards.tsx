@@ -80,7 +80,7 @@ const CourseBatchesCards = ({ batches }: { batches: any[] }) => {
           <p className="text-muted-foreground">
             No batches created for this course yet.
           </p>
-          <Button className="mt-2 cursor-pointer cursor-pointer bg-primary-bg hover:bg-primary-bg/90">
+          <Button className="mt-2  cursor-pointer bg-primary-bg hover:bg-primary-bg/90">
             <Plus size={16} className="mr-1" /> Create Your First Batch
           </Button>
         </div>

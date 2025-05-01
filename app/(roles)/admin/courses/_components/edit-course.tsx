@@ -1,47 +1,28 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Course } from "@/lib/types";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import Image from "next/image";
-import {
-  PencilIcon,
-  Calendar,
-  Clock,
-  Users,
-  Plus,
-  Trash2,
-  RefreshCcw,
-  Save,
-  X,
-  Upload,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CourseStatusCard from "./course-status-card";
 import CourseModulesCard from "./course-modules-card";
 import CourseBatchesCards from "./course-batches-cards";
 import CourseInstructorsCards from "./course-instructors-cards";
+
 import { dummyBatches, dummyInstructors } from "@/lib/static";
 
+import { RefreshCcw, Save, X, Upload } from "lucide-react";
 type EditCourseProps = {
   course: Course | undefined;
 };
-
-
 
 const EditCourse = ({ course }: EditCourseProps) => {
   const router = useRouter();
@@ -66,14 +47,15 @@ const EditCourse = ({ course }: EditCourseProps) => {
   const [description, setDescription] = useState(course.description || "");
   const [price, setPrice] = useState(course.price || 0);
   const [discount, setDiscount] = useState(course.discount || 0);
-  const [offerPrice, setOfferPrice] = useState(price - (price * Number(course.discount)) / 100 || 0);
+  const [offerPrice, setOfferPrice] = useState(
+    price - (price * Number(course.discount)) / 100 || 0
+  );
   const [instructors, setInstructors] = useState(dummyInstructors);
   const [batches, setBatches] = useState(dummyBatches);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);
     };
@@ -88,7 +70,6 @@ const EditCourse = ({ course }: EditCourseProps) => {
     setOfferPrice(price - (price * discount) / 100);
   }, [price, discount]);
 
- 
   const handleSave = () => {
     //TODO: Handle saving logic here
     setIsLoading(true);
@@ -99,9 +80,7 @@ const EditCourse = ({ course }: EditCourseProps) => {
     }, 800);
   };
 
- 
-
-  // Helper function to format currency
+  
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -164,7 +143,7 @@ const EditCourse = ({ course }: EditCourseProps) => {
                 <Label className="text-base font-medium">Regular Price</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                  ₹
+                    ₹
                   </span>
                   <Input
                     type="number"

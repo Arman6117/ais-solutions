@@ -2,7 +2,7 @@ import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
-import { Course } from "./types";
+import { Course, DummyBatches, DummyInstructors } from "./types";
 
 export const adminSidebarLinks = [
   {
@@ -133,13 +133,14 @@ export const coursesData: Course[] = [
   {
     id: "1",
     name: "JavaScript Bootcamp",
-    description:'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+    description:
+      "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
     createdAt: "2024-04-10",
     students: 120,
-    discount:10,
+    discount: 10,
     batches: 5,
     batchesCompleted: 2,
-    price:1000,
+    price: 1000,
 
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
     batchesName: ["Batch A", "Batch B", "Batch C"],
@@ -148,14 +149,15 @@ export const coursesData: Course[] = [
   {
     id: "2",
     name: "React Essentials",
-    description:'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+    description:
+      "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 
     createdAt: "2024-03-15",
     students: 80,
     batches: 3,
-    discount:20,
+    discount: 20,
     batchesCompleted: 2,
-    price:1000,
+    price: 1000,
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
     batchesName: ["Batch A", "Batch B", "Batch C"],
     instructors: ["Arman Patel", "Robin Teach"],
@@ -163,14 +165,15 @@ export const coursesData: Course[] = [
   {
     id: "3",
     name: "Data Structures",
-    description:'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+    description:
+      "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 
     createdAt: "2024-02-05",
     students: 60,
     batches: 4,
-    discount:40,
+    discount: 40,
     batchesCompleted: 2,
-    price:1000,
+    price: 1000,
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
     batchesName: ["Batch A", "Batch B", "Batch C"],
     instructors: ["Arman Patel", "Robin Teach"],
@@ -178,14 +181,15 @@ export const coursesData: Course[] = [
   {
     id: "4",
     name: "Python Mastery",
-    description:'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+    description:
+      "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 
     createdAt: "2024-01-22",
     students: 100,
     batches: 6,
     batchesCompleted: 1,
-    price:1000,
-    discount:50,
+    price: 1000,
+    discount: 50,
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
     batchesName: ["Batch A", "Batch B", "Batch C"],
     instructors: ["Arman Patel", "Robin Teach"],
@@ -193,14 +197,15 @@ export const coursesData: Course[] = [
   {
     id: "5",
     name: "MongoDB Crash Course",
-    description:'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+    description:
+      "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 
     createdAt: "2024-01-10",
     students: 70,
     batches: 2,
-    discount:80,
+    discount: 80,
     batchesCompleted: 2,
-    price:1000,
+    price: 1000,
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
     batchesName: ["Batch A", "Batch B", "Batch C"],
     instructors: ["Arman Patel", "Robin Teach"],
@@ -208,20 +213,21 @@ export const coursesData: Course[] = [
   {
     id: "6",
     name: "Fullstack Development",
-    description:'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+    description:
+      "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 
     createdAt: "2024-01-02",
     students: 90,
-    discount:23,
+    discount: 23,
     batches: 5,
     batchesCompleted: 4,
-    price:1000,
+    price: 1000,
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
     batchesName: ["Batch A", "Batch B", "Batch C"],
     instructors: ["Arman Patel", "Robin Teach"],
   },
 ];
-export const dummyInstructors = [
+export const dummyInstructors: DummyInstructors[] = [
   {
     id: 1,
     name: "John Doe",
@@ -244,7 +250,7 @@ export const dummyInstructors = [
     email: "robert@example.com",
   },
 ];
-export const dummyBatches = [
+export const dummyBatches: DummyBatches[] = [
   {
     id: 1,
     name: "Morning Batch",

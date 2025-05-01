@@ -14,13 +14,32 @@ export type Course = {
   id: string;
   name: string;
   description: string;
-  discount:number
+  discount: number;
   createdAt: string;
   students: number;
   batches: number;
-  batchesCompleted:number
-  price:number
+  batchesCompleted: number;
+  price: number;
   batchesName: string[];
   modules: string[];
   instructors: string[];
+};
+
+export type DummyBatches = {
+  id: number;
+  name: string;
+  schedule: string;
+  time: string;
+  students: number;
+  startDate: string;
+  endDate: string;
+  status: string;
+};
+
+export type DummyInstructors = {
+  id: number;
+  name: string;
+  role: string;
+  avatar: string;
+  email: string;
 };

@@ -1,6 +1,7 @@
-import { coursesData } from "@/lib/static";
+import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
 import React from "react";
 import EditCourse from "../../_components/edit-course";
+import CourseDetails from "@/components/course-details";
 
 const EditCoursePage = async ({
   params,
@@ -11,10 +12,13 @@ const EditCoursePage = async ({
   const data = coursesData.find((course) => course.id === id);
   return (
     <main className="flex w-full">
-      
-        <EditCourse course={data} />
-      
-    
+      {/* <EditCourse course={data} /> */}
+      <CourseDetails
+        mode="edit"
+        course={data}
+        dummyBatches={dummyBatches}
+        dummyInstructors={dummyInstructors}
+      />
     </main>
   );
 };

@@ -3,7 +3,7 @@ import React from "react";
 import EditCourse from "../../_components/edit-course";
 import CourseDetails from "@/components/course-components/course-details";
 
-const EditCoursePage = async ({
+const CourseDetailsPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -23,4 +23,4 @@ const EditCoursePage = async ({
   );
 };
 
-export default EditCoursePage;
+export default CourseDetailsPage;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "../ui/button";
@@ -31,7 +31,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type CourseDetailsProps = {
-  mode: "view" | "edit";
+  // mode: "view" | "edit";
   course: Course | undefined;
   dummyBatches: DummyBatches[];
   dummyInstructors: DummyInstructors[];
@@ -41,9 +41,13 @@ const CourseDetails = ({
   dummyBatches,
   course,
   dummyInstructors,
-  mode,
+  // mode,
 }: CourseDetailsProps) => {
   const router = useRouter();
+  const searchParams= useSearchParams()
+
+  const defaultMode = searchParams.get('mode') ==="edit" ? "edit":"view"
+  const [mode,setMode] = useState<"edit"|"view">(defaultMode)
 
   if (!course) {
     return (
@@ -71,7 +75,7 @@ const CourseDetails = ({
   const [batches, setBatches] = useState(dummyBatches || []);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isEditMode,setMode] = useState(mode)
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -145,7 +149,7 @@ const CourseDetails = ({
                 <Button
 
                 className="bg-white  text-black hover:text-white cursor-pointer"
-                onClick={() => router.back()}
+                onClick={() => setMode("edit")}
               >
                 <PencilIcon size={16} className="mr-1" /> Edit
               </Button>

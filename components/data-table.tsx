@@ -203,7 +203,7 @@ export function DataTable<T>({
                   </TableCell>
                   {columns.map((col) => (
                     <TableCell className="text-center" key={col.id}>
-                      <Link href={`${pathname}/details/${getRowId(item)}`}>
+                      <Link href={`${pathname}/course-details/${getRowId(item)}?mode=view`}>
                       {col.accessor(item)}
                       </Link>
                     </TableCell>
@@ -212,7 +212,7 @@ export function DataTable<T>({
                     <Button
                       className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-primary-bg hover:text-white"
                       variant={"outline"}
-                      onClick={()=>router.push(`/admin/courses/edit/${getRowId(item)}`)}
+                      onClick={()=>router.push(`/admin/courses/course-details/${getRowId(item)}?mode=edit`)}
                     >
                       <PencilIcon className="size-4" />
                     </Button>

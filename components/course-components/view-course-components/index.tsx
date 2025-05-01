@@ -76,10 +76,11 @@ export function ViewCourseDescription({
             <h1 className="text-2xl font-bold">Description</h1>
             <Textarea
               readOnly
+              value={description}
               className="text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold"
-            >
-              {description}
-            </Textarea>
+            />
+            {/* {description} */}
+            {/* </Textarea> */}
           </div>
         </div>
       </div>

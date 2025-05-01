@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
 import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
-import {  toast } from "sonner";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { RefreshCcw, Save, X } from "lucide-react";
+import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 
 import {
   EditCourseDescription,
@@ -23,6 +23,12 @@ import CourseInstructorsCards from "@/components/course-components/course-instru
 import CourseBatchesCards from "@/components/course-components/course-batches-cards";
 import CourseModulesCard from "@/components/course-components/course-modules-card";
 import CourseStatusCard from "@/components/course-components/course-status-card";
+import {
+  ViewCourseDescription,
+  ViewCourseDiscountAndOfferPrice,
+  ViewCourseNameAndPrice,
+} from "./view-course-components";
+import { cn } from "@/lib/utils";
 
 type CourseDetailsProps = {
   mode: "view" | "edit";
@@ -30,18 +36,6 @@ type CourseDetailsProps = {
   dummyBatches: DummyBatches[];
   dummyInstructors: DummyInstructors[];
 };
-
-function ViewCourseName() {
-  return <></>;
-}
-
-function ViewCourseDescription() {
-  return <></>;
-}
-
-function ViewCoursePrice() {
-  return <></>;
-}
 
 const CourseDetails = ({
   dummyBatches,
@@ -77,6 +71,7 @@ const CourseDetails = ({
   const [batches, setBatches] = useState(dummyBatches || []);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditMode,setMode] = useState(mode)
 
   useEffect(() => {
     const handleResize = () => {
@@ -103,20 +98,28 @@ const CourseDetails = ({
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
       <div className="w-full lg:w-2/3 flex-grow">
-        <Card className="border-0 shadow-md">
-          <CardHeader className="bg-gray-50 border-b">
+        <Card className="border-0 shadow-md p-0">
+          <CardHeader
+            className={cn(
+              "bg-gray-50 border-b",
+              mode === "view" && "bg-primary-bg rounded-lg  text-white h-full"
+            )}
+          >
             <div className="flex md:flex-row flex-col items-center justify-between">
               <div>
                 <CardTitle className="text-2xl md:text-3xl font-bold">
-                  {mode === "edit" ? "Edit Course" : "View Course Details"}
+                  {mode === "edit" ? "Edit Course" : (<p className="mt-7">View Course Details</p>)}
                 </CardTitle>
-                <p className="text-muted-foreground mt-1">
-                  {mode === "edit"
-                    ? " Edit the course details. You can update name, description, price, and more."
-                    : "View the course details below"}
-                </p>
+                {mode === "edit" ? (
+                  <p className="text-muted-foreground mt-1 text-center">
+                    Edit the course details. You can update name, description,
+                    price, and more.
+                  </p>
+                ) : (
+                  <p className="mt-1 ml-1">View the course details below</p>
+                )}
               </div>
-              {mode === "edit" && (
+              {mode === "edit" ? (
                 <div className="flex gap-2">
                   <Button
                     className="bg-primary-bg hover:bg-primary-bg/90 gap-2 cursor-pointer"
@@ -138,6 +141,14 @@ const CourseDetails = ({
                     <X size={16} className="mr-1" /> Cancel
                   </Button>
                 </div>
+              ) : (
+                <Button
+
+                className="bg-white  text-black hover:text-white cursor-pointer"
+                onClick={() => router.back()}
+              >
+                <PencilIcon size={16} className="mr-1" /> Edit
+              </Button>
               )}
             </div>
           </CardHeader>
@@ -148,8 +159,13 @@ const CourseDetails = ({
                   <EditCourseName name={name} setName={setName} />
                   <EditCoursePrice price={price} setPrice={setPrice} />
                 </>
-              ) : null}
+              ) : (
+                <>
+                  <ViewCourseNameAndPrice name={name} price={price} />
+                </>
+              )}
             </div>
+            {mode === "view" && <Separator className="w-full mt-10" />}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mode === "edit" ? (
                 <>
@@ -163,12 +179,25 @@ const CourseDetails = ({
                     price={price}
                   />
                 </>
-              ) : null}
+              ) : (
+                <ViewCourseDiscountAndOfferPrice
+                  discount={discount}
+                  offerPrice={offerPrice}
+                />
+              )}
             </div>
-            <EditCourseDescription
-              description={description}
-              setDescription={setDescription}
-            />
+            {mode === "edit" ? (
+              <EditCourseDescription
+                description={description}
+                setDescription={setDescription}
+              />
+            ) : (
+              <>
+                <Separator className="my-6" />
+                <ViewCourseDescription description={description} />
+
+              </>
+            )}
             <Separator className="my-6" />
             <CourseInstructorsCards instructors={instructors} />
             <Separator className="my-6" />

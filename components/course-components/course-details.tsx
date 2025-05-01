@@ -3,14 +3,26 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
-import { Toaster, toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {  toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { RefreshCcw, Save, X } from "lucide-react";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+
+import {
+  EditCourseDescription,
+  EditCourseDiscount,
+  EditCourseName,
+  EditCourseOfferPrice,
+  EditCoursePrice,
+  EditCourseThumbnail,
+} from "./edit-course-components";
+import { Separator } from "../ui/separator";
+import CourseInstructorsCards from "@/components/course-components/course-instructors-cards";
+import CourseBatchesCards from "@/components/course-components/course-batches-cards";
+import CourseModulesCard from "@/components/course-components/course-modules-card";
+import CourseStatusCard from "@/components/course-components/course-status-card";
 
 type CourseDetailsProps = {
   mode: "view" | "edit";
@@ -22,61 +34,15 @@ type CourseDetailsProps = {
 function ViewCourseName() {
   return <></>;
 }
-function EditCourseName({
-  name,
-  setName,
-}: {
-  name: string;
-  setName: (n: string) => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label className="text-base font-medium">Course Name</Label>
-      <Input
-        placeholder="Enter Course Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="font-medium"
-      />
-    </div>
-  );
-}
 
 function ViewCourseDescription() {
-  return <></>;
-}
-function EditCourseDescription() {
   return <></>;
 }
 
 function ViewCoursePrice() {
   return <></>;
 }
-function EditCoursePrice({
-  price,
-  setPrice,
-}: {
-  price: number;
-  setPrice: (amount: number) => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label className="text-base font-medium">Regular Price</Label>
-      <div className="relative">
-        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-          ₹
-        </span>
-        <Input
-          type="number"
-          placeholder="Enter Price"
-          value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
-          className="font-medium pl-8"
-        />
-      </div>
-    </div>
-  );
-}
+
 const CourseDetails = ({
   dummyBatches,
   course,
@@ -184,11 +150,43 @@ const CourseDetails = ({
                 </>
               ) : null}
             </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             
-             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {mode === "edit" ? (
+                <>
+                  <EditCourseDiscount
+                    discount={discount}
+                    setDiscount={setDiscount}
+                  />
+                  <EditCourseOfferPrice
+                    discount={discount}
+                    offerPrice={offerPrice}
+                    price={price}
+                  />
+                </>
+              ) : null}
+            </div>
+            <EditCourseDescription
+              description={description}
+              setDescription={setDescription}
+            />
+            <Separator className="my-6" />
+            <CourseInstructorsCards instructors={instructors} />
+            <Separator className="my-6" />
+
+            <div>
+              <CourseBatchesCards batches={batches} />
+            </div>
           </CardContent>
         </Card>
+      </div>
+      <div className="w-full lg:w-1/3 space-y-6">
+        <EditCourseThumbnail
+          setThumbnail={() => {}}
+          thumbnail="https://placehold.co/600x400.png"
+        />
+        <CourseModulesCard modules={course.modules} />
+
+        <CourseStatusCard batches={batches} course={course} />
       </div>
     </div>
   );

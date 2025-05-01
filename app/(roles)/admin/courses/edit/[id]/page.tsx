@@ -1,7 +1,7 @@
 import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
 import React from "react";
 import EditCourse from "../../_components/edit-course";
-import CourseDetails from "@/components/course-details";
+import CourseDetails from "@/components/course-components/course-details";
 
 const EditCoursePage = async ({
   params,

@@ -8,16 +8,16 @@ import { toast } from "sonner";
 const CourseBatchesCards = ({ batches }: { batches: any[] }) => {
   return (
     <>
-     <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold">Batches</h2>
-                <Button
-                  size="sm"
-                  className="flex items-center gap-1 cursor-pointer bg-primary-bg hover:bg-primary-bg/90"
-                >
-                  {/* //TODO:Add batch page */}
-                  <Plus size={16} /> Add Batch
-                </Button>
-              </div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Batches</h2>
+        <Button
+          size="sm"
+          className="flex items-center gap-1 cursor-pointer bg-primary-bg hover:bg-primary-bg/90"
+        >
+          {/* //TODO:Add batch page */}
+          <Plus size={16} /> Add Batch
+        </Button>
+      </div>
       <div className="grid grid-cols-1 gap-4">
         {batches.map((batch) => (
           <Card
@@ -58,7 +58,11 @@ const CourseBatchesCards = ({ batches }: { batches: any[] }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 md:self-start">
-                  <Button size="sm" variant="outline" className="h-8 cursor-pointer">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 cursor-pointer"
+                  >
                     <PencilIcon size={14} className="mr-1" /> Edit
                   </Button>
                   <Button

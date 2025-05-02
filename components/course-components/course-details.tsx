@@ -224,7 +224,7 @@ CourseDetailsProps) => {
         ) : (
           <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
         )}
-        <CourseModulesCard modules={course.modules} />
+        <CourseModulesCard mode={mode} modules={course.modules} />
 
         <CourseStatusCard batches={batches} course={course} />
       </div>

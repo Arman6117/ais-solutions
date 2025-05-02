@@ -209,7 +209,7 @@ const EditCourse = ({ course }: EditCourseProps) => {
 
             <Separator className="my-6" />
 
-            <CourseInstructorsCards instructors={instructors} />
+            <CourseInstructorsCards mode={mode}instructors={instructors} />
             <Separator className="my-6" />
 
             <div>

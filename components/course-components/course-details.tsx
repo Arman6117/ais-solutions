@@ -4,12 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "../ui/button";
-
-import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
-
 import {
   EditCourseDescription,
   EditCourseDiscount,
@@ -27,8 +23,13 @@ import {
   ViewCourseDescription,
   ViewCourseDiscountAndOfferPrice,
   ViewCourseNameAndPrice,
+  ViewCourseThumbnail,
 } from "./view-course-components";
+
+import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 
 type CourseDetailsProps = {
   // mode: "view" | "edit";
@@ -41,13 +42,13 @@ const CourseDetails = ({
   dummyBatches,
   course,
   dummyInstructors,
-  // mode,
-}: CourseDetailsProps) => {
+}:
+CourseDetailsProps) => {
   const router = useRouter();
-  const searchParams= useSearchParams()
+  const searchParams = useSearchParams();
 
-  const defaultMode = searchParams.get('mode') ==="edit" ? "edit":"view"
-  const [mode,setMode] = useState<"edit"|"view">(defaultMode)
+  const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
+  const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
   if (!course) {
     return (
@@ -76,7 +77,6 @@ const CourseDetails = ({
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);
@@ -97,6 +97,7 @@ const CourseDetails = ({
     setIsLoading(true);
     toast.success("Changes saved successfully!");
     setIsLoading(false);
+    setMode("view");
   };
 
   return (
@@ -112,7 +113,11 @@ const CourseDetails = ({
             <div className="flex md:flex-row flex-col items-center justify-between">
               <div>
                 <CardTitle className="text-2xl md:text-3xl font-bold">
-                  {mode === "edit" ? "Edit Course" : (<p className="mt-7">View Course Details</p>)}
+                  {mode === "edit" ? (
+                    "Edit Course"
+                  ) : (
+                    <p className="mt-7">View Course Details</p>
+                  )}
                 </CardTitle>
                 {mode === "edit" ? (
                   <p className="text-muted-foreground mt-1 text-center">
@@ -147,12 +152,11 @@ const CourseDetails = ({
                 </div>
               ) : (
                 <Button
-
-                className="bg-white  text-black hover:text-white cursor-pointer"
-                onClick={() => setMode("edit")}
-              >
-                <PencilIcon size={16} className="mr-1" /> Edit
-              </Button>
+                  className="bg-white  text-black hover:text-white cursor-pointer"
+                  onClick={() => setMode("edit")}
+                >
+                  <PencilIcon size={16} className="mr-1" /> Edit
+                </Button>
               )}
             </div>
           </CardHeader>
@@ -199,11 +203,10 @@ const CourseDetails = ({
               <>
                 <Separator className="my-6" />
                 <ViewCourseDescription description={description} />
-
               </>
             )}
             <Separator className="my-6" />
-            <CourseInstructorsCards instructors={instructors} />
+            <CourseInstructorsCards mode={mode} instructors={instructors} />
             <Separator className="my-6" />
 
             <div>
@@ -213,10 +216,14 @@ const CourseDetails = ({
         </Card>
       </div>
       <div className="w-full lg:w-1/3 space-y-6">
-        <EditCourseThumbnail
-          setThumbnail={() => {}}
-          thumbnail="https://placehold.co/600x400.png"
-        />
+        {mode === "edit" ? (
+          <EditCourseThumbnail
+            setThumbnail={() => {}}
+            thumbnail="https://placehold.co/600x400.png"
+          />
+        ) : (
+          <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
+        )}
         <CourseModulesCard modules={course.modules} />
 
         <CourseStatusCard batches={batches} course={course} />

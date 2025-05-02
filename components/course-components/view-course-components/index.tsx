@@ -1,4 +1,6 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
 
 export function ViewCourseNameAndPrice({
   name,
@@ -77,7 +79,7 @@ export function ViewCourseDescription({
             <Textarea
               readOnly
               value={description}
-              className="text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold"
+              className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold"
             />
             {/* {description} */}
             {/* </Textarea> */}
@@ -86,4 +88,25 @@ export function ViewCourseDescription({
       </div>
     </>
   );
+}
+
+export function ViewCourseThumbnail({ thumbnail }: { thumbnail: string }) {
+  return <>
+    <Card className="overflow-hidden border-0 shadow-md">
+        <CardHeader className="pb-3 bg-gray-50 border-b">
+          <CardTitle className="text-xl">Course Thumbnail</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-3 p-1">
+          <div className="relative w-full aspect-video overflow-hidden rounded-lg border shadow-sm">
+            <Image
+              src={thumbnail}
+              alt="Course Thumbnail"
+              fill
+              className="object-fill"
+            />
+          </div>
+         
+        </CardContent>
+      </Card>
+  </>;
 }

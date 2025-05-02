@@ -20,7 +20,7 @@ const AdminSidebar = () => {
 
 
   return (
-    <div className="h-full  w-12  md:w-24 fixed bg-primary-bg ">
+    <div className="h-full  w-12 hidden md:block md:w-24 md:fixed bg-primary-bg ">
       <div className="flex flex-col gap-17 items-center justify-center px-0 py-10 md:p-10 ">
         <div className="text-white ">Logo</div>
         <div className="flex flex-col gap-10">

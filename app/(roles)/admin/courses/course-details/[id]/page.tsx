@@ -14,7 +14,6 @@ const CourseDetailsPage = async ({
     <main className="flex w-full">
       {/* <EditCourse course={data} /> */}
       <CourseDetails
-        // mode="view"
         course={data}
         dummyBatches={dummyBatches}
         dummyInstructors={dummyInstructors}

@@ -281,4 +281,14 @@ export const dummyBatches: DummyBatches[] = [
     endDate: "Aug 20, 2025",
     status: "Ongoing",
   },
+  {
+    id: 4,
+    name: "Weekend Batch",
+    schedule: "Sat-Sun",
+    time: "10:00 AM - 2:00 PM",
+    students: 22,
+    startDate: "May 20, 2025",
+    endDate: "Aug 20, 2025",
+    status: "Ongoing",
+  },
 ];

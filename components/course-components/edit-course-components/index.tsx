@@ -155,7 +155,7 @@ export function EditCourseThumbnail({
               className="object-cover"
             />
           </div>
-          <Button className="w-full flex items-center bg-primary-bg hover:bg-primary-bg/90 justify-center gap-2">
+          <Button className="w-full cursor-pointer flex items-center bg-primary-bg hover:bg-primary-bg/90 justify-center gap-2">
             <Upload size={16} /> Change Thumbnail
           </Button>
         </CardContent>

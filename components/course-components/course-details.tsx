@@ -210,7 +210,7 @@ CourseDetailsProps) => {
             <Separator className="my-6" />
 
             <div>
-              <CourseBatchesCards batches={batches} />
+              <CourseBatchesCards courseId={course.id} mode={mode} batches={batches} />
             </div>
           </CardContent>
         </Card>

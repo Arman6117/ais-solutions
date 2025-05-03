@@ -33,6 +33,7 @@ const EditInstructorDialog = ({
 }: EditInstructorDialogProps) => {
   const [assignedModules, setAssignedModules] = useState(dummyModules);
   const [availableModules, setAvailableModules] = useState(remainingModules);
+  const [showAvailableModules, setShowAvailableModules] = useState(false);
   if (!instructor) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
@@ -125,9 +126,8 @@ const EditInstructorDialog = ({
                   key={idx}
                   variant="outline"
                   className="bg-violet-50 cursor-pointer transition-all text-violet-700 group border-violet-200 py-1 px-2 justify-center"
-                  onClick={()=> handleRemoveModule(module)}
+                  onClick={() => handleRemoveModule(module)}
                 >
-
                   <Minus size={6} className="hidden group-hover:block  " />
                   {module}
                 </Badge>
@@ -136,25 +136,30 @@ const EditInstructorDialog = ({
                 variant={"outline"}
                 size={"sm"}
                 className="bg-violet-50 h-6 text-xs p-0 cursor-pointer text-violet-700 border-violet-200 0 justify-center"
+                onClick={()=>setShowAvailableModules((prev)=> !prev)}
               >
                 <Plus size={6} />
                 Assign Module
               </Button>
             </div>
-            <h1 className="text font-bold">Remaining Modules</h1>
-            <div className="flex flex-wrap gap-2">
-              {availableModules.map((module, idx) => (
-                <Badge
-                  key={idx}
-                  variant="outline"
-                  className="bg-violet-50 cursor-pointer hover:text-violet-700 text-neutral-400 border-violet-200 py-1 px-2 justify-center"
-                  onClick={() => handleAssignModule(module)}
-                >
-                  <Plus size={7} />
-                  {module}
-                </Badge>
-              ))}
-            </div>
+            {showAvailableModules && (
+              <div className="transition-all 5">
+                <h1 className="text font-bold">Available Modules</h1>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {availableModules.map((module, idx) => (
+                    <Badge
+                      key={idx}
+                      variant="outline"
+                      className="bg-violet-50 cursor-pointer hover:text-violet-700 text-neutral-400 border-violet-200 py-1 px-2 justify-center"
+                      onClick={() => handleAssignModule(module)}
+                    >
+                      <Plus size={7} />
+                      {module}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

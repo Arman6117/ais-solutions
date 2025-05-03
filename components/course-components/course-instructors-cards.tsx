@@ -23,6 +23,7 @@ const CourseInstructorsCards = ({
   mode: "edit" | "view";
 }) => {
   const [open, setOpen] = useState(false);
+  const [instructor, setInstructor] = useState(null);
 
   return (
     <>
@@ -112,11 +113,10 @@ const CourseInstructorsCards = ({
                             size="sm"
                             variant="ghost"
                             className="h-8 w-8 p-0  cursor-pointer absolute -top-10 right-10 text-gray-400 hover:text-violet-600 hover:bg-violet-50"
-                            onClick={() =>
-                              toast.success(
-                                `${instructor.name} removed from course`
-                              )
-                            }
+                            onClick={() => {
+                              setOpen(true);
+                              setInstructor(instructor);
+                            }}
                           >
                             <Pencil size={16} />
                           </Button>
@@ -158,7 +158,11 @@ const CourseInstructorsCards = ({
         )}
       </div>
 
-      <EditInstructorDialog open={open} onClose={() => setOpen(false)} />
+      <EditInstructorDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        instructor={instructor}
+      />
     </>
   );
 };

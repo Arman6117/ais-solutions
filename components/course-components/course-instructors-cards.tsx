@@ -1,10 +1,11 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { BookCopy, Calendar, Mail, Pencil, Plus, Trash2, Users } from "lucide-react";
-import React from "react";
+import { Mail, Pencil, Plus, Trash2, Users } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import {
   HoverCard,
@@ -12,6 +13,7 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import InstructorHoverCard from "./instructor-hover-card";
+import EditInstructorDialog from "./edit-instructor-dialog";
 
 const CourseInstructorsCards = ({
   instructors,
@@ -20,6 +22,8 @@ const CourseInstructorsCards = ({
   instructors: any[];
   mode: "edit" | "view";
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       <div className="space-y-6">
@@ -153,6 +157,8 @@ const CourseInstructorsCards = ({
           </div>
         )}
       </div>
+
+      <EditInstructorDialog open={open} onClose={() => setOpen(false)} />
     </>
   );
 };

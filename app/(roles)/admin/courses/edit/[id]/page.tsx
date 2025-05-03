@@ -1,20 +1,13 @@
 import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
 import React from "react";
-import EditCourse from "../../_components/edit-course";
 import CourseDetails from "@/components/course-components/course-details";
 
-const EditCoursePage = async ({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) => {
-  const id = (await params).id;
+const EditCoursePage = async ({ params }: { params: { id: string } }) => {
+  const id = params.id;
   const data = coursesData.find((course) => course.id === id);
   return (
     <main className="flex w-full">
-      {/* <EditCourse course={data} /> */}
       <CourseDetails
-        // mode="view"
         course={data}
         dummyBatches={dummyBatches}
         dummyInstructors={dummyInstructors}

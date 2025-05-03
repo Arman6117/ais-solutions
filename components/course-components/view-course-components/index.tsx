@@ -46,7 +46,9 @@ export function ViewCourseDiscountAndOfferPrice({
           {/* <div className="h-8 w-2 rounded-full bg-primary-bg"></div> */}
           <div className="flex flex-col gap-3">
             <h1 className="text-2xl font-bold">Discount</h1>
-            <span className="text-xl font-semibold text-neutral-800">{discount}%</span>
+            <span className="text-xl font-semibold text-neutral-800">
+              {discount}%
+            </span>
           </div>
         </div>
       </div>
@@ -91,8 +93,9 @@ export function ViewCourseDescription({
 }
 
 export function ViewCourseThumbnail({ thumbnail }: { thumbnail: string }) {
-  return <>
-    <Card className="overflow-hidden border-0 shadow-md">
+  return (
+    <>
+      <Card className="overflow-hidden border-0 shadow-md">
         <CardHeader className="pb-3 bg-gray-50 border-b">
           <CardTitle className="text-xl">Course Thumbnail</CardTitle>
         </CardHeader>
@@ -105,8 +108,8 @@ export function ViewCourseThumbnail({ thumbnail }: { thumbnail: string }) {
               className="object-fill"
             />
           </div>
-         
         </CardContent>
       </Card>
-  </>;
+    </>
+  );
 }

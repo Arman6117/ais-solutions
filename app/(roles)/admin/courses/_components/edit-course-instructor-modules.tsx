@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Badge } from "../ui/badge";
+import { Badge } from "../../../../../components/ui/badge";
 import { Minus, Plus } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../../../../components/ui/button";
 import { toast } from "sonner";
 
 type EditCourseInstructorModules = {

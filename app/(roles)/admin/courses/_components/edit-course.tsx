@@ -12,10 +12,10 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CourseStatusCard from "../../../../../components/course-components/course-status-card";
-import CourseModulesCard from "../../../../../components/course-components/course-modules-card";
-import CourseBatchesCards from "../../../../../components/course-components/course-batches-cards";
-import CourseInstructorsCards from "../../../../../components/course-components/course-instructors-cards";
+import CourseStatusCard from "./course-status-card";
+import CourseModulesCard from "./course-modules-card";
+import CourseBatchesCards from "./course-batches-cards";
+import CourseInstructorsCards from "./course-instructors-cards";
 
 import { dummyBatches, dummyInstructors } from "@/lib/static";
 

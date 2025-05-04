@@ -1,7 +1,7 @@
 import { BookCopy, Calendar, Mail, Users } from "lucide-react";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../../../components/ui/avatar";
+import { Badge } from "../../../../../components/ui/badge";
 
 const InstructorHoverCard = ({ instructor }: { instructor: any }) => {
   return (

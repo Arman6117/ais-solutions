@@ -6,9 +6,9 @@ import {
   DialogContent,
   DialogTitle,
   DialogClose,
-} from "../ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
+} from "../../../../../components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../../../components/ui/avatar";
+import { Button } from "../../../../../components/ui/button";
 import EditCourseInstructorModules from "./edit-course-instructor-modules";
 import EditCourseInstructorBatches from "./edit-course-instructor-batches";
 

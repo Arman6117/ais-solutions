@@ -11,9 +11,10 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "../ui/hover-card";
+} from "../../../../../components/ui/hover-card";
 import InstructorHoverCard from "./instructor-hover-card";
 import EditInstructorDialog from "./edit-instructor-dialog";
+import AddInstructorButton from "./add-instructor-button";
 
 const CourseInstructorsCards = ({
   instructors,
@@ -36,14 +37,7 @@ const CourseInstructorsCards = ({
               assigned to this course
             </p>
           </div>
-          {mode === "edit" && (
-            <Button
-              size="sm"
-              className="flex items-center gap-2 cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-sm"
-            >
-              <Plus size={16} /> Add Instructor
-            </Button>
-          )}
+          {mode === "edit" && <AddInstructorButton />}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

@@ -15,10 +15,10 @@ import {
   EditCourseThumbnail,
 } from "./edit-course-components";
 import { Separator } from "../ui/separator";
-import CourseInstructorsCards from "@/components/course-components/course-instructors-cards";
-import CourseBatchesCards from "@/components/course-components/course-batches-cards";
-import CourseModulesCard from "@/components/course-components/course-modules-card";
-import CourseStatusCard from "@/components/course-components/course-status-card";
+import CourseInstructorsCards from "@/app/(roles)/admin/courses/_components/course-instructors-cards";
+import CourseBatchesCards from "@/app/(roles)/admin/courses/_components/course-batches-cards";
+import CourseModulesCard from "@/app/(roles)/admin/courses/_components/course-modules-card";
+import CourseStatusCard from "@/app/(roles)/admin/courses/_components/course-status-card";
 import {
   ViewCourseDescription,
   ViewCourseDiscountAndOfferPrice,

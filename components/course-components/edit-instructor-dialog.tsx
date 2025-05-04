@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { Dialog, DialogHeader, DialogContent, DialogTitle } from "../ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Mail, Minus, Plus } from "lucide-react";
+import { Calendar, Mail, Minus, Plus, Users } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { toast } from "sonner";
+import { ScrollArea } from "../ui/scroll-area";
+import EditCourseInstructorModules from "./edit-course-instructor-modules";
+import EditCourseInstructorBatches from "./edit-course-instructor-batches";
 
 type EditInstructorDialogProps = {
   open: boolean;
@@ -14,26 +17,73 @@ type EditInstructorDialogProps = {
   instructor: any;
 };
 
+const dummyBatches = [
+  {
+    name: "Morning Batch",
+    students: 25,
+    period: "May - Aug 2025",
+  },
+  {
+    name: "Weekend Batch",
+    students: 18,
+    period: "Jun - Oct 2025",
+  },
+];
+
+const availableBatches = [
+  {
+    name: "Evening Batch",
+    students: 20,
+    period: "Jun - Sep 2025",
+  },
+  {
+    name: "Intensive Batch",
+    students: 15,
+    period: "Jul - Aug 2025",
+  },
+  {
+    name: "Intensive Batch",
+    students: 15,
+    period: "Jul - Aug 2025",
+  },
+  {
+    name: "Intensive Batch",
+    students: 15,
+    period: "Jul - Aug 2025",
+  },
+  {
+    name: "Intensive Batch",
+    students: 15,
+    period: "Jul - Aug 2025",
+  },
+  {
+    name: "Intensive Batch",
+    students: 15,
+    period: "Jul - Aug 2025",
+  },
+];
+
 const dummyModules = [
   "Introduction to React",
   "Advanced React Patterns",
   "State Management",
   "React Performance",
 ];
+
 const remainingModules = [
   "SSR in React",
   "React Testing",
   "React Router",
   "React Query",
 ];
+
 const EditInstructorDialog = ({
   open,
   instructor,
   onClose,
 }: EditInstructorDialogProps) => {
-  const [assignedModules, setAssignedModules] = useState(dummyModules);
-  const [availableModules, setAvailableModules] = useState(remainingModules);
-  const [showAvailableModules, setShowAvailableModules] = useState(false);
+ 
+
   if (!instructor) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
@@ -51,40 +101,13 @@ const EditInstructorDialog = ({
     );
   }
 
-  const handleAssignModule = (module: string) => {
-    //TODO:Make an API Call
-    const existing = assignedModules.includes(module);
-    if (existing) {
-      toast.error("Module already present");
-      return;
-    }
-
-    setAssignedModules((prev) => [...prev, module]);
-    setAvailableModules((prev) => prev.filter((mod) => mod !== module));
-    toast.success("Module added");
-  };
-
-  const handleRemoveModule = (module: string) => {
-    //TODO:Make an API Call
-    const existing = availableModules.includes(module);
-    if (existing) {
-      toast.error("Module does not exists");
-      return;
-    }
-
-    setAssignedModules((prev) => prev.filter((mod) => mod !== module));
-    setAvailableModules((prev) => [...prev, module]);
-
-    toast.success("Module removed");
-  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-64">
+      <DialogContent className="max-w-md max-hscreen overflow-ycroll">
         <DialogHeader>
           <DialogTitle>Edit Instructor Details</DialogTitle>
         </DialogHeader>
-        {/* <Separator className="bg-prim/\ary-bg "/> */}
         <div className="flex flex-col">
           <div className="bg-gradient-to-r rounded from-violet-600 to-indigo-600 text-white p-5">
             <div className="flex items-center gap-4">
@@ -118,48 +141,28 @@ const EditInstructorDialog = ({
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 mt-5">
-            <h1 className="text font-bold">Modules</h1>
-            <div className="flex flex-wrap gap-2">
-              {assignedModules.map((module, idx) => (
-                <Badge
-                  key={idx}
-                  variant="outline"
-                  className="bg-violet-50 cursor-pointer transition-all text-violet-700 group border-violet-200 py-1 px-2 justify-center"
-                  onClick={() => handleRemoveModule(module)}
-                >
-                  <Minus size={6} className="hidden group-hover:block  " />
-                  {module}
-                </Badge>
-              ))}
-              <Button
-                variant={"outline"}
-                size={"sm"}
-                className="bg-violet-50 h-6 text-xs p-0 cursor-pointer text-violet-700 border-violet-200 0 justify-center"
-                onClick={()=>setShowAvailableModules((prev)=> !prev)}
-              >
-                <Plus size={6} />
-                Assign Module
-              </Button>
-            </div>
-            {showAvailableModules && (
-              <div className="transition-all 5">
-                <h1 className="text font-bold">Available Modules</h1>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {availableModules.map((module, idx) => (
-                    <Badge
-                      key={idx}
-                      variant="outline"
-                      className="bg-violet-50 cursor-pointer hover:text-violet-700 text-neutral-400 border-violet-200 py-1 px-2 justify-center"
-                      onClick={() => handleAssignModule(module)}
-                    >
-                      <Plus size={7} />
-                      {module}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
+
+          {/* Modules Section */}
+          <EditCourseInstructorModules
+            dummyModules={dummyModules}
+            remainingModules={remainingModules}
+          />
+
+          {/* Batches Section */}
+          <EditCourseInstructorBatches dummyBatches={dummyBatches} availableBatches={availableBatches}/>
+          
+
+          <div className="flex justify-end gap-2 mt-6">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="border-neutral-200"
+            >
+              Cancel
+            </Button>
+            <Button className="bg-violet-600 cursor-pointer hover:bg-violet-700 text-white">
+              Save Changes
+            </Button>
           </div>
         </div>
       </DialogContent>

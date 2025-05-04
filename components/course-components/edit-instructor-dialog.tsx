@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import { Dialog, DialogHeader, DialogContent, DialogTitle } from "../ui/dialog";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Button } from "../ui/button";
+import React from "react";
 
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogTitle,
+  DialogClose,
+} from "../ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Calendar, Mail, Minus, Plus, Users } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { toast } from "sonner";
-import { ScrollArea } from "../ui/scroll-area";
+import { Button } from "../ui/button";
 import EditCourseInstructorModules from "./edit-course-instructor-modules";
 import EditCourseInstructorBatches from "./edit-course-instructor-batches";
 
+import { Mail } from "lucide-react";
 type EditInstructorDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -82,8 +84,6 @@ const EditInstructorDialog = ({
   instructor,
   onClose,
 }: EditInstructorDialogProps) => {
- 
-
   if (!instructor) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
@@ -101,10 +101,9 @@ const EditInstructorDialog = ({
     );
   }
 
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-hscreen overflow-ycroll">
+      <DialogContent className="max-w-md ">
         <DialogHeader>
           <DialogTitle>Edit Instructor Details</DialogTitle>
         </DialogHeader>
@@ -128,7 +127,7 @@ const EditInstructorDialog = ({
                   <Mail size={14} />
                   <span>{instructor.email}</span>
                 </div>
-                <div className="flex gap-2 mt-2">
+                {/* <div className="flex gap-2 mt-2">
                   <Badge className="bg-white/20 hover:bg-white/30 text-white border-none">
                     {instructor.role || "Instructor"}
                   </Badge>
@@ -137,7 +136,7 @@ const EditInstructorDialog = ({
                       Lead
                     </Badge>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -149,10 +148,12 @@ const EditInstructorDialog = ({
           />
 
           {/* Batches Section */}
-          <EditCourseInstructorBatches dummyBatches={dummyBatches} availableBatches={availableBatches}/>
-          
+          <EditCourseInstructorBatches
+            dummyBatches={dummyBatches}
+            availableBatches={availableBatches}
+          />
 
-          <div className="flex justify-end gap-2 mt-6">
+          <div className="flex cursor-pointer justify-end gap-2 mt-6">
             <Button
               variant="outline"
               onClick={onClose}
@@ -160,7 +161,7 @@ const EditInstructorDialog = ({
             >
               Cancel
             </Button>
-            <Button className="bg-violet-600 cursor-pointer hover:bg-violet-700 text-white">
+            <Button className="bg-violet-600  cursor-pointer hover:bg-violet-700 text-white">
               Save Changes
             </Button>
           </div>

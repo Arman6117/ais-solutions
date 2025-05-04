@@ -25,7 +25,7 @@ const InstructorHoverCard = ({ instructor }: { instructor: any }) => {
               <Mail size={14} />
               <span>{instructor.email}</span>
             </div>
-            <div className="flex gap-2 mt-2">
+            {/* <div className="flex gap-2 mt-2">
               <Badge className="bg-white/20 hover:bg-white/30 text-white border-none">
                 {instructor.role || "Instructor"}
               </Badge>
@@ -34,7 +34,7 @@ const InstructorHoverCard = ({ instructor }: { instructor: any }) => {
                   Lead
                 </Badge>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

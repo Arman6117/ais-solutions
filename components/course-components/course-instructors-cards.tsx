@@ -78,7 +78,7 @@ const CourseInstructorsCards = ({
                           <Mail size={14} className="text-gray-400" />
                           <span>{instructor.email}</span>
                         </div>
-                        <div className="flex gap-2 mt-2">
+                        {/* <div className="flex gap-2 mt-2">
                           <Badge
                             variant="outline"
                             className="bg-violet-50 border-violet-200 text-violet-700 font-medium"
@@ -93,7 +93,7 @@ const CourseInstructorsCards = ({
                               Lead
                             </Badge>
                           )}
-                        </div>
+                        </div> */}
                       </div>
                       {mode === "edit" && (
                         <div className="flex gap-4">

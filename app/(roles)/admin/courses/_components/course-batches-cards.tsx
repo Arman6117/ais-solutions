@@ -41,7 +41,7 @@ const CourseBatchesCards = ({
             )}
           >
             <Link
-              href={mode==='view' ?`/admin/courses/batch-details/${courseId}/batch/${batch.id}` : "#"}
+              href={mode==='view' ?`/admin/courses/batch-details/${courseId}/batch/${batch.id}?mode=view` : "#"}
             >
               <CardContent className="p-4">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">

@@ -1,7 +1,9 @@
 import React from "react";
 
 const BatchDetailsPage = () => {
-  return <div>BatchDetailsPage</div>;
+  return <div>
+    
+  </div>;
 };
 
 export default BatchDetailsPage;

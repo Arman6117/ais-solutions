@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 
 import { toast } from "sonner";
 
-
-import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
+import { DummyBatches, DummyInstructors, DummyStudent } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
@@ -15,31 +14,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type BatchDetailsProps = {
   // mode: "view" | "edit";
-  course: Course | undefined ;
-  dummyBatches: DummyBatches[];
+  batch: DummyBatches | undefined;
+  dummyModules: string[];
   dummyInstructors: DummyInstructors[];
+  dummyStudents: DummyStudent[] | undefined;
 };
 
-const CourseDetails = ({
-  dummyBatches,
-  course,
+const BatchDetails = ({
+  batch,
   dummyInstructors,
-}:
-BatchDetailsProps) => {
+  dummyModules,
+  dummyStudents,
+}: BatchDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
-  if (!course) {
+  if (!batch) {
     return (
       <div className="p-8 flex w-full items-center justify-center h-full">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">No Course Selected</h2>
-          <p className="text-muted-foreground">
-            Please select a course to edit
-          </p>
+          <h2 className="text-2xl font-bold mb-2">No Batchbatch Selected</h2>
+          <p className="text-muted-foreground">Please select a batch to edit</p>
           <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
             Go Back
           </Button>
@@ -47,15 +45,9 @@ BatchDetailsProps) => {
       </div>
     );
   }
-  const [name, setName] = useState(course.name || "");
-  const [description, setDescription] = useState(course.description || "");
-  const [price, setPrice] = useState(course.price || 0);
-  const [discount, setDiscount] = useState(course.discount || 0);
-  const [offerPrice, setOfferPrice] = useState(
-    price - (price * discount) / 100 || 0
-  );
+  const [name, setName] = useState(batch.name || "");
   const [instructors, setInstructors] = useState(dummyInstructors || []);
-  const [batches, setBatches] = useState(dummyBatches || []);
+  const [students, setStudents] = useState(dummyStudents || []);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,10 +61,6 @@ BatchDetailsProps) => {
     window.addEventListener("resize", handleResize);
     window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    setOfferPrice(price - (price * discount) / 100);
-  }, [price, discount]);
 
   const handleSave = () => {
     //TODO:Handle saving logic and API call here
@@ -96,18 +84,17 @@ BatchDetailsProps) => {
               <div>
                 <CardTitle className="text-2xl md:text-3xl font-bold">
                   {mode === "edit" ? (
-                    "Edit Course"
+                    "Edit Batch"
                   ) : (
-                    <p className="mt-7">View Course Details</p>
+                    <p className="mt-7">View Batch Details</p>
                   )}
                 </CardTitle>
                 {mode === "edit" ? (
                   <p className="text-muted-foreground mt-1 text-center">
-                    Edit the course details. You can update name, description,
-                    price, and more.
+                    Edit the batch details.
                   </p>
                 ) : (
-                  <p className="mt-1 ml-1">View the course details below</p>
+                  <p className="mt-1 ml-1">View the batch details below</p>
                 )}
               </div>
               {mode === "edit" ? (
@@ -143,15 +130,24 @@ BatchDetailsProps) => {
             </div>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
-           
+            <div className="flex flex-col gap-7">
+              {mode === "view" ? (
+                
+                  <div className="flex flex-col gap-3">
+                    <h1 className="text-2xl font-bold text-neutral-800">
+                      Name
+                    </h1>
+                    <span className="text-xl font-semibold">{name}</span>
+                  </div>
+                
+              ) : null}
+            </div>
           </CardContent>
         </Card>
       </div>
-      <div className="w-full lg:w-1/3 space-y-6">
-        
-      </div>
+      {/* <div className="w-full lg:w-1/3 space-y-6"></div> */}
     </div>
   );
 };
 
-export default CourseDetails;
+export default BatchDetails;

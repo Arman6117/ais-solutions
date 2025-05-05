@@ -26,7 +26,7 @@ export type Course = {
 };
 
 export type DummyBatches = {
-  id: number;
+  id: number | string;
   name: string;
   schedule: string;
   time: string;
@@ -42,4 +42,21 @@ export type DummyInstructors = {
   role: string;
   avatar: string;
   email: string;
+
+};
+
+export type DummyStudent = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  phone: string;
+  batchId: string;
+  isApproved: boolean;
+  joinedAt: string;
+  modules:string[]
+  courses:Course[]
+  feesStatus:'paid'|'unpaid'
+  totalFeePaid:number,
+  feesRemaining:number,
 };

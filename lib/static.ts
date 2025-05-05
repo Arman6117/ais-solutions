@@ -2,7 +2,7 @@ import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyStudent } from "./types";
 
 export const adminSidebarLinks = [
   {
@@ -252,7 +252,7 @@ export const dummyInstructors: DummyInstructors[] = [
 ];
 export const dummyBatches: DummyBatches[] = [
   {
-    id: 1,
+    id: '1',
     name: "Morning Batch",
     schedule: "Mon-Wed-Fri",
     time: "9:00 AM - 11:00 AM",
@@ -262,7 +262,7 @@ export const dummyBatches: DummyBatches[] = [
     status: "Ongoing",
   },
   {
-    id: 2,
+    id: "2",
     name: "Evening Batch",
     schedule: "Tue-Thu",
     time: "6:00 PM - 8:30 PM",
@@ -272,7 +272,7 @@ export const dummyBatches: DummyBatches[] = [
     status: "Ongoing",
   },
   {
-    id: 3,
+    id: "3",
     name: "Weekend Batch",
     schedule: "Sat-Sun",
     time: "10:00 AM - 2:00 PM",
@@ -282,7 +282,7 @@ export const dummyBatches: DummyBatches[] = [
     status: "Ongoing",
   },
   {
-    id: 4,
+    id: "4",
     name: "Weekend Batch",
     schedule: "Sat-Sun",
     time: "10:00 AM - 2:00 PM",
@@ -291,4 +291,82 @@ export const dummyBatches: DummyBatches[] = [
     endDate: "Aug 20, 2025",
     status: "Ongoing",
   },
+];
+
+export const dummyStudents: DummyStudent[] = [
+  {
+    id: "stu-1",
+    name: "Aarav Mehta",
+    email: "aarav@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/11.jpg",
+    phone: "9876543210",
+    batchId: "batch-101",
+    isApproved: true,
+    joinedAt: "2025-05-01",
+    modules: ["HTML", "CSS", "JS"],
+    courses: [coursesData[0]],
+    feesStatus: "paid",
+    totalFeePaid: 20000,
+    feesRemaining: 0,
+  },
+  {
+    id: "stu-2",
+    name: "Isha Rao",
+    email: "isha@example.com",
+    avatar: "https://randomuser.me/api/portraits/women/12.jpg",
+    phone: "9123456780",
+    batchId: "batch-102",
+    isApproved: true,
+    joinedAt: "2025-05-02",
+    modules: ["React", "Node"],
+    courses: [coursesData[0]],
+    feesStatus: "unpaid",
+    totalFeePaid: 10000,
+    feesRemaining: 10000,
+  },
+  {
+    id: "stu-3",
+    name: "Kabir Joshi",
+    email: "kabir@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    phone: "9988776655",
+    batchId: "batch-103",
+    isApproved: false,
+    joinedAt: "2025-05-03",
+    modules: ["Arrays", "Trees"],
+    courses: [coursesData[1]],
+    feesStatus: "unpaid",
+    totalFeePaid: 5000,
+    feesRemaining: 10000,
+  },
+  {
+    id: "stu-4",
+    name: "Meera Kulkarni",
+    email: "meera@example.com",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    phone: "9090909090",
+    batchId: "batch-101",
+    isApproved: true,
+    joinedAt: "2025-05-04",
+    modules: ["HTML", "CSS", "JS", "React"],
+    courses: [coursesData[0]],
+    feesStatus: "paid",
+    totalFeePaid: 20000,
+    feesRemaining: 0,
+  },
+  {
+    id: "stu-5",
+    name: "Rohan Bhat",
+    email: "rohan@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/55.jpg",
+    phone: "8888888888",
+    batchId: "batch-102",
+    isApproved: true,
+    joinedAt: "2025-05-05",
+    modules: ["Graphs", "Trees"],
+    courses: [coursesData[1]],
+    feesStatus: "unpaid",
+    totalFeePaid: 7500,
+    feesRemaining: 7500,
+  }
 ];

@@ -42,19 +42,18 @@ const AddInstructorButton = () => {
   };
 
   const handleAdd = () => {
-    // e.stopPropagation(); 
     toast.success(`${found?.name} has been added to this course.`);
     setFound(null);
     setEmail("");
     setOpen(false);
   };
-  
+
   const handleReset = () => {
     setFound(null);
     setEmail("");
     setOpen(false);
   };
-  
+
   return (
     <>
       <Dialog onOpenChange={handleReset}>
@@ -82,8 +81,8 @@ const AddInstructorButton = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
               />
-              <Button 
-                className="bg-primary-bg whitespace-nowrap" 
+              <Button
+                className="bg-primary-bg whitespace-nowrap"
                 onClick={handleSearch}
               >
                 Search
@@ -106,9 +105,7 @@ const AddInstructorButton = () => {
           {found && (
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <div
-                  className="w-full cursor-pointer mt-4 border border-gray-100 shadow-lg flex items-center justify-between p-3 sm:p-5 rounded-lg hover:bg-gray-50"
-                >
+                <div className="w-full cursor-pointer mt-4 border border-gray-100 shadow-lg flex items-center justify-between p-3 sm:p-5 rounded-lg hover:bg-gray-50">
                   <div className="flex gap-3 sm:gap-6 items-center">
                     <Avatar className="size-10 sm:size-12">
                       <AvatarImage
@@ -118,7 +115,9 @@ const AddInstructorButton = () => {
                       <AvatarFallback>{found.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <p className="font-medium text-sm sm:text-base">{found.name}</p>
+                      <p className="font-medium text-sm sm:text-base">
+                        {found.name}
+                      </p>
                       <p className="font-medium text-xs sm:text-sm text-muted-foreground">
                         {found.email}
                       </p>
@@ -137,7 +136,7 @@ const AddInstructorButton = () => {
                 align="end"
                 alignOffset={-50}
                 className="w-[280px] sm:w-[350px] md:w-96 max-h-80 overflow-y-auto p-0 bg-white border border-gray-200 rounded-lg shadow-lg"
-                style={{ overflowY: 'auto' }}
+                style={{ overflowY: "scroll" }}
               >
                 <InstructorHoverCard instructor={found} />
               </PopoverContent>

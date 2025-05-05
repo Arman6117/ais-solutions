@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import BatchInfoWrapper from "@/components/batch-components/btach-info-wrapper";
 
 type BatchDetailsProps = {
   // mode: "view" | "edit";
@@ -132,20 +133,19 @@ const BatchDetails = ({
           <CardContent className="p-6 space-y-6">
             <div className="flex flex-col gap-7">
               {mode === "view" ? (
-                
-                  <div className="flex flex-col gap-3">
-                    <h1 className="text-2xl font-bold text-neutral-800">
-                      Name
-                    </h1>
-                    <span className="text-xl font-semibold">{name}</span>
+                <div className="flex flex-col gap-10">
+                  <BatchInfoWrapper label="Name">{batch.name}</BatchInfoWrapper>
+                  <div className="flex gap-14">
+                  <BatchInfoWrapper label="Start Date">{batch.startDate}</BatchInfoWrapper>
+                  <BatchInfoWrapper label="End Date">{batch.endDate}</BatchInfoWrapper>
                   </div>
-                
+                </div>
               ) : null}
             </div>
           </CardContent>
         </Card>
       </div>
-      {/* <div className="w-full lg:w-1/3 space-y-6"></div> */}
+      <div className="w-full lg:w-1/3 space-y-6"></div>
     </div>
   );
 };

@@ -29,6 +29,7 @@ type BatchDetailsProps = {
   dummyModules: string[];
   dummyInstructors: DummyInstructors[];
   dummyStudents: DummyStudent[] | undefined;
+  courseId: string;
 };
 
 const BatchDetails = ({
@@ -36,6 +37,7 @@ const BatchDetails = ({
   dummyInstructors,
   dummyModules,
   dummyStudents,
+  courseId,
 }: BatchDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -242,7 +244,12 @@ const BatchDetails = ({
         </div>
       </div>
       <div className="w-full">
-        <BatchStudentTable mode={mode} dummyStudents={dummyStudents!} />
+        <BatchStudentTable
+          mode={mode}
+          dummyStudents={dummyStudents!}
+          courseId={courseId}
+          batchId={batch.id as string}
+        />
       </div>
       {/* <BatchStudentTable mode={mode}/> */}
     </div>

@@ -19,6 +19,7 @@ const CoursesTable = () => {
   return (
     <>
       <DataTable
+        href={`admin/course/course-details/`}
         data={coursesData}
         columns={[
           {

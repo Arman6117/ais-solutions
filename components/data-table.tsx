@@ -39,8 +39,8 @@ type DataTableProps<T> = {
   filterOptions?: FilterOption[];
   onDeleteSelected: (selectedIds: string[]) => void;
   getRowId: (row: T) => string;
-  // actions:[]
-  openDialog: (item:T) => void
+  href: string;
+  openDialog: (item: T) => void;
 };
 
 export function DataTable<T>({
@@ -48,15 +48,16 @@ export function DataTable<T>({
   data,
   filterOptions,
   getRowId,
+  href,
   onDeleteSelected,
   searchPlaceholder = "Search...",
-  openDialog
+  openDialog,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const router  = useRouter();
+  const router = useRouter();
   const pathname = usePathname();
 
   const pageSize = 3; //TODO:Later make 10-20
@@ -64,13 +65,25 @@ export function DataTable<T>({
   const filteredData = useMemo(() => {
     let sorted = [...data];
 
-    if (sortType) {
+    if ((filterOptions?.length ?? 0) > 0 && sortType) {
       const [key, order] = sortType.split("-");
-      sorted.sort((a, b) => {
-        const aVal = (a as any)[key];
-        const bVal = (b as any)[key];
-        return order === "asc" ? aVal - bVal : bVal - aVal;
-      });
+      if (key && order) {
+        sorted.sort((a, b) => {
+          const aVal = (a as any)[key];
+          const bVal = (b as any)[key];
+
+          if (typeof aVal === "number" && typeof bVal === "number") {
+            return order === "asc" ? aVal - bVal : bVal - aVal;
+          }
+
+          const aStr = String(aVal).toLowerCase();
+          const bStr = String(bVal).toLowerCase();
+
+          return order === "asc"
+            ? aStr.localeCompare(bStr)
+            : bStr.localeCompare(aStr);
+        });
+      }
     }
     return sorted.filter((item) =>
       JSON.stringify(item).toLowerCase().includes(searchTerm.toLowerCase())
@@ -114,7 +127,6 @@ export function DataTable<T>({
     paginatedData.length > 0 &&
     paginatedData.every((item) => selectedIds.includes(getRowId(item)));
 
-  
   return (
     <div className="flex flex-col gap-6 w-full">
       <div className="flex gap-7">
@@ -185,9 +197,11 @@ export function DataTable<T>({
                   checked={isAllSelected}
                   onCheckedChange={handleSelectAll}
                 />
-              </TableHead >
+              </TableHead>
               {columns.map((column) => (
-                <TableHead className="text-center" key={column.id}>{column.header}</TableHead>
+                <TableHead className="text-center" key={column.id}>
+                  {column.header}
+                </TableHead>
               ))}
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
@@ -204,8 +218,8 @@ export function DataTable<T>({
                   </TableCell>
                   {columns.map((col) => (
                     <TableCell className="text-center" key={col.id}>
-                      <Link href={`${pathname}/course-details/${getRowId(item)}?mode=view`}>
-                      {col.accessor(item)}
+                      <Link href={`${href}/${getRowId(item)}?mode=view`}>
+                        {col.accessor(item)}
                       </Link>
                     </TableCell>
                   ))}
@@ -213,7 +227,9 @@ export function DataTable<T>({
                     <Button
                       className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-primary-bg hover:text-white"
                       variant={"outline"}
-                      onClick={()=>router.push(`/admin/courses/course-details/${getRowId(item)}?mode=edit`)}
+                      onClick={() =>
+                        router.push(`${href}/${getRowId(item)}?mode=edit`)
+                      }
                     >
                       <PencilIcon className="size-4" />
                     </Button>

@@ -14,12 +14,13 @@ export const batchModules = [
 const BatchDetailsPage = async ({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string,courseId:string }>;
 }) => {
   const id = (await params).id;
+  const courseId = (await params).courseId;
   const batch = dummyBatches.find((batch) => batch.id === id);
   const students = dummyStudents.filter((stud) => stud.batchId === id);
-
+ 
   return (
     <main className="w-screen flex">
       <BatchDetails
@@ -27,6 +28,7 @@ const BatchDetailsPage = async ({
         dummyInstructors={dummyInstructors}
         dummyModules={batchModules}
         dummyStudents={students}
+        courseId={courseId}
       />
     </main>
   );

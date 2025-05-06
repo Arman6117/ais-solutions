@@ -53,9 +53,13 @@ const studentTableFilter = [
 const BatchStudentTable = ({
   mode,
   dummyStudents,
+  courseId,
+  batchId,
 }: {
   mode: "view" | "edit";
   dummyStudents: DummyStudent[];
+  courseId: string;
+  batchId: string;
 }) => {
   return (
     <>
@@ -76,7 +80,7 @@ const BatchStudentTable = ({
           <DataTable
             data={dummyStudents}
             columns={studentTableCol}
-            // filterOptions={studentTableFilter}
+            href={`/admin/courses/batch-details/${courseId}/batch/${batchId}`}
             searchPlaceholder="Search by email or name"
             getRowId={(row) => row.id}
             onDeleteSelected={(ids) => {

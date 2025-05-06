@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -27,7 +27,7 @@ import { Column, FilterOption } from "@/lib/types";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
-import { ArrowRight, PencilIcon, Trash2 } from "lucide-react";
+import { ArrowRight, Menu, PencilIcon, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -57,10 +57,28 @@ export function DataTable<T>({
   const [sortType, setSortType] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  const pageSize = 3; //TODO:Later make 10-20
+  // Track screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkScreenSize();
+
+    // Add event listener
+    window.addEventListener("resize", checkScreenSize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  const pageSize = isMobile ? 5 : 10;
 
   const filteredData = useMemo(() => {
     let sorted = [...data];
@@ -127,72 +145,69 @@ export function DataTable<T>({
     paginatedData.length > 0 &&
     paginatedData.every((item) => selectedIds.includes(getRowId(item)));
 
-  return (
-    <div className="flex flex-col gap-6 w-full">
-      <div className="flex gap-7">
-        <div className="flex gap-3 w-full">
-          <Input
-            value={searchTerm}
-            placeholder={searchPlaceholder}
-            className="max-w-sm text-lg font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(0);
-            }}
-          />
-          <Button
-            className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
-            onClick={() => {
-              setSearchTerm(searchTerm);
-              //TODO: Implement server action to search courses
-            }}
-          >
-            <ArrowRight />
-          </Button>
-        </div>
-        {(filterOptions ?? []).length > 0 && (
-          <div className="flex gap-2">
-            <Select
-              value={sortType}
-              onValueChange={(val) => {
-                setSortType(val);
-                setCurrentPage(0);
-              }}
-            >
-              <SelectTrigger className="w-48 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200 focus-visible:ring-2 font-semibold">
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent className="text-sm font-semibold p-2">
-                {filterOptions?.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button
-              className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
-              onClick={handleReset}
-            >
-              Reset
-            </Button>
-            {selectedIds.length > 0 && (
-              <Button
-                className="cursor-pointer"
-                variant="destructive"
-                onClick={() => onDeleteSelected(selectedIds)}
+  // Card view for mobile
+  const renderCardView = () => {
+    return (
+      <div className="grid grid-cols-1 gap-4">
+        {paginatedData.length > 0 ? (
+          paginatedData.map((item, i) => (
+            <div key={i} className="bg-white rounded-lg shadow p-4 border">
+              <div className="flex justify-between items-center mb-2">
+                <Checkbox
+                  checked={selectedIds.includes(getRowId(item))}
+                  onCheckedChange={() => handleToggleSelect(getRowId(item))}
+                  className="mr-2"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-primary-bg hover:text-white"
+                    variant="outline"
+                    onClick={() =>
+                      router.push(`${href}/${getRowId(item)}?mode=edit`)
+                    }
+                  >
+                    <PencilIcon className="size-4" />
+                  </Button>
+                  <Button
+                    className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-destructive hover:text-white"
+                    variant="outline"
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              </div>
+              <Link
+                href={`${href}/${getRowId(item)}?mode=view`}
+                className="block"
               >
-                <Trash2 />({selectedIds.length})
-              </Button>
-            )}
+                {columns.map((col, index) => (
+                  <div key={col.id} className="py-1 border-b last:border-b-0">
+                    <div className="font-medium text-sm text-gray-500">
+                      {col.header}
+                    </div>
+                    <div>{col.accessor(item)}</div>
+                  </div>
+                ))}
+              </Link>
+            </div>
+          ))
+        ) : (
+          <div className="text-center p-8 bg-white rounded-lg shadow">
+            <p className="text-muted-foreground">No data found.</p>
           </div>
         )}
       </div>
-      <div className="flex flex-col">
+    );
+  };
+
+  // Table view for desktop
+  const renderTableView = () => {
+    return (
+      <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="text-center">
-              <TableHead className="text-center">
+              <TableHead className="text-center w-12">
                 <Checkbox
                   checked={isAllSelected}
                   onCheckedChange={handleSelectAll}
@@ -203,14 +218,14 @@ export function DataTable<T>({
                   {column.header}
                 </TableHead>
               ))}
-              <TableHead className="text-center">Actions</TableHead>
+              <TableHead className="text-center w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedData.length > 0 ? (
               paginatedData.map((item, i) => (
                 <TableRow key={i}>
-                  <TableCell className="font-semibold text-center ">
+                  <TableCell className="font-semibold text-center">
                     <Checkbox
                       checked={selectedIds.includes(getRowId(item))}
                       onCheckedChange={() => handleToggleSelect(getRowId(item))}
@@ -226,7 +241,7 @@ export function DataTable<T>({
                   <TableCell className="text-center flex gap-2 justify-center items-center">
                     <Button
                       className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-primary-bg hover:text-white"
-                      variant={"outline"}
+                      variant="outline"
                       onClick={() =>
                         router.push(`${href}/${getRowId(item)}?mode=edit`)
                       }
@@ -235,7 +250,7 @@ export function DataTable<T>({
                     </Button>
                     <Button
                       className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-destructive hover:text-white"
-                      variant={"outline"}
+                      variant="outline"
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -245,8 +260,8 @@ export function DataTable<T>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={5}
-                  className="text-center text-muted-foreground"
+                  colSpan={columns.length + 2}
+                  className="text-center text-muted-foreground h-24"
                 >
                   No data found.
                 </TableCell>
@@ -255,18 +270,186 @@ export function DataTable<T>({
           </TableBody>
         </Table>
       </div>
+    );
+  };
+
+  // Render mobile search
+  const renderMobileSearch = () => {
+    if (isSearchExpanded) {
+      return (
+        <div className="flex items-center gap-2 w-full mb-4">
+          <Input
+            value={searchTerm}
+            placeholder={searchPlaceholder}
+            className="text-base font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(0);
+            }}
+            autoFocus
+          />
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setIsSearchExpanded(false)}
+            className="shrink-0"
+          >
+            <X className="size-5" />
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex justify-between items-center w-full mb-4">
+        <Button
+          variant="outline"
+          className="text-sm px-3"
+          onClick={() => setIsSearchExpanded(true)}
+        >
+          <Search className="mr-2 size-4" />
+          Search
+        </Button>
+
+        {selectedIds.length > 0 && (
+          <Button
+            className="cursor-pointer"
+            variant="destructive"
+            size="sm"
+            onClick={() => onDeleteSelected(selectedIds)}
+          >
+            <Trash2 className="mr-1 size-4" />
+            {selectedIds.length}
+          </Button>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      {/* Desktop controls */}
+      {!isMobile && (
+        <div className="flex flex-col md:flex-row gap-3 md:gap-6 md:items-center">
+          <div className="flex gap-2 w-full md:w-auto md:flex-1">
+            <Input
+              value={searchTerm}
+              placeholder={searchPlaceholder}
+              className="text-base font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(0);
+              }}
+            />
+            <Button
+              className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
+              onClick={() => {
+                setSearchTerm(searchTerm);
+              }}
+            >
+              <ArrowRight />
+            </Button>
+          </div>
+
+          {(filterOptions ?? []).length > 0 && (
+            <div className="flex gap-2 flex-wrap">
+              <Select
+                value={sortType}
+                onValueChange={(val) => {
+                  setSortType(val);
+                  setCurrentPage(0);
+                }}
+              >
+                <SelectTrigger className="w-full md:w-48 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200 focus-visible:ring-2 font-semibold">
+                  <SelectValue placeholder="Sort" />
+                </SelectTrigger>
+                <SelectContent className="text-sm font-semibold p-2">
+                  {filterOptions?.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
+                onClick={handleReset}
+              >
+                Reset
+              </Button>
+              {selectedIds.length > 0 && (
+                <Button
+                  className="cursor-pointer"
+                  variant="destructive"
+                  onClick={() => onDeleteSelected(selectedIds)}
+                >
+                  <Trash2 className="mr-1" />({selectedIds.length})
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mobile controls */}
+      {isMobile && renderMobileSearch()}
+
+      {/* Mobile filters */}
+      {isMobile && (filterOptions ?? []).length > 0 && (
+        <div className="flex gap-2 mb-4">
+          <Select
+            value={sortType}
+            onValueChange={(val) => {
+              setSortType(val);
+              setCurrentPage(0);
+            }}
+          >
+            <SelectTrigger className="w-full focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200 focus-visible:ring-2 text-sm">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent className="text-sm p-2">
+              {filterOptions?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80 shrink-0"
+            onClick={handleReset}
+            size="sm"
+          >
+            Reset
+          </Button>
+        </div>
+      )}
+
+      {/* Render table or cards based on screen size */}
+      {isMobile ? renderCardView() : renderTableView()}
+
+      {/* Pagination */}
       {totalPages > 1 && (
-        <Pagination>
+        <Pagination className="mt-4">
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                className="cursor-pointer"
+                className={`cursor-pointer ${
+                  currentPage === 0 ? "opacity-50 pointer-events-none" : ""
+                }`}
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
               />
             </PaginationItem>
+            <div className="text-sm mx-2">
+              Page {currentPage + 1} of {totalPages}
+            </div>
             <PaginationItem>
               <PaginationNext
-                className="cursor-pointer"
+                className={`cursor-pointer ${
+                  currentPage + 1 >= totalPages
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                }`}
                 onClick={() =>
                   setCurrentPage((prev) =>
                     prev + 1 < totalPages ? prev + 1 : prev

@@ -36,7 +36,7 @@ type DataTableProps<T> = {
   data: T[];
   columns: Column<T>[];
   searchPlaceholder: string;
-  filterOptions: FilterOption[];
+  filterOptions?: FilterOption[];
   onDeleteSelected: (selectedIds: string[]) => void;
   getRowId: (row: T) => string;
   // actions:[]
@@ -114,6 +114,7 @@ export function DataTable<T>({
     paginatedData.length > 0 &&
     paginatedData.every((item) => selectedIds.includes(getRowId(item)));
 
+  
   return (
     <div className="flex flex-col gap-6 w-full">
       <div className="flex gap-7">
@@ -137,7 +138,7 @@ export function DataTable<T>({
             <ArrowRight />
           </Button>
         </div>
-        {filterOptions.length > 0 && (
+        {(filterOptions ?? []).length > 0 && (
           <div className="flex gap-2">
             <Select
               value={sortType}
@@ -150,7 +151,7 @@ export function DataTable<T>({
                 <SelectValue placeholder="Sort" />
               </SelectTrigger>
               <SelectContent className="text-sm font-semibold p-2">
-                {filterOptions.map((option) => (
+                {filterOptions?.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>

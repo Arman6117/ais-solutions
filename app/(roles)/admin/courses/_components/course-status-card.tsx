@@ -6,7 +6,7 @@ import { Course } from '@/lib/types'
 
 import React from 'react'
 
-const CourseStatusCard = ({course,batches}:{course:Course,batches:any}) => {
+const CourseStatusCard = ({course,batches}:{course?:Course,batches:any}) => {
   return (
     <>
      <Card className="border-0 shadow-md">

@@ -13,9 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CourseStatusCard from "./course-status-card";
-import CourseModulesCard from "./course-modules-card";
+import CourseModulesCard from "../../../../../components/course-modules-card";
 import CourseBatchesCards from "./course-batches-cards";
-import CourseInstructorsCards from "./course-instructors-cards";
+import CourseInstructorsCards from "../../../../../components/instructors-cards";
 
 import { dummyBatches, dummyInstructors } from "@/lib/static";
 

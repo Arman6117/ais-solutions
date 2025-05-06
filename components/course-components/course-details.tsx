@@ -15,9 +15,9 @@ import {
   EditCourseThumbnail,
 } from "./edit-course-components";
 import { Separator } from "../ui/separator";
-import CourseInstructorsCards from "@/app/(roles)/admin/courses/_components/course-instructors-cards";
+import CourseInstructorsCards from "@/components/instructors-cards";
 import CourseBatchesCards from "@/app/(roles)/admin/courses/_components/course-batches-cards";
-import CourseModulesCard from "@/app/(roles)/admin/courses/_components/course-modules-card";
+import CourseModulesCard from "@/components/course-modules-card";
 import CourseStatusCard from "@/app/(roles)/admin/courses/_components/course-status-card";
 import {
   ViewCourseDescription,
@@ -42,8 +42,7 @@ const CourseDetails = ({
   dummyBatches,
   course,
   dummyInstructors,
-}:
-CourseDetailsProps) => {
+}: CourseDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -206,11 +205,19 @@ CourseDetailsProps) => {
               </>
             )}
             <Separator className="my-6" />
-            <CourseInstructorsCards mode={mode} instructors={instructors} />
+            <CourseInstructorsCards
+              mode={mode}
+              instructors={instructors}
+              label={`${dummyInstructors.length} are assigned to this course`}
+            />
             <Separator className="my-6" />
 
             <div>
-              <CourseBatchesCards courseId={course.id} mode={mode} batches={batches} />
+              <CourseBatchesCards
+                courseId={course.id}
+                mode={mode}
+                batches={batches}
+              />
             </div>
           </CardContent>
         </Card>
@@ -224,7 +231,7 @@ CourseDetailsProps) => {
         ) : (
           <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
         )}
-        <CourseModulesCard mode={mode} modules={course.modules} />
+        <CourseModulesCard name="Course" mode={mode} modules={course.modules} />
 
         <CourseStatusCard batches={batches} course={course} />
       </div>

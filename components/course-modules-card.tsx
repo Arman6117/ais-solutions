@@ -6,15 +6,17 @@ import React from "react";
 const CourseModulesCard = ({
   modules,
   mode,
+  name,
 }: {
   modules: string[];
   mode: "view" | "edit";
+  name: string;
 }) => {
   return (
     <>
       <Card className="border-0 shadow-md">
         <CardHeader className="flex flex-row items-center justify-between pb-3 bg-gray-50 border-b">
-          <CardTitle className="text-xl">Course Modules</CardTitle>
+          <CardTitle className="text-xl">{name} Modules</CardTitle>
           {mode === "edit" && (
             <Button
               size="sm"

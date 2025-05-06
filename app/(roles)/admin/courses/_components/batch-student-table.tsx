@@ -63,7 +63,7 @@ const BatchStudentTable = ({
 }) => {
   return (
     <>
-      <Card className="border-0 w-full shadow-md p-0 overflow-hidden mt-">
+      <Card className="border-0 w-full shadow-md p-0 mb-10 overflow-hidden mt-">
         <CardHeader
           className={cn(
             "px-8 py-6",

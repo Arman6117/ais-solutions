@@ -23,6 +23,9 @@ import BatchInfoWrapper from "@/components/batch-components/btach-info-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import BatchStudentTable from "./batch-student-table";
+import CourseModulesCard from "../../../../../components/course-modules-card";
+import CourseStatusCard from "./course-status-card";
+import InstructorsCards from "../../../../../components/instructors-cards";
 
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
@@ -233,14 +236,27 @@ const BatchDetails = ({
                       {batch.status}
                     </Badge>
                   </div>
-                  {/* <Separator /> */}
+                  <Separator />
+                  <div className="flex flex-col gap-6">
+                    <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
+                      <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
+                      <CheckCircle className="text-indigo-600 mr-2" size={20} />
+                      Instructors
+                    </h1>
+                    <InstructorsCards
+                      label={`${dummyInstructors.length} are assigned to this batch`}
+                      instructors={dummyInstructors}
+                      mode={mode}
+                    />
+                  </div>
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
-        <div className="w-full lg:w-1/3 space-y-6">
-          {/* Placeholder for future components */}
+        <div className="w-full lg:w-1/3 space-y-6 ">
+          <CourseModulesCard name="Batch" mode={mode} modules={dummyModules} />
+          <CourseStatusCard batches={10} />
         </div>
       </div>
       <div className="w-full">

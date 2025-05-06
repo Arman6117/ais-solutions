@@ -11,17 +11,19 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "../../../../../components/ui/hover-card";
-import InstructorHoverCard from "./instructor-hover-card";
-import EditInstructorDialog from "./edit-instructor-dialog";
-import AddInstructorButton from "./add-instructor-button";
+} from "./ui/hover-card";
+import InstructorHoverCard from "../app/(roles)/admin/courses/_components/instructor-hover-card";
+import EditInstructorDialog from "../app/(roles)/admin/courses/_components/edit-instructor-dialog";
+import AddInstructorButton from "../app/(roles)/admin/courses/_components/add-instructor-button";
 
-const CourseInstructorsCards = ({
+const InstructorsCards = ({
   instructors,
   mode,
+  label
 }: {
   instructors: any[];
   mode: "edit" | "view";
+  label:string
 }) => {
   const [open, setOpen] = useState(false);
   const [instructor, setInstructor] = useState(null);
@@ -34,7 +36,7 @@ const CourseInstructorsCards = ({
             <h2 className="text-2xl font-bold text-gray-800">Instructors</h2>
             <p className="text-sm text-gray-500">
               {instructors.length} instructor{instructors.length !== 1 && "s"}{" "}
-              assigned to this course
+           {label}
             </p>
           </div>
           {mode === "edit" && <AddInstructorButton />}
@@ -161,4 +163,4 @@ const CourseInstructorsCards = ({
   );
 };
 
-export default CourseInstructorsCards;
+export default InstructorsCards;

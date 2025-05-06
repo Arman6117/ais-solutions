@@ -145,7 +145,7 @@ export function DataTable<T>({
     paginatedData.length > 0 &&
     paginatedData.every((item) => selectedIds.includes(getRowId(item)));
 
-  // Card view for mobile
+  //! Card view for mobile
   const renderCardView = () => {
     return (
       <div className="grid grid-cols-1 gap-4">
@@ -200,7 +200,7 @@ export function DataTable<T>({
     );
   };
 
-  // Table view for desktop
+  //! Table view for desktop
   const renderTableView = () => {
     return (
       <div className="overflow-x-auto">
@@ -273,7 +273,7 @@ export function DataTable<T>({
     );
   };
 
-  // Render mobile search
+  //! Render mobile search
   const renderMobileSearch = () => {
     if (isSearchExpanded) {
       return (

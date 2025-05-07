@@ -257,7 +257,7 @@ const BatchDetails = ({
         </div>
         <div className="w-full lg:w-1/3 space-y-6 ">
           <ModulesCard name="Batch" mode={mode} modules={dummyModules} />
-          <StatusCard name="Batch" batches={10} />
+          <StatusCard name="Batch" />
         </div>
       </div>
       <div className="w-full">

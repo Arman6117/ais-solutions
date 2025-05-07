@@ -233,7 +233,7 @@ const CourseDetails = ({
         )}
         <CourseModulesCard name="Course" mode={mode} modules={course.modules} />
 
-        <CourseStatusCard batches={batches} course={course} />
+        <CourseStatusCard name="Course" batches={batches} course={course} />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { format, isThisMonth, isToday, isTomorrow } from "date-fns";
+import { format, isToday } from "date-fns";
 import { Calendar } from "lucide-react";
 import React from "react";
 
@@ -89,8 +89,7 @@ const BatchMeetings = ({ batch, courseId, mode, modules }: BatchMeetings) => {
                     key={meeting.id || i}
                     className={cn(
                       "bg-white p-3 rounded shadow-sm border border-gray-100 hover:border-violet-300 transition-colors duration-200",
-                      !isToday(meeting.date) && "bg-violet-50",
-                      
+                      !isToday(meeting.date) && "bg-violet-50"
                     )}
                   >
                     <div className="flex items-center mb-2">

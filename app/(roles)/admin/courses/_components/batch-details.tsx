@@ -78,11 +78,11 @@ const BatchDetails = ({
   const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed"|string>(
     batch.status || ""
   );
-  const [instructors, setInstructors] = useState(dummyInstructors || []);
+  
   const [students, setStudents] = useState(dummyStudents || []);
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
-  const [formattedDate, setFormattedDate] = useState("");
+
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

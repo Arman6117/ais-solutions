@@ -22,7 +22,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const AddInstructorButton = () => {
+const AddInstructorButton = ({
+  setInstructor,
+}: {
+  setInstructor: (instructor: any) => void;
+}) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [found, setFound] = useState<DummyInstructors | null>(null);
@@ -46,6 +50,7 @@ const AddInstructorButton = () => {
     setFound(null);
     setEmail("");
     setOpen(false);
+    setInstructor((prev:any) => [...prev, found]);
   };
 
   const handleReset = () => {

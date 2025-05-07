@@ -27,6 +27,7 @@ const InstructorsCards = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [instructor, setInstructor] = useState(null);
+  const [initialInstructors,setInstructors] = useState(instructors);
 
   return (
     <>
@@ -35,15 +36,15 @@ const InstructorsCards = ({
           <div>
             <h2 className="text-2xl font-bold text-gray-800">Instructors</h2>
             <p className="text-sm text-gray-500">
-              {instructors.length} instructor{instructors.length !== 1 && "s"}{" "}
+              {initialInstructors.length} instructor{initialInstructors.length !== 1 && "s"}{" "}
            {label}
             </p>
           </div>
-          {mode === "edit" && <AddInstructorButton />}
+          {mode === "edit" && <AddInstructorButton setInstructor ={setInstructors} />}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {instructors.map((instructor) => (
+          {initialInstructors.map((instructor) => (
             <HoverCard key={instructor.id}>
               <HoverCardTrigger asChild>
                 <Card
@@ -134,7 +135,7 @@ const InstructorsCards = ({
           ))}
         </div>
 
-        {instructors.length === 0 && (
+        {initialInstructors.length === 0 && (
           <div className="text-center p-10 border border-dashed border-gray-300 rounded-lg bg-gray-50">
             <div className="flex justify-center mb-4">
               <div className="bg-violet-100 p-3 rounded-full">

@@ -6,12 +6,12 @@ import { Course } from '@/lib/types'
 
 import React from 'react'
 
-const CourseStatusCard = ({course,batches}:{course?:Course,batches:any}) => {
+const StatusCard = ({course,batches,name}:{course?:Course,batches:any,name:string}) => {
   return (
     <>
      <Card className="border-0 shadow-md">
           <CardHeader className="pb-3 bg-gray-50 border-b">
-            <CardTitle className="text-xl">Course Status</CardTitle>
+            <CardTitle className="text-xl">{name} Status</CardTitle>
           </CardHeader>
           <CardContent className="p-4">
             <div className="space-y-4">
@@ -50,4 +50,4 @@ const CourseStatusCard = ({course,batches}:{course?:Course,batches:any}) => {
   )
 }
 
-export default CourseStatusCard
+export default StatusCard

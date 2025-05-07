@@ -23,9 +23,10 @@ import BatchInfoWrapper from "@/components/batch-components/btach-info-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import BatchStudentTable from "./batch-student-table";
-import CourseModulesCard from "../../../../../components/course-modules-card";
-import CourseStatusCard from "./course-status-card";
+
 import InstructorsCards from "../../../../../components/instructors-cards";
+import ModulesCard from "../../../../../components/modules-card";
+import StatusCard from "../../../../../components/status-card";
 
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
@@ -255,8 +256,8 @@ const BatchDetails = ({
           </Card>
         </div>
         <div className="w-full lg:w-1/3 space-y-6 ">
-          <CourseModulesCard name="Batch" mode={mode} modules={dummyModules} />
-          <CourseStatusCard batches={10} />
+          <ModulesCard name="Batch" mode={mode} modules={dummyModules} />
+          <StatusCard name="Batch" batches={10} />
         </div>
       </div>
       <div className="w-full">

@@ -12,8 +12,8 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CourseStatusCard from "./course-status-card";
-import CourseModulesCard from "../../../../../components/course-modules-card";
+import CourseStatusCard from "../../../../../components/status-card";
+import CourseModulesCard from "../../../../../components/modules-card";
 import CourseBatchesCards from "./course-batches-cards";
 import CourseInstructorsCards from "../../../../../components/instructors-cards";
 

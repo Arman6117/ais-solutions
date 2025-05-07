@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PencilIcon, Plus, Trash2 } from "lucide-react";
 import React from "react";
 
-const CourseModulesCard = ({
+const ModulesCard = ({
   modules,
   mode,
   name,
@@ -75,4 +75,4 @@ const CourseModulesCard = ({
   );
 };
 
-export default CourseModulesCard;
+export default ModulesCard;

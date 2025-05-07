@@ -27,6 +27,16 @@ import BatchStudentTable from "./batch-student-table";
 import InstructorsCards from "../../../../../components/instructors-cards";
 import ModulesCard from "../../../../../components/modules-card";
 import StatusCard from "../../../../../components/status-card";
+import EditBatchInfo from "@/components/batch-components/edit-batch-info";
+import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
@@ -65,12 +75,18 @@ const BatchDetails = ({
     );
   }
   const [name, setName] = useState(batch.name || "");
+  const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed"|string>(
+    batch.status || ""
+  );
   const [instructors, setInstructors] = useState(dummyInstructors || []);
   const [students, setStudents] = useState(dummyStudents || []);
-  const [modules, setModules] = useState(dummyModules || []);
+  const [startDate, setStartDate] = useState(batch.startDate || "");
+  const [endDate, setEndDate] = useState(batch.endDate || "");
+  const [formattedDate, setFormattedDate] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const formatDate = (date: string) => format(date, "PP");
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);
@@ -93,21 +109,21 @@ const BatchDetails = ({
   // Status color mapping
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "ongoing":
+      case "Ongoing":
         return {
           bg: "bg-green-50",
           text: "text-green-700",
           border: "border-green-200",
           dot: "bg-green-600",
         };
-      case "completed":
+      case "Completed":
         return {
           bg: "bg-blue-50",
           text: "text-blue-700",
           border: "border-blue-200",
           dot: "bg-blue-600",
         };
-      case "upcoming":
+      case "Upcoming":
         return {
           bg: "bg-amber-50",
           text: "text-amber-700",
@@ -124,7 +140,7 @@ const BatchDetails = ({
     }
   };
 
-  const statusColor = getStatusColor(batch.status);
+  const statusColor = getStatusColor(status);
 
   return (
     <div className="w-full p mb-4 flex flex-col gap-6">
@@ -191,32 +207,77 @@ const BatchDetails = ({
             </CardHeader>
 
             <CardContent className="p-8 space-y-6">
-              {mode === "view" && (
-                <div className="flex flex-col gap-14">
-                  <BatchInfoWrapper
-                    className="max-w-full"
+              <div className="flex flex-col gap-14">
+                {mode === "view" ? (
+                  <>
+                    <BatchInfoWrapper
+                      className="max-w-full"
+                      label="Name"
+                      icon={<Users className="text-indigo-600" size={20} />}
+                    >
+                      {name}
+                    </BatchInfoWrapper>
+                  </>
+                ) : (
+                  <EditBatchInfo
                     label="Name"
                     icon={<Users className="text-indigo-600" size={20} />}
                   >
-                    {batch.name}
-                  </BatchInfoWrapper>
-
+                    <Input
+                      placeholder="Enter batch name"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      className="focus-visible:ring-0"
+                    />
+                  </EditBatchInfo>
+                )}
+                {/* <div className="grid md:grid-cols-2 gap-7"> */}
+                {mode === "view" ? (
                   <div className="grid md:grid-cols-2 gap-7">
                     <BatchInfoWrapper
                       label="Start Date"
                       icon={<Calendar className="text-indigo-600" size={20} />}
                     >
-                      {batch.startDate}
+                      {formatDate(startDate)}
                     </BatchInfoWrapper>
 
                     <BatchInfoWrapper
                       label="End Date"
                       icon={<Calendar className="text-indigo-600" size={20} />}
                     >
-                      {batch.endDate}
+                      {formatDate(endDate)}
                     </BatchInfoWrapper>
                   </div>
-
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-7">
+                    <EditBatchInfo
+                      label="Start Date"
+                      icon={<Calendar className="text-indigo-600" size={20} />}
+                    >
+                      <Input
+                        placeholder="Enter batch starting date"
+                        onChange={(e) => setStartDate(e.target.value)}
+                        value={startDate}
+                        type="date"
+                        className="focus-visible:ring-0"
+                      />
+                    </EditBatchInfo>
+                    <EditBatchInfo
+                      label="End Date"
+                      icon={<Calendar className="text-indigo-600" size={20} />}
+                    >
+                      <Input
+                        placeholder="Enter batch ending date"
+                        onChange={(e) => setEndDate(e.target.value)}
+                        value={endDate}
+                        type="date"
+                        className="focus-visible:ring-0"
+                      />
+                    </EditBatchInfo>
+                  </div>
+                )}
+                {/* </div> */}
+                {mode === "view" ? (
                   <div className="flex flex-col gap-3">
                     <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
                       <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
@@ -234,24 +295,52 @@ const BatchDetails = ({
                       <div
                         className={cn("size-3 rounded-full", statusColor.dot)}
                       ></div>
-                      {batch.status}
+                      {status}
                     </Badge>
                   </div>
-                  <Separator />
-                  <div className="flex flex-col gap-6">
-                    <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
-                      <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
-                      <CheckCircle className="text-indigo-600 mr-2" size={20} />
-                      Instructors
-                    </h1>
-                    <InstructorsCards
-                      label={`${dummyInstructors.length} are assigned to this batch`}
-                      instructors={dummyInstructors}
-                      mode={mode}
-                    />
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <EditBatchInfo
+                      label="Status"
+                      icon={
+                        <CheckCircle
+                          className="text-indigo-600 mr-2"
+                          size={20}
+                        />
+                      }
+                    >
+                      <Select
+                        value={status}
+                        onValueChange={(val) => {
+                          setStatus(val);
+                        }}
+                      >
+                        <SelectTrigger className="w-[280px]">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Ongoing">Ongoing</SelectItem>
+                          <SelectItem value="Upcoming">Upcoming</SelectItem>
+                          <SelectItem value="Completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </EditBatchInfo>
                   </div>
+                )}
+                <Separator />
+                <div className="flex flex-col gap-6">
+                  <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
+                    <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
+                    <CheckCircle className="text-indigo-600 mr-2" size={20} />
+                    Instructors
+                  </h1>
+                  <InstructorsCards
+                    label={`${dummyInstructors.length} are assigned to this batch`}
+                    instructors={dummyInstructors}
+                    mode={mode}
+                  />
                 </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -268,7 +357,6 @@ const BatchDetails = ({
           batchId={batch.id as string}
         />
       </div>
-      {/* <BatchStudentTable mode={mode}/> */}
     </div>
   );
 };

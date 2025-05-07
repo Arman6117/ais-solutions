@@ -33,7 +33,7 @@ export type DummyBatches = {
   students: number;
   startDate: string;
   endDate: string;
-  status: string;
+  status: "Ongoing" | "Upcoming" | "Completed";
 };
 
 export type DummyInstructors = {
@@ -42,7 +42,6 @@ export type DummyInstructors = {
   role: string;
   avatar: string;
   email: string;
-
 };
 
 export type DummyStudent = {
@@ -54,9 +53,9 @@ export type DummyStudent = {
   batchId: string;
   isApproved: boolean;
   joinedAt: string;
-  modules:string[]
-  courses:Course[]
-  feesStatus:'paid'|'unpaid'
-  totalFeePaid:number,
-  feesRemaining:number,
+  modules: string[];
+  courses: Course[];
+  feesStatus: "paid" | "unpaid";
+  totalFeePaid: number;
+  feesRemaining: number;
 };

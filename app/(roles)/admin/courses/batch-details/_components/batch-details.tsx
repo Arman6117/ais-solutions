@@ -24,9 +24,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import BatchStudentTable from "./batch-student-table";
 
-import InstructorsCards from "../../../../../components/instructors-cards";
-import ModulesCard from "../../../../../components/modules-card";
-import StatusCard from "../../../../../components/status-card";
+import InstructorsCards from "../../../../../../components/instructors-cards";
+import ModulesCard from "../../../../../../components/modules-card";
+import StatusCard from "../../../../../../components/status-card";
 import EditBatchInfo from "@/components/batch-components/edit-batch-info";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
@@ -37,6 +37,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PiChalkboardTeacher } from "react-icons/pi";
+import BatchMeetings from "./batch-meetings";
+import BatchStatusSelector from "./batch-status-selector";
 
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
@@ -75,10 +78,10 @@ const BatchDetails = ({
     );
   }
   const [name, setName] = useState(batch.name || "");
-  const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed"|string>(
-    batch.status || ""
-  );
-  
+  const [status, setStatus] = useState<
+    "Ongoing" | "Upcoming" | "Completed" | string
+  >(batch.status || "");
+
   const [students, setStudents] = useState(dummyStudents || []);
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
@@ -108,7 +111,7 @@ const BatchDetails = ({
 
   // Status color mapping
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status) {
       case "Ongoing":
         return {
           bg: "bg-green-50",
@@ -257,7 +260,7 @@ const BatchDetails = ({
                       <Input
                         placeholder="Enter batch starting date"
                         onChange={(e) => setStartDate(e.target.value)}
-                        value={startDate}
+                        value={format(startDate, "yyyy-MM-dd")}
                         type="date"
                         className="focus-visible:ring-0"
                       />
@@ -269,7 +272,7 @@ const BatchDetails = ({
                       <Input
                         placeholder="Enter batch ending date"
                         onChange={(e) => setEndDate(e.target.value)}
-                        value={endDate}
+                        value={format(endDate, "yyyy-MM-dd")}
                         type="date"
                         className="focus-visible:ring-0"
                       />
@@ -299,43 +302,20 @@ const BatchDetails = ({
                     </Badge>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-3">
-                    <EditBatchInfo
-                      label="Status"
-                      icon={
-                        <CheckCircle
-                          className="text-indigo-600 mr-2"
-                          size={20}
-                        />
-                      }
-                    >
-                      <Select
-                        value={status}
-                        onValueChange={(val) => {
-                          setStatus(val);
-                        }}
-                      >
-                        <SelectTrigger className="w-[280px]">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Ongoing">Ongoing</SelectItem>
-                          <SelectItem value="Upcoming">Upcoming</SelectItem>
-                          <SelectItem value="Completed">Completed</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </EditBatchInfo>
-                  </div>
+                  <BatchStatusSelector setStatus={setStatus} status={status} />
                 )}
                 <Separator />
                 <div className="flex flex-col gap-6">
                   <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
                     <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
-                    <CheckCircle className="text-indigo-600 mr-2" size={20} />
+                    <PiChalkboardTeacher
+                      className="text-indigo-600 mr-2"
+                      size={20}
+                    />
                     Instructors
                   </h1>
                   <InstructorsCards
-                    label={`${dummyInstructors.length} are assigned to this batch`}
+                    label={` are assigned to this batch`}
                     instructors={dummyInstructors}
                     mode={mode}
                   />
@@ -346,6 +326,12 @@ const BatchDetails = ({
         </div>
         <div className="w-full lg:w-1/3 space-y-6 ">
           <ModulesCard name="Batch" mode={mode} modules={dummyModules} />
+          <BatchMeetings
+            mode={mode}
+            courseId={courseId}
+            batch={batch.name}
+            modules={dummyModules}
+          />
           <StatusCard name="Batch" />
         </div>
       </div>

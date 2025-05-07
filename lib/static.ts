@@ -35,7 +35,7 @@ export const adminSidebarLinks = [
 export const sampleMeetings = [
   {
     _id: "1",
-    date: "2025-04-01",
+    date: "2025-05-01",
     course: "JavaScript Bootcamp",
     module: "Promise",
     batch: "Batch A",
@@ -43,7 +43,7 @@ export const sampleMeetings = [
   },
   {
     _id: "2",
-    date: "2025-04-01",
+    date: "2025-05-01",
     course: "Python Basics",
     module: "Datatypes",
     batch: "Batch B",
@@ -51,7 +51,7 @@ export const sampleMeetings = [
   },
   {
     _id: "3",
-    date: "2025-04-04",
+    date: "2025-05-04",
     course: "React Hooks",
     module: "useState",
     batch: "Batch C",
@@ -59,7 +59,7 @@ export const sampleMeetings = [
   },
   {
     _id: "4",
-    date: "2025-04-06",
+    date: "2025-05-06",
     course: "Data Structures",
     module: "Array",
     batch: "Batch A",

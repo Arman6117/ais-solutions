@@ -1,4 +1,5 @@
 import { DataTable } from "@/components/data-table";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DummyStudent } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -66,7 +67,7 @@ const BatchStudentTable = ({
       <Card className="border-0 w-full shadow-md p-0 mb-10 overflow-hidden mt-">
         <CardHeader
           className={cn(
-            "px-8 py-6",
+            "px-8 py-6 flex justify-between",
             mode === "view"
               ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white"
               : "bg-gray-50 border-b"
@@ -75,6 +76,12 @@ const BatchStudentTable = ({
           <CardTitle className="text-2xl md:text-3xl font-bold mb-2">
             Students of the Batch
           </CardTitle>
+
+          <div>
+            <Button className="bg-white hover:bg-purple-50 text-black cursor-pointer">
+              Add Student
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <DataTable

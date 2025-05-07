@@ -1,6 +1,6 @@
 import { dummyBatches, dummyInstructors, dummyStudents } from "@/lib/static";
 import React from "react";
-import BatchDetails from "../../../../_components/batch-details";
+import BatchDetails from "../../../_components/batch-details";
 
 export const batchModules = [
   "HTML & CSS Basics",

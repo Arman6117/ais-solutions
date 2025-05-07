@@ -42,7 +42,7 @@ const AddInstructorButton = () => {
   };
 
   const handleAdd = () => {
-    toast.success(`${found?.name} has been added to this course.`);
+    toast.success(`${found?.name} has been added.`);
     setFound(null);
     setEmail("");
     setOpen(false);

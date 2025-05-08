@@ -211,7 +211,7 @@ const CourseDetails = ({
               label={`${dummyInstructors.length} are assigned to this course`}
             />
             <Separator className="my-6" />
-
+    
             <div>
               <CourseBatchesCards
                 courseId={course.id}

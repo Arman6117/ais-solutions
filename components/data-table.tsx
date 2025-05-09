@@ -62,19 +62,15 @@ export function DataTable<T>({
   const router = useRouter();
   const pathname = usePathname();
 
-  // Track screen size
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
     };
 
-    // Initial check
     checkScreenSize();
 
-    // Add event listener
     window.addEventListener("resize", checkScreenSize);
 
-    // Cleanup
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
@@ -377,16 +373,16 @@ export function DataTable<T>({
               >
                 Reset
               </Button>
-              {selectedIds.length > 0 && (
-                <Button
-                  className="cursor-pointer"
-                  variant="destructive"
-                  onClick={() => onDeleteSelected(selectedIds)}
-                >
-                  <Trash2 className="mr-1" />({selectedIds.length})
-                </Button>
-              )}
             </div>
+          )}
+          {selectedIds.length > 0 && (
+            <Button
+              className="cursor-pointer"
+              variant="destructive"
+              onClick={() => onDeleteSelected(selectedIds)}
+            >
+              <Trash2 className="mr-1" />({selectedIds.length})
+            </Button>
           )}
         </div>
       )}

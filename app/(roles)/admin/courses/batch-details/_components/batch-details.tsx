@@ -40,6 +40,7 @@ import {
 import { PiChalkboardTeacher } from "react-icons/pi";
 import BatchMeetings from "./batch-meetings";
 import BatchStatusSelector from "./batch-status-selector";
+import BatchNotesTable from "./batch-notes-table";
 
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
@@ -336,6 +337,7 @@ const BatchDetails = ({
         </div>
       </div>
       <div className="w-full">
+        <BatchNotesTable mode={mode} batchId={batch.id as string} />
         <BatchStudentTable
           mode={mode}
           dummyStudents={dummyStudents!}

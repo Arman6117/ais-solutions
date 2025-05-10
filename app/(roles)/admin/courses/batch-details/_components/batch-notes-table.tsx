@@ -1,5 +1,4 @@
-
-import { NotesTable } from "@/components/notes-table";
+import NotesTable from "@/components/notes-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -25,7 +24,7 @@ export interface Note {
   lectureDate: string;
   attachments: Attachment[];
 }
-const DUMMY_NOTES:Note[] = [
+const DUMMY_NOTES: Note[] = [
   {
     id: "1",
     moduleId: "m1",
@@ -87,10 +86,10 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
         </CardHeader>
         <CardContent>
           <NotesTable
-            // notes={DUMMY_NOTES}
-            // role="admin"
-            // mode={mode}
-            // batchId={batchId}
+            notes={DUMMY_NOTES}
+            role="admin"
+            mode={mode}
+            batchId={batchId}
           />
         </CardContent>
       </Card>

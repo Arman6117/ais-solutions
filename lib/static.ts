@@ -2,7 +2,7 @@ import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyStudent, Note } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyStudent} from "./types";
 
 export const adminSidebarLinks = [
   {
@@ -369,34 +369,4 @@ export const dummyStudents: DummyStudent[] = [
     totalFeePaid: 7500,
     feesRemaining: 7500,
   }
-];
-
-export const dummyData: Note[] = [
-  {
-    id: "1",
-    moduleName: "Introduction to AI",
-    chapterName: "Neural Networks",
-    dateCreated: "2025-01-15",
-    youtubeLinks: [
-      "https://youtube.com/watch?v=abc123",
-      "https://youtube.com/watch?v=def456",
-    ],
-    pdfFiles: ["note1.pdf", "note2.pdf"],
-  },
-  {
-    id: "2",
-    moduleName: "Data Science",
-    chapterName: "Statistics Basics",
-    dateCreated: "2025-02-10",
-    youtubeLinks: ["https://youtube.com/watch?v=ghi789"],
-    pdfFiles: ["stats_note.pdf"],
-  },
-  {
-    id: "3",
-    moduleName: "Machine Learning",
-    chapterName: "Supervised Learning",
-    dateCreated: "2025-03-05",
-    youtubeLinks: [],
-    pdfFiles: ["ml_note1.pdf", "ml_note2.pdf"],
-  },
 ];

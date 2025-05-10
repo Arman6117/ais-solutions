@@ -1,12 +1,6 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-} from "@/components/ui/select";
+import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -23,75 +17,76 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Trash2, X, Plus } from "lucide-react";
 import { toast } from "sonner";
-import Link from "next/link";
+
+import { Trash2, Plus } from "lucide-react";
+import LinkList from "./batch-components/notes-table-helper-components/link-list";
+import SearchBar from "./batch-components/notes-table-helper-components/search-bar";
+import SortSelector from "./batch-components/notes-table-helper-components/sort-selector";
+import NoteCard from "./batch-components/notes-table-helper-components/note-card";
+import { Note } from "@/lib/types";
+import NewNoteForm from "./batch-components/notes-table-helper-components/new-note-form";
+import { dummyData } from "@/lib/static";
 
 // Types
-interface Note {
+type SortField = "moduleName" | "chapterName" | "dateCreated";
+type SortDirection = "asc" | "desc";
+type SortType = `${SortField}-${SortDirection}`;
+type LinkField = "youtubeLinks" | "pdfFiles" | "files";
+
+interface Column {
   id: string;
-  moduleName: string;
-  chapterName: string;
-  dateCreated: string;
-  youtubeLinks: string[];
-  pdfFiles: string[];
-}
+  header: string;
+  accessor: (note: Note) => React.ReactNode;
+};
 
-// Mock data for demonstration
-const dummyData: Note[] = [
-  {
-    id: "1",
-    moduleName: "Introduction to AI",
-    chapterName: "Neural Networks",
-    dateCreated: "2025-01-15",
-    youtubeLinks: ["https://youtube.com/watch?v=abc123", "https://youtube.com/watch?v=def456"],
-    pdfFiles: ["note1.pdf", "note2.pdf"],
-  },
-  {
-    id: "2",
-    moduleName: "Data Science",
-    chapterName: "Statistics Basics",
-    dateCreated: "2025-02-10",
-    youtubeLinks: ["https://youtube.com/watch?v=ghi789"],
-    pdfFiles: ["stats_note.pdf"],
-  },
-  {
-    id: "3",
-    moduleName: "Machine Learning",
-    chapterName: "Supervised Learning",
-    dateCreated: "2025-03-05",
-    youtubeLinks: [],
-    pdfFiles: ["ml_note1.pdf", "ml_note2.pdf"],
-  },
-];
 
-// Column definitions
-const createColumns = (handleDeleteLink, handleAddLink) => [
+const createColumns = ({
+  handleDeleteLink,
+  handleAddLink,
+  handleDeleteFile,
+  handleAddFile,
+}: {
+  handleDeleteLink: (
+    noteId: string,
+    fieldName: LinkField,
+    index: number
+  ) => void;
+  handleAddLink: (noteId: string, fieldName: LinkField) => void;
+  handleDeleteFile: (
+    noteId: string,
+    fieldName: LinkField,
+    index: number
+  ) => void;
+  handleAddFile: (noteId: string, fieldName: LinkField) => void;
+}): Column[] => [
   {
     id: "moduleName",
     header: "Module Name",
-    accessor: (note: Note) => note.moduleName,
+    accessor: (note: Note) => <span>{note.moduleName}</span>,
   },
   {
     id: "chapterName",
     header: "Chapter Name",
-    accessor: (note: Note) => note.chapterName,
+    accessor: (note: Note) => <span>{note.chapterName}</span>,
   },
   {
     id: "dateCreated",
     header: "Date Created",
-    accessor: (note: Note) => new Date(note.dateCreated).toLocaleDateString(),
+    accessor: (note: Note) => (
+      <span>{new Date(note.dateCreated).toLocaleDateString()}</span>
+    ),
   },
   {
     id: "youtubeLinks",
     header: "YouTube Links",
     accessor: (note: Note) => (
-      <LinkList 
-        items={note.youtubeLinks} 
-        noteId={note.id} 
-        fieldName="youtubeLinks" 
+      <LinkList
+        items={note.youtubeLinks}
+        noteId={note.id}
+        fieldName="youtubeLinks"
         handleDelete={handleDeleteLink}
         handleAdd={handleAddLink}
         isUrl={true}
@@ -100,279 +95,73 @@ const createColumns = (handleDeleteLink, handleAddLink) => [
     ),
   },
   {
-    id: "pdfFiles",
-    header: "PDF Notes",
-    accessor: (note: Note) => (
-      <LinkList 
-        items={note.pdfFiles} 
-        noteId={note.id} 
-        fieldName="pdfFiles" 
-        handleDelete={handleDeleteLink}
-        handleAdd={handleAddLink}
-        basePath="/files/"
-        buttonText="Add PDF"
-      />
-    ),
+    id: "files",
+    header: "Files & Notes",
+    accessor: (note: Note) => {
+      // Handle both legacy pdfFiles array and new files array
+      if (note.files && Array.isArray(note.files)) {
+        return (
+          <LinkList
+            items={note.files}
+            noteId={note.id}
+            fieldName="files"
+            handleDelete={handleDeleteFile}
+            handleAdd={handleAddFile}
+            isFile={true}
+            basePath="/files/"
+            buttonText="Add File"
+          />
+        );
+      } else if (note.pdfFiles && Array.isArray(note.pdfFiles)) {
+        // Convert legacy pdfFiles to file objects for backward compatibility
+        const convertedFiles = note.pdfFiles.map(filename => ({
+          name: filename,
+          type: "application/pdf"
+        }));
+        
+        return (
+          <LinkList
+            items={convertedFiles}
+            noteId={note.id}
+            fieldName="files"
+            handleDelete={handleDeleteFile}
+            handleAdd={handleAddFile}
+            isFile={true}
+            basePath="/files/"
+            buttonText="Add File"
+          />
+        );
+      }
+      
+      return (
+        <LinkList
+          items={[]}
+          noteId={note.id}
+          fieldName="files"
+          handleDelete={handleDeleteFile}
+          handleAdd={handleAddFile}
+          isFile={true}
+          basePath="/files/"
+          buttonText="Add File"
+        />
+      );
+    },
   },
 ];
 
-// LinkList component for both YouTube links and PDF files
-const LinkList = ({ 
-  items, 
-  noteId, 
-  fieldName, 
-  handleDelete, 
-  handleAdd, 
-  isUrl = false, 
-  basePath = "", 
-  buttonText = "Add Item" 
-}) => (
-  <div className="flex flex-col gap-1">
-    {items.map((item, index) => (
-      <div key={index} className="flex items-center gap-2">
-        <a 
-          href={isUrl ? item : `${basePath}${item}`} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="text-blue-600 hover:underline"
-        >
-          {isUrl ? `Link ${index + 1}` : item}
-        </a>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleDelete(noteId, fieldName, index);
-          }}
-          className="h-6 w-6"
-        >
-          <Trash2 className="h-4 w-4 text-red-500" />
-        </Button>
-      </div>
-    ))}
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        handleAdd(noteId, fieldName);
-      }}
-      className="mt-1"
-    >
-      {buttonText}
-    </Button>
-  </div>
-);
-
-// Search component
-const SearchBar = ({ 
-  searchTerm, 
-  setSearchTerm, 
-  setCurrentPage, 
-  isMobile, 
-  isSearchExpanded, 
-  setIsSearchExpanded 
-}) => {
-  if (isMobile && isSearchExpanded) {
-    return (
-      <div className="flex items-center gap-2 w-full mb-4">
-        <Input
-          value={searchTerm}
-          placeholder="Search notes..."
-          className="text-base font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(0);
-          }}
-          autoFocus
-        />
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => setIsSearchExpanded(false)}
-          className="shrink-0"
-        >
-          <X className="size-5" />
-        </Button>
-      </div>
-    );
-  }
-
-  if (isMobile) {
-    return (
-      <Button
-        variant="outline"
-        className="text-sm px-3"
-        onClick={() => setIsSearchExpanded(true)}
-      >
-        <Search className="mr-2 size-4" />
-        Search
-      </Button>
-    );
-  }
-
-  return (
-    <div className="flex gap-2 w-full md:w-auto md:flex-1">
-      <Input
-        value={searchTerm}
-        placeholder="Search notes..."
-        className="text-base font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-          setCurrentPage(0);
-        }}
-      />
-      <Button
-        className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
-        onClick={() => setSearchTerm(searchTerm)}
-      >
-        <ArrowRight />
-      </Button>
-    </div>
-  );
-};
-
-// Sorting component
-const SortSelector = ({ sortType, setSortType, setCurrentPage }) => (
-  <Select
-    value={sortType}
-    onValueChange={(val) => {
-      setSortType(val);
-      setCurrentPage(0);
-    }}
-  >
-    <SelectTrigger className="w-full md:w-48 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200 focus-visible:ring-2 font-semibold text-sm">
-      <SelectValue placeholder="Sort" />
-    </SelectTrigger>
-    <SelectContent className="text-sm font-semibold p-2">
-      <SelectItem value="dateCreated-desc">Date (Newest First)</SelectItem>
-      <SelectItem value="dateCreated-asc">Date (Oldest First)</SelectItem>
-      <SelectItem value="moduleName-asc">Module (A-Z)</SelectItem>
-      <SelectItem value="moduleName-desc">Module (Z-A)</SelectItem>
-      <SelectItem value="chapterName-asc">Chapter (A-Z)</SelectItem>
-      <SelectItem value="chapterName-desc">Chapter (Z-A)</SelectItem>
-    </SelectContent>
-  </Select>
-);
-
-// NoteCard component for mobile view
-const NoteCard = ({ note, columns, selectedIds, handleToggleSelect, handleDeleteSelected }) => (
-  <div className="bg-white rounded-lg shadow p-4 border">
-    <div className="flex justify-between items-center mb-2">
-      <Checkbox
-        checked={selectedIds.includes(note.id)}
-        onCheckedChange={() => handleToggleSelect(note.id)}
-        className="mr-2"
-      />
-      <Button
-        className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-destructive hover:text-white"
-        variant="outline"
-        onClick={() => handleDeleteSelected([note.id])}
-      >
-        <Trash2 className="size-4" />
-      </Button>
-    </div>
-    <Link href={`/notes/${note.id}?mode=view`} className="block">
-      {columns.map((col) => (
-        <div key={col.id} className="py-1 border-b last:border-b-0">
-          <div className="font-medium text-sm text-gray-500">{col.header}</div>
-          <div>{col.accessor(note)}</div>
-        </div>
-      ))}
-    </Link>
-  </div>
-);
-
-// New Note Creation Form
-const NewNoteForm = ({ newNote, setNewNote, handleCreateNote, setIsCreating }) => (
-  <TableRow>
-    <TableCell />
-    <TableCell>
-      <Input
-        value={newNote.moduleName || ""}
-        onChange={(e) => setNewNote({ ...newNote, moduleName: e.target.value })}
-        placeholder="Module Name"
-      />
-    </TableCell>
-    <TableCell>
-      <Input
-        value={newNote.chapterName || ""}
-        onChange={(e) => setNewNote({ ...newNote, chapterName: e.target.value })}
-        placeholder="Chapter Name"
-      />
-    </TableCell>
-    <TableCell>
-      <Input
-        type="date"
-        value={newNote.dateCreated || ""}
-        onChange={(e) => setNewNote({ ...newNote, dateCreated: e.target.value })}
-      />
-    </TableCell>
-    <TableCell>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          const link = prompt("Enter YouTube link:");
-          if (link) {
-            setNewNote({
-              ...newNote,
-              youtubeLinks: [...(newNote.youtubeLinks || []), link],
-            });
-          }
-        }}
-      >
-        Add Link
-      </Button>
-    </TableCell>
-    <TableCell>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          const file = prompt("Enter PDF filename:");
-          if (file) {
-            setNewNote({
-              ...newNote,
-              pdfFiles: [...(newNote.pdfFiles || []), file],
-            });
-          }
-        }}
-      >
-        Add PDF
-      </Button>
-    </TableCell>
-    <TableCell>
-      <div className="flex gap-2">
-        <Button onClick={handleCreateNote}>Save</Button>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            setIsCreating(false);
-            setNewNote({});
-          }}
-        >
-          Cancel
-        </Button>
-      </div>
-    </TableCell>
-  </TableRow>
-);
-
-// Main NotesTable component
 export function NotesTable() {
   const [notes, setNotes] = useState<Note[]>(dummyData);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortType, setSortType] = useState("dateCreated-desc");
+  const [sortType, setSortType] = useState<SortType>("dateCreated-desc");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [newNote, setNewNote] = useState<Partial<Note>>({});
+  const [newNote, setNewNote] = useState<Partial<Note>>({
+    youtubeLinks: [],
+    pdfFiles: [],
+  });
 
   // Responsive handling
   useEffect(() => {
@@ -387,7 +176,11 @@ export function NotesTable() {
   const pageSize = isMobile ? 5 : 10;
 
   // Link management functions
-  const handleDeleteLink = (noteId, field, index) => {
+  const handleDeleteLink = (
+    noteId: string,
+    field: LinkField,
+    index: number
+  ) => {
     setNotes((prev) =>
       prev.map((note) =>
         note.id === noteId
@@ -395,11 +188,15 @@ export function NotesTable() {
           : note
       )
     );
-    toast.success(`${field === "youtubeLinks" ? "YouTube link" : "PDF file"} deleted`);
+    toast.success(
+      `${field === "youtubeLinks" ? "YouTube link" : "PDF file"} deleted`
+    );
   };
 
-  const handleAddLink = (noteId, field) => {
-    const newItem = prompt(`Enter new ${field === "youtubeLinks" ? "YouTube link" : "PDF filename"}:`);
+  const handleAddLink = (noteId: string, field: LinkField) => {
+    const newItem = prompt(
+      `Enter new ${field === "youtubeLinks" ? "YouTube link" : "PDF filename"}:`
+    );
     if (newItem) {
       setNotes((prev) =>
         prev.map((note) =>
@@ -408,23 +205,30 @@ export function NotesTable() {
             : note
         )
       );
-      toast.success(`${field === "youtubeLinks" ? "YouTube link" : "PDF file"} added`);
+      toast.success(
+        `${field === "youtubeLinks" ? "YouTube link" : "PDF file"} added`
+      );
     }
   };
 
-  // Data filtering and sorting
   const filteredData = useMemo(() => {
     let sorted = [...notes];
     if (sortType) {
-      const [key, order] = sortType.split("-");
+      const [key, order] = sortType.split("-") as [SortField, SortDirection];
       sorted.sort((a, b) => {
-        const aVal = key === "dateCreated" ? new Date(a[key]) : String(a[key as keyof Note]).toLowerCase();
-        const bVal = key === "dateCreated" ? new Date(b[key]) : String(b[key as keyof Note]).toLowerCase();
-
         if (key === "dateCreated") {
-          return order === "asc" ? (aVal as Date).getTime() - (bVal as Date).getTime() : (bVal as Date).getTime() - (aVal as Date).getTime();
+          const aDate = new Date(a[key]);
+          const bDate = new Date(b[key]);
+          return order === "asc"
+            ? aDate.getTime() - bDate.getTime()
+            : bDate.getTime() - aDate.getTime();
         }
-        return order === "asc" ? (aVal as string).localeCompare(bVal as string) : (bVal as string).localeCompare(aVal as string);
+
+        const aVal = String(a[key]).toLowerCase();
+        const bVal = String(b[key]).toLowerCase();
+        return order === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
       });
     }
     return sorted.filter((note) =>
@@ -440,21 +244,26 @@ export function NotesTable() {
   );
 
   // Selection functions
-  const handleToggleSelect = (id) => {
+  const handleToggleSelect = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
   const handleSelectAll = () => {
-    const allIds = filteredData.map((note) => note.id);
+    const allIds = paginatedData.map((note) => note.id);
     const allSelected = allIds.every((id) => selectedIds.includes(id));
     if (allSelected) {
       setSelectedIds((prev) => prev.filter((id) => !allIds.includes(id)));
     } else {
-      setSelectedIds((prev) => [...prev, ...allIds.filter((id) => !prev.includes(id))]);
+      setSelectedIds((prev) => [
+        ...prev,
+        ...allIds.filter((id) => !prev.includes(id)),
+      ]);
     }
-    toast.success(`${allSelected ? "Deselected" : "Selected"} ${allIds.length} items`);
+    toast.success(
+      `${allSelected ? "Deselected" : "Selected"} ${allIds.length} items`
+    );
   };
 
   // Action functions
@@ -464,58 +273,68 @@ export function NotesTable() {
     setCurrentPage(0);
   };
 
-  const handleDeleteSelected = (ids) => {
+  const handleDeleteSelected = (ids: string[]) => {
     setNotes((prev) => prev.filter((note) => !ids.includes(note.id)));
-    setSelectedIds((prev) => prev.filter(id => !ids.includes(id)));
+    setSelectedIds((prev) => prev.filter((id) => !ids.includes(id)));
     toast.success("Selected notes deleted");
   };
 
   const handleCreateNote = () => {
     if (isCreating) {
       if (newNote.moduleName && newNote.chapterName) {
-        setNotes((prev) => [
-          ...prev,
-          {
-            id: `${Date.now()}`,
-            moduleName: newNote.moduleName || '',
-            chapterName: newNote.chapterName || '',
-            dateCreated: newNote.dateCreated || new Date().toISOString().split('T')[0],
-            youtubeLinks: newNote.youtubeLinks || [],
-            pdfFiles: newNote.pdfFiles || [],
-          },
-        ]);
+        const newNoteEntry: Note = {
+          id: `${Date.now()}`,
+          moduleName: newNote.moduleName,
+          chapterName: newNote.chapterName,
+          dateCreated:
+            newNote.dateCreated || new Date().toISOString().split("T")[0],
+          youtubeLinks: newNote.youtubeLinks || [],
+          pdfFiles: newNote.pdfFiles || [],
+        };
+
+        setNotes((prev) => [...prev, newNoteEntry]);
         setIsCreating(false);
-        setNewNote({});
+        setNewNote({
+          youtubeLinks: [],
+          pdfFiles: [],
+        });
         toast.success("Note created");
       } else {
         toast.error("Please fill all required fields");
       }
     } else {
       setIsCreating(true);
-      setNewNote({ dateCreated: new Date().toISOString().split("T")[0] });
+      setNewNote({
+        dateCreated: new Date().toISOString().split("T")[0],
+        youtubeLinks: [],
+        pdfFiles: [],
+      });
     }
   };
 
-  const columns = createColumns(handleDeleteLink, handleAddLink);
+  const columns = createColumns({
+    handleDeleteLink,
+    handleAddLink,
+  });
 
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Desktop Header */}
       {!isMobile && (
         <div className="flex flex-col md:flex-row gap-3 md:gap-6 md:items-center">
-          <SearchBar 
-            searchTerm={searchTerm} 
-            setSearchTerm={setSearchTerm} 
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
             setCurrentPage={setCurrentPage}
             isMobile={isMobile}
             isSearchExpanded={isSearchExpanded}
             setIsSearchExpanded={setIsSearchExpanded}
           />
           <div className="flex gap-2 flex-wrap">
-            <SortSelector 
-              sortType={sortType} 
-              setSortType={setSortType} 
-              setCurrentPage={setCurrentPage} 
+            <SortSelector
+              sortType={sortType}
+              setSortType={setSortType}
+              setCurrentPage={setCurrentPage}
             />
             <Button
               className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
@@ -546,9 +365,9 @@ export function NotesTable() {
       {isMobile && (
         <>
           <div className="flex justify-between items-center w-full mb-4">
-            <SearchBar 
-              searchTerm={searchTerm} 
-              setSearchTerm={setSearchTerm} 
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
               setCurrentPage={setCurrentPage}
               isMobile={isMobile}
               isSearchExpanded={isSearchExpanded}
@@ -567,10 +386,10 @@ export function NotesTable() {
             )}
           </div>
           <div className="flex gap-2 mb-4">
-            <SortSelector 
-              sortType={sortType} 
-              setSortType={setSortType} 
-              setCurrentPage={setCurrentPage} 
+            <SortSelector
+              sortType={sortType}
+              setSortType={setSortType}
+              setCurrentPage={setCurrentPage}
             />
             <Button
               className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80 shrink-0"
@@ -596,7 +415,7 @@ export function NotesTable() {
         <div className="grid grid-cols-1 gap-4">
           {paginatedData.length > 0 ? (
             paginatedData.map((note) => (
-              <NoteCard 
+              <NoteCard
                 key={note.id}
                 note={note}
                 columns={columns}
@@ -621,7 +440,9 @@ export function NotesTable() {
                   <Checkbox
                     checked={
                       paginatedData.length > 0 &&
-                      paginatedData.every((note) => selectedIds.includes(note.id))
+                      paginatedData.every((note) =>
+                        selectedIds.includes(note.id)
+                      )
                     }
                     onCheckedChange={handleSelectAll}
                   />
@@ -636,7 +457,7 @@ export function NotesTable() {
             </TableHeader>
             <TableBody>
               {isCreating && (
-                <NewNoteForm 
+                <NewNoteForm
                   newNote={newNote}
                   setNewNote={setNewNote}
                   handleCreateNote={handleCreateNote}
@@ -654,7 +475,9 @@ export function NotesTable() {
                     </TableCell>
                     {columns.map((col) => (
                       <TableCell className="text-center" key={col.id}>
-                        <Link href={`/notes/${note.id}?mode=view`}>{col.accessor(note)}</Link>
+                        <Link href={`/notes/${note.id}?mode=view`}>
+                          {col.accessor(note)}
+                        </Link>
                       </TableCell>
                     ))}
                     <TableCell className="text-center flex gap-2 justify-center items-center">
@@ -670,7 +493,10 @@ export function NotesTable() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length + 2} className="text-center text-muted-foreground h-24">
+                  <TableCell
+                    colSpan={columns.length + 2}
+                    className="text-center text-muted-foreground h-24"
+                  >
                     No notes found.
                   </TableCell>
                 </TableRow>
@@ -686,7 +512,9 @@ export function NotesTable() {
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                className={`cursor-pointer ${currentPage === 0 ? "opacity-50 pointer-events-none" : ""}`}
+                className={`cursor-pointer ${
+                  currentPage === 0 ? "opacity-50 pointer-events-none" : ""
+                }`}
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
               />
             </PaginationItem>
@@ -695,8 +523,16 @@ export function NotesTable() {
             </div>
             <PaginationItem>
               <PaginationNext
-                className={`cursor-pointer ${currentPage + 1 >= totalPages ? "opacity-50 pointer-events-none" : ""}`}
-                onClick={() => setCurrentPage((prev) => prev + 1 < totalPages ? prev + 1 : prev)}
+                className={`cursor-pointer ${
+                  currentPage + 1 >= totalPages
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                }`}
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    prev + 1 < totalPages ? prev + 1 : prev
+                  )
+                }
               />
             </PaginationItem>
           </PaginationContent>

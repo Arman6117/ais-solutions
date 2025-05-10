@@ -59,3 +59,29 @@ export type DummyStudent = {
   totalFeePaid: number;
   feesRemaining: number;
 };
+
+// Updated Note type definition to include both legacy pdfFiles and new files format
+export type Note = {
+  id: string;
+  moduleName: string;
+  chapterName: string;
+  dateCreated: string;
+  youtubeLinks: string[];
+  // Legacy field - deprecated but kept for backward compatibility
+  pdfFiles?: string[];
+  // New field - stores all file types with metadata
+  files?: Array<{
+    name: string;
+    type: string;
+  }>;
+};
+
+// Type for link/file fields
+export type LinkField = "youtubeLinks" | "files";
+
+// Type for column definitions
+export type ColumnNote = {
+  id: string;
+  header: string;
+  accessor: (note: Note) => React.ReactNode;
+};

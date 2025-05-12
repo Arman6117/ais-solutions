@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { Checkbox } from "./ui/checkbox";
+import { Separator } from "./ui/separator";
 
 type NotesTableProps = {
   mode: "view" | "edit";
@@ -28,9 +29,9 @@ const NotesTable = ({ batchId, mode, notes, role }: NotesTableProps) => {
             <TableHead className="text-center">Module</TableHead>
             <TableHead className="text-center">Chapter</TableHead>
             <TableHead className="text-center">Date Created</TableHead>
+            <TableHead className="text-center">Video Link</TableHead>
             <TableHead className="text-center">Files</TableHead>
             <TableHead className="text-center">Actions</TableHead>
-            {/* <TableHead>Video Link</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -39,12 +40,21 @@ const NotesTable = ({ batchId, mode, notes, role }: NotesTableProps) => {
               <TableCell className="text-center">
                 <Checkbox />
               </TableCell>
-              <TableCell className="text-center">{note.moduleName}</TableCell>
-              <TableCell className="text-center">{note.chapterName}</TableCell>
-              <TableCell className="text-center">{note.lectureDate}</TableCell>
-              {note.attachments.map((atc: any) => (
-                <TableCell className="text-center" key={atc.id}>{atc.name}</TableCell>
-              ))}
+              <TableCell className="text-center">{note.module}</TableCell>
+              <TableCell className="text-center">{note.chapter}</TableCell>
+              <TableCell className="text-center">{note.dateCreated}</TableCell>
+              <TableCell className="text-center truncate max-w-44 ">
+                {note.videoLinks.map((i: any) => (
+                  <div key={i.id} className="flex flex-col gap-4">
+                    <div  className="flex flex-col gap-2">
+                      {i.label}
+                    </div>
+
+                    <Separator />
+                  </div>
+                ))}
+              </TableCell>
+              <TableCell className="text-center">{note.files}</TableCell>
             </TableRow>
           ))}
         </TableBody>

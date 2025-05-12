@@ -24,44 +24,60 @@ export interface Note {
   lectureDate: string;
   attachments: Attachment[];
 }
-const DUMMY_NOTES: Note[] = [
+const notesData = [
   {
-    id: "1",
-    moduleId: "m1",
-    moduleName: "React Fundamentals",
-    chapterName: "Components & Props",
-    lectureDate: "2024-03-15",
-    attachments: [
-      {
-        id: "a1",
-        type: "link",
-        url: "https://youtube.com/watch?v=123",
-        name: "Lecture Recording",
-      },
-      {
-        id: "a2",
-        type: "file",
-        url: "/files/react-basics.pdf",
-        name: "Lecture Notes.pdf",
-      },
-    ],
+    id: "note-1",
+    module: "Module 1",
+    chapter: "Introduction",
+    dateCreated: "2025-04-01",
+    videoLinks: ["https://youtu.be/abc123"],
+    files: ["intro.pdf", "welcome.zip"],
   },
   {
-    id: "2",
-    moduleId: "m2",
-    moduleName: "State Management",
-    chapterName: "Redux Overview",
-    lectureDate: "2024-03-16",
-    attachments: [
-      {
-        id: "a3",
-        type: "link",
-        url: "https://youtube.com/watch?v=456",
-        name: "Redux Tutorial",
-      },
+    id: "note-2",
+    module: "Module 2",
+    chapter: "Getting Started",
+    dateCreated: "2025-04-03",
+    videoLinks: ["https://youtu.be/def456", "https://vimeo.com/123456"],
+    files: ["start-guide.docx"],
+  },
+  {
+    id: "note-3",
+    module: "Module 2",
+    chapter: "Variables & Types",
+    dateCreated: "2025-04-05",
+    videoLinks: ["https://youtu.be/ghi789"],
+    files: ["types.pptx", "examples.zip"],
+  },
+  {
+    id: "note-4",
+    module: "Module 3",
+    chapter: "Functions",
+    dateCreated: "2025-04-10",
+    videoLinks: ["https://youtu.be/jkl012", "https://vimeo.com/789123"],
+    files: ["functions.pdf"],
+  },
+  {
+    id: "note-5",
+    module: "Module 4",
+    chapter: "Arrays & Loops",
+    dateCreated: "2025-04-14",
+    videoLinks: [
+      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
+      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
     ],
+    files: ["arrays-loops.docx"],
+  },
+  {
+    id: "note-6",
+    module: "Module 5",
+    chapter: "Final Project Setup",
+    dateCreated: "2025-04-20",
+    videoLinks: ["https://youtu.be/pqr678", "https://vimeo.com/456789"],
+    files: ["project-setup.zip"],
   },
 ];
+
 const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
   return (
     <>
@@ -86,7 +102,7 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
         </CardHeader>
         <CardContent>
           <NotesTable
-            notes={DUMMY_NOTES}
+            notes={notesData}
             role="admin"
             mode={mode}
             batchId={batchId}

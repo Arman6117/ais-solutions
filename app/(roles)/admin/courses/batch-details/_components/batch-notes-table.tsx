@@ -1,8 +1,9 @@
+"use client";
 import NotesTable from "@/components/notes-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useState } from "react";
 
 type BatchNotesTable = {
   mode: "view" | "edit";
@@ -30,7 +31,10 @@ const notesData = [
     module: "Module 1",
     chapter: "Introduction",
     dateCreated: "2025-04-01",
-    videoLinks: ["https://youtu.be/abc123"],
+    videoLinks: [
+      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
+      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+    ],
     files: ["intro.pdf", "welcome.zip"],
   },
   {
@@ -38,7 +42,10 @@ const notesData = [
     module: "Module 2",
     chapter: "Getting Started",
     dateCreated: "2025-04-03",
-    videoLinks: ["https://youtu.be/def456", "https://vimeo.com/123456"],
+    videoLinks: [
+      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
+      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+    ],
     files: ["start-guide.docx"],
   },
   {
@@ -46,7 +53,10 @@ const notesData = [
     module: "Module 2",
     chapter: "Variables & Types",
     dateCreated: "2025-04-05",
-    videoLinks: ["https://youtu.be/ghi789"],
+    videoLinks: [
+      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
+      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+    ],
     files: ["types.pptx", "examples.zip"],
   },
   {
@@ -54,7 +64,10 @@ const notesData = [
     module: "Module 3",
     chapter: "Functions",
     dateCreated: "2025-04-10",
-    videoLinks: ["https://youtu.be/jkl012", "https://vimeo.com/789123"],
+    videoLinks: [
+      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
+      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+    ],
     files: ["functions.pdf"],
   },
   {
@@ -73,12 +86,16 @@ const notesData = [
     module: "Module 5",
     chapter: "Final Project Setup",
     dateCreated: "2025-04-20",
-    videoLinks: ["https://youtu.be/pqr678", "https://vimeo.com/456789"],
+    videoLinks: [
+      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
+      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+    ],
     files: ["project-setup.zip"],
   },
 ];
 
 const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
+  const [isCreating, setIsCreating] = useState(false);
   return (
     <>
       <Card className="border-0 w-full shadow-md p-0 mb-10 overflow-hidden mt-">
@@ -95,8 +112,11 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
           </CardTitle>
 
           <div>
-            <Button className="bg-white hover:bg-purple-50 text-black cursor-pointer">
-              Add Student
+            <Button
+              className="bg-white hover:bg-purple-50 text-black cursor-pointer"
+              onClick={() => setIsCreating(true)}
+            >
+              Create Note
             </Button>
           </div>
         </CardHeader>
@@ -106,6 +126,8 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
             role="admin"
             mode={mode}
             batchId={batchId}
+            isCreating={isCreating}
+            setIsCreating={setIsCreating}
           />
         </CardContent>
       </Card>

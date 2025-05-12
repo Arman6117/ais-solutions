@@ -10,13 +10,22 @@ import {
 import { Button } from "../ui/button";
 import AddLinkDialog from "./add-link-dialog";
 
-const AddLinkButton = ({ notesLinks }: { notesLinks: any[] }) => {
+const AddLinkButton = ({
+  notesLinks,
+  setNotesLinks,
+}: {
+  notesLinks: any[];
+  setNotesLinks: (links: any[]) => void;
+}) => {
   const [linkLabel, setLinkLabel] = useState("");
   const [link, setLink] = useState("");
-  const newLink = [{ linkLabel, link }];
+  //   const newLink = [{ linkLabel, link }];
   const createLink = () => {
-    notesLinks.push(newLink);
-    console.log("Added")
+    const newLink = { linkLabel, link };
+    setNotesLinks([...notesLinks, newLink]); // <-- Triggers re-render
+    console.log("Added");
+    setLinkLabel(""); // Reset inputs if needed
+    setLink("");
   };
   return (
     <Dialog>

@@ -96,6 +96,7 @@ const notesData = [
 
 const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
   const [isCreating, setIsCreating] = useState(false);
+
   return (
     <>
       <Card className="border-0 w-full shadow-md p-0 mb-10 overflow-hidden mt-">

@@ -1,4 +1,5 @@
-import React from "react";
+'use client'
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -35,6 +36,14 @@ const NotesTable = ({
   const createNewNote = (newNote: any) => {
     notes.push(newNote);
   };
+  const [videoLinks,setVideoLinks] = useState<any[]>()
+
+  useEffect(()=> {
+    const notesVideoLinks = notes.map((note)=> note.videoLinks)
+    console.log(notesVideoLinks)
+    setVideoLinks(notesVideoLinks)
+  },[])
+
   return (
     <>
       <Table>
@@ -58,7 +67,9 @@ const NotesTable = ({
               createNewNote={createNewNote}
             />
           )}
-          {notes.map((note, i) => (
+          {notes.map((note, i) => {
+           
+            return(
             <TableRow key={i} className="text-center  text-sm font-medium">
               <TableCell className="text-center">
                 <Checkbox />
@@ -68,7 +79,7 @@ const NotesTable = ({
               <TableCell className="text-center">{note.chapter}</TableCell>
               <TableCell className="text-center">{note.dateCreated}</TableCell>
               <TableCell className="text-center truncate max-w-44 ">
-                {note.videoLinks.map((i: any, index: number) => (
+                {videoLinks?.map((i: any, index: number) => (
                   <div
                     key={index}
                     className="flex items-center justify-center flex-col gap-4"
@@ -101,7 +112,7 @@ const NotesTable = ({
                   </div>
                 ))}
                 {mode === "edit" && (
-                  <AddLinkButton notesLinks={note.videoLinks}/>
+                  <AddLinkButton notesLinks={videoLinks || []} setNotesLinks={setVideoLinks}/>
                 
                 )}
               </TableCell>
@@ -165,7 +176,7 @@ const NotesTable = ({
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
+          )})}
         </TableBody>
       </Table>
     </>

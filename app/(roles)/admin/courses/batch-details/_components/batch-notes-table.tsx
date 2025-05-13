@@ -171,7 +171,7 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
         </CardHeader>
         <CardContent>
           <NotesTable
-            notes={notesData}
+            notes={mode ==='create' ? [] : notesData}
             role="admin"
             mode={mode}
             batchId={batchId}

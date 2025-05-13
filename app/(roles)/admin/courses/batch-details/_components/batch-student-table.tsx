@@ -57,7 +57,7 @@ const BatchStudentTable = ({
   courseId,
   batchId,
 }: {
-  mode: "view" | "edit";
+  mode: "view" | "edit" |'create';
   dummyStudents: DummyStudent[];
   courseId: string;
   batchId: string;

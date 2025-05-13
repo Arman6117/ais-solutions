@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { Calendar } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,10 +13,41 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+
 import AddInstructorButton from "../../../_components/add-instructor-button";
 import InstructorsCards from "@/components/instructors-cards";
+import BatchStudentTable from "../../../batch-details/_components/batch-student-table";
+import BatchNotesTable from "../../../batch-details/_components/batch-notes-table";
+
+// Student table columns definition
+const studentTableCol = [
+  {
+    id: "name",
+    header: "Student Name",
+    accessor: (row: any) => row.name,
+  },
+  {
+    id: "email",
+    header: "Email",
+    accessor: (row: any) => row.email,
+  },
+  {
+    id: "phone",
+    header: "Phone",
+    accessor: (row: any) => row.phone,
+  },
+  {
+    id: "joinedAt",
+    header: "Joined At",
+    accessor: (row: any) => row.joinedAt,
+  },
+  {
+    id: "feesStatus",
+    header: "Fees Status",
+    accessor: (row: any) => row.feesStatus,
+  },
+];
 
 export default function CreateBatch() {
   const [instructors, setInstructors] = useState<any[]>([]);
@@ -35,7 +65,7 @@ export default function CreateBatch() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid w-full grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main form */}
         <div className="lg:col-span-2">
           <Card>
@@ -86,12 +116,14 @@ export default function CreateBatch() {
                   </Badge>
                 </div>
               </div>
-              
+
               {/* Instructors Card */}
               <Card>
                 <CardHeader>
                   <CardTitle>Instructors</CardTitle>
-                  <CardDescription>Add instructors to this batch</CardDescription>
+                  <CardDescription>
+                    Add instructors to this batch
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="min-h-40">
                   {instructors.length === 0 ? (
@@ -112,60 +144,35 @@ export default function CreateBatch() {
                   )}
                 </CardContent>
                 <CardFooter>
-                  <AddInstructorButton 
+                  <AddInstructorButton
                     setInstructor={(newInstructor) => {
                       // Use object for single instructor, array updater for array
-                      if (typeof newInstructor === 'function') {
+                      if (typeof newInstructor === "function") {
                         setInstructors(newInstructor);
                       } else {
-                        setInstructors(prev => [...prev, newInstructor]);
+                        setInstructors((prev) => [...prev, newInstructor]);
                       }
                       console.log("Instructor added:", newInstructor);
-                    }} 
+                    }}
                   />
                 </CardFooter>
               </Card>
             </CardContent>
           </Card>
 
-          {/* Students & Notes Tabs */}
+          {/* Students Table */}
+          <div className="mt-6 w-full">
+            <BatchStudentTable
+              mode="edit"
+              dummyStudents={[]}
+              courseId="create"
+              batchId="new"
+            />
+          </div>
+
+          {/* Notes Table */}
           <div className="mt-6">
-            <Tabs defaultValue="students">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="students">Students</TabsTrigger>
-                <TabsTrigger value="notes">Notes</TabsTrigger>
-              </TabsList>
-              <TabsContent value="students">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Students</CardTitle>
-                    <CardDescription>
-                      Students enrolled in this batch
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="min-h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-md">
-                    <div className="text-center text-gray-500">
-                      <p>No students enrolled yet</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="notes">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Notes</CardTitle>
-                    <CardDescription>
-                      Important notes about this batch
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="min-h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-md">
-                    <div className="text-center text-gray-500">
-                      <p>No notes added yet</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+            <BatchNotesTable mode="create" batchId="new" />
           </div>
         </div>
 
@@ -187,19 +194,16 @@ export default function CreateBatch() {
               )}
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Add Modules</Button>
+              <Button className="w-full bg-primary-bg">Add Modules</Button>
             </CardFooter>
           </Card>
 
           {/* Create Batch Button */}
-          <Button className="w-full" size="lg">
+          <Button className="w-full bg-primary-bg" size="lg">
             Create Batch
           </Button>
         </div>
       </div>
-
-      {/* Debug display - remove in production */}
-     
     </div>
   );
 }

@@ -17,8 +17,7 @@ import { Badge } from "@/components/ui/badge";
 
 import AddInstructorButton from "../../../_components/add-instructor-button";
 import InstructorsCards from "@/components/instructors-cards";
-import BatchStudentTable from "../../../batch-details/_components/batch-student-table";
-import BatchNotesTable from "../../../batch-details/_components/batch-notes-table";
+
 
 // Student table columns definition
 const studentTableCol = [
@@ -53,8 +52,7 @@ export default function CreateBatch() {
   const [instructors, setInstructors] = useState<any[]>([]);
   const [modules, setModules] = useState([]);
 
-  // Debug log to verify state updates
-  console.log("Current instructors in CreateBatch:", instructors);
+
 
   return (
     <div className="w-full p-6">

@@ -160,20 +160,7 @@ export default function CreateBatch() {
             </CardContent>
           </Card>
 
-          {/* Students Table */}
-          <div className="mt-6 w-full">
-            <BatchStudentTable
-              mode="edit"
-              dummyStudents={[]}
-              courseId="create"
-              batchId="new"
-            />
-          </div>
-
-          {/* Notes Table */}
-          <div className="mt-6">
-            <BatchNotesTable mode="create" batchId="new" />
-          </div>
+          
         </div>
 
         {/* Sidebar with Modules */}

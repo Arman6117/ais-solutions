@@ -53,17 +53,11 @@ const NewNoteForm = ({
 
     const formattedDate = date ? format(date, "MMM dd, yyyy") : "";
     
-    // Add the current link if provided
-    const linksToSave = [...videoLinks];
-    if (linkLabel && link) {
-      linksToSave.push({ label: linkLabel, link });
-    }
-
     const newNote = {
       module: moduleName,
       chapter: chapterName,
       dateCreated: formattedDate,
-      videoLinks: linksToSave.length > 0 ? linksToSave : [],
+      videoLinks: videoLinks,
       files: files,
     };
 
@@ -75,9 +69,11 @@ const NewNoteForm = ({
     setIsCreating(false);
   };
 
-  const onAddLink = (newLabel: string, newLink: string) => {
-    if (newLabel && newLink) {
-      setVideoLinks([...videoLinks, { label: newLabel, link: newLink }]);
+  const onAddLink = (label: string, url: string) => {
+    if (label && url) {
+      setVideoLinks([...videoLinks, { label, link: url }]);
+      setLinkLabel("");
+      setLink("");
     }
   };
 
@@ -150,7 +146,13 @@ const NewNoteForm = ({
                   <DialogHeader>
                     <DialogTitle>Add a new Video link</DialogTitle>
                   </DialogHeader>
-                  <AddLinkDialog onAddLink={onAddLink} />
+                  <AddLinkDialog
+                    label={linkLabel}
+                    link={link}
+                    setLinkLabel={setLinkLabel}
+                    setLink={setLink}
+                    onAddLink={onAddLink}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
@@ -287,7 +289,13 @@ const NewNoteForm = ({
               <DialogHeader>
                 <DialogTitle>Add a new Video link</DialogTitle>
               </DialogHeader>
-              <AddLinkDialog onAddLink={onAddLink} />
+              <AddLinkDialog
+                label={linkLabel}
+                link={link}
+                setLinkLabel={setLinkLabel}
+                setLink={setLink}
+                onAddLink={onAddLink}
+              />
             </DialogContent>
           </Dialog>
         </div>

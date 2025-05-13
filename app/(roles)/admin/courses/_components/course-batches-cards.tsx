@@ -22,11 +22,14 @@ const CourseBatchesCards = ({
         <h2 className="text-xl font-bold">Batches</h2>
         {mode === "edit" && (
           <Button
+          asChild
             size="sm"
             className="flex items-center gap-1 cursor-pointer bg-primary-bg hover:bg-primary-bg/90"
           >
-            {/* //TODO:Add batch page */}
-            <Plus size={16} /> Add Batch
+            <Link href={`/admin/courses/${courseId}/create-batch`}>
+              {/* //TODO:Add batch page */}
+              <Plus size={16} /> Add Batch
+            </Link>
           </Button>
         )}
       </div>
@@ -41,7 +44,11 @@ const CourseBatchesCards = ({
             )}
           >
             <Link
-              href={mode==='view' ?`/admin/courses/batch-details/${courseId}/batch/${batch.id}?mode=view` : "#"}
+              href={
+                mode === "view"
+                  ? `/admin/courses/batch-details/${courseId}/batch/${batch.id}?mode=view`
+                  : "#"
+              }
             >
               <CardContent className="p-4">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">

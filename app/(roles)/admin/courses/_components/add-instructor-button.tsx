@@ -6,12 +6,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Dialog,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { dummyInstructors } from "@/lib/static";
 import { DummyInstructors } from "@/lib/types";
-import { Dialog, DialogDescription } from "@radix-ui/react-dialog";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -25,13 +26,14 @@ import {
 const AddInstructorButton = ({
   setInstructor,
 }: {
-  setInstructor: (instructor: any) => void;
+  setInstructor: (instructorOrUpdater: any) => void;
 }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [found, setFound] = useState<DummyInstructors | null>(null);
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSearch = () => {
     setLoading(true);
@@ -46,26 +48,43 @@ const AddInstructorButton = ({
   };
 
   const handleAdd = () => {
-    toast.success(`${found?.name} has been added.`);
-    setFound(null);
-    setEmail("");
-    setOpen(false);
-    setInstructor((prev:any) => [...prev, found]);
+    if (found) {
+      // Add a unique ID if it doesn't exist
+      const instructorToAdd = {
+        ...found,
+        id: found.id || `instructor-${Date.now()}`
+      };
+      
+      // Direct invocation of the setter with a single instructor
+      // The parent component will handle whether to use it as an updater or direct value
+      setInstructor(instructorToAdd);
+      
+      console.log("Added instructor:", instructorToAdd);
+      toast.success(`${found?.name} has been added.`);
+      setFound(null);
+      setEmail("");
+      setOpen(false);
+      setDialogOpen(false);
+    }
   };
 
   const handleReset = () => {
     setFound(null);
     setEmail("");
+    setError("");
     setOpen(false);
   };
 
   return (
     <>
-      <Dialog onOpenChange={handleReset}>
+      <Dialog open={dialogOpen} onOpenChange={(isOpen) => {
+        setDialogOpen(isOpen);
+        if (!isOpen) handleReset();
+      }}>
         <DialogTrigger asChild>
           <Button
             size="sm"
-            className="flex items-center gap-2 cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-sm"
+            className="flex items-center gap-2 cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-sm "
           >
             <Plus size={16} /> Add Instructor
           </Button>

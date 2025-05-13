@@ -30,13 +30,6 @@ import StatusCard from "../../../../../../components/status-card";
 import EditBatchInfo from "@/components/batch-components/edit-batch-info";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { PiChalkboardTeacher } from "react-icons/pi";
 import BatchMeetings from "./batch-meetings";
 import BatchStatusSelector from "./batch-status-selector";
@@ -60,7 +53,7 @@ const BatchDetails = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
+  const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view" ;
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
   if (!batch) {

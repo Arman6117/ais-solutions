@@ -5,13 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Mail, Pencil, Plus, Trash2, Users } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "./ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import InstructorHoverCard from "../app/(roles)/admin/courses/_components/instructor-hover-card";
 import EditInstructorDialog from "../app/(roles)/admin/courses/_components/edit-instructor-dialog";
 import AddInstructorButton from "../app/(roles)/admin/courses/_components/add-instructor-button";
@@ -19,33 +15,40 @@ import AddInstructorButton from "../app/(roles)/admin/courses/_components/add-in
 const InstructorsCards = ({
   instructors,
   mode,
-  label
+  label,
 }: {
   instructors: any[];
-  mode: "edit" | "view";
-  label:string
+  mode: "edit" | "view" | "create";
+  label: string;
 }) => {
   const [open, setOpen] = useState(false);
   const [instructor, setInstructor] = useState(null);
-  const [initialInstructors,setInstructors] = useState(instructors);
+  // Remove this state initialization to use the props directly
+  // const [initialInstructors, setInstructors] = useState(instructors);
+  
+  // console.log("Instructors in InstructorsCards:", instructors); // Debug log
 
   return (
     <>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">Instructors</h2>
-            <p className="text-sm text-gray-500">
-              {initialInstructors.length} instructor{initialInstructors.length !== 1 && "s"}{" "}
-           {label}
-            </p>
-          </div>
-          {mode === "edit" && <AddInstructorButton setInstructor ={setInstructors} />}
+          {mode !== "create" && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">Instructors</h2>
+              <p className="text-sm text-gray-500">
+                {instructors.length} instructor
+                {instructors.length !== 1 && "s"} {label}
+              </p>
+            </div>
+          )}
+          {mode === "edit" && (
+            <AddInstructorButton setInstructor={setInstructor} />
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {initialInstructors.map((instructor) => (
-            <HoverCard key={instructor.id}>
+          {instructors.map((instructor, index) => (
+            <HoverCard key={instructor.id || `instructor-${index}`}>
               <HoverCardTrigger asChild>
                 <Card
                   className={cn(
@@ -63,8 +66,8 @@ const InstructorsCards = ({
                           alt={instructor.name}
                         />
                         <AvatarFallback className="bg-violet-100 text-violet-600 font-medium">
-                          {instructor.name.charAt(0) +
-                            instructor.name.split(" ")[1]?.charAt(0)}
+                          {instructor.name?.charAt(0) +
+                            (instructor.name?.split(" ")[1]?.charAt(0) || "")}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-grow">
@@ -75,29 +78,13 @@ const InstructorsCards = ({
                           <Mail size={14} className="text-gray-400" />
                           <span>{instructor.email}</span>
                         </div>
-                        {/* <div className="flex gap-2 mt-2">
-                          <Badge
-                            variant="outline"
-                            className="bg-violet-50 border-violet-200 text-violet-700 font-medium"
-                          >
-                            {instructor.role || "Instructor"}
-                          </Badge>
-                          {instructor.isLead && (
-                            <Badge
-                              variant="outline"
-                              className="bg-amber-50 border-amber-200 text-amber-700 font-medium"
-                            >
-                              Lead
-                            </Badge>
-                          )}
-                        </div> */}
                       </div>
                       {mode === "edit" && (
                         <div className="flex gap-4">
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-8 w-8 p-0  cursor-pointer absolute -top-10 right-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                            className="h-8 w-8 p-0 cursor-pointer absolute -top-10 right-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
                             onClick={() =>
                               toast.success(
                                 `${instructor.name} removed from course`
@@ -109,7 +96,7 @@ const InstructorsCards = ({
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-8 w-8 p-0  cursor-pointer absolute -top-10 right-10 text-gray-400 hover:text-violet-600 hover:bg-violet-50"
+                            className="h-8 w-8 p-0 cursor-pointer absolute -top-10 right-10 text-gray-400 hover:text-violet-600 hover:bg-violet-50"
                             onClick={() => {
                               setOpen(true);
                               setInstructor(instructor);
@@ -135,7 +122,7 @@ const InstructorsCards = ({
           ))}
         </div>
 
-        {initialInstructors.length === 0 && (
+        {instructors.length === 0 && (
           <div className="text-center p-10 border border-dashed border-gray-300 rounded-lg bg-gray-50">
             <div className="flex justify-center mb-4">
               <div className="bg-violet-100 p-3 rounded-full">
@@ -148,18 +135,17 @@ const InstructorsCards = ({
             <p className="text-gray-500 mb-4">
               No instructors have been assigned to this course yet.
             </p>
-            <Button className="bg-violet-600 cursor-pointer hover:bg-violet-700 text-white">
-              <Plus size={16} className="mr-2" /> Add Your First Instructor
-            </Button>
           </div>
         )}
       </div>
 
-      <EditInstructorDialog
-        open={open}
-        onClose={() => setOpen(false)}
-        instructor={instructor}
-      />
+      {open && instructor && (
+        <EditInstructorDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          instructor={instructor}
+        />
+      )}
     </>
   );
 };

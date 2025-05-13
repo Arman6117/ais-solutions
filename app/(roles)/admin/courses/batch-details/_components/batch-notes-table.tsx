@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 
 type BatchNotesTable = {
-  mode: "view" | "edit";
+  mode: "view" | "edit" | "create";
   batchId: string;
 };
 

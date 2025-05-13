@@ -23,44 +23,19 @@ import NewNoteForm from "./batch-components/new-note-form";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+
+
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+
 } from "./ui/card";
 import { FaYoutube } from "react-icons/fa";
 import {
-  ChevronDown,
   Pencil,
   Trash2,
   Search,
   Filter,
-  AlertTriangle,
 } from "lucide-react";
 import { getIcon } from "@/lib/utils";
 import { IconType } from "react-icons/lib";
@@ -69,10 +44,10 @@ import MobileCardView from "./batch-components/mobile-card-view";
 import DeleteConfirmationDialog from "./batch-components/delete-confirmation-dialog";
 
 type NotesTableProps = {
-  mode: "view" | "edit";
+  mode: "view" | "edit" |"create";
   role: "admin" | "student";
   notes: any[];
-  batchId: string;
+  batchId?: string;
   isCreating: boolean;
   setIsCreating: (state: boolean) => void;
 };

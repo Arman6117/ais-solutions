@@ -18,7 +18,7 @@ type MobileCardViewProps = {
   handleRowCheckboxChange: (index: number) => void;
   handleDelete: (index: number) => void;
   note: any;
-  mode:'edit'|'view'
+  mode:'edit'|'view'|'create'
   updateNoteLinks:(index:number,newLinks:any[]) =>void
 };
 

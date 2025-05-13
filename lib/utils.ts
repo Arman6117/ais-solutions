@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
-import { FaFileExcel, FaFilePdf, FaFilePowerpoint, FaFileWord } from "react-icons/fa";
+import { FaFileAlt, FaFileExcel, FaFilePdf, FaFilePowerpoint, FaFileWord } from "react-icons/fa";
+import { IconType } from "react-icons/lib";
 import { PiFileZip } from "react-icons/pi";
 import { twMerge } from "tailwind-merge";
 
@@ -26,25 +27,24 @@ export function formatCurrency(amount: number) {
   }).format(amount);
 }
 
-export function getIcon(fileType:string) {
-  switch(fileType) {
+export function getIcon(fileType: string): IconType {
+  switch (fileType.toLowerCase()) {
     case 'pdf':
-      FaFilePdf
-      break;
-    case 'docs':
-      FaFileWord
-      break;
+      return FaFilePdf;
+    case 'doc':
+    case 'docx':
+      return FaFileWord;
     case 'ppt':
-      FaFilePowerpoint
-      break;
-    case 'zip':
-      PiFileZip
-      break;
     case 'pptx':
-      FaFilePowerpoint
-      break;
+      return FaFilePowerpoint;
+    case 'xls':
+    case 'xlsx':
     case 'csv':
-      FaFileExcel
-      break;
+      return FaFileExcel;
+    case 'zip':
+    case 'rar':
+      return PiFileZip;
+    default:
+      return FaFileAlt;
   }
 }

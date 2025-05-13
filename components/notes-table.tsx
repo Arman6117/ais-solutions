@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -8,13 +9,55 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { Checkbox } from "./ui/checkbox";
-import { Button } from "./ui/button";
-import { Pencil, PlusIcon, Trash2 } from "lucide-react";
-import NewNoteForm from "./batch-components/new-note-form";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "./ui/pagination";
 import AddLinkButton from "./batch-components/add-link-button";
+import NewNoteForm from "./batch-components/new-note-form";
+import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
+import { Input } from "./ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { FaYoutube } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { ChevronDown, Pencil, Trash2, Search, Filter, AlertTriangle } from "lucide-react";
+import { getIcon } from "@/lib/utils";
+import { IconType } from "react-icons/lib";
+import { ScrollArea } from "./ui/scroll-area";
 
 type NotesTableProps = {
   mode: "view" | "edit";
@@ -25,6 +68,8 @@ type NotesTableProps = {
   setIsCreating: (state: boolean) => void;
 };
 
+const ITEMS_PER_PAGE = 5;
+
 const NotesTable = ({
   batchId,
   mode,
@@ -34,7 +79,47 @@ const NotesTable = ({
   setIsCreating,
 }: NotesTableProps) => {
   const [noteList, setNoteList] = useState(notes);
+  const [filteredNotes, setFilteredNotes] = useState(notes);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
+  
   const router = useRouter();
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredNotes.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedNotes = filteredNotes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    // Filter and sort notes whenever dependencies change
+    let result = [...noteList];
+    
+    // Apply search filter
+    if (searchTerm) {
+      result = result.filter(note => 
+        note.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note.chapter.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (note.files && note.files.some((file: string) => 
+          file.toLowerCase().includes(searchTerm.toLowerCase())
+        ))
+      );
+    }
+    
+    // Apply sorting by date
+    result = result.sort((a, b) => {
+      const dateA = new Date(a.dateCreated).getTime();
+      const dateB = new Date(b.dateCreated).getTime();
+      return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
+    });
+    
+    setFilteredNotes(result);
+    setCurrentPage(1); // Reset to first page on filter/sort change
+  }, [noteList, searchTerm, sortDirection]);
+
   const updateNoteLinks = (noteIndex: number, newLinks: any[]) => {
     const updatedNotes = [...noteList];
     updatedNotes[noteIndex].videoLinks = newLinks;
@@ -45,121 +130,453 @@ const NotesTable = ({
     setNoteList([newNote, ...noteList]);
   };
 
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow className="items-center text-base font-semibold">
-          <TableHead className="text-center w-12">
-            <Checkbox />
-          </TableHead>
-          <TableHead className="text-center">Module</TableHead>
-          <TableHead className="text-center">Chapter</TableHead>
-          <TableHead className="text-center">Date Created</TableHead>
-          <TableHead className="text-center">Video Link</TableHead>
-          <TableHead className="text-center">Files</TableHead>
-          <TableHead className="text-center">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
+  const handleSelectAllChange = () => {
+    if (selectedRows.size === paginatedNotes.length) {
+      // If all are selected, deselect all
+      setSelectedRows(new Set());
+    } else {
+      // Otherwise, select all visible rows
+      const newSelected = new Set<number>();
+      paginatedNotes.forEach((_, index) => {
+        newSelected.add(startIndex + index);
+      });
+      setSelectedRows(newSelected);
+    }
+  };
 
-      <TableBody>
-        {isCreating && (
-          <NewNoteForm
-            setIsCreating={setIsCreating}
-            createNewNote={createNewNote}
+  const handleRowCheckboxChange = (index: number) => {
+    const newSelected = new Set(selectedRows);
+    if (newSelected.has(index)) {
+      newSelected.delete(index);
+    } else {
+      newSelected.add(index);
+    }
+    setSelectedRows(newSelected);
+  };
+
+  const handleDelete = (index: number) => {
+    setItemsToDelete([index]);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedRows.size > 0) {
+      setItemsToDelete(Array.from(selectedRows));
+      setDeleteDialogOpen(true);
+    }
+  };
+
+  const confirmDelete = () => {
+    const newNotes = noteList.filter((_, index) => !itemsToDelete.includes(index));
+    setNoteList(newNotes);
+    setSelectedRows(new Set());
+    setDeleteDialogOpen(false);
+  };
+
+  const toggleSortDirection = () => {
+    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total pages are less than max to show
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      // Calculate range around current page
+      const startPage = Math.max(2, currentPage - 1);
+      const endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pages.push("ellipsis-start");
+      }
+      
+      // Add pages around current page
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pages.push("ellipsis-end");
+      }
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
+  // Mobile view card renderer for each note
+  const renderMobileCard = (note: any, index: number) => (
+    <Card key={startIndex + index} className="mb-4">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="flex items-center gap-2">
+          <Checkbox 
+            checked={selectedRows.has(startIndex + index)}
+            onCheckedChange={() => handleRowCheckboxChange(startIndex + index)}
           />
-        )}
-
-        {noteList.map((note, i) => (
-          <TableRow key={i} className="text-center text-sm font-medium">
-            <TableCell>
-              <Checkbox />
-            </TableCell>
-            <TableCell>{note.module}</TableCell>
-            <TableCell>{note.chapter}</TableCell>
-            <TableCell>{note.dateCreated}</TableCell>
-
-            <TableCell className="text-center truncate max-w-44">
-              <div className="flex flex-col items-center gap-4">
-                {(note.videoLinks || []).map((v: any, index: number) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between w-full gap-2 border-b pb-2"
-                  >
-                    <div
-                      className="flex items-center gap-3 cursor-pointer"
-                      onClick={() => window.open(v.link)}
-                    >
-                      <FaYoutube className="text-purple-600" />
-                      <span className="truncate">{v.label}</span>
-                    </div>
-                    {mode === "edit" && (
-                      <div className="flex gap-">
-                        <Button variant="ghost" size="icon" className="cursor-pointer">
-                          <Pencil className="size-4 text-violet-600" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="cursor-pointer">
-                          <Trash2 className="size-4 text-destructive" />
-                        </Button>
-                      </div>
-                    )}
+          <CardTitle className="text-sm font-medium">{note.module}</CardTitle>
+        </div>
+        <div className="flex gap-1">
+          <Button size="icon" variant="outline" className="h-8 w-8">
+            <Pencil className="size-4" />
+          </Button>
+          <Button 
+            size="icon" 
+            variant="outline" 
+            className="h-8 w-8"
+            onClick={() => handleDelete(startIndex + index)}
+          >
+            <Trash2 className="size-4 text-destructive" />
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-2">
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="font-medium">Chapter:</div>
+          <div>{note.chapter}</div>
+          
+          <div className="font-medium">Created:</div>
+          <div>{note.dateCreated}</div>
+          
+          {note.videoLinks && note.videoLinks.length > 0 && (
+            <>
+              <div className="font-medium col-span-2 mt-2">Video Links:</div>
+              <div className="col-span-2">
+                {note.videoLinks.map((v: any, vIndex: number) => (
+                  <div key={vIndex} className="flex items-center gap-2 mb-1">
+                    <FaYoutube className="text-purple-600 flex-shrink-0" />
+                    <span className="truncate">{v.label}</span>
                   </div>
                 ))}
-
                 {mode === "edit" && (
-                  <AddLinkButton
-                    notesLinks={note.videoLinks || []}
-                    setNotesLinks={(newLinks) => updateNoteLinks(i, newLinks)}
-                  />
+                  <div className="mt-1">
+                    <AddLinkButton
+                      notesLinks={note.videoLinks || []}
+                      setNotesLinks={(newLinks) => updateNoteLinks(startIndex + index, newLinks)}
+                    />
+                  </div>
                 )}
               </div>
-            </TableCell>
-
-            {/* FILES */}
-            <TableCell>
-              <div className="flex flex-col items-center gap-4">
-                {(note.files || []).map((f: any, index: number) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between w-full gap-2 border-b pb-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="truncate max-w-40">{f}</span>
+            </>
+          )}
+          
+          {note.files && note.files.length > 0 && (
+            <>
+              <div className="font-medium col-span-2 mt-2">Files:</div>
+              <div className="col-span-2">
+                {note.files.map((f: any, fIndex: number) => {
+                  const ext = f.split(".").pop()?.toLowerCase() || "";
+                  const FileIcon: IconType = getIcon(ext);
+                  return (
+                    <div key={fIndex} className="flex items-center gap-2 mb-1">
+                      <FileIcon className="text-purple-600 flex-shrink-0" />
+                      <span className="truncate">{f}</span>
                     </div>
-                    {mode === "edit" && (
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="icon">
-                          <Pencil className="size-4 text-violet-600" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="size-4 text-destructive" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
                 {mode === "edit" && (
                   <Button size="sm" className="mt-2 bg-primary-bg">
                     Add File
                   </Button>
                 )}
               </div>
-            </TableCell>
+            </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 
-            {/* ROW ACTIONS */}
-            <TableCell>
-              <div className="flex justify-center gap-2">
-                <Button size="icon" variant="outline">
-                  <Pencil className="size-4" />
-                </Button>
-                <Button size="icon" variant="outline">
-                  <Trash2 className="size-4 text-destructive" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+  return (
+    <div className="space-y-4">
+      {/* Search and controls */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="relative w-full sm:w-auto">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by module, chapter or file..."
+            className="pl-8 w-full sm:w-[300px]"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={toggleSortDirection}
+            >
+              <Filter className="size-4" />
+              Sort by date {sortDirection === "asc" ? "↑" : "↓"}
+            </Button>
+            
+            {selectedRows.size > 0 && (
+              <Button 
+                variant="destructive"
+                onClick={handleBulkDelete}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="size-4" />
+                Delete ({selectedRows.size})
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop view table */}
+      <div className="hidden md:block overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="items-center text-base font-semibold">
+              <TableHead className="text-center w-12">
+                <Checkbox 
+                  checked={paginatedNotes.length > 0 && selectedRows.size === paginatedNotes.length}
+                  onCheckedChange={handleSelectAllChange}
+                />
+              </TableHead>
+              <TableHead className="text-center">Module</TableHead>
+              <TableHead className="text-center">Chapter</TableHead>
+              <TableHead className="text-center">
+                <div className="flex items-center justify-center gap-1">
+                  Date Created
+                </div>
+              </TableHead>
+              <TableHead className="text-center">Video Link</TableHead>
+              <TableHead className="text-center">Files</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {isCreating && (
+              <NewNoteForm
+                setIsCreating={setIsCreating}
+                createNewNote={createNewNote}
+              />
+            )}
+
+            {paginatedNotes.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8">
+                  No notes found. {searchTerm && "Try adjusting your search."}
+                </TableCell>
+              </TableRow>
+            ) : (
+              paginatedNotes.map((note, i) => (
+                <TableRow
+                  key={startIndex + i}
+                  className="text-center space-x-4 text-sm font-medium"
+                >
+                  <TableCell>
+                    <Checkbox 
+                      checked={selectedRows.has(startIndex + i)}
+                      onCheckedChange={() => handleRowCheckboxChange(startIndex + i)}
+                    />
+                  </TableCell>
+                  <TableCell>{note.module}</TableCell>
+                  <TableCell>{note.chapter}</TableCell>
+                  <TableCell>{note.dateCreated}</TableCell>
+
+                  <TableCell className="text-center truncate max-w-44">
+                    <div className="flex flex-col items-center gap-4">
+                      {(note.videoLinks || []).map((v: any, index: number) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between w-full gap-2 border-b pb-2"
+                        >
+                          <div
+                            className="flex items-center gap-3 cursor-pointer"
+                            onClick={() => window.open(v.link)}
+                          >
+                            <FaYoutube className="text-purple-600" />
+                            <span className="truncate">{v.label}</span>
+                          </div>
+                          {mode === "edit" && (
+                            <div className="flex gap-">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="cursor-pointer"
+                              >
+                                <Pencil className="size-4 text-violet-600" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="cursor-pointer"
+                              >
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+
+                      {mode === "edit" && (
+                        <AddLinkButton
+                          notesLinks={note.videoLinks || []}
+                          setNotesLinks={(newLinks) => updateNoteLinks(startIndex + i, newLinks)}
+                        />
+                      )}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="flex flex-col items-center gap-4">
+                      {(note.files || []).map((f: any, index: number) => {
+                        const ext = f.split(".").pop()?.toLowerCase() || "";
+                        const FileIcon: IconType = getIcon(ext);
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between w-full gap-2 border-b pb-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <FileIcon className="text-purple-600" />
+                              <span className="truncate max-w-40">{f}</span>
+                            </div>
+                            {mode === "edit" && (
+                              <div className="flex gap-1">
+                                <Button variant="ghost" size="icon">
+                                  <Pencil className="size-4 text-violet-600" />
+                                </Button>
+                                <Button variant="ghost" size="icon">
+                                  <Trash2 className="size-4 text-destructive" />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      {mode === "edit" && (
+                        <Button size="sm" className="mt-2 bg-primary-bg">
+                          Add File
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  {/* ROW ACTIONS */}
+                  <TableCell>
+                    <div className="flex justify-center gap-2">
+                      <Button size="icon" variant="outline">
+                        <Pencil className="size-4" />
+                      </Button>
+                      <Button 
+                        size="icon" 
+                        variant="outline"
+                        onClick={() => handleDelete(startIndex + i)}
+                      >
+                        <Trash2 className="size-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile view cards */}
+      <div className="md:hidden">
+        {isCreating && (
+          <Card className="mb-4">
+            <CardContent className="pt-4">
+              <NewNoteForm
+                setIsCreating={setIsCreating}
+                createNewNote={createNewNote}
+              />
+            </CardContent>
+          </Card>
+        )}
+        
+        {paginatedNotes.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p>No notes found. {searchTerm && "Try adjusting your search."}</p>
+          </Card>
+        ) : (
+          paginatedNotes.map((note, i) => renderMobileCard(note, i))
+        )}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+            
+            {getPageNumbers().map((page, i) => (
+              page === "ellipsis-start" || page === "ellipsis-end" ? (
+                <PaginationItem key={`ellipsis-${i}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              ) : (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(Number(page))}
+                    isActive={currentPage === page}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              )
+            ))}
+            
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="size-5 text-destructive" />
+              Confirm Deletion
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {itemsToDelete.length === 1 ? "this note" : `these ${itemsToDelete.length} notes`}? 
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

@@ -23,7 +23,7 @@ const AddLinkDialog = ({
   setLink: (link: string) => void;
   link: string;
   label: string;
-  createLink?: () => void;
+  createLink?: (label:string,url:string) => void;
 }) => {
   const onSave = () => {
     toast.success("Link added");

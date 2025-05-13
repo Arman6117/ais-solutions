@@ -1,4 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
+import { FaFileExcel, FaFilePdf, FaFilePowerpoint, FaFileWord } from "react-icons/fa";
+import { PiFileZip } from "react-icons/pi";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -22,4 +24,27 @@ export function formatCurrency(amount: number) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+export function getIcon(fileType:string) {
+  switch(fileType) {
+    case 'pdf':
+      FaFilePdf
+      break;
+    case 'docs':
+      FaFileWord
+      break;
+    case 'ppt':
+      FaFilePowerpoint
+      break;
+    case 'zip':
+      PiFileZip
+      break;
+    case 'pptx':
+      FaFilePowerpoint
+      break;
+    case 'csv':
+      FaFileExcel
+      break;
+  }
 }

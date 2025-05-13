@@ -32,8 +32,16 @@ const notesData = [
     chapter: "Introduction",
     dateCreated: "2025-04-01",
     videoLinks: [
-      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
-      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+      {
+        id: 1,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
+      {
+        id: 2,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
     ],
     files: ["intro.pdf", "welcome.zip"],
   },
@@ -43,8 +51,16 @@ const notesData = [
     chapter: "Getting Started",
     dateCreated: "2025-04-03",
     videoLinks: [
-      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
-      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+      {
+        id: 1,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
+      {
+        id: 2,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
     ],
     files: ["start-guide.docx"],
   },
@@ -54,8 +70,16 @@ const notesData = [
     chapter: "Variables & Types",
     dateCreated: "2025-04-05",
     videoLinks: [
-      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
-      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+      {
+        id: 1,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
+      {
+        id: 2,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
     ],
     files: ["types.pptx", "examples.zip"],
   },
@@ -65,8 +89,16 @@ const notesData = [
     chapter: "Functions",
     dateCreated: "2025-04-10",
     videoLinks: [
-      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
-      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+      {
+        id: 1,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
+      {
+        id: 2,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
     ],
     files: ["functions.pdf"],
   },
@@ -76,8 +108,16 @@ const notesData = [
     chapter: "Arrays & Loops",
     dateCreated: "2025-04-14",
     videoLinks: [
-      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
-      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+      {
+        id: 1,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
+      {
+        id: 2,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
     ],
     files: ["arrays-loops.docx"],
   },
@@ -87,8 +127,16 @@ const notesData = [
     chapter: "Final Project Setup",
     dateCreated: "2025-04-20",
     videoLinks: [
-      { id: 1, label: "Lecture note", link: "https://youtu.be/mno345" },
-      { id: 2, label: "Lecture note", link: "https://youtu.be/mno345" },
+      {
+        id: 1,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
+      {
+        id: 2,
+        label: "Lecture note",
+        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
+      },
     ],
     files: ["project-setup.zip"],
   },

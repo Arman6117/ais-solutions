@@ -10,36 +10,37 @@ import {
 import { Button } from "../ui/button";
 import AddLinkDialog from "./add-link-dialog";
 
-const AddLinkButton = ({
-  notesLinks,
-  setNotesLinks,
-}: {
+type AddLinkButtonProps = {
   notesLinks: any[];
   setNotesLinks: (links: any[]) => void;
-}) => {
-  const [linkLabel, setLinkLabel] = useState("");
+};
+
+const AddLinkButton = ({ notesLinks, setNotesLinks }: AddLinkButtonProps) => {
+  const [label, setLinkLabel] = useState("");
   const [link, setLink] = useState("");
-  //   const newLink = [{ linkLabel, link }];
+
   const createLink = () => {
-    const newLink = { linkLabel, link };
-    setNotesLinks([...notesLinks, newLink]); // <-- Triggers re-render
-    console.log("Added");
-    setLinkLabel(""); // Reset inputs if needed
+    if (!link || !label) return;
+    const newLink = { label, link };
+    setNotesLinks([...notesLinks, newLink]);
+    setLinkLabel("");
     setLink("");
   };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={"sm"} className="cursor-pointer my-2 bg-primary-bg">
+        <Button size="sm" className="my-2 bg-primary-bg">
           Add link
         </Button>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add a new Video link</DialogTitle>
+          <DialogTitle>Add a new video link</DialogTitle>
         </DialogHeader>
         <AddLinkDialog
-          label={linkLabel}
+          label={label}
           link={link}
           setLink={setLink}
           setLinkLabel={setLinkLabel}

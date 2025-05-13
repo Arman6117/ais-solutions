@@ -11,17 +11,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Calendar } from "../ui/calendar";
 import { Calendar as CalendarIcon, X, Plus, Save } from "lucide-react";
 import { format } from "date-fns";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import AddLinkDialog from "./add-link-dialog";
+import MobileNewNoteForm from "./mobile-new-note-form";
 
 const NewNoteForm = ({
   setIsCreating,
@@ -35,9 +38,11 @@ const NewNoteForm = ({
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [linkLabel, setLinkLabel] = useState("");
   const [link, setLink] = useState("");
-  const [videoLinks, setVideoLinks] = useState<Array<{ label: string; link: string }>>([]);
+  const [videoLinks, setVideoLinks] = useState<
+    Array<{ label: string; link: string }>
+  >([]);
   const [files, setFiles] = useState<Array<string>>(["a file"]);
-  
+
   const isMobileView = () => {
     if (typeof window !== "undefined") {
       return window.innerWidth < 768;
@@ -52,7 +57,7 @@ const NewNoteForm = ({
     }
 
     const formattedDate = date ? format(date, "MMM dd, yyyy") : "";
-    
+
     const newNote = {
       module: moduleName,
       chapter: chapterName,
@@ -77,143 +82,29 @@ const NewNoteForm = ({
     }
   };
 
-  // Mobile view (Card layout)
   if (isMobileView()) {
     return (
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle className="text-lg">Add New Note</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="moduleName" className="text-sm font-medium">Module Name</label>
-            <Input
-              id="moduleName"
-              placeholder="Enter module name"
-              value={moduleName}
-              onChange={(e) => setModuleName(e.target.value)}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="chapterName" className="text-sm font-medium">Chapter Name</label>
-            <Input
-              id="chapterName"
-              placeholder="Enter chapter name"
-              value={chapterName}
-              onChange={(e) => setChapterName(e.target.value)}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="date" className="text-sm font-medium">Date</label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="date"
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "MMM dd, yyyy") : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Video Links</label>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Plus className="mr-2 h-3 w-3" />
-                    Add Link
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add a new Video link</DialogTitle>
-                  </DialogHeader>
-                  <AddLinkDialog
-                    label={linkLabel}
-                    link={link}
-                    setLinkLabel={setLinkLabel}
-                    setLink={setLink}
-                    onAddLink={onAddLink}
-                  />
-                </DialogContent>
-              </Dialog>
-            </div>
-            
-            {videoLinks.length > 0 && (
-              <div className="space-y-2 border rounded-md p-2">
-                {videoLinks.map((videoLink, index) => (
-                  <div key={index} className="flex items-center justify-between text-sm border-b pb-2 last:border-0 last:pb-0">
-                    <span className="truncate max-w-60">{videoLink.label}</span>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6"
-                      onClick={() => {
-                        const newLinks = [...videoLinks];
-                        newLinks.splice(index, 1);
-                        setVideoLinks(newLinks);
-                      }}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Files</label>
-              <Button variant="outline" size="sm">
-                <Plus className="mr-2 h-3 w-3" />
-                Add File
-              </Button>
-            </div>
-            
-            {files.length > 0 && (
-              <div className="space-y-2 border rounded-md p-2">
-                {files.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between text-sm">
-                    <span className="truncate max-w-60">{file}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>
-            <Save className="mr-2 h-4 w-4" />
-            Save Note
-          </Button>
-        </CardFooter>
-      </Card>
+      <MobileNewNoteForm
+        chapterName={chapterName}
+        date={date}
+        files={files}
+        handleCancel={handleCancel}
+        handleSave={handleSave}
+        link={link}
+        linkLabel={linkLabel}
+        moduleName={moduleName}
+        setChapterName={setChapterName}
+        setDate={setDate}
+        setLink={setLink}
+        setLinkLabel={setLinkLabel}
+        setModuleName={setModuleName}
+        setVideoLinks={setVideoLinks}
+        videoLinks={videoLinks}
+        onAddLink={onAddLink}
+      />
     );
   }
 
-  // Desktop view (Table Row layout)
   return (
     <TableRow className="h-20 bg-muted/50">
       <TableCell className="text-center">
@@ -264,9 +155,9 @@ const NewNoteForm = ({
           {videoLinks.map((videoLink, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <span className="truncate max-w-32">{videoLink.label}</span>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-6 w-6"
                 onClick={() => {
                   const newLinks = [...videoLinks];

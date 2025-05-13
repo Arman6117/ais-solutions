@@ -23,26 +23,25 @@ const AddLinkDialog = ({
   createLink,
 }:AddLinkDialogProps) => {
   const handleSave = () => {
-    // Validate inputs
     if (!label.trim() || !link.trim()) {
       toast.error("Please enter both label and link");
       return;
     }
 
-    // If onAddLink is provided (for NewNoteForm), use it
+
     if (onAddLink) {
       onAddLink(label, link);
     }
 
-    // If createLink is provided (for existing notes), use it
+    
     if (createLink) {
       createLink();
     }
 
-    // Display success message
+
     toast.success("Link added");
 
-    // Reset the form fields if setters are provided
+
     if (setLinkLabel && setLink) {
       setLinkLabel("");
       setLink("");

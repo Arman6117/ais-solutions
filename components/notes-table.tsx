@@ -54,10 +54,19 @@ import {
   CardTitle,
 } from "./ui/card";
 import { FaYoutube } from "react-icons/fa";
-import { ChevronDown, Pencil, Trash2, Search, Filter, AlertTriangle } from "lucide-react";
+import {
+  ChevronDown,
+  Pencil,
+  Trash2,
+  Search,
+  Filter,
+  AlertTriangle,
+} from "lucide-react";
 import { getIcon } from "@/lib/utils";
 import { IconType } from "react-icons/lib";
 import { ScrollArea } from "./ui/scroll-area";
+import MobileCardView from "./batch-components/mobile-card-view";
+import DeleteConfirmationDialog from "./batch-components/delete-confirmation-dialog";
 
 type NotesTableProps = {
   mode: "view" | "edit";
@@ -86,36 +95,41 @@ const NotesTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
-  
+
   const router = useRouter();
-  
+
   // Calculate pagination
   const totalPages = Math.ceil(filteredNotes.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedNotes = filteredNotes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedNotes = filteredNotes.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     // Filter and sort notes whenever dependencies change
     let result = [...noteList];
-    
+
     // Apply search filter
     if (searchTerm) {
-      result = result.filter(note => 
-        note.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        note.chapter.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (note.files && note.files.some((file: string) => 
-          file.toLowerCase().includes(searchTerm.toLowerCase())
-        ))
+      result = result.filter(
+        (note) =>
+          note.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          note.chapter.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (note.files &&
+            note.files.some((file: string) =>
+              file.toLowerCase().includes(searchTerm.toLowerCase())
+            ))
       );
     }
-    
+
     // Apply sorting by date
     result = result.sort((a, b) => {
       const dateA = new Date(a.dateCreated).getTime();
       const dateB = new Date(b.dateCreated).getTime();
       return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
     });
-    
+
     setFilteredNotes(result);
     setCurrentPage(1); // Reset to first page on filter/sort change
   }, [noteList, searchTerm, sortDirection]);
@@ -167,7 +181,9 @@ const NotesTable = ({
   };
 
   const confirmDelete = () => {
-    const newNotes = noteList.filter((_, index) => !itemsToDelete.includes(index));
+    const newNotes = noteList.filter(
+      (_, index) => !itemsToDelete.includes(index)
+    );
     setNoteList(newNotes);
     setSelectedRows(new Set());
     setDeleteDialogOpen(false);
@@ -181,122 +197,48 @@ const NotesTable = ({
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
-    
+
     if (totalPages <= maxPagesToShow) {
       // Show all pages if total pages are less than max to show
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Always show first page
       pages.push(1);
-      
-      // Calculate range around current page
+
       const startPage = Math.max(2, currentPage - 1);
       const endPage = Math.min(totalPages - 1, currentPage + 1);
-      
-      // Add ellipsis after first page if needed
+
       if (startPage > 2) {
         pages.push("ellipsis-start");
       }
-      
-      // Add pages around current page
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
-      
-      // Add ellipsis before last page if needed
+
       if (endPage < totalPages - 1) {
         pages.push("ellipsis-end");
       }
-      
-      // Always show last page
+
       pages.push(totalPages);
     }
-    
+
     return pages;
   };
 
   // Mobile view card renderer for each note
   const renderMobileCard = (note: any, index: number) => (
-    <Card key={startIndex + index} className="mb-4">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="flex items-center gap-2">
-          <Checkbox 
-            checked={selectedRows.has(startIndex + index)}
-            onCheckedChange={() => handleRowCheckboxChange(startIndex + index)}
-          />
-          <CardTitle className="text-sm font-medium">{note.module}</CardTitle>
-        </div>
-        <div className="flex gap-1">
-          <Button size="icon" variant="outline" className="h-8 w-8">
-            <Pencil className="size-4" />
-          </Button>
-          <Button 
-            size="icon" 
-            variant="outline" 
-            className="h-8 w-8"
-            onClick={() => handleDelete(startIndex + index)}
-          >
-            <Trash2 className="size-4 text-destructive" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-2">
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="font-medium">Chapter:</div>
-          <div>{note.chapter}</div>
-          
-          <div className="font-medium">Created:</div>
-          <div>{note.dateCreated}</div>
-          
-          {note.videoLinks && note.videoLinks.length > 0 && (
-            <>
-              <div className="font-medium col-span-2 mt-2">Video Links:</div>
-              <div className="col-span-2">
-                {note.videoLinks.map((v: any, vIndex: number) => (
-                  <div key={vIndex} className="flex items-center gap-2 mb-1">
-                    <FaYoutube className="text-purple-600 flex-shrink-0" />
-                    <span className="truncate">{v.label}</span>
-                  </div>
-                ))}
-                {mode === "edit" && (
-                  <div className="mt-1">
-                    <AddLinkButton
-                      notesLinks={note.videoLinks || []}
-                      setNotesLinks={(newLinks) => updateNoteLinks(startIndex + index, newLinks)}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-          
-          {note.files && note.files.length > 0 && (
-            <>
-              <div className="font-medium col-span-2 mt-2">Files:</div>
-              <div className="col-span-2">
-                {note.files.map((f: any, fIndex: number) => {
-                  const ext = f.split(".").pop()?.toLowerCase() || "";
-                  const FileIcon: IconType = getIcon(ext);
-                  return (
-                    <div key={fIndex} className="flex items-center gap-2 mb-1">
-                      <FileIcon className="text-purple-600 flex-shrink-0" />
-                      <span className="truncate">{f}</span>
-                    </div>
-                  );
-                })}
-                {mode === "edit" && (
-                  <Button size="sm" className="mt-2 bg-primary-bg">
-                    Add File
-                  </Button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+    <MobileCardView
+      handleDelete={handleDelete}
+      handleRowCheckboxChange={handleRowCheckboxChange}
+      index={index}
+      mode={mode}
+      note={note}
+      selectedRows={selectedRows}
+      startIndex={startIndex}
+      updateNoteLinks={updateNoteLinks}
+    />
   );
 
   return (
@@ -312,7 +254,7 @@ const NotesTable = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <div className="flex gap-2">
             <Button
@@ -323,9 +265,9 @@ const NotesTable = ({
               <Filter className="size-4" />
               Sort by date {sortDirection === "asc" ? "↑" : "↓"}
             </Button>
-            
+
             {selectedRows.size > 0 && (
-              <Button 
+              <Button
                 variant="destructive"
                 onClick={handleBulkDelete}
                 className="flex items-center gap-2"
@@ -344,8 +286,11 @@ const NotesTable = ({
           <TableHeader>
             <TableRow className="items-center text-base font-semibold">
               <TableHead className="text-center w-12">
-                <Checkbox 
-                  checked={paginatedNotes.length > 0 && selectedRows.size === paginatedNotes.length}
+                <Checkbox
+                  checked={
+                    paginatedNotes.length > 0 &&
+                    selectedRows.size === paginatedNotes.length
+                  }
                   onCheckedChange={handleSelectAllChange}
                 />
               </TableHead>
@@ -383,9 +328,11 @@ const NotesTable = ({
                   className="text-center space-x-4 text-sm font-medium"
                 >
                   <TableCell>
-                    <Checkbox 
+                    <Checkbox
                       checked={selectedRows.has(startIndex + i)}
-                      onCheckedChange={() => handleRowCheckboxChange(startIndex + i)}
+                      onCheckedChange={() =>
+                        handleRowCheckboxChange(startIndex + i)
+                      }
                     />
                   </TableCell>
                   <TableCell>{note.module}</TableCell>
@@ -430,7 +377,9 @@ const NotesTable = ({
                       {mode === "edit" && (
                         <AddLinkButton
                           notesLinks={note.videoLinks || []}
-                          setNotesLinks={(newLinks) => updateNoteLinks(startIndex + i, newLinks)}
+                          setNotesLinks={(newLinks) =>
+                            updateNoteLinks(startIndex + i, newLinks)
+                          }
                         />
                       )}
                     </div>
@@ -477,8 +426,8 @@ const NotesTable = ({
                       <Button size="icon" variant="outline">
                         <Pencil className="size-4" />
                       </Button>
-                      <Button 
-                        size="icon" 
+                      <Button
+                        size="icon"
                         variant="outline"
                         onClick={() => handleDelete(startIndex + i)}
                       >
@@ -505,7 +454,7 @@ const NotesTable = ({
             </CardContent>
           </Card>
         )}
-        
+
         {paginatedNotes.length === 0 ? (
           <Card className="p-8 text-center">
             <p>No notes found. {searchTerm && "Try adjusting your search."}</p>
@@ -520,13 +469,17 @@ const NotesTable = ({
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious 
+              <PaginationPrevious
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === 1
+                    ? "pointer-events-none cursor-pointer opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
-            
-            {getPageNumbers().map((page, i) => (
+
+            {getPageNumbers().map((page, i) =>
               page === "ellipsis-start" || page === "ellipsis-end" ? (
                 <PaginationItem key={`ellipsis-${i}`}>
                   <PaginationEllipsis />
@@ -541,12 +494,18 @@ const NotesTable = ({
                   </PaginationLink>
                 </PaginationItem>
               )
-            ))}
-            
+            )}
+
             <PaginationItem>
-              <PaginationNext 
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              <PaginationNext
+                onClick={() =>
+                  setCurrentPage(Math.min(totalPages, currentPage + 1))
+                }
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none cursor-pointer opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>
@@ -554,28 +513,12 @@ const NotesTable = ({
       )}
 
       {/* Delete confirmation dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="size-5 text-destructive" />
-              Confirm Deletion
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete {itemsToDelete.length === 1 ? "this note" : `these ${itemsToDelete.length} notes`}? 
-              This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteConfirmationDialog 
+        confirmDelete={confirmDelete}
+        deleteDialogOpen={deleteDialogOpen}
+        itemsToDelete={itemsToDelete}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+      />
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import { IoBookOutline } from "react-icons/io5";
-import { LuFileStack, LuLayoutDashboard } from "react-icons/lu";
+import { LuFileStack, LuLayoutDashboard, LuSchool } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
 import { Course, DummyBatches, DummyInstructors, DummyStudent} from "./types";
+
 
 export const adminSidebarLinks = [
   {
@@ -14,6 +15,11 @@ export const adminSidebarLinks = [
     label: "Courses",
     link: "/admin/courses",
     icon: IoBookOutline,
+  },
+  {
+    label: "All Batches",
+    link: "/admin/all-batches",
+    icon: LuSchool,
   },
   {
     label: "Modules",

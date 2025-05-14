@@ -213,6 +213,7 @@ const NotesTable = ({
       selectedRows={selectedRows}
       startIndex={startIndex}
       updateNoteLinks={updateNoteLinks}
+      key={index}
     />
   );
 

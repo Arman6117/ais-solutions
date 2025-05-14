@@ -60,4 +60,13 @@ export type DummyStudent = {
   feesRemaining: number;
 };
 
-
+export type DummyModules = {
+  id: string;
+  name: string;
+  createdAt: string;
+  course: string[];
+  price: number;
+  discount: number;
+  offerPrice: number;
+  rating: number;
+};

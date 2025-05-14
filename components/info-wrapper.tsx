@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 
-const BatchInfoWrapper = ({
+const InfoWrapper = ({
   children,
   label,
   className,
@@ -19,11 +19,11 @@ const BatchInfoWrapper = ({
         {icon && <span className="mr-2">{icon}</span>}
         {label}
       </h1>
-      <div className="bg-graient-to-r from-indigo-50 to-purple-50 rounded-lg p-5 border--4 border-indigo-500 shadow-sm transition-all hover:shadow-md">
+      <div className="  rounded-lg p-5  border-indigo-500 shadow-sm transition-all hover:shadow-md">
         <span className="text-xl font-semibold text-gray-800">{children}</span>
       </div>
     </div>
   );
 };
 
-export default BatchInfoWrapper;
+export default InfoWrapper;

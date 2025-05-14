@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import BatchInfoWrapper from "@/components/batch-components/btach-info-wrapper";
+import InfoWrapper from "@/components/info-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import BatchStudentTable from "./batch-student-table";
@@ -174,13 +174,13 @@ const BatchDetails = ({
               <div className="flex flex-col gap-14">
                 {mode === "view" ? (
                   <>
-                    <BatchInfoWrapper
+                    <InfoWrapper
                       className="max-w-full"
                       label="Name"
                       icon={<Users className="text-indigo-600" size={20} />}
                     >
                       {name}
-                    </BatchInfoWrapper>
+                    </InfoWrapper>
                   </>
                 ) : (
                   <EditBatchInfo
@@ -198,19 +198,19 @@ const BatchDetails = ({
                 {/* <div className="grid md:grid-cols-2 gap-7"> */}
                 {mode === "view" ? (
                   <div className="grid md:grid-cols-2 gap-7">
-                    <BatchInfoWrapper
+                    <InfoWrapper
                       label="Start Date"
                       icon={<Calendar className="text-indigo-600" size={20} />}
                     >
                       {formatDate(startDate)}
-                    </BatchInfoWrapper>
+                    </InfoWrapper>
 
-                    <BatchInfoWrapper
+                    <InfoWrapper
                       label="End Date"
                       icon={<Calendar className="text-indigo-600" size={20} />}
                     >
                       {formatDate(endDate)}
-                    </BatchInfoWrapper>
+                    </InfoWrapper>
                   </div>
                 ) : (
                   <div className="grid md:grid-cols-2 gap-7">

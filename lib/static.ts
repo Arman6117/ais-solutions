@@ -376,3 +376,79 @@ export const dummyStudents: DummyStudent[] = [
     feesRemaining: 7500,
   }
 ];
+
+
+export const coursesWithBatches = [
+  {
+    id: 1,
+    name: "Web Development",
+    batches: [
+      {
+        id: 101,
+        name: "Cohort A",
+        startDate: "2025-06-01",
+        endDate: "2025-08-30",
+        studentsCount: 24,
+        instructor: "Sarah Johnson",
+        status: "Ongoing", // Current date is between start and end
+      },
+      {
+        id: 102,
+        name: "Cohort B",
+        startDate: "2025-07-15",
+        endDate: "2025-10-15",
+        studentsCount: 18,
+        instructor: "Michael Chen",
+        status: "Upcoming", // Current date is before start
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Data Science",
+    batches: [
+      {
+        id: 201,
+        name: "Evening Batch",
+        startDate: "2025-05-10",
+        endDate: "2025-08-10",
+        studentsCount: 15,
+        instructor: "Alex Rivera",
+        status: "Ongoing",
+      },
+      {
+        id: 202,
+        name: "Weekend Batch",
+        startDate: "2025-06-05",
+        endDate: "2025-09-05",
+        studentsCount: 22,
+        instructor: "Priya Patel",
+        status: "Upcoming",
+      },
+      {
+        id: 203,
+        name: "Morning Batch",
+        startDate: "2024-05-20",
+        endDate: "2024-08-20",
+        studentsCount: 20,
+        instructor: "David Kim",
+        status: "Completed", // Current date is after end
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "UX/UI Design",
+    batches: [
+      {
+        id: 301,
+        name: "Summer Batch",
+        startDate: "2024-06-15",
+        endDate: "2024-09-15",
+        studentsCount: 16,
+        instructor: "Emma Watson",
+        status: "Completed",
+      },
+    ],
+  },
+];

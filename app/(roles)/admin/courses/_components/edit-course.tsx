@@ -209,11 +209,11 @@ const EditCourse = ({ course }: EditCourseProps) => {
 
             <Separator className="my-6" />
 
-            <CourseInstructorsCards mode={mode}instructors={instructors} />
+            <CourseInstructorsCards mode={'edit'} label="Course" instructors={instructors} />
             <Separator className="my-6" />
 
             <div>
-              <CourseBatchesCards batches={batches} />
+              <CourseBatchesCards  mode="edit" courseId="" batches={batches} />
             </div>
           </CardContent>
         </Card>
@@ -239,9 +239,9 @@ const EditCourse = ({ course }: EditCourseProps) => {
           </CardContent>
         </Card>
 
-        <CourseModulesCard modules={course.modules} />
+        <CourseModulesCard mode="edit" name="Course" modules={course.modules} />
 
-        <CourseStatusCard batches={batches} course={course} />
+        <CourseStatusCard name="Course" batches={batches} course={course} />
       </div>
     </div>
   );

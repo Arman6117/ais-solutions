@@ -27,7 +27,7 @@ const CourseBatchesCards = ({
             className="flex items-center gap-1 cursor-pointer bg-primary-bg hover:bg-primary-bg/90"
           >
             <Link href={`/admin/courses/${courseId}/create-batch`}>
-              {/* //TODO:Add batch page */}
+
               <Plus size={16} /> Add Batch
             </Link>
           </Button>

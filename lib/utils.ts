@@ -48,3 +48,37 @@ export function getIcon(fileType: string): IconType {
       return FaFileAlt;
   }
 }
+
+  // Status color mapping
+  export function getStatusColor(status: string){
+    switch (status) {
+      case "Ongoing":
+        return {
+          bg: "bg-green-50",
+          text: "text-green-700",
+          border: "border-green-200",
+          dot: "bg-green-600",
+        };
+      case "Completed":
+        return {
+          bg: "bg-blue-50",
+          text: "text-blue-700",
+          border: "border-blue-200",
+          dot: "bg-blue-600",
+        };
+      case "Upcoming":
+        return {
+          bg: "bg-amber-50",
+          text: "text-amber-700",
+          border: "border-amber-200",
+          dot: "bg-amber-600",
+        };
+      default:
+        return {
+          bg: "bg-gray-50",
+          text: "text-gray-700",
+          border: "border-gray-200",
+          dot: "bg-gray-600",
+        };
+    }
+  };

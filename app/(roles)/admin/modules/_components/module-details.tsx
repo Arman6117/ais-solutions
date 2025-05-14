@@ -1,15 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
-import { DummyModules } from "@/lib/types";
-import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { PencilIcon, RefreshCcw, Save, Users, X } from "lucide-react";
-import ModuleInfoWrapper from "./module-info-wrapper";
+
 import InfoWrapper from "@/components/info-wrapper";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+
+import { cn } from "@/lib/utils";
+import { DummyModules } from "@/lib/types";
+
+import { PencilIcon, RefreshCcw, Save, Users, X } from "lucide-react";
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };

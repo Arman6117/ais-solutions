@@ -2,8 +2,7 @@ import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard, LuSchool } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyStudent} from "./types";
-
+import { Course, DummyBatches, DummyInstructors, DummyStudent } from "./types";
 
 export const adminSidebarLinks = [
   {
@@ -238,27 +237,30 @@ export const dummyInstructors: DummyInstructors[] = [
     id: 1,
     name: "John Doe",
     role: "Lead Instructor",
-    avatar: "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=2266&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    avatar:
+      "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=2266&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     email: "john@example.com",
   },
   {
     id: 2,
     name: "Jane Smith",
     role: "Assistant Instructor",
-    avatar: "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=2266&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    avatar:
+      "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=2266&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     email: "jane@example.com",
   },
   {
     id: 3,
     name: "Robert Johnson",
     role: "Teaching Assistant",
-    avatar: "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=2266&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    avatar:
+      "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=2266&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     email: "robert@example.com",
   },
 ];
 export const dummyBatches: DummyBatches[] = [
   {
-    id: '1',
+    id: "1",
     name: "Morning Batch",
     schedule: "Mon-Wed-Fri",
     time: "9:00 AM - 11:00 AM",
@@ -374,9 +376,8 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 7500,
     feesRemaining: 7500,
-  }
+  },
 ];
-
 
 export const coursesWithBatches = [
   {
@@ -450,5 +451,45 @@ export const coursesWithBatches = [
         status: "Completed",
       },
     ],
+  },
+];
+
+export const dummyModules = [
+ 
+  {
+    id: "1",
+    name: "Module 1",
+    createdAt: "2024-06-15",
+    course: ["Course 1", "Course 2"],
+    price: 1000,
+    discount: 10,
+    offerPrice: 900,
+  },
+  {
+    id: "2",
+    name: "Module 2",
+    createdAt: "2024-06-15",
+    course: ["Course 1", "Course 2"],
+    price: 1000,
+    discount: 10,
+    offerPrice: 900,
+  },
+  {
+    id: "3",
+    name: "Module 3",
+    createdAt: "2024-06-15",
+    course: ["Course 1", "Course 2"],
+    price: 6000,
+    discount: 10,
+    offerPrice: 5900,
+  },
+  {
+    id: "4",
+    name: "Module 1",
+    createdAt: "2024-06-15",
+    course: ["Course 1", "Course 2"],
+    price: 5000,
+    discount: 10,
+    offerPrice: 4900,
   },
 ];

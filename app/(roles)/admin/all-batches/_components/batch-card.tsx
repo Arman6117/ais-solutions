@@ -16,7 +16,7 @@ type BatchCardProps = {
 const BatchCard = ({ batch, courseId }: BatchCardProps) => {
   const statusColor = getStatusColor(batch.status);
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 mb-4 hover:shadow-lg transition-shadow duration-200">
+    <div className="bg-white rounded-lg shadow-md p-5 mb-4 hover:border-violet-300 hover:scale-102 hover:shadow-lg hover:shadow-violet-100 duration-200">
       <div className="flex gap-10 items-start mb-4">
         <h3 className="text-lg font-semibold text-gray-800">{batch.name}</h3>
         <Badge

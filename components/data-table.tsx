@@ -40,7 +40,7 @@ type DataTableProps<T> = {
   onDeleteSelected: (selectedIds: string[]) => void;
   getRowId: (row: T) => string;
   href: string;
-  openDialog: (item: T) => void;
+  openDialog?: (item: T) => void;
 };
 
 export function DataTable<T>({

@@ -115,6 +115,8 @@ const columns: Column<(typeof dummyModules)[0]>[] = [
 const filterOptions: FilterOption[] = [
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
+  { value: "rating-asc", label: "Rating: Low to High" },
+  { value: "rating-desc", label: "Rating: High to Low" },
   { value: "name-asc", label: "Name (A-Z)" },
   { value: "name-desc", label: "Name (Z-A)" },
 ];
@@ -134,7 +136,7 @@ export default function ModulesDataTable() {
         filterOptions={filterOptions}
         onDeleteSelected={handleDeleteSelected}
         getRowId={(row) => row.id}
-        href={`/admin/courses/module-details/`}
+        href={`/admin/modules/module-details/`}
       />
     </>
   );

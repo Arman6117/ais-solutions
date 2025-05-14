@@ -1,5 +1,5 @@
 import React from 'react'
-import ModulesTable from './modules-table'
+import ModulesTable from './_components/modules-table'
 
 const ModulesPage = () => {
   return (

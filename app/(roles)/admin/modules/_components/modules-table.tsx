@@ -1,6 +1,7 @@
 "use client";
 import { DataTable } from "@/components/data-table";
 import { Column, FilterOption } from "@/lib/types";
+import { format } from "date-fns";
 import { BookOpen, Star } from "lucide-react";
 import { PiStarFill } from "react-icons/pi";
 
@@ -96,6 +97,11 @@ const columns: Column<(typeof dummyModules)[0]>[] = [
     id: "offerPrice",
     header: "Offer Price",
     accessor: (row) => `₹${row.offerPrice}`,
+  },
+  {
+    id: "createdAt",
+    header: "Date Created",
+    accessor: (row) => format(row.createdAt, "PP")
   },
   {
     id: "rating",

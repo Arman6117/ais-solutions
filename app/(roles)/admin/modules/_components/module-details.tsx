@@ -10,8 +10,18 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DummyModules } from "@/lib/types";
 
-import { PencilIcon, RefreshCcw, Save, Users, X,BadgeIndianRupeeIcon,PercentCircle } from "lucide-react";
+import {
+  PencilIcon,
+  RefreshCcw,
+  Save,
+  Users,
+  X,
+  BadgeIndianRupeeIcon,
+  PercentCircle,
+  BookOpen,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import ModuleCoursesCard from "./module-courses-cards";
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };
@@ -133,7 +143,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
           <CardContent className="p-8 space-y-6">
             <div className="flex flex-col gap-14">
               {mode === "view" ? (
-               < >
+                <>
                   <InfoWrapper
                     className="max-w-full"
                     label="Name"
@@ -143,37 +153,56 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                   </InfoWrapper>
                 </>
               ) : null}
-              {mode ==='view' ? (
+              {mode === "view" ? (
                 <div className="grid md:grid-cols-2 gap-7">
-
-                <InfoWrapper
-                icon={<BadgeIndianRupeeIcon className="text-indigo-600" size={20} />}
-                label="Price"
-                >
-                  {price}
-                </InfoWrapper>
-                <InfoWrapper
-                icon={<PercentCircle className="text-indigo-600" size={20} />}
-                label="Discount"
-                >
-                  {discount}%
-                </InfoWrapper>
-                <InfoWrapper
-                icon={<BadgeIndianRupeeIcon className="text-indigo-600" size={20} />}
-                label="Offer Price"
-                >
-                  {offerPrice}
-                </InfoWrapper>
-                  </div>
-                  
-              ):null}
+                  <InfoWrapper
+                    icon={
+                      <BadgeIndianRupeeIcon
+                        className="text-indigo-600"
+                        size={20}
+                      />
+                    }
+                    label="Price"
+                  >
+                    {price}
+                  </InfoWrapper>
+                  <InfoWrapper
+                    icon={
+                      <PercentCircle className="text-indigo-600" size={20} />
+                    }
+                    label="Discount"
+                  >
+                    {discount}%
+                  </InfoWrapper>
+                  <InfoWrapper
+                    icon={
+                      <BadgeIndianRupeeIcon
+                        className="text-indigo-600"
+                        size={20}
+                      />
+                    }
+                    label="Offer Price"
+                  >
+                    {offerPrice}
+                  </InfoWrapper>
+                </div>
+              ) : null}
             </div>
             <Separator />
             {mode === "view" ? (
-              <div className="grid md:grid-cols-2 gap-7">
-                
+              <div className="flex w-full flex-col gap-6">
+                <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
+                  <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
+                  <BookOpen className="text-indigo-600 mr-2" size={20} />
+                  Courses
+                </h1>
+                <ModuleCoursesCard
+                  // mode={mode}
+                  courses={courses}
+                  // itemsPerPage={4}
+                />
               </div>
-            ) :null}
+            ) : null}
           </CardContent>
         </Card>
       </div>

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { DummyModules } from "@/lib/types";
 
 import { PencilIcon, RefreshCcw, Save, Users, X,BadgeIndianRupeeIcon,PercentCircle } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };
@@ -39,6 +40,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   //   const [description, setDescription] = useState(module.description || "");
   const [price, setPrice] = useState(module.price || 0);
   const [discount, setDiscount] = useState(module.discount || 0);
+  const [courses, setCourses] = useState(module.course || []);
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100 || 0
   );
@@ -166,8 +168,9 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                   
               ):null}
             </div>
+            <Separator />
             {mode === "view" ? (
-              <div>
+              <div className="grid md:grid-cols-2 gap-7">
                 
               </div>
             ) :null}

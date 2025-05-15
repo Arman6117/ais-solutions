@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DummyModules } from "@/lib/types";
 
-import { PencilIcon, RefreshCcw, Save, Users, X } from "lucide-react";
+import { PencilIcon, RefreshCcw, Save, Users, X,BadgeIndianRupeeIcon,PercentCircle } from "lucide-react";
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };
@@ -131,7 +131,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
           <CardContent className="p-8 space-y-6">
             <div className="flex flex-col gap-14">
               {mode === "view" ? (
-                <>
+               < >
                   <InfoWrapper
                     className="max-w-full"
                     label="Name"
@@ -141,7 +141,36 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                   </InfoWrapper>
                 </>
               ) : null}
+              {mode ==='view' ? (
+                <div className="grid md:grid-cols-2 gap-7">
+
+                <InfoWrapper
+                icon={<BadgeIndianRupeeIcon className="text-indigo-600" size={20} />}
+                label="Price"
+                >
+                  {price}
+                </InfoWrapper>
+                <InfoWrapper
+                icon={<PercentCircle className="text-indigo-600" size={20} />}
+                label="Discount"
+                >
+                  {discount}%
+                </InfoWrapper>
+                <InfoWrapper
+                icon={<BadgeIndianRupeeIcon className="text-indigo-600" size={20} />}
+                label="Offer Price"
+                >
+                  {offerPrice}
+                </InfoWrapper>
+                  </div>
+                  
+              ):null}
             </div>
+            {mode === "view" ? (
+              <div>
+                
+              </div>
+            ) :null}
           </CardContent>
         </Card>
       </div>

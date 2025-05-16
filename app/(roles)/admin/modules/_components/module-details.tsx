@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import ModuleCoursesCard from "./module-courses-cards";
+import ModuleChapters from "./module-chapters";
+import { dummyChapters } from "@/lib/static";
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };
@@ -54,6 +56,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100 || 0
   );
+  const [chapter, setChapter] = useState(dummyChapters || []);
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -189,24 +192,14 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
               ) : null}
             </div>
             <Separator />
-            {mode === "view" ? (
-              <div className="flex w-full flex-col gap-6  ">
-                <div className="flex w-full flex-col px-3 py-5 rounded-lg bg-primary-bg text-white">
+            <ModuleChapters mode={mode} chapter={chapter} />
+            <Separator />
 
-                <h1 className="text-2xl font-bold  mb-2 flex items-center">
-                  <div className="w-1 h-6 bg-white rounded-full mr-2"></div>
-                  <BookOpen className="mr-2" size={26} />
-                  Course Usage
-                </h1>
-                <p className="text-sm text-neutral-300">The following courses include this module</p>
-                </div>
-                <ModuleCoursesCard
-                  // mode={mode}
-                  courses={courses}
-                  // itemsPerPage={4}
-                />
-              </div>
-            ) : null}
+            <ModuleCoursesCard
+              // mode={mode}
+              courses={courses}
+              // itemsPerPage={4}
+            />
           </CardContent>
         </Card>
       </div>

@@ -50,9 +50,6 @@ type ModuleChaptersProps = {
 };
 
 const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
- 
-
-  
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="flex w-full flex-col px-3 py-5 rounded-lg bg-primary-bg text-white">
@@ -123,10 +120,7 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
 
                     <TabsContent value="notes" className="mt-0">
                       <div className="flex flex-col gap-4">
-                       <ModuleChapterNotesFiles
-                         mode = {mode}
-                         chap={chap}
-                       />
+                        <ModuleChapterNotesFiles mode={mode} chap={chap} />
                       </div>
                     </TabsContent>
                   </Tabs>
@@ -134,7 +128,7 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
               </div>
             </AccordionContent>
           </AccordionItem>
-          <Separator className="my-1" />
+          {/* <Separator className="my-1" /> */}
         </Accordion>
       ))}
 

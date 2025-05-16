@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getLevelColor, getModeColor } from "@/lib/utils";
 import {
@@ -13,7 +12,7 @@ import {
 import Link from "next/link";
 import React from "react";
 
-// Extended type with more course information
+
 type ModuleCourseCardProps = {
   course: {
     id: string;
@@ -32,7 +31,7 @@ type ModuleCourseCardProps = {
 const ModuleCourseCard = ({ course }: ModuleCourseCardProps) => {
   return (
     <div className="bg-white rounded-lg shadow-md w-72 overflow-hidden transition-all hover:shadow-lg hover:translate-y-1 duration-300 border border-gray-100">
-      {/* Card Header with Course Title */}
+      
       <div className="flex w-full justify-between p-4 rounded-t-lg bg-primary-bg">
         <h1 className="text-xl text-white font-medium line-clamp-1">
           {course.title}
@@ -42,11 +41,11 @@ const ModuleCourseCard = ({ course }: ModuleCourseCardProps) => {
           asChild
           className="bg-white text-primary-bg hover:bg-gray-100 hover:text-primary-bg"
         >
-          <Link href={`/courses/${course.id}`}>View</Link>
+          <Link href={`/admin/courses/course-details/${course.id}?mode=view`}>View</Link>
         </Button>
       </div>
 
-      {/* Course Mode Badge */}
+      
       <div className="px-4 pt-3">
         <div className="flex items-center gap-2">
           <span

@@ -138,8 +138,8 @@ const ModuleCoursesCards = ({ courses }: ModuleCoursesCardsProps) => {
             </CarouselItem>
           )}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="ml-10 rounded-lg cursor-pointer  hover:border-violet-300 hover:bg-violet-50" />
+        <CarouselNext className="mr-10 rounded-lg cursor-pointer hover:border-violet-300 hover:bg-violet-50" />
       </Carousel>
                 </div>
     </div>

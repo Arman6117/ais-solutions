@@ -190,7 +190,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
             </div>
             <Separator />
             {mode === "view" ? (
-              <div className="flex w-full flex-col gap-6">
+              <div className="flex w-full flex-col gap-6  ">
                 <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
                   <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
                   <BookOpen className="text-indigo-600 mr-2" size={20} />

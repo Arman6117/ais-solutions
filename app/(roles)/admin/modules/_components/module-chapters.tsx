@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ModuleChapterVideoLinks from "./module-chapter-video-links";
+import ModuleChapterNotesFiles from "./module-chapter-notes-files";
 
 type VideoLink = {
   id: string;
@@ -49,14 +50,9 @@ type ModuleChaptersProps = {
 };
 
 const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
-  const handleFileChange = (fileId: string) => {
-    console.log(`Changing file with ID: ${fileId}`);
-  };
+ 
 
-  const handleFileDelete = (fileId: string) => {
-    console.log(`Deleting file with ID: ${fileId}`);
-  };
-
+  
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="flex w-full flex-col px-3 py-5 rounded-lg bg-primary-bg text-white">
@@ -127,87 +123,10 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
 
                     <TabsContent value="notes" className="mt-0">
                       <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-2">
-                          <FileText className="text-primary-bg" />
-                          <span className="text-lg font-semibold">
-                            Lecture Notes
-                          </span>
-                        </div>
-
-                        <div className="ml-8">
-                          {chap.files && chap.files.length > 0 ? (
-                            <div className="border rounded-lg overflow-hidden">
-                              <div className="grid grid-cols-12 bg-gray-50 p-3 border-b font-medium text-gray-600">
-                                <div className="col-span-7 flex items-center">
-                                  File Name
-                                </div>
-                                <div className="col-span-2">Size</div>
-                                <div className="col-span-3">Actions</div>
-                              </div>
-
-                              {chap.files.map((file, index) => (
-                                <div
-                                  key={index}
-                                  className="grid grid-cols-12 p-3 border-b last:border-b-0 hover:bg-gray-50"
-                                >
-                                  <div className="col-span-7 flex items-center">
-                                    <File className="mr-2 h-4 w-4 text-gray-500" />
-                                    <span className="font-medium truncate">
-                                      {file.fileName}
-                                    </span>
-                                  </div>
-                                  <div className="col-span-2 flex items-center text-sm text-gray-500">
-                                    {file.fileSize || "-"}
-                                  </div>
-                                  <div className="col-span-3 flex items-center gap-1">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-8 w-8 p-0 rounded-full text-blue-600 hover:bg-blue-50"
-                                      onClick={() =>
-                                        window.open(file.downloadUrl, "_blank")
-                                      }
-                                      title="Download"
-                                    >
-                                      <Download size={16} />
-                                    </Button>
-
-                                    {mode === "edit" && (
-                                      <>
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          className="h-8 w-8 p-0 rounded-full hover:bg-primary-bg hover:text-white"
-                                          title="Change File"
-                                          onClick={() =>
-                                            handleFileChange(file.id)
-                                          }
-                                        >
-                                          <PencilIcon size={16} />
-                                        </Button>
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          className="h-8 w-8 p-0 rounded-full hover:bg-red-500 hover:text-white"
-                                          title="Remove File"
-                                          onClick={() =>
-                                            handleFileDelete(file.id)
-                                          }
-                                        >
-                                          <Trash2Icon size={16} />
-                                        </Button>
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="text-center py-6 border border-dashed rounded-lg text-gray-500">
-                              No notes available for this chapter
-                            </div>
-                          )}
-                        </div>
+                       <ModuleChapterNotesFiles
+                         mode = {mode}
+                         chap={chap}
+                       />
                       </div>
                     </TabsContent>
                   </Tabs>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type CourseType = {
   id: string;
@@ -91,7 +92,7 @@ const useChunkSize = () => {
 
   function getInitialChunkSize() {
     if (typeof window === "undefined") return 1; // Default for SSR
-    
+
     const width = window.innerWidth;
     if (width < 640) return 1; // Mobile
     if (width < 1024) return 1; // Tablet
@@ -125,9 +126,10 @@ const chunkArray = <T,>(arr: T[], size: number): T[][] => {
 
 type ModuleCoursesCardsProps = {
   courses: string[];
+  mode: "view" | "edit";
 };
 
-const ModuleCoursesCards = ({ courses }: ModuleCoursesCardsProps) => {
+const ModuleCoursesCards = ({ courses, mode }: ModuleCoursesCardsProps) => {
   const [search, setSearch] = useState("");
   const chunkSize = useChunkSize();
 
@@ -140,15 +142,18 @@ const ModuleCoursesCards = ({ courses }: ModuleCoursesCardsProps) => {
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
       {/* Header - Responsive padding and font sizes */}
-      <div className="flex w-full flex-col px-3 sm:px-5 py-3 sm:py-5 rounded-lg bg-primary-bg text-white">
-        <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 flex items-center">
-          <div className="w-1 h-5 sm:h-6 bg-white rounded-full mr-2"></div>
-          <BookOpen className="mr-2" size={24} />
-          Course Usage
-        </h1>
-        <p className="text-xs sm:text-sm text-neutral-300">
-          The following courses include this module
-        </p>
+      <div className="flex justify-between px-3 w-full sm:px-5 py-3 sm:py-5 rounded-lg items-center bg-primary-bg text-white">
+        <div className="flex  flex-col  ">
+          <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 flex items-center">
+            <div className="w-1 h-5 sm:h-6 bg-white rounded-full mr-2"></div>
+            <BookOpen className="mr-2" size={24} />
+            Course Usage
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-300">
+            The following courses include this module
+          </p>
+        </div>
+        {mode === "edit" && <Button>Add course</Button>}
       </div>
 
       {/* Search and Carousel Container */}
@@ -182,11 +187,13 @@ const ModuleCoursesCards = ({ courses }: ModuleCoursesCardsProps) => {
                 ))
               ) : (
                 <CarouselItem>
-                  <div className="text-gray-500 p-4 text-center w-full">No courses found.</div>
+                  <div className="text-gray-500 p-4 text-center w-full">
+                    No courses found.
+                  </div>
                 </CarouselItem>
               )}
             </CarouselContent>
-            
+
             {/* Carousel Navigation - Moved to absolute positioning */}
             <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 ml-0 sm:ml-2 rounded-lg cursor-pointer hover:border-violet-300 hover:bg-violet-50" />
             <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 mr-0 sm:mr-2 rounded-lg cursor-pointer hover:border-violet-300 hover:bg-violet-50" />

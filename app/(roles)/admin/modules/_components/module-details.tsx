@@ -196,7 +196,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
             <Separator />
 
             <ModuleCoursesCard
-              // mode={mode}
+              mode={mode}
               courses={courses}
               // itemsPerPage={4}
             />

@@ -19,6 +19,8 @@ import {
   BadgeIndianRupeeIcon,
   PercentCircle,
   BookOpen,
+  FileDown,
+  FileUp,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import ModuleCoursesCard from "./module-courses-cards";
@@ -26,6 +28,8 @@ import ModuleChapters from "./module-chapters";
 import { dummyChapters } from "@/lib/static";
 import EditInfo from "@/components/edit-info";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };
@@ -40,7 +44,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     return (
       <div className="p-8 flex w-full items-center justify-center h-full">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">No Modumodule Selected</h2>
+          <h2 className="text-2xl font-bold mb-2">No Module Selected</h2>
           <p className="text-muted-foreground">Please select a Module</p>
           <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
             Go Back
@@ -51,7 +55,6 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   }
 
   const [name, setName] = useState(module.name || "");
-  //   const [description, setDescription] = useState(module.description || "");
   const [price, setPrice] = useState(module.price || 0);
   const [discount, setDiscount] = useState(module.discount || 0);
   const [courses, setCourses] = useState(module.course || []);
@@ -59,6 +62,8 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     price - (price * discount) / 100 || 0
   );
   const [chapter, setChapter] = useState(dummyChapters || []);
+  const [syllabusFile, setSyllabusFile] = useState<File | null>(null);
+  const [syllabusFileName, setSyllabusFileName] = useState("module_syllabus.pdf");
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +76,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     handleResize();
 
     window.addEventListener("resize", handleResize);
-    window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -81,10 +86,35 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   const handleSave = () => {
     //TODO:Handle saving logic and API call here
     setIsLoading(true);
+    // Include syllabus file in the save operation
     toast.success("Changes saved successfully!");
     setIsLoading(false);
     setMode("view");
   };
+
+  const handleSyllabusUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSyllabusFile(file);
+      setSyllabusFileName(file.name);
+      toast.success(`Syllabus file "${file.name}" selected`);
+    }
+  };
+
+  const handleDownloadSyllabus = () => {
+    // In a real application, this would download the actual file
+    // For this example, we're just showing a success message
+    toast.success(`Downloading ${syllabusFileName}`);
+    
+    // In a real implementation, you would:
+    // 1. Make an API call to get the file URL or blob
+    // 2. Create a download link and trigger it
+    // const link = document.createElement('a');
+    // link.href = URL.createObjectURL(syllabusBlob);
+    // link.download = syllabusFileName;
+    // link.click();
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
       <div className="flex flex-col w-full">
@@ -92,7 +122,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
           <CardHeader
             className={cn(
               "bg-gray-50 border-b",
-              mode === "view" && "bg-primary-bg rounded-lg  text-white h-full"
+              mode === "view" && "bg-primary-bg rounded-lg text-white h-full"
             )}
           >
             <div className="flex md:flex-row flex-col items-center justify-between">
@@ -137,7 +167,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                 </div>
               ) : (
                 <Button
-                  className="bg-white  text-black hover:text-white cursor-pointer"
+                  className="bg-white text-black hover:text-white cursor-pointer"
                   onClick={() => setMode("edit")}
                 >
                   <PencilIcon size={16} className="mr-1" /> Edit
@@ -156,19 +186,83 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                   >
                     {name}
                   </InfoWrapper>
+
+                  <div className="flex items-center justify-between">
+                    <InfoWrapper
+                      label="Syllabus"
+                      icon={<BookOpen className="text-indigo-600" size={20} />}
+                    >
+                      {syllabusFileName}
+                    </InfoWrapper>
+                    <Button 
+                      variant="outline" 
+                      className="gap-2 border-primary-bg text-primary-bg hover:bg-primary-bg hover:text-white"
+                      onClick={handleDownloadSyllabus}
+                    >
+                      <FileDown size={16} />
+                      Download Syllabus
+                    </Button>
+                  </div>
                 </>
               ) : (
-                <EditInfo
-                  label="Name"
-                  icon={<Users className="text-indigo-600" size={20} />}
-                >
-                  <Input
-                    placeholder="Enter module name"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    className="focus-visible:ring-0"
-                  />
-                </EditInfo>
+                <>
+                  <EditInfo
+                    label="Name"
+                    icon={<Users className="text-indigo-600" size={20} />}
+                  >
+                    <Input
+                      placeholder="Enter module name"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      className="focus-visible:ring-0"
+                    />
+                  </EditInfo>
+
+                  <EditInfo
+                    label="Syllabus"
+                    icon={<BookOpen className="text-indigo-600" size={20} />}
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium">{syllabusFileName}</div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1 border-primary-bg text-primary-bg hover:bg-primary-bg hover:text-white"
+                          onClick={handleDownloadSyllabus}
+                        >
+                          <FileDown size={14} />
+                          Download
+                        </Button>
+                      </div>
+                      
+                      <div className="grid w-full max-w-sm items-center gap-2">
+                        <Label htmlFor="syllabus-upload" className="text-sm font-medium">
+                          Change Syllabus File
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            id="syllabus-upload"
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            className="focus-visible:ring-0"
+                            onChange={handleSyllabusUpload}
+                          />
+                          <Button 
+                            size="sm" 
+                            variant="secondary" 
+                            className="gap-1 flex-shrink-0"
+                            type="button"
+                            onClick={() => document.getElementById("syllabus-upload")?.click()}
+                          >
+                            <FileUp size={14} />
+                            Upload
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </EditInfo>
+                </>
               )}
               {/* //TODO:Add description */}
               {mode === "view" ? (
@@ -245,9 +339,12 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                     </div>
                   </EditInfo>
                   <EditInfo
-                    label="Discount"
+                    label="Offer Price"
                     icon={
-                      <PercentCircle className="text-indigo-600" size={20} />
+                      <BadgeIndianRupeeIcon
+                        className="text-indigo-600"
+                        size={20}
+                      />
                     }
                   >
                     <div className="relative">

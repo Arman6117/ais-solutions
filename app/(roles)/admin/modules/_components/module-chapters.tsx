@@ -6,44 +6,46 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlignLeft,
-  Video,
-
-} from "lucide-react";
+import { AlignLeft, Video } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import ModuleChapterTopics from "./module-chapter-topics";
+import AddModuleChapterButton from "./add-module-chapter-button";
 
 type ContentTopic = {
   id: number;
   title: string;
-  description?: string;
+  description: string;
 };
 
 type Chapter = {
   id: number;
   name: string;
   description: string;
-
-  topics?: ContentTopic[];
+  topics: ContentTopic[];
 };
 
 type ModuleChaptersProps = {
-  chapter?: Chapter[];
+  chapter: Chapter[];
+  setChapter: (chapter: Chapter[]) => void;
   mode: "view" | "edit";
 };
 
-const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
+const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="flex w-full flex-col px-3 py-5 rounded-lg bg-primary-bg text-white">
-        <h1 className="text-2xl font-bold mb-2 flex items-center">
-          <div className="w-1 h-6 bg-white rounded-full mr-2"></div>
-          <Video className="mr-2" size={26} />
-          Chapters
-        </h1>
-        <p className="text-sm text-neutral-300">Sub-topics of the module</p>
+      <div className="flex justify-between px-3 py-5 rounded-lg bg-primary-bg text-white">
+        <div className="flex w-full flex-col ">
+          <h1 className="text-2xl font-bold mb-2 flex items-center">
+            <div className="w-1 h-6 bg-white rounded-full mr-2"></div>
+            <Video className="mr-2" size={26} />
+            Chapters
+          </h1>
+          <p className="text-sm text-neutral-300">Sub-topics of the module</p>
+        </div>
+        {mode === "edit" && (
+          <AddModuleChapterButton chapter={chapter} setChapter={setChapter} />
+        )}
       </div>
 
       {chapter?.map((chap) => (
@@ -57,7 +59,6 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
                     {chap.topics?.length || 0}{" "}
                     {chap.topics?.length === 1 ? "topic" : "topics"}
                   </Badge>
-                 
                 </div>
               </div>
             </AccordionTrigger>
@@ -106,7 +107,7 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
                   </Tabs>
                 </div> */}
                 <div className="">
-                  <ModuleChapterTopics mode={mode} topics={chap.topics}/>
+                  <ModuleChapterTopics mode={mode} topics={chap.topics} />
                 </div>
               </div>
             </AccordionContent>

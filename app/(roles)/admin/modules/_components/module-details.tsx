@@ -106,7 +106,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     // For this example, we're just showing a success message
     toast.success(`Downloading ${syllabusFileName}`);
     
-    // In a real implementation, you would:
+    // In a real implementation:
     // 1. Make an API call to get the file URL or blob
     // 2. Create a download link and trigger it
     // const link = document.createElement('a');
@@ -370,7 +370,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
               )}
             </div>
             <Separator />
-            <ModuleChapters mode={mode} chapter={chapter} />
+            <ModuleChapters setChapter={setChapter} mode={mode} chapter={chapter} />
             <Separator />
 
             <ModuleCoursesCard

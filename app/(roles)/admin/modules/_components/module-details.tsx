@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { DummyModules } from "@/lib/types";
 
 import {
@@ -24,6 +24,8 @@ import { Separator } from "@/components/ui/separator";
 import ModuleCoursesCard from "./module-courses-cards";
 import ModuleChapters from "./module-chapters";
 import { dummyChapters } from "@/lib/static";
+import EditInfo from "@/components/edit-info";
+import { Input } from "@/components/ui/input";
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
 };
@@ -155,7 +157,20 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                     {name}
                   </InfoWrapper>
                 </>
-              ) : null}
+              ) : (
+                <EditInfo
+                  label="Name"
+                  icon={<Users className="text-indigo-600" size={20} />}
+                >
+                  <Input
+                    placeholder="Enter module name"
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                    className="focus-visible:ring-0"
+                  />
+                </EditInfo>
+              )}
+              {/* //TODO:Add description */}
               {mode === "view" ? (
                 <div className="grid md:grid-cols-2 gap-7">
                   <InfoWrapper
@@ -189,7 +204,73 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                     {offerPrice}
                   </InfoWrapper>
                 </div>
-              ) : null}
+              ) : (
+                <div className="grid md:grid-cols-2 gap-7">
+                  <EditInfo
+                    label="Price"
+                    icon={
+                      <BadgeIndianRupeeIcon
+                        className="text-indigo-600"
+                        size={20}
+                      />
+                    }
+                  >
+                    <Input
+                      placeholder="Enter price name"
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                      type="number"
+                      value={price}
+                      className="focus-visible:ring-0"
+                    />
+                  </EditInfo>
+                  <EditInfo
+                    label="Discount"
+                    icon={
+                      <PercentCircle className="text-indigo-600" size={20} />
+                    }
+                  >
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        placeholder="Enter Discount in %"
+                        value={discount}
+                        onChange={(e) => setDiscount(Number(e.target.value))}
+                        className="font-medium pr-8"
+                        min="0"
+                        max="100"
+                      />
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        %
+                      </span>
+                    </div>
+                  </EditInfo>
+                  <EditInfo
+                    label="Discount"
+                    icon={
+                      <PercentCircle className="text-indigo-600" size={20} />
+                    }
+                  >
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        ₹
+                      </span>
+                      <Input
+                        type="number"
+                        readOnly
+                        placeholder="Offer Price"
+                        value={offerPrice}
+                        className="font-medium pl-8 bg-gray-50"
+                      />
+                    </div>
+                    {discount > 0 && (
+                      <p className="text-sm text-green-600">
+                        {discount}% off ({formatCurrency(price - offerPrice)}{" "}
+                        discount)
+                      </p>
+                    )}
+                  </EditInfo>
+                </div>
+              )}
             </div>
             <Separator />
             <ModuleChapters mode={mode} chapter={chapter} />

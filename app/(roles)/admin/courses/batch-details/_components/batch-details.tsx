@@ -3,11 +3,29 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+
+
+import InfoWrapper from "@/components/info-wrapper";
+import BatchStudentTable from "./batch-student-table";
+import InstructorsCards from "../../../../../../components/instructors-cards";
+import ModulesCard from "../../../../../../components/modules-card";
+import StatusCard from "../../../../../../components/status-card";
+import EditInfo from "@/components/edit-info";
+import BatchMeetings from "./batch-meetings";
+import BatchStatusSelector from "./batch-status-selector";
+import BatchNotesTable from "./batch-notes-table";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
+import { PiChalkboardTeacher } from "react-icons/pi";
 
 import { DummyBatches, DummyInstructors, DummyStudent } from "@/lib/types";
-import { cn, getStatusColor } from "@/lib/utils";
 
+import { cn, getStatusColor } from "@/lib/utils";
 import {
   PencilIcon,
   RefreshCcw,
@@ -17,24 +35,6 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import InfoWrapper from "@/components/info-wrapper";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import BatchStudentTable from "./batch-student-table";
-
-import InstructorsCards from "../../../../../../components/instructors-cards";
-import ModulesCard from "../../../../../../components/modules-card";
-import StatusCard from "../../../../../../components/status-card";
-import EditBatchInfo from "@/components/batch-components/edit-batch-info";
-import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
-import { PiChalkboardTeacher } from "react-icons/pi";
-import BatchMeetings from "./batch-meetings";
-import BatchStatusSelector from "./batch-status-selector";
-import BatchNotesTable from "./batch-notes-table";
-
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
   dummyModules: string[];
@@ -53,7 +53,7 @@ const BatchDetails = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view" ;
+  const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
   if (!batch) {
@@ -102,7 +102,6 @@ const BatchDetails = ({
     setIsLoading(false);
     setMode("view");
   };
-
 
   const statusColor = getStatusColor(status);
 
@@ -183,7 +182,7 @@ const BatchDetails = ({
                     </InfoWrapper>
                   </>
                 ) : (
-                  <EditBatchInfo
+                  <EditInfo
                     label="Name"
                     icon={<Users className="text-indigo-600" size={20} />}
                   >
@@ -193,7 +192,7 @@ const BatchDetails = ({
                       value={name}
                       className="focus-visible:ring-0"
                     />
-                  </EditBatchInfo>
+                  </EditInfo>
                 )}
                 {/* <div className="grid md:grid-cols-2 gap-7"> */}
                 {mode === "view" ? (
@@ -214,7 +213,7 @@ const BatchDetails = ({
                   </div>
                 ) : (
                   <div className="grid md:grid-cols-2 gap-7">
-                    <EditBatchInfo
+                    <EditInfo
                       label="Start Date"
                       icon={<Calendar className="text-indigo-600" size={20} />}
                     >
@@ -225,8 +224,8 @@ const BatchDetails = ({
                         type="date"
                         className="focus-visible:ring-0"
                       />
-                    </EditBatchInfo>
-                    <EditBatchInfo
+                    </EditInfo>
+                    <EditInfo
                       label="End Date"
                       icon={<Calendar className="text-indigo-600" size={20} />}
                     >
@@ -237,7 +236,7 @@ const BatchDetails = ({
                         type="date"
                         className="focus-visible:ring-0"
                       />
-                    </EditBatchInfo>
+                    </EditInfo>
                   </div>
                 )}
                 {/* </div> */}

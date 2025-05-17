@@ -1,4 +1,4 @@
-import EditBatchInfo from "@/components/batch-components/edit-batch-info";
+import EditBatchInfo from "@/components/edit-info";
 import {
   Select,
   SelectContent,

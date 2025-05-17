@@ -2,13 +2,13 @@ import { cn } from "@/lib/utils";
 import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 import React from "react";
 
-type EditBatchInfo = {
+type EditInfoProps = {
   label: string;
   children: React.ReactNode;
   icon: React.ReactNode;
   className?: string;
 };
-const EditBatchInfo = ({ children, label, icon, className }: EditBatchInfo) => {
+const EditInfo = ({ children, label, icon, className }: EditInfoProps) => {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
@@ -23,4 +23,4 @@ const EditBatchInfo = ({ children, label, icon, className }: EditBatchInfo) => {
   );
 };
 
-export default EditBatchInfo;
+export default EditInfo;

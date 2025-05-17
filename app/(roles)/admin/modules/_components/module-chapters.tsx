@@ -15,12 +15,12 @@ import {
   FileText,
   Download,
   File,
+  List,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ModuleChapterVideoLinks from "./module-chapter-video-links";
-import ModuleChapterNotesFiles from "./module-chapter-notes-files";
+
 
 type VideoLink = {
   id: string;
@@ -36,12 +36,18 @@ type NoteFile = {
   downloadUrl: string;
 };
 
+type ContentTopic = {
+  id: number;
+  title: string;
+  description?: string;
+};
+
 type Chapter = {
   id: number;
   name: string;
   description: string;
-  videoLinks: VideoLink[];
-  files?: NoteFile[];
+
+  topics?: ContentTopic[];
 };
 
 type ModuleChaptersProps = {
@@ -67,7 +73,7 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
             <AccordionTrigger className="text-xl font-medium">
               <div className="flex items-center gap-2">
                 {chap.name}
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                   <Badge className="bg-primary-bg/20 text-primary-bg">
                     {chap.videoLinks?.length || 0}{" "}
                     {chap.videoLinks?.length === 1 ? "lecture" : "lectures"}
@@ -78,7 +84,7 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
                       {chap.files.length === 1 ? "note" : "notes"}
                     </Badge>
                   )}
-                </div>
+                </div> */}
               </div>
             </AccordionTrigger>
             <AccordionContent className="border-t px-2 py-4">
@@ -91,7 +97,7 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
                   <p className="ml-8 font-medium">{chap.description}</p>
                 </div>
 
-                <div className="flex flex-col gap-4">
+                {/* <div className="flex flex-col gap-4">
                   <Tabs defaultValue="lectures" className="w-full">
                     <div className="flex items-center gap-2 mb-2">
                       <TabsList className="bg-gray-100">
@@ -124,6 +130,83 @@ const ModuleChapters = ({ mode, chapter }: ModuleChaptersProps) => {
                       </div>
                     </TabsContent>
                   </Tabs>
+                </div> */}
+                <div className="">
+                <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-2">
+                          <List className="text-green-600" />
+                          <span className="text-lg font-semibold">Content Covered</span>
+                        </div>
+                        
+                        <div className="ml-8">
+                          {chap.topics && chap.topics.length > 0 ? (
+                            <div className="space-y-4">
+                              {chap.topics.map((topic) => (
+                                <div 
+                                  key={topic.id} 
+                                  className="border rounded-lg p-4 bg-green-50/50 hover:bg-green-50 transition-colors"
+                                >
+                                  <div className="flex justify-between items-start">
+                                    <div className="flex items-start gap-3">
+                                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                                      <div>
+                                        <h3 className="font-medium text-lg text-gray-900">{topic.title}</h3>
+                                        {topic.description && (
+                                          <p className="text-gray-600 mt-1">{topic.description}</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                    
+                                    {mode === "edit" && (
+                                      <div className="flex gap-1">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-8 w-8 p-0 rounded-full hover:bg-green-600 hover:text-white"
+                                        >
+                                          <PencilIcon size={16} />
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm" 
+                                          className="h-8 w-8 p-0 rounded-full hover:bg-red-500 hover:text-white"
+                                        >
+                                          <Trash2Icon size={16} />
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                              
+                              {mode === "edit" && (
+                                <Button 
+                                  variant="outline" 
+                                  className="w-full mt-2 border-dashed border-green-600 text-green-600 hover:bg-green-50"
+                                >
+                                  + Add New Topic
+                                </Button>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-center py-6 border border-dashed rounded-lg text-gray-500">
+                              {mode === "edit" ? (
+                                <div className="flex flex-col items-center gap-2">
+                                  <p>No topics defined for this chapter yet</p>
+                                  <Button 
+                                    variant="outline" 
+                                    className="border-dashed border-green-600 text-green-600 hover:bg-green-50"
+                                  >
+                                    + Add First Topic
+                                  </Button>
+                                </div>
+                              ) : (
+                                <p>No topics available for this chapter</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                </div>
                 </div>
               </div>
             </AccordionContent>

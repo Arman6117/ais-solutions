@@ -503,52 +503,72 @@ export const dummyChapters = [
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-    videoLinks: [
-      { id: 1, label: "Link1", link: "#" },
-      { id: 2, label: "Link2", link: "#" },
-      { id: 3, label: "Link3", link: "#" },
+
+    topics: [
+      {
+        id: 1,
+        title: "Introduction",
+        description: "Basic introduction to the chapter concepts",
+      },
+      {
+        id: 2,
+        title: "Core Concepts",
+        description: "Detailed explanation of fundamental principles",
+      },
     ],
-    files: ["File 1.pdf", "File 2", "File 3"],
   },
   {
     id: 2,
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-    videoLinks: [
-      { id: 1, label: "Link1", link: "#" },
-      { id: 2, label: "Link2", link: "#" },
-      { id: 3, label: "Link3", link: "#" },
-    ],
-    files: ["File 1.pdf", "File 2", "File 3"],
+      topics: [
+        {
+          id: 1,
+          title: "Introduction",
+          description: "Basic introduction to the chapter concepts",
+        },
+        {
+          id: 2,
+          title: "Core Concepts",
+          description: "Detailed explanation of fundamental principles",
+        },
+      ],
   },
   {
     id: 3,
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-    videoLinks: [
-      { id: 1, label: "Link1", link: "#" },
-      { id: 2, label: "Link2", link: "#" },
-      { id: 3, label: "Link3", link: "#" },
-    ],
-    files: ["File 1.pdf", "File 2", "File 3"],
+      topics: [
+        {
+          id: 1,
+          title: "Introduction",
+          description: "Basic introduction to the chapter concepts",
+        },
+        {
+          id: 2,
+          title: "Core Concepts",
+          description: "Detailed explanation of fundamental principles",
+        },
+      ],
   },
   {
     id: 4,
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-    videoLinks: [
-      { id: 1, label: "Link1", link: "#" },
-      { id: 2, label: "Link2", link: "#" },
-      { id: 3, label: "Link3", link: "#" },
-    ],
-    files: [
-      { id: 1, fileName: "File 1", fileSize: "23mb", downloadUrl:'' },
-      { id: 2, fileName: "File 2", fileSize: "23mb", downloadUrl:'' },
-      { id: 3, fileName: "File 3", fileSize: "23mb", downloadUrl:'' },
-      
-    ],
+      topics: [
+        {
+          id: 1,
+          title: "Introduction",
+          description: "Basic introduction to the chapter concepts",
+        },
+        {
+          id: 2,
+          title: "Core Concepts",
+          description: "Detailed explanation of fundamental principles",
+        },
+      ],
   },
 ];

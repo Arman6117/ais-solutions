@@ -10,7 +10,7 @@ type ContentTopic = {
   description: string;
 };
 type ModuleChapterTopicsProps = {
-  mode: "view" | "edit";
+  mode: "view" | "edit" |'create';
   topics: ContentTopic[] ;
   chapterId: number;
   addTopicToChapter: (chapterId: number, newTopic: ContentTopic) => void;
@@ -74,7 +74,7 @@ const ModuleChapterTopics = ({
               </div>
             ))}
 
-            {mode === "edit" && (
+            {mode === "edit" || mode ==='create' && (
               <AddModuleChapterTopicButton
                 topics={topics}
                 setChapTopics={setChapTopics}
@@ -85,7 +85,7 @@ const ModuleChapterTopics = ({
           </div>
         ) : (
           <div className="text-center py-6 border border-dashed rounded-lg text-gray-500">
-            {mode === "edit" ? (
+            {mode === "edit" || mode ==='create'? (
               <div className="flex flex-col items-center gap-2">
                 <p>No topics defined for this chapter yet</p>
                 <AddModuleChapterTopicButton

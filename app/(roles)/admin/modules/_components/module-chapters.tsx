@@ -30,7 +30,7 @@ type Chapter = {
 type ModuleChaptersProps = {
   chapter: Chapter[];
   setChapter: (chapter: Chapter[]) => void;
-  mode: "view" | "edit";
+  mode: "view" | "edit" | "create";
 };
 
 const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
@@ -44,19 +44,21 @@ const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
   };
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="flex justify-between items-center px-3 py-5 rounded-lg bg-primary-bg text-white">
-        <div className="flex w-full flex-col ">
-          <h1 className="text-2xl font-bold mb-2 flex items-center">
-            <div className="w-1 h-6 bg-white rounded-full mr-2"></div>
-            <Video className="mr-2" size={26} />
-            Chapters
-          </h1>
-          <p className="text-sm text-neutral-300">Sub-topics of the module</p>
+      {mode !== "create" && (
+        <div className="flex justify-between items-center px-3 py-5 rounded-lg bg-primary-bg text-white">
+          <div className="flex w-full flex-col ">
+            <h1 className="text-2xl font-bold mb-2 flex items-center">
+              <div className="w-1 h-6 bg-white rounded-full mr-2"></div>
+              <Video className="mr-2" size={26} />
+              Chapters
+            </h1>
+            <p className="text-sm text-neutral-300">Sub-topics of the module</p>
+          </div>
+          {mode === "edit" && (
+            <AddModuleChapterButton chapter={chapter} setChapter={setChapter} />
+          )}
         </div>
-        {mode === "edit" && (
-          <AddModuleChapterButton chapter={chapter} setChapter={setChapter} />
-        )}
-      </div>
+      )}
 
       {chapter?.map((chap) => (
         <Accordion type="single" className="px-2" collapsible key={chap.id}>
@@ -126,14 +128,17 @@ const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
                 </div>
                 {mode === "edit" && (
                   <div className="mt-7">
-                    <Button variant={"destructive"} className="cursor-pointer ml-5">
+                    <Button
+                      variant={"destructive"}
+                      className="cursor-pointer ml-5"
+                    >
                       <Trash2 className="size-6" />
                       Delete {chap.name}
                     </Button>
                   </div>
                 )}
               </div>
-              <Separator className="mt-5"/>
+              <Separator className="mt-5" />
             </AccordionContent>
           </AccordionItem>
           {/* <Separator className="my-1" /> */}

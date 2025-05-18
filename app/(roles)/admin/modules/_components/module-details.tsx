@@ -27,7 +27,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import ModuleCoursesCard from "./module-courses-cards";
 import ModuleChapters from "./module-chapters";
 import { dummyChapters } from "@/lib/static";
 import EditInfo from "@/components/edit-info";
@@ -43,6 +42,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import CoursesCards from "../../../../../components/courses-cards";
 
 type ModuleDetailsProps = {
   module: DummyModules | undefined;
@@ -488,9 +488,10 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
             />
             <Separator />
 
-            <ModuleCoursesCard
+            <CoursesCards
               mode={mode}
-              courses={courses}
+              label="Course Usage"
+              // courses={courses}
               // itemsPerPage={4}
             />
           </CardContent>

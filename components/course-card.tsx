@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import React from "react";
 
-type ModuleCourseCardProps = {
+type CourseCardProps = {
   course: {
     id: string;
     title: string;
@@ -27,7 +27,7 @@ type ModuleCourseCardProps = {
   };
 };
 
-const ModuleCourseCard = ({ course }: ModuleCourseCardProps) => {
+const CourseCard = ({ course }: CourseCardProps) => {
   return (
     <div className="bg-white rounded-lg shadow-md w-full max-w-xs overflow-hidden transition-all hover:shadow-lg hover:translate-y-1 duration-300 border border-gray-100">
       {/* Card Header with Course Title - Full width on all screens */}
@@ -108,4 +108,4 @@ const ModuleCourseCard = ({ course }: ModuleCourseCardProps) => {
   );
 };
 
-export default ModuleCourseCard;
+export default CourseCard;

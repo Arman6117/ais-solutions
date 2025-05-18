@@ -24,10 +24,10 @@ const StudentTable = () => {
         return false;
       }
 
-      // Apply gender filter
-      //   if (genderFilter !== 'all' && student.gender !== genderFilter) {
-      //     return false;
-      //   }
+    //   Apply gender filter
+        if (genderFilter !== 'all' && student.gender !== genderFilter) {
+          return false;
+        }
 
       return true;
     });
@@ -49,11 +49,11 @@ const StudentTable = () => {
       header: "Phone",
       accessor: (row: DummyStudent) => row.phone,
     },
-    // {
-    //   id: "gender",
-    //   header: "Gender",
-    //   accessor: (row: DummyStudent) => row.gender,
-    // },
+    {
+      id: "gender",
+      header: "Gender",
+      accessor: (row: DummyStudent) => row.gender,
+    },
     {
       id: "joinedAt",
       header: "Joined At",
@@ -97,46 +97,31 @@ const StudentTable = () => {
   }, []);
 
   //   // Get unique genders from data
-  //   const uniqueGenders = useMemo(() => {
-  //     const genders = new Set<string>();
-  //     dummyStudents.forEach(student => {
-  //       if (student.gender) {
-  //         genders.add(student.gender);
-  //       }
-  //     });
-  //     return Array.from(genders);
-  //   }, []);
+  const uniqueGenders = useMemo(() => {
+    const genders = new Set<string>();
+    dummyStudents.forEach((student) => {
+      if (student.gender) {
+        genders.add(student.gender);
+      }
+    });
+    return Array.from(genders);
+  }, []);
 
   return (
     <>
       {/* Additional Filter Controls */}
-      <div className="flex flex-col md:flex-row gap-3 mb-4">
-        {/* <div className="flex-1">
-          <label className="text-sm font-medium mb-1 block">Gender</label>
-          <Select value={genderFilter} onValueChange={setGenderFilter}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Filter by gender" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Genders</SelectItem>
-              {uniqueGenders.map(gender => (
-                <SelectItem key={gender} value={gender}>{gender}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div> */}
-      </div>
+
+      {/* </div> */}
 
       {/* DataTable Component */}
       <DataTable
         columns={studentTableCol}
         data={filteredStudents}
         getRowId={(row: DummyStudent) => row.id}
-        href="/students"
+        href="/admin/students/student-details"
         additionalFilter={
-          <>
+          <div className="flex flex-col md:flex-row gap-3 mb-4">
             <div className="flex-1">
-             
               <Select
                 value={feeStatusFilter}
                 onValueChange={setFeeStatusFilter}
@@ -154,7 +139,22 @@ const StudentTable = () => {
                 </SelectContent>
               </Select>
             </div>
-          </>
+            <div className="flex-1">
+              <Select value={genderFilter} onValueChange={setGenderFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Filter by gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Genders</SelectItem>
+                  {uniqueGenders.map((gender) => (
+                    <SelectItem key={gender} value={gender}>
+                      {gender}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         }
         filterOptions={studentTableFilter}
         onDeleteSelected={(ids) => {

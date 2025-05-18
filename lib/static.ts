@@ -316,7 +316,8 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "paid",
     totalFeePaid: 20000,
     feesRemaining: 0,
-    refCoins:50
+    refCoins: 50,
+    gender: "Male",
   },
   {
     id: "stu-2",
@@ -332,7 +333,8 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 10000,
     feesRemaining: 10000,
-    refCoins:10
+    refCoins: 10,
+    gender: "Female",
   },
   {
     id: "stu-3",
@@ -348,7 +350,8 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 5000,
     feesRemaining: 10000,
-    refCoins:90
+    refCoins: 90,
+    gender: "Male",
   },
   {
     id: "stu-4",
@@ -364,7 +367,8 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "paid",
     totalFeePaid: 20000,
     feesRemaining: 0,
-    refCoins:20
+    refCoins: 20,
+    gender: "Female",
   },
   {
     id: "stu-5",
@@ -380,7 +384,8 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 7500,
     feesRemaining: 7500,
-    refCoins:400
+    refCoins: 400,
+    gender: "Male",
   },
 ];
 
@@ -527,53 +532,53 @@ export const dummyChapters = [
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-      topics: [
-        {
-          id: 1,
-          title: "Introduction",
-          description: "Basic introduction to the chapter concepts",
-        },
-        {
-          id: 2,
-          title: "Core Concepts",
-          description: "Detailed explanation of fundamental principles",
-        },
-      ],
+    topics: [
+      {
+        id: 1,
+        title: "Introduction",
+        description: "Basic introduction to the chapter concepts",
+      },
+      {
+        id: 2,
+        title: "Core Concepts",
+        description: "Detailed explanation of fundamental principles",
+      },
+    ],
   },
   {
     id: 3,
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-      topics: [
-        {
-          id: 1,
-          title: "Introduction",
-          description: "Basic introduction to the chapter concepts",
-        },
-        {
-          id: 2,
-          title: "Core Concepts",
-          description: "Detailed explanation of fundamental principles",
-        },
-      ],
+    topics: [
+      {
+        id: 1,
+        title: "Introduction",
+        description: "Basic introduction to the chapter concepts",
+      },
+      {
+        id: 2,
+        title: "Core Concepts",
+        description: "Detailed explanation of fundamental principles",
+      },
+    ],
   },
   {
     id: 4,
     name: "Chapter 1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellat tempore quas eius quo minima non animi enim, et e",
-      topics: [
-        {
-          id: 1,
-          title: "Introduction",
-          description: "Basic introduction to the chapter concepts",
-        },
-        {
-          id: 2,
-          title: "Core Concepts",
-          description: "Detailed explanation of fundamental principles",
-        },
-      ],
+    topics: [
+      {
+        id: 1,
+        title: "Introduction",
+        description: "Basic introduction to the chapter concepts",
+      },
+      {
+        id: 2,
+        title: "Core Concepts",
+        description: "Detailed explanation of fundamental principles",
+      },
+    ],
   },
 ];

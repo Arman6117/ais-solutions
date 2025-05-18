@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import ModuleCourseCard from "./module-course-card";
 import {
   Carousel,
   CarouselContent,
@@ -11,6 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Course } from "@/lib/types";
+import CourseCard from "./course-card";
 
 type CourseType = {
   id: string;
@@ -124,12 +125,13 @@ const chunkArray = <T,>(arr: T[], size: number): T[][] => {
   return result;
 };
 
-type ModuleCoursesCardsProps = {
-  courses: string[];
+type CoursesCardsProps = {
+  courses?: Course[];
   mode: "view" | "edit";
+  label: string | undefined;
 };
 
-const ModuleCoursesCards = ({ courses, mode }: ModuleCoursesCardsProps) => {
+const CoursesCards = ({ courses, mode, label }: CoursesCardsProps) => {
   const [search, setSearch] = useState("");
   const chunkSize = useChunkSize();
 
@@ -142,19 +144,25 @@ const ModuleCoursesCards = ({ courses, mode }: ModuleCoursesCardsProps) => {
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
       {/* Header - Responsive padding and font sizes */}
+        {label && (
       <div className="flex justify-between px-3 w-full sm:px-5 py-3 sm:py-5 rounded-lg items-center bg-primary-bg text-white">
-        <div className="flex  flex-col  ">
-          <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 flex items-center">
-            <div className="w-1 h-5 sm:h-6 bg-white rounded-full mr-2"></div>
-            <BookOpen className="mr-2" size={24} />
-            Course Usage
-          </h1>
-          <p className="text-xs sm:text-sm text-neutral-300">
-            The following courses include this module
-          </p>
-        </div>
-        {mode === "edit" && <Button className="bg-white hover:text-white text-black cursor-pointer">Add course</Button>}
+          <div className="flex  flex-col  ">
+            <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 flex items-center">
+              <div className="w-1 h-5 sm:h-6 bg-white rounded-full mr-2"></div>
+              <BookOpen className="mr-2" size={24} />
+              {label}
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-300">
+              The following courses include this module
+            </p>
+          </div>
+        {mode === "edit" && (
+          <Button className="bg-white hover:text-white text-black cursor-pointer">
+            Add course
+          </Button>
+        )}
       </div>
+          )}
 
       {/* Search and Carousel Container */}
       <div className="w-full flex flex-col space-y-3 sm:space-y-4">
@@ -179,7 +187,7 @@ const ModuleCoursesCards = ({ courses, mode }: ModuleCoursesCardsProps) => {
                     <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 lg:gap-10 justify-center sm:justify-around items-center px-12">
                       {courseChunk.map((course, index) => (
                         <div key={index} className="w-full sm:max-w-xs">
-                          <ModuleCourseCard course={course} />
+                          <CourseCard course={course} />
                         </div>
                       ))}
                     </div>
@@ -204,4 +212,4 @@ const ModuleCoursesCards = ({ courses, mode }: ModuleCoursesCardsProps) => {
   );
 };
 
-export default ModuleCoursesCards;
+export default CoursesCards;

@@ -41,6 +41,7 @@ type DataTableProps<T> = {
   getRowId: (row: T) => string;
   href: string;
   openDialog?: (item: T) => void;
+  additionalFilter?: React.ReactNode;
 };
 
 export function DataTable<T>({
@@ -52,6 +53,7 @@ export function DataTable<T>({
   onDeleteSelected,
   searchPlaceholder = "Search...",
   openDialog,
+  additionalFilter,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("");
@@ -373,6 +375,7 @@ export function DataTable<T>({
               >
                 Reset
               </Button>
+              {additionalFilter && <>{additionalFilter}</>}
             </div>
           )}
           {selectedIds.length > 0 && (

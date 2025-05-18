@@ -58,6 +58,7 @@ export type DummyStudent = {
   feesStatus: "paid" | "unpaid";
   totalFeePaid: number;
   feesRemaining: number;
+  refCoins?:number
 };
 
 export type DummyModules = {

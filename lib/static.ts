@@ -316,6 +316,7 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "paid",
     totalFeePaid: 20000,
     feesRemaining: 0,
+    refCoins:50
   },
   {
     id: "stu-2",
@@ -331,6 +332,7 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 10000,
     feesRemaining: 10000,
+    refCoins:10
   },
   {
     id: "stu-3",
@@ -346,6 +348,7 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 5000,
     feesRemaining: 10000,
+    refCoins:90
   },
   {
     id: "stu-4",
@@ -361,6 +364,7 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "paid",
     totalFeePaid: 20000,
     feesRemaining: 0,
+    refCoins:20
   },
   {
     id: "stu-5",
@@ -376,6 +380,7 @@ export const dummyStudents: DummyStudent[] = [
     feesStatus: "unpaid",
     totalFeePaid: 7500,
     feesRemaining: 7500,
+    refCoins:400
   },
 ];
 

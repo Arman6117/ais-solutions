@@ -41,15 +41,7 @@ const studentTableFilter = [
   {
     label: "Student:Low to High",
     value: "student-desc",
-  },
-  {
-    label: "Batches:High to Low",
-    value: "batches-asc",
-  },
-  {
-    label: "Batches:Low to High",
-    value: "batches-desc",
-  },
+  }
 ];
 const BatchStudentTable = ({
   mode,

@@ -19,40 +19,13 @@ import AddInstructorButton from "../../../_components/add-instructor-button";
 import InstructorsCards from "@/components/instructors-cards";
 
 
-// Student table columns definition
-const studentTableCol = [
-  {
-    id: "name",
-    header: "Student Name",
-    accessor: (row: any) => row.name,
-  },
-  {
-    id: "email",
-    header: "Email",
-    accessor: (row: any) => row.email,
-  },
-  {
-    id: "phone",
-    header: "Phone",
-    accessor: (row: any) => row.phone,
-  },
-  {
-    id: "joinedAt",
-    header: "Joined At",
-    accessor: (row: any) => row.joinedAt,
-  },
-  {
-    id: "feesStatus",
-    header: "Fees Status",
-    accessor: (row: any) => row.feesStatus,
-  },
-];
+
 
 export default function CreateBatch() {
   const [instructors, setInstructors] = useState<any[]>([]);
   const [modules, setModules] = useState([]);
 
-
+   
 
   return (
     <div className="w-full p-6">
@@ -64,7 +37,7 @@ export default function CreateBatch() {
       </div>
 
       <div className="grid w-full grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main form */}
+      
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>

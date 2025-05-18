@@ -1,10 +1,12 @@
-import React from "react";
-import CreateModule from "../_components/create-module";
+import React from 'react'
+import CreateModule from '../_components/create-module'
 
 const CreateModulePage = () => {
-  return <>
-    <CreateModule/>
-  </>;
-};
+  return (
+    <>
+     <CreateModule/>
+    </>
+  )
+}
 
-export default CreateModulePage;
+export default CreateModulePage

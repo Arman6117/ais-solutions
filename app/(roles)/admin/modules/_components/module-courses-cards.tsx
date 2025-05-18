@@ -153,7 +153,7 @@ const ModuleCoursesCards = ({ courses, mode }: ModuleCoursesCardsProps) => {
             The following courses include this module
           </p>
         </div>
-        {mode === "edit" && <Button>Add course</Button>}
+        {mode === "edit" && <Button className="bg-white hover:text-white text-black cursor-pointer">Add course</Button>}
       </div>
 
       {/* Search and Carousel Container */}

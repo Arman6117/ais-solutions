@@ -26,14 +26,14 @@ export const adminSidebarLinks = [
     icon: LuFileStack,
   },
   {
-    label: "Offers",
-    link: "/admin/offers",
-    icon: MdOutlineLocalOffer,
-  },
-  {
     label: "Students",
     link: "/admin/students",
     icon: PiStudent,
+  },
+  {
+    label: "Offers",
+    link: "/admin/offers",
+    icon: MdOutlineLocalOffer,
   },
 ];
 

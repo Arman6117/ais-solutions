@@ -1,7 +1,10 @@
 import React from "react";
+import CreateModule from "../_components/create-module";
 
-const CreateModule = () => {
-  return <div>CreateModule</div>;
+const CreateModulePage = () => {
+  return <>
+    <CreateModule/>
+  </>;
 };
 
-export default CreateModule;
+export default CreateModulePage;

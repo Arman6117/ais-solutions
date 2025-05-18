@@ -7,11 +7,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
-import { AlignLeft, Video } from "lucide-react";
+import { AlignLeft, Trash2, Video } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import ModuleChapterTopics from "./module-chapter-topics";
 import AddModuleChapterButton from "./add-module-chapter-button";
+import { Button } from "@/components/ui/button";
 
 type ContentTopic = {
   id: number;
@@ -123,7 +124,16 @@ const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
                     chapterId={chap.id}
                   />
                 </div>
+                {mode === "edit" && (
+                  <div className="mt-7">
+                    <Button variant={"destructive"} className="cursor-pointer ml-5">
+                      <Trash2 className="size-6" />
+                      Delete {chap.name}
+                    </Button>
+                  </div>
+                )}
               </div>
+              <Separator className="mt-5"/>
             </AccordionContent>
           </AccordionItem>
           {/* <Separator className="my-1" /> */}

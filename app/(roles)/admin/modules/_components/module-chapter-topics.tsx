@@ -1,21 +1,27 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, List, PencilIcon, Trash2Icon } from "lucide-react";
 import React, { useState } from "react";
 import AddModuleChapterTopicButton from "./add-module-chapter-topic-button";
 
 type ContentTopic = {
-    id: number;
-    title: string;
-    description?: string;
-  };
+  id: number;
+  title: string;
+  description: string;
+};
 type ModuleChapterTopicsProps = {
-    mode:"view"|"edit",
-    topics:ContentTopic[] | undefined
-
-}
-const ModuleChapterTopics = ({mode,topics}:ModuleChapterTopicsProps) => {
-    const [chapTopics,setChapTopics] = useState(topics || [])
+  mode: "view" | "edit";
+  topics: ContentTopic[] ;
+  chapterId: number;
+  addTopicToChapter: (chapterId: number, newTopic: ContentTopic) => void;
+};
+const ModuleChapterTopics = ({
+  mode,
+  topics,
+  addTopicToChapter,
+  chapterId,
+}: ModuleChapterTopicsProps) => {
+  const [chapTopics, setChapTopics] = useState(topics || []);
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
@@ -69,11 +75,12 @@ const ModuleChapterTopics = ({mode,topics}:ModuleChapterTopicsProps) => {
             ))}
 
             {mode === "edit" && (
-                <AddModuleChapterTopicButton 
-                  currTopics ={chapTopics}
-                  setTopics={setChapTopics}
-                />
-             
+              <AddModuleChapterTopicButton
+                topics={topics}
+                setChapTopics={setChapTopics}
+                addTopicToChapter={addTopicToChapter}
+                chapterId={chapterId}
+              />
             )}
           </div>
         ) : (
@@ -81,12 +88,12 @@ const ModuleChapterTopics = ({mode,topics}:ModuleChapterTopicsProps) => {
             {mode === "edit" ? (
               <div className="flex flex-col items-center gap-2">
                 <p>No topics defined for this chapter yet</p>
-                <Button
-                  variant="outline"
-                  className="border-dashed border-green-600 text-green-600 hover:bg-green-50"
-                >
-                  + Add First Topic
-                </Button>
+                <AddModuleChapterTopicButton
+                  topics={topics}
+                  setChapTopics={setChapTopics}
+                  addTopicToChapter={addTopicToChapter}
+                  chapterId={chapterId}
+                />
               </div>
             ) : (
               <p>No topics available for this chapter</p>

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Accordion,
@@ -32,9 +33,17 @@ type ModuleChaptersProps = {
 };
 
 const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
+  const addTopicToChapter = (chapterId: number, newTopic: ContentTopic) => {
+    const updatedChapters = chapter.map((chap) =>
+      chap.id === chapterId
+        ? { ...chap, topics: [...(chap.topics || []), newTopic] }
+        : chap
+    );
+    setChapter(updatedChapters);
+  };
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="flex justify-between px-3 py-5 rounded-lg bg-primary-bg text-white">
+      <div className="flex justify-between items-center px-3 py-5 rounded-lg bg-primary-bg text-white">
         <div className="flex w-full flex-col ">
           <h1 className="text-2xl font-bold mb-2 flex items-center">
             <div className="w-1 h-6 bg-white rounded-full mr-2"></div>
@@ -107,7 +116,12 @@ const ModuleChapters = ({ mode, chapter, setChapter }: ModuleChaptersProps) => {
                   </Tabs>
                 </div> */}
                 <div className="">
-                  <ModuleChapterTopics mode={mode} topics={chap.topics} />
+                  <ModuleChapterTopics
+                    mode={mode}
+                    topics={chap.topics}
+                    addTopicToChapter={addTopicToChapter}
+                    chapterId={chap.id}
+                  />
                 </div>
               </div>
             </AccordionContent>

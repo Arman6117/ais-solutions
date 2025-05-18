@@ -15,16 +15,20 @@ import { Textarea } from "@/components/ui/textarea";
 type ContentTopic = {
   id: number;
   title: string;
-  description?: string;
+  description: string;
 };
 
 type AddModuleChapterTopicButtonProps = {
-  currTopics: ContentTopic[] | undefined;
-  setTopics: (topics: ContentTopic[]) => void;
+  topics:ContentTopic[]
+  setChapTopics: (newTopic: ContentTopic[]) => void;
+  chapterId: number;
+  addTopicToChapter: (chapterId: number, newTopic: ContentTopic) => void;
 };
 const AddModuleChapterTopicButton = ({
-  currTopics,
-  setTopics,
+  addTopicToChapter,
+  chapterId,
+  topics,
+  setChapTopics
 }: AddModuleChapterTopicButtonProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -32,14 +36,24 @@ const AddModuleChapterTopicButton = ({
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newTopic = { title, description };
-    setTopics([...(currTopics || []), { id: Date.now(), ...newTopic }]);
 
+    // Create new topic with a unique ID
+    const newTopic = {
+      id: Date.now(),
+      title,
+      description,
+    };
+
+    // Add the topic directly to the parent's state
+    addTopicToChapter(chapterId, newTopic);
+    setChapTopics([...( topics|| []), { ...newTopic }]);
+
+    // Reset form fields
     setTitle("");
     setDescription("");
-
     setOpen(false);
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

@@ -53,7 +53,7 @@ const InstructorsCards = ({
                 <Card
                   className={cn(
                     "border border-gray-200 bg-white hover:shadow-md transition-all duration-300",
-                    mode === "view" || mode ==='create' &&
+                    mode === "view"  &&
                       "cursor-pointer hover:border-violet-300 hover:scale-102 hover:shadow-lg hover:shadow-violet-100"
                   )}
                 >
@@ -110,7 +110,7 @@ const InstructorsCards = ({
                   </CardContent>
                 </Card>
               </HoverCardTrigger>
-              {mode === "view" || mode ==='create' && (
+              {mode === "view" && (
                 <HoverCardContent
                   align="start"
                   className="md:w-96 w-64 max-h-96 bg-white border border-gray-200 p-0 rounded-lg shadow-lg overflow-auto no-scrollbar"

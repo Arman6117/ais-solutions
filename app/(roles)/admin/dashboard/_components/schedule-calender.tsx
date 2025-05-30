@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   HoverCard,
   HoverCardContent,
@@ -47,13 +48,13 @@ const ScheduleCalender = () => {
       <div className="flex w-full px-4 py-3 justify-between items-center border-b border-gray-200 bg-gray-50">
         <h1 className="text-lg font-bold text-gray-800">Your Schedule</h1>
         <div className="flex gap-2 items-center">
-          <button
+          <Button
             onClick={handlePrevPage}
             disabled={page === 0}
             className="text-gray-700 p-1 rounded-full hover:bg-gray-200 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
           >
             <ChevronLeft size={18} />
-          </button>
+          </Button>
           <h1 className="text-sm font-medium text-gray-600 min-w-20 text-center">
             {format(paginatedDates[0], "MMM d")} - {format(paginatedDates[paginatedDates.length - 1], "MMM d")}
           </h1>

@@ -38,19 +38,19 @@ const CoursesTable = () => {
             accessor: (row) => row.students,
           },
           {
-            id: "batches",
-            header: "No of Batches",
-            accessor: (row) => row.batches,
-          },
-          {
-            id: "batchesCompleted",
-            header: "Batches Completed",
-            accessor: (row) => row.batchesCompleted,
-          },
-          {
             id: "price",
             header: "Price",
             accessor: (row) => row.price,
+          },
+          {
+            id: "discount",
+            header: "Discount",
+            accessor: (row) => row.discount,
+          },
+          {
+            id: "offerPrice",
+            header: "Offer Price",
+            accessor: (row) => row.price - (row.price * row.discount) / 100 || 0,
           },
         ]}
         filterOptions={[

@@ -9,10 +9,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { adminSidebarLinks } from "@/lib/static";
+import { studentSidebarLinks } from "@/lib/static";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-const AdminSidebar = () => {
+const StudentSidebar = () => {
   // const [active, setActive] = useState(false);
 
   const url = usePathname();
@@ -24,7 +24,7 @@ const AdminSidebar = () => {
       <div className="flex flex-col gap-17 items-center justify-center px-0 py-10 md:p-10 ">
         <div className="text-white ">Logo</div>
         <div className="flex flex-col gap-10">
-          {adminSidebarLinks.map(({ label, link, icon: Icon }) => {
+          {studentSidebarLinks.map(({ label, link, icon: Icon }) => {
            const isActive = url.includes(link)
             
             return (
@@ -50,4 +50,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default StudentSidebar;

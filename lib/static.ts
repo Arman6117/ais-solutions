@@ -1,8 +1,10 @@
 import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard, LuSchool } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
-import { PiStudent } from "react-icons/pi";
+import { PiChalkboardTeacher, PiFolderSimpleUser, PiStudent } from "react-icons/pi";
 import { Course, DummyBatches, DummyInstructors, DummyStudent } from "./types";
+import { UserCircleIcon } from "lucide-react";
+import { FaUser } from "react-icons/fa";
 
 export const adminSidebarLinks = [
   {
@@ -35,6 +37,29 @@ export const adminSidebarLinks = [
     link: "/admin/offers",
     icon: MdOutlineLocalOffer,
   },
+];
+export const studentSidebarLinks = [
+  {
+    label: "Dashboard",
+    link: "/student/dashboard",
+    icon: LuLayoutDashboard,
+  },
+  {
+    label: "Courses",
+    link: "/student/courses",
+    icon: IoBookOutline,
+  },
+  {
+    label: "Sessions",
+    link: "/student/session",
+    icon: PiChalkboardTeacher,
+  },
+  {
+    label: "Profile",
+    link: "/student/profile",
+    icon: FaUser,
+  },
+  
 ];
 
 export const sampleMeetings = [

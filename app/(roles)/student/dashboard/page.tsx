@@ -1,9 +1,13 @@
+import Greetings from '@/components/greetings'
 import React from 'react'
+import StudentDashboard from './_components/student-dashboard'
 
-const StudentDashboard = () => {
+const StudentDashboardPage = () => {
   return (
-    <div>StudentDashboard</div>
+    <>
+   <StudentDashboard/>
+    </>
   )
 }
 
-export default StudentDashboard
+export default StudentDashboardPage

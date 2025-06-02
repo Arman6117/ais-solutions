@@ -312,7 +312,7 @@ export const dummyBatches: DummyBatches[] = [
     students: 22,
     startDate: "May 20, 2025",
     endDate: "Aug 20, 2025",
-    status: "Ongoing",
+    status: "Upcoming",
   },
   {
     id: "4",
@@ -322,7 +322,7 @@ export const dummyBatches: DummyBatches[] = [
     students: 22,
     startDate: "May 20, 2025",
     endDate: "Aug 20, 2025",
-    status: "Ongoing",
+    status: "Completed",
   },
 ];
 

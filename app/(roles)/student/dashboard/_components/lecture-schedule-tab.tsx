@@ -6,14 +6,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const LectureScheduleTab = () => {
   return (
     <Tabs defaultValue="today" orientation="horizontal">
-      <TabsList className="space-x-11 sm:p-7 bg-primary-bg/10 shadow">
-        <TabsTrigger className="text-lg sm:p-5 cursor-pointer " value="today">
+      <TabsList className="inline-flex items-center justify-center rounded-full bg-muted p-1 shadow-inner">
+        <TabsTrigger
+          value="today"
+          className="text-sm sm:text-base px-6 py-2 sm:px-8 sm:py-3 font-medium transition-all duration-200 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-primary"
+        >
           Today
         </TabsTrigger>
-        <TabsTrigger className="text-lg sm:p-5 cursor-pointer" value="tomorrow">
+        <TabsTrigger
+          value="tomorrow"
+          className="text-sm sm:text-base px-6 py-2 sm:px-8 sm:py-3 font-medium transition-all duration-200 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-primary"
+        >
           Tomorrow
         </TabsTrigger>
       </TabsList>
+
       <ScrollArea className="h-[500px] no-scrollbar overflow-x-hidden flex gap-6 pr-2 flex-col w-auto">
         <TabsContent value="today" className=" flex gap-6 p-3 flex-col ">
           <LectureScheduleCard day="today" />

@@ -9,7 +9,7 @@ const LectureSchedule = () => {
         <Calendar className='text-primary-bg size-8'/>
         <h1 className='text-3xl font-bold'>Your Schedule</h1>
      </div>
-     <div className='bg-soft-white px-5 py-2 rounded-md '>
+     <div className=' px-5 py-2 w-fit rounded-md '>
         <LectureScheduleTab/>
      </div>
     </div>

@@ -3,6 +3,7 @@ import React from "react";
 import LectureSchedule from "./lecture-schedule";
 import StudentBatches from "./student-batches";
 import StudentCard from "./student-card";
+import StudentCourseDataCard from "./student-course-data-card";
 
 const StudentDashboard = () => {
   return (
@@ -15,8 +16,9 @@ const StudentDashboard = () => {
         
       </div>
       <div className="bg-soft-white flex flex-col gap-5 pb  w-full h-dvh rounded-lg p-5">
-        <div className="flex gap-3">
+        <div className="flex gap-8">
           <StudentCard />
+          <StudentCourseDataCard />
         </div>
         <StudentBatches />
       </div>

@@ -7,7 +7,7 @@ import StudentNotification from "./student-notification";
 
 const StudentCard = () => {
   return (
-    <div className="flex flex-col rounded-lg shadow-md bg-white p-3 relative">
+    <div className="flex flex-col w-full rounded-lg shadow-md bg-white p-3 relative">
       <Image
         src={"/abstract/abstract1.jpg"}
         className="rounded-lg"

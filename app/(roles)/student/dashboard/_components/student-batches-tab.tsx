@@ -32,80 +32,87 @@ const StudentBatchesTab = () => {
   );
 
   return (
-    <Tabs defaultValue="all">
-      <div className="my-1">
-        <Input
-          placeholder="Search batches"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-      <TabsList className="bg-transparent space-x-7 text-lg">
-        <TabsTrigger
-          value="all"
-          className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
-        >
-          All
-        </TabsTrigger>
-        <TabsTrigger
-          value="ongoing"
-          className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
-        >
-          Ongoing
-        </TabsTrigger>
-        <TabsTrigger
-          value="upcoming"
-          className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
-        >
-          Upcoming
-        </TabsTrigger>
-        <TabsTrigger
-          value="completed"
-          className="cursor-pointer bg-transparent data-[state=active]:border-b-2  data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
-        >
-          Completed
-        </TabsTrigger>
-      </TabsList>
-
-      <ScrollArea className="h-[500px] no-scrollbar overflow-x-hidden flex gap-6 pr-2 flex-col w-auto">
-        {filteredBatches.map((batch) => (
-          <TabsContent
-            key={batch.id}
+    <div className="flex flex-col h-full">
+      <Tabs defaultValue="all" className="flex flex-col h-full">
+        <div className="flex-shrink-0 mb-3">
+          <Input
+            placeholder="Search batches"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        
+        <TabsList className="flex-shrink-0 bg-transparent space-x-7 text-lg mb-3">
+          <TabsTrigger
             value="all"
-            className=" flex gap-6 p-3 flex-col "
+            className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
           >
-            <StudentBatchesCard status={batch.status} batch={batch} />
-          </TabsContent>
-        ))}
-        {onGoingBatches.map((batch) => (
-          <TabsContent
-            key={batch.id}
+            All
+          </TabsTrigger>
+          <TabsTrigger
             value="ongoing"
-            className=" flex gap-6 p-3 flex-col "
+            className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
           >
-            <StudentBatchesCard status={batch.status} batch={batch} />
-          </TabsContent>
-        ))}
-        {upComingBatches.map((batch) => (
-          <TabsContent
-            key={batch.id}
+            Ongoing
+          </TabsTrigger>
+          <TabsTrigger
             value="upcoming"
-            className=" flex gap-6 p-3 flex-col "
+            className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
           >
-            <StudentBatchesCard status={batch.status} batch={batch} />
-          </TabsContent>
-        ))}
-        {completedBatches.map((batch) => (
-          <TabsContent
-            key={batch.id}
+            Upcoming
+          </TabsTrigger>
+          <TabsTrigger
             value="completed"
-            className=" flex gap-6 p-3 flex-col "
+            className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
           >
-            <StudentBatchesCard status={batch.status} batch={batch} />
+            Completed
+          </TabsTrigger>
+        </TabsList>
+
+        <div className="flex-1 min-h-0">
+          <TabsContent value="all" className="h-full mt-0">
+            <ScrollArea className="h-full pr-2">
+              <div className="space-y-3 p-3">
+                {filteredBatches.map((batch) => (
+                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                ))}
+              </div>
+            </ScrollArea>
           </TabsContent>
-        ))}
-      </ScrollArea>
-    </Tabs>
+          
+          <TabsContent value="ongoing" className="h-full mt-0">
+            <ScrollArea className="h-full pr-2">
+              <div className="space-y-3">
+                {onGoingBatches.map((batch) => (
+                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+          
+          <TabsContent value="upcoming" className="h-full mt-0">
+            <ScrollArea className="h-full pr-2">
+              <div className="space-y-3">
+                {upComingBatches.map((batch) => (
+                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+          
+          <TabsContent value="completed" className="h-full mt-0">
+            <ScrollArea className="h-full pr-2">
+              <div className="space-y-3">
+                {completedBatches.map((batch) => (
+                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
   );
 };
 

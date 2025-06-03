@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { dummyBatches } from "@/lib/static";
 
 import StudentBatchesCard from "./student-batches-card";
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
 import { DummyBatches } from "@/lib/types";
+import { generateReadableLightColor } from "@/lib/utils";
 
 const StudentBatchesTab = () => {
   const [search, setSearch] = useState("");
@@ -30,7 +31,6 @@ const StudentBatchesTab = () => {
   const completedBatches = filteredBatches.filter(
     (batch) => batch.status === "Completed"
   );
-
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue="all" className="flex flex-col h-full">

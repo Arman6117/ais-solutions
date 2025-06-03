@@ -116,3 +116,43 @@ export function getLevelColor(level: string) {
       return "bg-gray-100 text-gray-800";
   }
 }
+
+export function generateReadableLightColor(): string {
+  // Check contrast ratio of color with black text
+  function getLuminance(r: number, g: number, b: number): number {
+    const a = [r, g, b].map((v) => {
+      v /= 255;
+      return v <= 0.03928
+        ? v / 12.92
+        : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+  }
+
+  function contrastRatio(l1: number, l2: number): number {
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  }
+
+  function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+    s /= 100;
+    l /= 100;
+    const k = (n: number) => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) =>
+      l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+  }
+
+  while (true) {
+    const h = Math.floor(Math.random() * 360);
+    const s = Math.floor(Math.random() * 30) + 60; // 60–90%
+    const l = Math.floor(Math.random() * 20) + 75; // 75–95%
+    const [r, g, b] = hslToRgb(h, s, l);
+    const luminance = getLuminance(r, g, b);
+    const contrast = contrastRatio(0, luminance); // Black text has luminance = 0
+
+    if (contrast >= 4.5) {
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+  }
+}

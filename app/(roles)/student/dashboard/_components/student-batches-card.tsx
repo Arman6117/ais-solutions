@@ -1,29 +1,33 @@
+'use client'
 import { DummyBatches } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, generateReadableLightColor } from "@/lib/utils";
 import { BookOpen, Calendar, CalendarCheckIcon, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { PiChalkboardTeacher } from "react-icons/pi";
 
 type StudentBatchesCardProps = {
   batch: DummyBatches;
   status: "Ongoing" | "Upcoming" | "Completed";
 };
 const StudentBatchesCard = ({ batch, status }: StudentBatchesCardProps) => {
+
+  const [bgColor, setBgColor] = useState("#ffffff"); // default safe color
+
+  useEffect(() => {
+    // run only on client after hydration
+    setBgColor(generateReadableLightColor());
+  }, [batch.id]);
   return (
     <Link
       href={`/student/batch-details/${batch.id}`}
       className={cn(
         "flex rounded cursor-pointer transition-all p-4 gap-6",
-        status === "Ongoing" &&
-          "bg-green-200 shadow-lg hover:outline-green-500 hover:outline-2 hover:shadow-lg hover:shadow-green-200",
-        status === "Upcoming" &&
-          "bg-indigo-200 hover:outline-blue-500 hover:outline-2 hover:shadow-lg hover:shadow-blue-200",
-        status === "Completed" &&
-          "bg-amber-200 hover:outline-amber-500 hover:outline-2 hover:shadow-lg hover:shadow-amber-200"
+        `hover:shadow-lg hover:shadow-primary-bg/10 hover:border-2 hover:border-primary-bg`,
+      
       )}
+      style={{ backgroundColor:  bgColor ,}}
     >
       <div className="bg-white rounded-lg size-20 p-1">
         <Image

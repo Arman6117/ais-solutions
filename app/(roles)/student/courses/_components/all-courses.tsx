@@ -1,6 +1,18 @@
 "use client";
+import { Input } from "@/components/ui/input";
 import React, { use, useMemo, useState } from "react";
+import CourseFilterSelect from "./course-filter-select";
+import CourseSortSelect from "./course-sort-select";
+import CourseCard from "./course-card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
+const COURSES_PER_PAGE = 4; //TODO:Change it later
 const dummyCourses = [
   {
     id: 1,
@@ -94,10 +106,66 @@ const AllCourses = () => {
 
     return courses;
   }, [search, levelFilter, sortOrder, sortBy]);
+  const totalPages = Math.ceil(filteredCourses.length / COURSES_PER_PAGE);
+  const paginatedCourses = filteredCourses.slice(
+    (currentPage - 1) * COURSES_PER_PAGE,
+    currentPage * COURSES_PER_PAGE
+  );
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <h1 className="text-5xl font-serif">Browse Courses</h1>
-      <div className="flex flex-col"></div>
+      <div className="flex flex-col mt-10">
+        <div className="flex sm:flex-row gap-10 flex-col">
+          <Input
+            placeholder="Search courses by name.."
+            className="focus w-64 sm:w-96 border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+          />
+          <div className="flex gap-3 flex-wrap">
+            <CourseFilterSelect
+              levelFilter={levelFilter}
+              setLevelFilter={setLevelFilter}
+            />
+            <CourseSortSelect
+              setSortBy={setSortBy}
+              setSortOrder={setSortOrder}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+            />
+          </div>
+        </div>
+        <div className="mt-10">
+          {paginatedCourses.map((course) => (
+            <CourseCard key={course.id} />
+          ))}
+        </div>
+      </div>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              className={
+                currentPage === 1 ? "pointer-events-none cursor-pointer opacity-50" : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+          <PaginationItem className="px-4">
+            {currentPage} / {totalPages}
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none cursor-pointer opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };

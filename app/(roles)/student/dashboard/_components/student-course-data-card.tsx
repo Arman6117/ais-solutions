@@ -1,9 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { BellIcon, BookOpen, CoinsIcon } from "lucide-react";
-import Image from "next/image";
+
 import React from "react";
-import { MdAlternateEmail, MdOutlineEmail } from "react-icons/md";
-import StudentNotification from "./student-notification";
+
+import {  BookOpen} from "lucide-react";
+
 import { PiStudent } from "react-icons/pi";
 
 const StudentCourseDataCard = () => {

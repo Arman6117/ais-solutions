@@ -151,7 +151,7 @@ export function generateReadableLightColor(): string {
     const luminance = getLuminance(r, g, b);
     const contrast = contrastRatio(0, luminance); // Black text has luminance = 0
 
-    if (contrast >= 4.5) {
+    if (contrast >= 4) {
       return `hsl(${h}, ${s}%, ${l}%)`;
     }
   }

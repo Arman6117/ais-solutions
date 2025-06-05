@@ -56,6 +56,9 @@ const CourseCard = ({ course }: CourseCardProps) => {
           <Badge className="flex gap-2 rounded py-1 px-2 border border-gray-300 bg-transparent  items-center ">
             <span className="text-muted-foreground ">3 Months</span>
           </Badge>
+          <Badge className="flex gap-2 rounded py-1 px-2 border border-gray-300 bg-transparent  items-center ">
+            <span className="text-muted-foreground ">Offline</span>
+          </Badge>
         </div>
         <div className="flex justify-between">
           <div className="flex gap-2 items-center mt-2">

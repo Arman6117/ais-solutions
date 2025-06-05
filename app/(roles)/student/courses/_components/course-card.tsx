@@ -1,8 +1,12 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { LucidePyramid, Star } from "lucide-react";
-import Image from "next/image";
 import React from "react";
+import Image from "next/image";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+
+import { LucidePyramid, Star } from "lucide-react";
+import Link from "next/link";
 
 type Course = {
   id: number;
@@ -16,6 +20,7 @@ type CourseCardProps = {
 };
 const CourseCard = ({ course }: CourseCardProps) => {
   return (
+    <Link href={`/student/courses/course-details/${course.id}`}>
     <Card className="shadow-none p-0 hover:bg-accent transition-colors">
       <CardContent className="flex p-4   flex-col gap-2 cursor-pointer ">
         <Image
@@ -24,7 +29,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
           height={300}
           alt="thumbnail"
           className="rounded-md"
-        />
+          />
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-semibold text-indigo-950">
             {course.title}
@@ -57,9 +62,17 @@ const CourseCard = ({ course }: CourseCardProps) => {
             <span className="text-xl font-bold">₹{course.price}</span>
             <span className="line-through text-muted-foreground ">₹2000</span>
           </div>
+          <Button
+            className="border-primary-bg cursor-pointer text-primary-bg hover:bg-primary-bg/10 hover:text-primary-bg "
+            size={"sm"}
+            variant={"outline"}
+            >
+            Add To My Course
+          </Button>
         </div>
       </CardContent>
     </Card>
+              </Link>
   );
 };
 

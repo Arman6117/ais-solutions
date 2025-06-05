@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 
-const COURSES_PER_PAGE = 10; //TODO:Change it later
+const COURSES_PER_PAGE = 5; //TODO:Change it later
 const dummyCourses = [
   {
     id: 1,
@@ -144,7 +144,7 @@ const AllCourses = () => {
           ))}
         </div>
       </div>
-      <Pagination>
+      <Pagination className="mt-5">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious

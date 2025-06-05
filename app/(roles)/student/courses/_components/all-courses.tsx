@@ -11,8 +11,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Separator } from "@/components/ui/separator";
 
-const COURSES_PER_PAGE = 4; //TODO:Change it later
+const COURSES_PER_PAGE = 10; //TODO:Change it later
 const dummyCourses = [
   {
     id: 1,
@@ -117,6 +118,7 @@ const AllCourses = () => {
       <div className="flex flex-col mt-10">
         <div className="flex sm:flex-row gap-10 flex-col">
           <Input
+           onChange={(e)=>setSearchTerm(e.target.value)}
             placeholder="Search courses by name.."
             className="focus w-64 sm:w-96 border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
           />
@@ -133,9 +135,12 @@ const AllCourses = () => {
             />
           </div>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 grid md:grid-cols-3 xl:grid-cols-4  grid-cols-1 sm:grid-cols-2 border-separate gap-x-4 gap-y-8">
           {paginatedCourses.map((course) => (
-            <CourseCard key={course.id} />
+            
+              <CourseCard key={course.id} course={course} />
+            
+            
           ))}
         </div>
       </div>
@@ -145,7 +150,9 @@ const AllCourses = () => {
             <PaginationPrevious
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               className={
-                currentPage === 1 ? "pointer-events-none cursor-pointer opacity-50" : "cursor-pointer"
+                currentPage === 1
+                  ? "pointer-events-none cursor-pointer opacity-50"
+                  : "cursor-pointer"
               }
             />
           </PaginationItem>

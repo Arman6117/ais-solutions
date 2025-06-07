@@ -1,13 +1,23 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Pyramid } from "lucide-react";
+import { Calendar, Pyramid, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import ModuleSelect from "./module-select";
+import ModulesDescription from "./modules-description";
+import { dummyInstructors } from "@/lib/static";
+import StudentCourseInstructorCard from "./student-course-instructor-card";
 
 const exampleModuleAndPrice = [
   { name: "React Hooks", price: 200 },
@@ -21,7 +31,7 @@ const StudentCourseDetails = () => {
     0
   );
   return (
-    <div className="flex flex-col w-full relative ">
+    <div className="flex flex-col w-full  ">
       <div className="h-auto bg-gradient-to-r gap-4 rounded-md from-[#16161d] to-indigo-950 p-10 flex flex-col">
         <h1 className="sm:text-[45px] text-4xl max-w-[550px] text-white font-bold ">
           The Complete Web Development Bootcamp
@@ -49,12 +59,14 @@ const StudentCourseDetails = () => {
       </div>
       <div className="flex md:flex-row flex-col  justify-between">
         <div className="flex flex-col">
-          <div className="">
-            <h1>Modules</h1>
+          <ModulesDescription modules={exampleModuleAndPrice} />
+          <StudentCourseInstructorCard instructors={dummyInstructors} />
+          <div className="flex gap-4 mt-5">
+            <Star className="text-amber" />
           </div>
         </div>
-        <Card className="p-0 mt-4">
-          <CardContent className="p-3  flex flex-col">
+        <Card className="p-0 sticky mt-4 max-h-[550px]">
+          <CardContent className="p-3   flex flex-col">
             <Image
               src={"https://placehold.co/200x120"}
               width={350}
@@ -108,10 +120,12 @@ const StudentCourseDetails = () => {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Select Modules</DialogTitle>
-                    <DialogDescription>Only modules you want to purchase</DialogDescription>
+                  <DialogTitle>Select Modules</DialogTitle>
+                  <DialogDescription>
+                    Only modules you want to purchase
+                  </DialogDescription>
                 </DialogHeader>
-                <ModuleSelect modules={exampleModuleAndPrice}/>
+                <ModuleSelect modules={exampleModuleAndPrice} />
               </DialogContent>
             </Dialog>
           </CardContent>

@@ -1,3 +1,11 @@
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+import StudentCourseInstructorCard from "./student-course-instructor-card";
+import CourseBasicInfoCard from "./course-basic-info-card";
+import ModuleSelect from "./module-select";
+import ModulesDescription from "./modules-description";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,14 +18,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Pyramid, Star } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import ModuleSelect from "./module-select";
-import ModulesDescription from "./modules-description";
+
 import { dummyInstructors } from "@/lib/static";
-import StudentCourseInstructorCard from "./student-course-instructor-card";
+
+import { Calendar, Pyramid, Star } from "lucide-react";
+import StudentCourseReviews from "./student-course-reviews";
 
 const exampleModuleAndPrice = [
   { name: "React Hooks", price: 200 },
@@ -59,11 +64,11 @@ const StudentCourseDetails = () => {
       </div>
       <div className="flex md:flex-row flex-col  justify-between">
         <div className="flex flex-col">
+          <CourseBasicInfoCard />
           <ModulesDescription modules={exampleModuleAndPrice} />
           <StudentCourseInstructorCard instructors={dummyInstructors} />
-          <div className="flex gap-4 mt-5">
-            <Star className="text-amber" />
-          </div>
+          <Separator className="mt-5"/>
+          <StudentCourseReviews className="md:flex hidden" />
         </div>
         <Card className="p-0  md:fixed md:right-12 md:top-20 mt-4 max-h-[550px]">
           <CardContent className="p-3   flex flex-col">
@@ -130,6 +135,7 @@ const StudentCourseDetails = () => {
             </Dialog>
           </CardContent>
         </Card>
+        <StudentCourseReviews className="flex md:hidden" />
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ const StudentCourseDetails = () => {
     0
   );
   return (
-    <div className="flex flex-col w-full  ">
+    <div className="flex flex-col w-full relative  ">
       <div className="h-auto bg-gradient-to-r gap-4 rounded-md from-[#16161d] to-indigo-950 p-10 flex flex-col">
         <h1 className="sm:text-[45px] text-4xl max-w-[550px] text-white font-bold ">
           The Complete Web Development Bootcamp
@@ -65,7 +65,7 @@ const StudentCourseDetails = () => {
             <Star className="text-amber" />
           </div>
         </div>
-        <Card className="p-0 sticky mt-4 max-h-[550px]">
+        <Card className="p-0  md:fixed md:right-12 md:top-20 mt-4 max-h-[550px]">
           <CardContent className="p-3   flex flex-col">
             <Image
               src={"https://placehold.co/200x120"}

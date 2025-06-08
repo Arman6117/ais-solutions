@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import React, { use, useMemo, useState } from "react";
+import React, {  useMemo, useState } from "react";
 import CourseFilterSelect from "./course-filter-select";
 import CourseSortSelect from "./course-sort-select";
 import CourseCard from "./course-card";

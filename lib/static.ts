@@ -1,7 +1,11 @@
 import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard, LuSchool } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
-import { PiChalkboardTeacher, PiFolderSimpleUser, PiStudent } from "react-icons/pi";
+import {
+  PiChalkboardTeacher,
+  PiFolderSimpleUser,
+  PiStudent,
+} from "react-icons/pi";
 import { Course, DummyBatches, DummyInstructors, DummyStudent } from "./types";
 import { UserCircleIcon } from "lucide-react";
 import { FaUser } from "react-icons/fa";
@@ -51,7 +55,7 @@ export const studentSidebarLinks = [
   },
   {
     label: "Sessions",
-    link: "/student/session",
+    link: "/student/sessions",
     icon: PiChalkboardTeacher,
   },
   {
@@ -59,7 +63,6 @@ export const studentSidebarLinks = [
     link: "/student/profile",
     icon: FaUser,
   },
-  
 ];
 
 export const sampleMeetings = [
@@ -605,5 +608,88 @@ export const dummyChapters = [
         description: "Detailed explanation of fundamental principles",
       },
     ],
+  },
+];
+
+export const dummySessions = [
+  {
+    id: 1,
+    date: "2025-06-01",
+    title: "Intro to Web Development",
+    attended: true,
+    instructor: "John Doe",
+    course: "Full Stack Web Dev Bootcamp",
+    module: "Module 1: HTML & CSS",
+    chapter: "Chapter 2: Semantic HTML",
+  },
+  {
+    id: 2,
+    date: "2025-05-30",
+    title: "Flexbox Deep Dive",
+    attended: false,
+    instructor: "Jane Smith",
+    course: "Full Stack Web Dev Bootcamp",
+    module: "Module 2: CSS Layouts",
+    chapter: "Chapter 1: Flexbox Basics",
+  },
+  {
+    id: 3,
+    date: "2025-05-28",
+    title: "JS Fundamentals",
+    attended: true,
+    instructor: "Rahul Patel",
+    course: "Full Stack Web Dev Bootcamp",
+    module: "Module 3: JavaScript",
+    chapter: "Chapter 1: Variables and Types",
+  },
+  {
+    id: 4,
+    date: "2025-05-26",
+    title: "React Intro",
+    attended: true,
+    instructor: "Priya Sharma",
+    course: "React Mastery",
+    module: "Module 1: React Basics",
+    chapter: "Chapter 1: JSX & Components",
+  },
+  {
+    id: 5,
+    date: "2025-05-25",
+    title: "Hooks in React",
+    attended: false,
+    instructor: "Priya Sharma",
+    course: "React Mastery",
+    module: "Module 2: Advanced React",
+    chapter: "Chapter 2: useEffect in Depth",
+  },
+  {
+    id: 6,
+    date: "2025-05-23",
+    title: "Node.js Crash Course",
+    attended: true,
+    instructor: "Ali Khan",
+    course: "Backend Development with Node.js",
+    module: "Module 1: Getting Started",
+    chapter: "Chapter 3: Express Basics",
+  },
+  {
+    id: 7,
+    date: "2025-05-21",
+    title: "MongoDB Essentials",
+    attended: false,
+    instructor: "Ali Khan",
+    course: "Backend Development with Node.js",
+    module: "Module 2: Database Layer",
+    chapter: "Chapter 1: Connecting with Mongoose",
+  },
+  {
+    id: 8,
+    date: "2025-05-19",
+    title: "Deploying Full Stack Apps",
+    attended: true,
+    instructor: "John Doe",
+    course: "DevOps for Developers",
+    module: "Module 3: CI/CD",
+    chapter: "Chapter 2: Vercel & Netlify",
   },
 ];

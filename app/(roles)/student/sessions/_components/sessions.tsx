@@ -7,6 +7,8 @@ import SessionSortSelect from "./session-sort-select";
 import { Input } from "@/components/ui/input";
 
 import { dummySessions } from "@/lib/static";
+import SessionCard from "./session-card";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const ITEMS_PER_PAGE = 5; //TODO: Number of sessions per page change later
 const Sessions = () => {
@@ -48,7 +50,7 @@ const Sessions = () => {
   }, [filter, searchTerm, sortBy]);
 
   const totalPages = Math.ceil(filteredSessions.length / ITEMS_PER_PAGE);
-  const paginatedCourses = filteredSessions.slice(
+  const paginatedSessions = filteredSessions.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -67,8 +69,42 @@ const Sessions = () => {
             <SessionFilterSelect filter={filter} setFilter={setFilter} />
             <SessionSortSelect setSortBy={setSortBy} sortBy={sortBy} />
           </div>
-        </div>
+            </div>
+          <div className="flex flex-col gap-5 mt-10">
+            {paginatedSessions.map((session) => (
+              <SessionCard key={session.id} session={session} />
+            ))}
+          </div>
       </div>
+      <Pagination className="mt-5">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none cursor-pointer opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+          <PaginationItem className="px-4">
+            {currentPage} / {totalPages}
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none cursor-pointer opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };

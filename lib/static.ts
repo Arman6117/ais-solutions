@@ -693,3 +693,39 @@ export const dummySessions = [
     chapter: "Chapter 2: Vercel & Netlify",
   },
 ];
+
+
+export const dummyStudentProfile ={
+  name: "Rohan Sharma",
+  email: "rohan@example.com",
+  number: "+91 9876543210",
+  image: "https://placehold.co/120x120",
+  totalFees: 15000,
+  paidFees: 10000,
+  courses: [
+    {
+      name: "Full Stack Web Development",
+      total: 8000,
+      paid: 8000,
+      status: "Completed",
+      batch: "Batch A",
+      approved: true,
+    },
+    {
+      name: "Data Structures & Algorithms",
+      total: 7000,
+      paid: 2000,
+      status: "Ongoing",
+      batch: "Batch B",
+      approved: true,
+    },
+    {
+      name: "DevOps Fundamentals",
+      total: 5000,
+      paid: 0,
+      status: "Ongoing",
+      batch: "Batch C",
+      approved: false,
+    },
+  ],
+}

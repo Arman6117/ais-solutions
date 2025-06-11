@@ -4,20 +4,17 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
   Play,
-  Lock,
+
   FileText,
   Video,
-  ChevronDown,
   ChevronRight,
   Download,
   Clock,
-  CheckCircle,
+
 } from "lucide-react";
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -30,237 +27,13 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import ModuleAccordion from "./module-accordion";
-
+import { dummyEnrolledCourseData as courseData } from "@/lib/static";
 // Mock data - replace with your actual data
-const courseData = {
-  id: 1,
-  name: "Advanced React Development",
-  description:
-    "Master advanced React concepts including hooks, context, performance optimization, and modern patterns. Build production-ready applications with confidence.",
-  progress: 65,
-  modules: [
-    {
-      id: 1,
-      name: "React Fundamentals",
-      isPurchased: true,
-      isCompleted: true,
 
-      chapters: [
-        {
-          id: 1,
-          name: "Introduction to React",
-          isCompleted: true,
-          duration: "25m",
-          notes: [
-            {
-              id: 1,
-              title: "React Basics Overview",
-              videoUrl: "https://www.youtube.com/embed/dGcsHMXbSOA",
-              files: [
-                { name: "React_Basics.pdf", size: "2.1 MB" },
-                { name: "Code_Examples.zip", size: "1.5 MB" },
-              ],
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: "Components and JSX",
-          isCompleted: true,
 
-          notes: [
-            {
-              id: 2,
-              title: "Understanding JSX",
-              videoUrl: "https://www.youtube.com/embed/7fPXI_MnBOY",
-              files: [{ name: "JSX_Guide.pdf", size: "1.8 MB" }],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Advanced Hooks",
-      isPurchased: true,
-      isCompleted: false,
 
-      chapters: [
-        {
-          id: 3,
-          name: "useState and useEffect",
-          isCompleted: false,
-          duration: "45m",
-          notes: [
-            {
-              id: 3,
-              title: "State Management with Hooks",
-              videoUrl: "https://www.youtube.com/embed/O6P86uwfdR0",
-              files: [
-                { name: "Hooks_Examples.pdf", size: "2.5 MB" },
-                { name: "Practice_Code.zip", size: "3.2 MB" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Performance Optimization",
-      isPurchased: false,
-      isCompleted: false,
 
-      chapters: [
-        {
-          id: 4,
-          name: "React.memo and useMemo",
-          isCompleted: false,
-          duration: "40m",
-          notes: [],
-        },
-      ],
-    },
-  ],
-};
 
-const VideoPlayer = ({ videoUrl, title }) => {
-  return (
-    <div className=" aspect-video w-full rounded-lg overflow-hidden bg-black">
-      <iframe
-        src={videoUrl}
-        title={title}
-        className="w-full h-full"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-    </div>
-  );
-};
-
-const FileDownload = ({ file }) => {
-  return (
-    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-      <div className="flex items-center gap-3">
-        <FileText className="w-5 h-5 text-purple-500" />
-        <div>
-          <p className="font-medium text-sm">{file.name}</p>
-          <p className="text-xs text-gray-500">{file.size}</p>
-        </div>
-      </div>
-      <Button variant="outline" size="sm">
-        <Download className="w-4 h-4 mr-2" />
-        Download
-      </Button>
-    </div>
-  );
-};
-
-const NotesViewer = ({ note, courseName }) => {
-  const [activeTab, setActiveTab] = useState("video");
-
-  return (
-    <div className="space-y-6 w-4xl">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" size="sm">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Course
-        </Button>
-        <div>
-          <h2 className="text-2xl font-bold">{courseName}</h2>
-          <p className="text-gray-600">{note.title}</p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="video">Video</TabsTrigger>
-          <TabsTrigger value="notes">Notes</TabsTrigger>
-          <TabsTrigger value="next">Next Chapter</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="video" className="space-y-4 w-ful">
-          <VideoPlayer videoUrl={note.videoUrl} title={note.title} />
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="w-5 h-5" />
-                Video Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p>
-                  <strong>Title:</strong> {note.title}
-                </p>
-                <p>
-                  <strong>Duration:</strong> 25 minutes
-                </p>
-                <p>
-                  <strong>Quality:</strong> 1080p HD
-                </p>
-                <div className="flex gap-2 mt-4">
-                  <Badge variant="secondary">React</Badge>
-                  <Badge variant="secondary">JavaScript</Badge>
-                  <Badge variant="secondary">Frontend</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="notes" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Course Materials
-              </CardTitle>
-              <CardDescription>
-                Download the following files to supplement your learning
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {note.files.map((file, index) => (
-                <FileDownload key={index} file={file} />
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="next" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Next: Components and JSX</CardTitle>
-              <CardDescription>Continue your learning journey</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <Play className="w-8 h-8 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold">Understanding JSX Syntax</h3>
-                  <p className="text-sm text-gray-600">
-                    Learn how JSX works under the hood
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Duration: 35 minutes
-                  </p>
-                </div>
-                <Button>
-                  Start Next Chapter
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-};
 
 const EnrolledCourse = () => {
   return (
@@ -349,7 +122,7 @@ const EnrolledCourse = () => {
 
         <Accordion type="single" collapsible className="space-y-4">
           {courseData.modules.map((module) => (
-            <ModuleAccordion key={module.id} module={module} />
+            <ModuleAccordion key={module.id} module={module} courseName={courseData.name} />
           ))}
         </Accordion>
 

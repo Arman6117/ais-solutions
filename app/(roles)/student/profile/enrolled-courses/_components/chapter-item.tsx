@@ -22,8 +22,13 @@ type Chapter = {
 type ChapterItemProps = {
   chapter: Chapter;
   moduleIsPurchased: boolean;
+  courseName: string;
 };
-const ChapterItem = ({ chapter, moduleIsPurchased }: ChapterItemProps) => {
+const ChapterItem = ({
+  chapter,
+  moduleIsPurchased,
+  courseName,
+}: ChapterItemProps) => {
   return (
     <div className="border-l-2 border-gray-200 ml-4 pl-4 pb-4">
       <div className="flex items-center justify-between group">
@@ -69,7 +74,10 @@ const ChapterItem = ({ chapter, moduleIsPurchased }: ChapterItemProps) => {
             size="sm"
             className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
           >
-            <Link href={`/student/profile/enrolled-courses/view-notes/${chapter.name}/${chapter.id}`} className="flex gap-2 items-center">
+            <Link
+              href={`/student/profile/enrolled-courses/view-notes/${courseName}/${chapter.id}`}
+              className="flex gap-2 items-center"
+            >
               <FileText className="w-4 h-4 mr-2" />
               View Notes
             </Link>

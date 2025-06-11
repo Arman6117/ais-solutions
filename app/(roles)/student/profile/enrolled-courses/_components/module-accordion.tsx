@@ -33,8 +33,9 @@ type Module = {
 }
 type ModuleAccordionProps = {
     module:Module
+    courseName:string
 }
-const ModuleAccordion = ({ module}:ModuleAccordionProps ) => {
+const ModuleAccordion = ({ module,courseName}:ModuleAccordionProps ) => {
     return (
       <AccordionItem value={`module-${module.id}`} className="border rounded-lg px-4">
         <AccordionTrigger className="hover:no-underline">
@@ -81,6 +82,7 @@ const ModuleAccordion = ({ module}:ModuleAccordionProps ) => {
               <ChapterItem 
                 key={chapter.id} 
                 chapter={chapter} 
+                courseName={courseName}
                 moduleIsPurchased={module.isPurchased}
                 
               />

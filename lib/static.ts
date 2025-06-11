@@ -732,3 +732,96 @@ export const dummyStudentProfile ={
     },
   ],
 }
+
+
+export const dummyEnrolledCourseData = {
+  id: 1,
+  name: "Advanced React Development",
+  description:
+    "Master advanced React concepts including hooks, context, performance optimization, and modern patterns. Build production-ready applications with confidence.",
+  progress: 65,
+  modules: [
+    {
+      id: 1,
+      name: "React Fundamentals",
+      isPurchased: true,
+      isCompleted: true,
+
+      chapters: [
+        {
+          id: 1,
+          name: "Introduction to React",
+          isCompleted: true,
+          duration: "25m",
+          notes: [
+            {
+              id: 1,
+              title: "React Basics Overview",
+              videoUrl: "https://www.youtube.com/embed/dGcsHMXbSOA",
+              files: [
+                { name: "React_Basics.pdf", size: "2.1 MB" },
+                { name: "Code_Examples.zip", size: "1.5 MB" },
+              ],
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: "Components and JSX",
+          isCompleted: true,
+
+          notes: [
+            {
+              id: 2,
+              title: "Understanding JSX",
+              videoUrl: "https://www.youtube.com/embed/7fPXI_MnBOY",
+              files: [{ name: "JSX_Guide.pdf", size: "1.8 MB" }],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "Advanced Hooks",
+      isPurchased: true,
+      isCompleted: false,
+
+      chapters: [
+        {
+          id: 3,
+          name: "useState and useEffect",
+          isCompleted: false,
+          duration: "45m",
+          notes: [
+            {
+              id: 3,
+              title: "State Management with Hooks",
+              videoUrl: "https://www.youtube.com/embed/O6P86uwfdR0",
+              files: [
+                { name: "Hooks_Examples.pdf", size: "2.5 MB" },
+                { name: "Practice_Code.zip", size: "3.2 MB" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: "Performance Optimization",
+      isPurchased: false,
+      isCompleted: false,
+
+      chapters: [
+        {
+          id: 4,
+          name: "React.memo and useMemo",
+          isCompleted: false,
+          duration: "40m",
+          notes: [],
+        },
+      ],
+    },
+  ],
+};

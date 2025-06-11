@@ -254,13 +254,7 @@ const StudentProfile = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
             {studentData.courses.map((course, idx) => (
-              <Link
-                href={`/student/profile/enrolled-courses/${course.name}`}
-                key={idx}
-                className="no-underline"
-              >
-                <EnrolledCourseCard course={course} />
-              </Link>
+              <EnrolledCourseCard course={course} key={idx} />
             ))}
           </div>
         </div>

@@ -704,6 +704,7 @@ export const dummyStudentProfile ={
   paidFees: 10000,
   courses: [
     {
+      id:1,
       name: "Full Stack Web Development",
       total: 8000,
       paid: 8000,
@@ -712,6 +713,7 @@ export const dummyStudentProfile ={
       approved: true,
     },
     {
+      id:2,
       name: "Data Structures & Algorithms",
       total: 7000,
       paid: 2000,
@@ -720,6 +722,7 @@ export const dummyStudentProfile ={
       approved: true,
     },
     {
+      id:3,
       name: "DevOps Fundamentals",
       total: 5000,
       paid: 0,

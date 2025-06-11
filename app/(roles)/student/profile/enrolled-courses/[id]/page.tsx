@@ -1,7 +1,8 @@
 import React from 'react'
+import StudentProfile from '../../_components/student-profile'
 import EnrolledCourse from '../_components/enrolled-course'
 
-const EnrolledCoursePage = () => {
+const EnrolledCoursesPage = () => {
   return (
     <>
      <EnrolledCourse/>
@@ -9,4 +10,4 @@ const EnrolledCoursePage = () => {
   )
 }
 
-export default EnrolledCoursePage
+export default EnrolledCoursesPage

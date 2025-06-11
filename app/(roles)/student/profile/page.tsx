@@ -3,9 +3,9 @@ import StudentProfile from './_components/student-profile'
 
 const StudentProfilePage = () => {
   return (
-    <>
-     <StudentProfile/>
-    </>
+     <>
+      <StudentProfile/> 
+     </>
   )
 }
 

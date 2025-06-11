@@ -1,28 +1,42 @@
-'use client'
-import React, { useState } from 'react';
+"use client";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Play, Lock, FileText, Video, ChevronDown, ChevronRight, Download, Clock, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Play,
+  Lock,
+  FileText,
+  Video,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import ModuleAccordion from "./module-accordion";
 
 // Mock data - replace with your actual data
 const courseData = {
   id: 1,
   name: "Advanced React Development",
-  description: "Master advanced React concepts including hooks, context, performance optimization, and modern patterns. Build production-ready applications with confidence.",
+  description:
+    "Master advanced React concepts including hooks, context, performance optimization, and modern patterns. Build production-ready applications with confidence.",
   progress: 65,
   modules: [
     {
@@ -30,7 +44,7 @@ const courseData = {
       name: "React Fundamentals",
       isPurchased: true,
       isCompleted: true,
-      duration: "2h 30m",
+
       chapters: [
         {
           id: 1,
@@ -44,35 +58,33 @@ const courseData = {
               videoUrl: "https://www.youtube.com/embed/dGcsHMXbSOA",
               files: [
                 { name: "React_Basics.pdf", size: "2.1 MB" },
-                { name: "Code_Examples.zip", size: "1.5 MB" }
-              ]
-            }
-          ]
+                { name: "Code_Examples.zip", size: "1.5 MB" },
+              ],
+            },
+          ],
         },
         {
           id: 2,
           name: "Components and JSX",
           isCompleted: true,
-          duration: "35m",
+
           notes: [
             {
               id: 2,
               title: "Understanding JSX",
               videoUrl: "https://www.youtube.com/embed/7fPXI_MnBOY",
-              files: [
-                { name: "JSX_Guide.pdf", size: "1.8 MB" }
-              ]
-            }
-          ]
-        }
-      ]
+              files: [{ name: "JSX_Guide.pdf", size: "1.8 MB" }],
+            },
+          ],
+        },
+      ],
     },
     {
       id: 2,
       name: "Advanced Hooks",
       isPurchased: true,
       isCompleted: false,
-      duration: "3h 15m",
+
       chapters: [
         {
           id: 3,
@@ -86,30 +98,30 @@ const courseData = {
               videoUrl: "https://www.youtube.com/embed/O6P86uwfdR0",
               files: [
                 { name: "Hooks_Examples.pdf", size: "2.5 MB" },
-                { name: "Practice_Code.zip", size: "3.2 MB" }
-              ]
-            }
-          ]
-        }
-      ]
+                { name: "Practice_Code.zip", size: "3.2 MB" },
+              ],
+            },
+          ],
+        },
+      ],
     },
     {
       id: 3,
       name: "Performance Optimization",
       isPurchased: false,
       isCompleted: false,
-      duration: "2h 45m",
+
       chapters: [
         {
           id: 4,
           name: "React.memo and useMemo",
           isCompleted: false,
           duration: "40m",
-          notes: []
-        }
-      ]
-    }
-  ]
+          notes: [],
+        },
+      ],
+    },
+  ],
 };
 
 const VideoPlayer = ({ videoUrl, title }) => {
@@ -147,7 +159,7 @@ const FileDownload = ({ file }) => {
 
 const NotesViewer = ({ note, courseName }) => {
   const [activeTab, setActiveTab] = useState("video");
-  
+
   return (
     <div className="space-y-6 w-4xl">
       <div className="flex items-center gap-4 mb-6">
@@ -167,7 +179,7 @@ const NotesViewer = ({ note, courseName }) => {
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="next">Next Chapter</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="video" className="space-y-4 w-ful">
           <VideoPlayer videoUrl={note.videoUrl} title={note.title} />
           <Card>
@@ -179,9 +191,15 @@ const NotesViewer = ({ note, courseName }) => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <p><strong>Title:</strong> {note.title}</p>
-                <p><strong>Duration:</strong> 25 minutes</p>
-                <p><strong>Quality:</strong> 1080p HD</p>
+                <p>
+                  <strong>Title:</strong> {note.title}
+                </p>
+                <p>
+                  <strong>Duration:</strong> 25 minutes
+                </p>
+                <p>
+                  <strong>Quality:</strong> 1080p HD
+                </p>
                 <div className="flex gap-2 mt-4">
                   <Badge variant="secondary">React</Badge>
                   <Badge variant="secondary">JavaScript</Badge>
@@ -191,7 +209,7 @@ const NotesViewer = ({ note, courseName }) => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="notes" className="space-y-4">
           <Card>
             <CardHeader>
@@ -210,7 +228,7 @@ const NotesViewer = ({ note, courseName }) => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="next" className="space-y-4">
           <Card>
             <CardHeader>
@@ -224,8 +242,12 @@ const NotesViewer = ({ note, courseName }) => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold">Understanding JSX Syntax</h3>
-                  <p className="text-sm text-gray-600">Learn how JSX works under the hood</p>
-                  <p className="text-xs text-gray-500 mt-1">Duration: 35 minutes</p>
+                  <p className="text-sm text-gray-600">
+                    Learn how JSX works under the hood
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Duration: 35 minutes
+                  </p>
                 </div>
                 <Button>
                   Start Next Chapter
@@ -240,177 +262,50 @@ const NotesViewer = ({ note, courseName }) => {
   );
 };
 
-const ChapterItem = ({ chapter, moduleIsPurchased, onViewNotes }) => {
-  return (
-    <div className="border-l-2 border-gray-200 ml-4 pl-4 pb-4">
-      <div className="flex items-center justify-between group">
-        <div className="flex items-center gap-3 flex-1">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            chapter.isCompleted ? 'bg-green-500' : moduleIsPurchased ? 'bg-purple-500' : 'bg-gray-300'
-          }`}>
-            {chapter.isCompleted ? (
-              <CheckCircle className="w-4 h-4 text-white" />
-            ) : moduleIsPurchased ? (
-              <Play className="w-4 h-4 text-white" />
-            ) : (
-              <Lock className="w-4 h-4 text-gray-600" />
-            )}
-          </div>
-          <div className="flex-1">
-            <h4 className={`font-medium ${!moduleIsPurchased ? 'text-gray-400' : ''}`}>
-              {chapter.name}
-            </h4>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Clock className="w-3 h-3" />
-              <span>{chapter.duration}</span>
-              {chapter.isCompleted && (
-                <Badge variant="outline" className="text-xs">Completed</Badge>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {moduleIsPurchased && chapter.notes.length > 0 && (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => onViewNotes(chapter.notes[0])}
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            View Notes
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ModuleAccordion = ({ module, onViewNotes }) => {
-  return (
-    <AccordionItem value={`module-${module.id}`} className="border rounded-lg px-4">
-      <AccordionTrigger className="hover:no-underline">
-        <div className="flex items-center justify-between w-full mr-4">
-          <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-              module.isPurchased 
-                ? 'bg-gradient-to-br from-purple-500 to-indigo-600' 
-                : 'bg-gray-300'
-            }`}>
-              {module.isPurchased ? (
-                module.isCompleted ? (
-                  <CheckCircle className="w-6 h-6 text-white" />
-                ) : (
-                  <Play className="w-6 h-6 text-white" />
-                )
-              ) : (
-                <Lock className="w-6 h-6 text-gray-600" />
-              )}
-            </div>
-            <div className="text-left">
-              <h3 className={`text-lg font-semibold ${!module.isPurchased ? 'text-gray-400' : ''}`}>
-                {module.name}
-              </h3>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Clock className="w-3 h-3" />
-                <span>{module.duration}</span>
-                <span>•</span>
-                <span>{module.chapters.length} chapters</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {!module.isPurchased && (
-              <Badge variant="destructive">Locked</Badge>
-            )}
-            {module.isCompleted && (
-              <Badge variant="default" className="bg-green-500">Completed</Badge>
-            )}
-          </div>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent className="pt-4">
-        <div className="space-y-3">
-          {module.chapters.map((chapter) => (
-            <ChapterItem 
-              key={chapter.id} 
-              chapter={chapter} 
-              moduleIsPurchased={module.isPurchased}
-              onViewNotes={onViewNotes}
-            />
-          ))}
-        </div>
-        {!module.isPurchased && (
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <p className="text-sm text-gray-600 mb-3">
-              Unlock this module to access all chapters and materials
-            </p>
-            <Button className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600">
-              Purchase Module - $29.99
-            </Button>
-          </div>
-        )}
-      </AccordionContent>
-    </AccordionItem>
-  );
-};
-
 const EnrolledCourse = () => {
-  const [selectedNote, setSelectedNote] = useState(null);
-  const [course] = useState(courseData);
-
-  const handleViewNotes = (note) => {
-    setSelectedNote(note);
-  };
-
-  const handleBackToCourse = () => {
-    setSelectedNote(null);
-  };
-
-  if (selectedNote) {
-    return (
-      <div className="min-h-screen p-6">
-        <NotesViewer note={selectedNote} courseName={course.name} />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <div className="h-auto bg-gradient-to-r gap-4 w-full rounded-md from-[#16161d] to-indigo-950 p-6 md:p-10 flex flex-col">
-        <Button 
-          className="bg-gradient-to-r mt-1 w-16 h-10 from-purple-500 to-indigo-500 cursor-pointer text-white hover:from-purple-600 hover:to-indigo-600 transition-colors duration-300"
-          onClick={() => window.history.back()}
-        >
+        <Button className="bg-gradient-to-r mt-1 w-16 h-10 from-purple-500 to-indigo-500 cursor-pointer text-white hover:from-purple-600 hover:to-indigo-600 transition-colors duration-300">
           <ArrowLeft className="size-5" />
         </Button>
-        
+
         <div className="flex flex-col lg:flex-row gap-6 justify-between items-start">
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+              <Badge
+                variant="secondary"
+                className="bg-purple-500/20 text-purple-300"
+              >
                 Course
               </Badge>
-              <Badge variant="secondary" className="bg-green-500/20 text-green-300">
-                {course.progress}% Complete
+              <Badge
+                variant="secondary"
+                className="bg-green-500/20 text-green-300"
+              >
+                {courseData.progress}% Complete
               </Badge>
             </div>
             <h1 className="text-3xl md:text-5xl text-white font-semibold leading-tight">
-              {course.name}
+              {courseData.name}
             </h1>
             <p className="text-sm md:text-base max-w-2xl text-gray-300 leading-relaxed">
-              {course.description}
+              {courseData.description}
             </p>
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-300">Course Progress</span>
-                <span className="text-sm text-white font-medium">{course.progress}%</span>
+                <span className="text-sm text-white font-medium">
+                  {courseData.progress}%
+                </span>
               </div>
-              <Progress value={course.progress} className="h-2" />
+              <Progress
+                value={courseData.progress}
+                className="h-2 [&>div]:bg-white bg-neutral-900"
+              />
             </div>
           </div>
-          
+
           <div className="lg:w-72">
             <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
               <CardHeader>
@@ -419,18 +314,20 @@ const EnrolledCourse = () => {
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-300">Total Modules</span>
-                  <span className="text-white font-medium">{course.modules.length}</span>
+                  <span className="text-white font-medium">
+                    {courseData.modules.length}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-300">Purchased</span>
                   <span className="text-white font-medium">
-                    {course.modules.filter(m => m.isPurchased).length}
+                    {courseData.modules.filter((m) => m.isPurchased).length}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-300">Completed</span>
                   <span className="text-white font-medium">
-                    {course.modules.filter(m => m.isCompleted).length}
+                    {courseData.modules.filter((m) => m.isCompleted).length}
                   </span>
                 </div>
               </CardContent>
@@ -439,10 +336,11 @@ const EnrolledCourse = () => {
         </div>
       </div>
 
-      {/* Modules Section */}
       <div className="p-6 md:p-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 md:mb-0">Course Modules</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 md:mb-0">
+            Course Modules
+          </h2>
           <Button variant="outline" className="w-fit">
             <Download className="w-4 h-4 mr-2" />
             Download All Materials
@@ -450,12 +348,8 @@ const EnrolledCourse = () => {
         </div>
 
         <Accordion type="single" collapsible className="space-y-4">
-          {course.modules.map((module) => (
-            <ModuleAccordion 
-              key={module.id} 
-              module={module} 
-              onViewNotes={handleViewNotes}
-            />
+          {courseData.modules.map((module) => (
+            <ModuleAccordion key={module.id} module={module} />
           ))}
         </Accordion>
 
@@ -472,12 +366,14 @@ const EnrolledCourse = () => {
               <p className="text-sm text-gray-600 mb-4">
                 Complete all modules to earn your certificate
               </p>
-              <Button 
-                variant="outline" 
-                disabled={course.progress < 100}
+              <Button
+                variant="outline"
+                disabled={courseData.progress < 100}
                 className="w-full"
               >
-                {course.progress < 100 ? 'Complete Course First' : 'Download Certificate'}
+                {courseData.progress < 100
+                  ? "Complete Course First"
+                  : "Download Certificate"}
               </Button>
             </CardContent>
           </Card>

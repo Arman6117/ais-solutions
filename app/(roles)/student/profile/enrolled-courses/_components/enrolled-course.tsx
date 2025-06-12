@@ -3,25 +3,19 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
-  Play,
-
-  FileText,
-  Video,
-  ChevronRight,
+  
   Download,
-  Clock,
+
 
 } from "lucide-react";
 import {
   Accordion,
 
 } from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -29,12 +23,6 @@ import { Progress } from "@/components/ui/progress";
 import ModuleAccordion from "./module-accordion";
 import { dummyEnrolledCourseData as courseData } from "@/lib/static";
 // Mock data - replace with your actual data
-
-
-
-
-
-
 const EnrolledCourse = () => {
   return (
     <div className="min-h-screen">
@@ -126,7 +114,7 @@ const EnrolledCourse = () => {
           ))}
         </Accordion>
 
-        {/* Additional Course Actions */}
+        {/* Additional Course Actions
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
@@ -184,7 +172,7 @@ const EnrolledCourse = () => {
               </Button>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </div>
   );

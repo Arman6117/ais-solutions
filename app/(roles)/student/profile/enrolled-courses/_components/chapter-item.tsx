@@ -9,7 +9,7 @@ type Files = {
 type Notes = {
   id: number;
   title: string;
-  videoUrl: string;
+  videoUrl: string[];
   files: Files[];
 };
 type Chapter = {

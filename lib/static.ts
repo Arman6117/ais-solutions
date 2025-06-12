@@ -757,7 +757,16 @@ export const dummyEnrolledCourseData = {
             {
               id: 1,
               title: "React Basics Overview",
-              videoUrl: "https://www.youtube.com/embed/dGcsHMXbSOA",
+              videoUrl: ["https://www.youtube.com/embed/dGcsHMXbSOA"],
+              files: [
+                { name: "React_Basics.pdf", size: "2.1 MB" },
+                { name: "Code_Examples.zip", size: "1.5 MB" },
+              ],
+            },
+            {
+              id: 2,
+              title: "React Basics Overview",
+              videoUrl: ["https://www.youtube.com/embed/dGcsHMXbSOA"],
               files: [
                 { name: "React_Basics.pdf", size: "2.1 MB" },
                 { name: "Code_Examples.zip", size: "1.5 MB" },
@@ -772,9 +781,9 @@ export const dummyEnrolledCourseData = {
 
           notes: [
             {
-              id: 2,
+              id: 1,
               title: "Understanding JSX",
-              videoUrl: "https://www.youtube.com/embed/7fPXI_MnBOY",
+              videoUrl:[ "https://www.youtube.com/embed/7fPXI_MnBOY","https://www.youtube.com/embed/7fPXI_MnBOY"],
               files: [{ name: "JSX_Guide.pdf", size: "1.8 MB" }],
             },
           ],
@@ -795,9 +804,9 @@ export const dummyEnrolledCourseData = {
           duration: "45m",
           notes: [
             {
-              id: 3,
+              id: 1,
               title: "State Management with Hooks",
-              videoUrl: "https://www.youtube.com/embed/O6P86uwfdR0",
+              videoUrl: ["https://www.youtube.com/embed/O6P86uwfdR0"],
               files: [
                 { name: "Hooks_Examples.pdf", size: "2.5 MB" },
                 { name: "Practice_Code.zip", size: "3.2 MB" },

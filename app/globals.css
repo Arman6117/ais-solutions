@@ -125,3 +125,13 @@
 @utility no-scrollbar {
   @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
 }
+.pattern11 {
+  background-image: repeating-linear-gradient(
+    223deg,
+    rgba(0, 0, 0, 0.035),  /* Slightly gray for visibility */
+    rgba(0, 0, 0, 0.035) 1px,
+    transparent 0px,
+    transparent 2px
+  );
+  background-size: 20px;
+}

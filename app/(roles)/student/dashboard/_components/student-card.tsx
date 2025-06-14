@@ -4,10 +4,12 @@ import Image from "next/image";
 import React from "react";
 import { MdAlternateEmail, MdOutlineEmail } from "react-icons/md";
 import StudentNotification from "./student-notification";
+import { FaSchool } from "react-icons/fa";
+import StudentBatchName from "./student-batch-name";
 
 const StudentCard = () => {
   return (
-    <div className="flex flex-col w-full rounded-lg shadow-md bg-white p-3 relative">
+    <div className="flex flex-col pattern11 w-full rounded-lg shadow-md bg-white p-3 relative">
       <Image
         src={"/abstract/abstract1.jpg"}
         className="rounded-lg"
@@ -31,6 +33,7 @@ const StudentCard = () => {
             <MdAlternateEmail className="text-neutral-500 size-[14px]" />
             <span className="text-sm text-neutral-500">example@email.com</span>
           </div>
+        <StudentBatchName/>
           <div className="flex gap-5 mt-4 items">
             <div className="bg-soft-white flex gap-1 max-w-16 mt- items-center rounded-md shado-md p-2 ">
               <CoinsIcon className="text-primary-bg" />

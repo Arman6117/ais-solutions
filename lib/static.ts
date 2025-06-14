@@ -192,7 +192,7 @@ export const coursesData: Course[] = [
     batchesCompleted: 2,
     price: 1000,
     modules: ["Introduction", "Variables", "Functions", "Objects", "Arrays"],
-    batchesName: ["Batch A", "Batch B", "Batch C"],
+    batchesName: ["Batch D", "Batch E", "Batch F"],
     instructors: ["Arman Patel", "Robin Teach"],
   },
   {

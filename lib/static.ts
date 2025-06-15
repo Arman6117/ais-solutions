@@ -6,7 +6,7 @@ import {
   PiFolderSimpleUser,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyStudent } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent } from "./types";
 import { UserCircleIcon } from "lucide-react";
 import { FaUser } from "react-icons/fa";
 
@@ -492,7 +492,7 @@ export const coursesWithBatches = [
   },
 ];
 
-export const dummyModules = [
+export const dummyModules:DummyModules[] = [
   {
     id: "1",
     name: "Module 1",
@@ -502,6 +502,7 @@ export const dummyModules = [
     discount: 10,
     offerPrice: 900,
     rating: 4.5,
+    status: "Ongoing", // Example status
   },
   {
     id: "2",
@@ -512,6 +513,7 @@ export const dummyModules = [
     discount: 10,
     offerPrice: 900,
     rating: 4,
+    status: "Completed", 
   },
   {
     id: "3",
@@ -522,6 +524,7 @@ export const dummyModules = [
     discount: 10,
     offerPrice: 5900,
     rating: 5,
+    status: "Upcoming", 
   },
   {
     id: "4",
@@ -532,6 +535,7 @@ export const dummyModules = [
     discount: 10,
     offerPrice: 4900,
     rating: 2,
+    status: "Ongoing", 
   },
 ];
 

@@ -56,7 +56,7 @@ export function getIcon(fileType: string): IconType {
 }
 
 // Status color mapping
-export function getStatusColor(status: string) {
+export function getStatusColor(status: 'Ongoing' | 'Completed' | 'Upcoming' ) {
   switch (status) {
     case "Ongoing":
       return {

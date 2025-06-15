@@ -1,33 +1,32 @@
 'use client'
-import { DummyBatches } from "@/lib/types";
-import { cn, generateReadableLightColor } from "@/lib/utils";
+import { DummyModules } from "@/lib/types";
+import { cn, generateReadableLightColor, getLevelColor, getStatusColor } from "@/lib/utils";
 import { BookOpen, Calendar, CalendarCheckIcon, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 
-type StudentBatchesCardProps = {
-  batch: DummyBatches;
+type StudentModulesCardProps = {
+  module: DummyModules;
   status: "Ongoing" | "Upcoming" | "Completed";
 };
-const StudentBatchesCard = ({ batch, status }: StudentBatchesCardProps) => {
+const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
 
-  const [bgColor, setBgColor] = useState("#ffffff"); // default safe color
+   const bgStyle = useMemo(()=> {
+    return getStatusColor(module.status)
+   },[module.id])
 
-  useEffect(() => {
-    // run only on client after hydration
-    setBgColor(generateReadableLightColor());
-  }, [batch.id]);
+  //  console.log(bgStyle)
   return (
     <Link
-      href={`/student/batch-details/${batch.id}`}
+      href={`/student/module-details/${module.id}`}
       className={cn(
-        "flex rounded cursor-pointer transition-all p-4 gap-6",
+        "flex rounded cursor-pointer border-2 transition-all p-4 gap-6",
         `hover:shadow-lg hover:shadow-primary-bg/10 hover:border-2 hover:border-primary-bg`,
       
-      )}
-      style={{ backgroundColor:  bgColor ,}}
+      bgStyle.bg ,bgStyle.border,bgStyle.text)}
+    
     >
       <div className="bg-white rounded-lg size-20 p-1">
         <Image
@@ -39,15 +38,12 @@ const StudentBatchesCard = ({ batch, status }: StudentBatchesCardProps) => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <h1 className="text-lg font-medium ">{batch.name}</h1>
-        <div className="flex gap-2 items-center text-neutral-600">
-          <Clock className="size-4" />
-          <span className="text-sm ">{batch.time}</span>
-        </div>
+        <h1 className="text-lg font-medium ">{module.name}</h1>
+      
         <div className="flex gap-6 mt-2">
           <div className="flex gap-2 items-center text-neutral-600">
             <BookOpen className="size-4" />
-            <span className="text-sm ">10 Modules</span>
+            <span className="text-sm ">10 Chapter</span>
           </div>
           <div className="flex gap-2 items-center text-neutral-600">
             <FaChalkboardTeacher className="size-4" />
@@ -58,11 +54,11 @@ const StudentBatchesCard = ({ batch, status }: StudentBatchesCardProps) => {
           <div className="flex gap-6 mt-2">
             <div className="flex gap-2 items-center text-neutral-600">
               <Calendar className="size-4" />
-              <span className="text-sm ">{batch.startDate}</span>
+              <span className="text-sm ">20 June 2025</span>
             </div>
             <div className="flex gap-2 items-center text-neutral-600">
               <CalendarCheckIcon className="size-4" />
-              <span className="text-sm font">{batch.endDate}</span>
+              <span className="text-sm font">20 July 2025</span>
             </div>
           </div>
         )}
@@ -71,4 +67,4 @@ const StudentBatchesCard = ({ batch, status }: StudentBatchesCardProps) => {
   );
 };
 
-export default StudentBatchesCard;
+export default StudentModulesCard;

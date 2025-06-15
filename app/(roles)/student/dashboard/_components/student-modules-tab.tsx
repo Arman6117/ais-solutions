@@ -1,48 +1,50 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { dummyBatches } from "@/lib/static";
+import { dummyModules } from "@/lib/static";
 
-import StudentBatchesCard from "./student-batches-card";
+import StudentModulesCard from "./student-modules-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-import { DummyBatches } from "@/lib/types";
-import { generateReadableLightColor } from "@/lib/utils";
+import { DummyModules } from "@/lib/types";
+import { useCourseStore } from "@/store/use-course-store";
+import ModuleCardSkeleton from "@/components/skeletons/module-card";
 
-const StudentBatchesTab = () => {
+const StudentModulesTab = () => {
   const [search, setSearch] = useState("");
-  const [filteredBatches, setFilteredBatches] =
-    useState<DummyBatches[]>(dummyBatches);
+  const { selectedCourse } = useCourseStore();
+  const [filteredModules, setFilteredModules] =
+    useState<DummyModules[]>(dummyModules);
 
   useEffect(() => {
-    const filtered = dummyBatches.filter((batch) =>
-      batch.name.toLowerCase().includes(search.toLowerCase())
+    const filtered = dummyModules.filter((module) =>
+      module.name.toLowerCase().includes(search.toLowerCase())
     );
-    setFilteredBatches(filtered);
+    setFilteredModules(filtered);
   }, [search]);
 
-  const onGoingBatches = filteredBatches.filter(
-    (batch) => batch.status === "Ongoing"
+  const onGoingModules = filteredModules.filter(
+    (module) => module.status === "Ongoing"
   );
-  const upComingBatches = filteredBatches.filter(
-    (batch) => batch.status === "Upcoming"
+  const upComingModules = filteredModules.filter(
+    (module) => module.status === "Upcoming"
   );
-  const completedBatches = filteredBatches.filter(
-    (batch) => batch.status === "Completed"
+  const completedModules = filteredModules.filter(
+    (module) => module.status === "Completed"
   );
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue="all" className="flex flex-col h-full">
         <div className="flex-shrink-0 mb-3">
           <Input
-            placeholder="Search batches"
+            placeholder="Search modules"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full"
           />
         </div>
-        
+
         <TabsList className="flex-shrink-0 bg-transparent space-x-7 text-lg mb-3">
           <TabsTrigger
             value="all"
@@ -57,16 +59,16 @@ const StudentBatchesTab = () => {
             Ongoing
           </TabsTrigger>
           <TabsTrigger
-            value="upcoming"
-            className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
-          >
-            Upcoming
-          </TabsTrigger>
-          <TabsTrigger
             value="completed"
             className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
           >
             Completed
+          </TabsTrigger>
+          <TabsTrigger
+            value="upcoming"
+            className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
+          >
+            Upcoming
           </TabsTrigger>
         </TabsList>
 
@@ -74,38 +76,69 @@ const StudentBatchesTab = () => {
           <TabsContent value="all" className="h-full mt-0">
             <ScrollArea className="h-full pr-2">
               <div className="space-y-3 p-3">
-                {filteredBatches.map((batch) => (
-                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                {filteredModules.map((module) => (
+                  <React.Suspense
+                    fallback={<ModuleCardSkeleton />}
+                    key={module.id}
+                  >
+                    <StudentModulesCard
+                      status={module.status}
+                      module={module}
+                    />
+                  </React.Suspense>
                 ))}
               </div>
             </ScrollArea>
           </TabsContent>
-          
+
           <TabsContent value="ongoing" className="h-full mt-0">
             <ScrollArea className="h-full pr-2">
               <div className="space-y-3">
-                {onGoingBatches.map((batch) => (
-                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                {onGoingModules.map((module) => (
+                  <React.Suspense
+                    fallback={<ModuleCardSkeleton />}
+                    key={module.id}
+                  >
+                    <StudentModulesCard
+                      status={module.status}
+                      module={module}
+                    />
+                  </React.Suspense>
                 ))}
               </div>
             </ScrollArea>
           </TabsContent>
-          
-          <TabsContent value="upcoming" className="h-full mt-0">
-            <ScrollArea className="h-full pr-2">
-              <div className="space-y-3">
-                {upComingBatches.map((batch) => (
-                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
-                ))}
-              </div>
-            </ScrollArea>
-          </TabsContent>
-          
+
           <TabsContent value="completed" className="h-full mt-0">
             <ScrollArea className="h-full pr-2">
               <div className="space-y-3">
-                {completedBatches.map((batch) => (
-                  <StudentBatchesCard key={batch.id} status={batch.status} batch={batch} />
+                {completedModules.map((module) => (
+                  <React.Suspense
+                    fallback={<ModuleCardSkeleton />}
+                    key={module.id}
+                  >
+                    <StudentModulesCard
+                      status={module.status}
+                      module={module}
+                    />
+                  </React.Suspense>
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+          <TabsContent value="upcoming" className="h-full mt-0">
+            <ScrollArea className="h-full pr-2">
+              <div className="space-y-3">
+                {upComingModules.map((module) => (
+                  <React.Suspense
+                    fallback={<ModuleCardSkeleton />}
+                    key={module.id}
+                  >
+                    <StudentModulesCard
+                      status={module.status}
+                      module={module}
+                    />
+                  </React.Suspense>
                 ))}
               </div>
             </ScrollArea>
@@ -116,4 +149,4 @@ const StudentBatchesTab = () => {
   );
 };
 
-export default StudentBatchesTab;
+export default StudentModulesTab;

@@ -71,4 +71,5 @@ export type DummyModules = {
   discount: number;
   offerPrice: number;
   rating: number;
+  status:"Ongoing" | "Upcoming" | "Completed";
 };

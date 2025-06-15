@@ -1,7 +1,9 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import React from "react";
 import LectureScheduleCard from "./lecture-schedule-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import LectureCardSuspense from "./lecture-card-suspense";
 
 const LectureScheduleTab = () => {
   return (
@@ -23,15 +25,11 @@ const LectureScheduleTab = () => {
 
       <ScrollArea className="h-[500px] no-scrollbar overflow-x-hidden flex gap-6 pr-2 flex-col w-auto">
         <TabsContent value="today" className=" flex gap-6 p-3 flex-col ">
-          <LectureScheduleCard day="today" />
-          <LectureScheduleCard day="today" />
-          <LectureScheduleCard day="today" />
+          <LectureCardSuspense day='today'/>
         </TabsContent>
 
         <TabsContent value="tomorrow" className="flex flex-col gap-6 p-3">
-          <LectureScheduleCard day="today" />
-          <LectureScheduleCard day="today" />
-          <LectureScheduleCard day="today" />
+          <LectureCardSuspense day="tomorrow"/>
         </TabsContent>
       </ScrollArea>
     </Tabs>

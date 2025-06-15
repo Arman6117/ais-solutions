@@ -12,27 +12,37 @@ import { useCourseStore } from "@/store/use-course-store";
 import ModuleCardSkeleton from "@/components/skeletons/module-card";
 
 const StudentModulesTab = () => {
-  const [search, setSearch] = useState("");
-  const { selectedCourse } = useCourseStore();
+  const { selectedCourse } = useCourseStore(); //TODO:Fetch modules using selected course
   const [filteredModules, setFilteredModules] =
     useState<DummyModules[]>(dummyModules);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const filtered = dummyModules.filter((module) =>
-      module.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filtered = dummyModules.filter((module) => {
+      const searchTerm = search.toLowerCase();
+      const moduleName = module.name.toLowerCase();
+      return moduleName.includes(searchTerm);
+    });
     setFilteredModules(filtered);
   }, [search]);
 
-  const onGoingModules = filteredModules.filter(
-    (module) => module.status === "Ongoing"
-  );
-  const upComingModules = filteredModules.filter(
-    (module) => module.status === "Upcoming"
-  );
-  const completedModules = filteredModules.filter(
-    (module) => module.status === "Completed"
-  );
+  const modulesByStatus = useMemo(() => {
+    return {
+      ongoing: filteredModules.filter((module) => module.status === "Ongoing"),
+      upcoming: filteredModules.filter(
+        (module) => module.status === "Upcoming"
+      ),
+      completed: filteredModules.filter(
+        (module) => module.status === "Completed"
+      ),
+    };
+  }, [filteredModules]);
+
+  const {
+    ongoing: onGoingModules,
+    upcoming: upComingModules,
+    completed: completedModules,
+  } = modulesByStatus;
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue="all" className="flex flex-col h-full">

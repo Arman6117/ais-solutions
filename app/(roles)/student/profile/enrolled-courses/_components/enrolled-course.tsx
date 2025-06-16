@@ -21,7 +21,11 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import ModuleAccordion from "./module-accordion";
-import { dummyEnrolledCourseData as courseData } from "@/lib/static";
+import { dummyEnrolledCourseData as courseData, dummyInstructors, dummyModules } from "@/lib/static";
+import ModulesDescription from "../../../../../../components/student-course-component/modules-description";
+import StudentCourseInstructorCard from "../../../../../../components/student-course-component/student-course-instructor-card";
+import StudentCourseReviews from "../../../../../../components/student-course-component/student-course-reviews";
+import { Separator } from "@/components/ui/separator";
 // Mock data - replace with your actual data
 const EnrolledCourse = () => {
   return (
@@ -98,21 +102,18 @@ const EnrolledCourse = () => {
       </div>
 
       <div className="p-6 md:p-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 md:mb-0">
-            Course Modules
-          </h2>
-          <Button variant="outline" className="w-fit">
-            <Download className="w-4 h-4 mr-2" />
-            Download All Materials
-          </Button>
+        <div className="flex flex-col  justify-between mb-8">
+          <ModulesDescription modules={dummyModules} className="w-full max-w-full" />
+          <StudentCourseInstructorCard instructors={dummyInstructors} />
+          <Separator className="mt-5"/>
+          <StudentCourseReviews isEnrolled={true} />
         </div>
 
-        <Accordion type="single" collapsible className="space-y-4">
+        {/* <Accordion type="single" collapsible className="space-y-4">
           {courseData.modules.map((module) => (
             <ModuleAccordion key={module.id} module={module} courseName={courseData.name} />
           ))}
-        </Accordion>
+        </Accordion> */}
 
         {/* Additional Course Actions
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

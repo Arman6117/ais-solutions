@@ -12,6 +12,8 @@ import {
 import { adminSidebarLinks } from "@/lib/static";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { IoExit } from "react-icons/io5";
 const AdminSidebar = () => {
   // const [active, setActive] = useState(false);
 
@@ -23,11 +25,13 @@ const AdminSidebar = () => {
     <div className="h-full  w-12 hidden md:block md:w-24 md:fixed bg-primary-bg ">
       <div className="flex flex-col gap-17 items-center justify-center px-0 py-10 md:p-10 ">
         <div className="text-white ">Logo</div>
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col justify-between">
+
+        <div className="flex flex-col gap-10 ">
           {adminSidebarLinks.map(({ label, link, icon: Icon }) => {
            const isActive = url.includes(link)
             
-            return (
+           return (
               <div key={label} className="flex justify-center">
                 <TooltipProvider>
                   <Tooltip>
@@ -45,6 +49,8 @@ const AdminSidebar = () => {
             );
           })}
         </div>
+          
+          </div>
       </div>
     </div>
   );

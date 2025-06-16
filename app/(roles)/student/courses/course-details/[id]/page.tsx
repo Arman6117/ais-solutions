@@ -1,5 +1,5 @@
 import React from "react";
-import StudentCourseDetails from "./_components/student-course-details";
+import StudentCourseDetails from "../../../../../../components/student-course-component/student-course-details";
 
 type StudentCourseDetailsPageProps = {
   params: {

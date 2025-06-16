@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 
 import StudentCourseInstructorCard from "./student-course-instructor-card";
-import CourseBasicInfoCard from "./course-basic-info-card";
-import ModuleSelect from "./module-select";
+import CourseBasicInfoCard from "../../app/(roles)/student/courses/course-details/[id]/_components/course-basic-info-card";
+import ModuleSelect from "../../app/(roles)/student/courses/course-details/[id]/_components/module-select";
 import ModulesDescription from "./modules-description";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,7 +68,7 @@ const StudentCourseDetails = () => {
           <ModulesDescription modules={exampleModuleAndPrice} />
           <StudentCourseInstructorCard instructors={dummyInstructors} />
           <Separator className="mt-5"/>
-          <StudentCourseReviews className="md:flex hidden" />
+          <StudentCourseReviews className="md:flex hidden" isEnrolled={false} />
         </div>
         <Card className="p-0  md:fixed md:right-12 md:top-20 mt-4 max-h-[550px]">
           <CardContent className="p-3   flex flex-col">
@@ -135,7 +135,7 @@ const StudentCourseDetails = () => {
             </Dialog>
           </CardContent>
         </Card>
-        <StudentCourseReviews className="flex md:hidden" />
+        <StudentCourseReviews className="flex md:hidden" isEnrolled={false}/>
       </div>
     </div>
   );

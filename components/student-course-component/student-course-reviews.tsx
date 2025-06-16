@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import DisplayRating from "@/components/display-rating";
 import React from "react";
 import { cn } from "@/lib/utils";
+import AddComment from "./add-comment";
 
 
 export const dummyReviews = [
@@ -80,15 +81,19 @@ export const dummyReviews = [
   
 type StudentCourseReviewsProps = {
   course?: any;
-  className:string
+  className?:string
+  isEnrolled:boolean
 };
-const StudentCourseReviews = ({className,course}:StudentCourseReviewsProps) => {
+const StudentCourseReviews = ({className,course,isEnrolled}:StudentCourseReviewsProps) => {
   return (
     <div className={cn("flex flex-col mt-5", className)}>
       <div className="flex gap-2 items-center">
         <Star className="text-amber-700 fill-amber-700 size-4" />
         <h3 className="text-2xl font-medium">4.7 Course Rating</h3>
       </div>
+        {isEnrolled && (
+          <AddComment/>
+        )}
       <div className="grid  sm:grid-cols-2 gap-6 mt-5 grid-cols-1">
         {dummyReviews.map((review)=> (
             <div key={review.id} className="flex p-3 flex-col">

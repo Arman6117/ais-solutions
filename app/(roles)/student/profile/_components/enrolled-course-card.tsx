@@ -124,17 +124,6 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
             </div>
             <Progress value={progressPercentage} className="h-3 rounded-full" />
           </div>
-
-          {/* Remove Button */}
-          {isApproved && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-all"
-            >
-              Remove Course
-            </Button>
-          )}
         </CardContent>
       </Card>
     </Link>

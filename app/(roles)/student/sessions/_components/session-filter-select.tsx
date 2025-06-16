@@ -9,8 +9,8 @@ import { Filter } from "lucide-react";
 import React from "react";
 
 type SessionFilterSelectProps = {
-  filter: "all" | "upcoming" | "attended" | "missed";
-  setFilter: (filter: "all" | "upcoming" | "attended" | "missed") => void;
+  filter: "all" | "attended" | "missed";
+  setFilter: (filter: "all" | "attended" | "missed") => void;
 };
 const SessionFilterSelect = ({
   filter,
@@ -19,7 +19,7 @@ const SessionFilterSelect = ({
   return (
     <Select
       value={filter}
-      onValueChange={(val: "all" | "upcoming" | "attended" | "missed") =>
+      onValueChange={(val: "all" | "attended" | "missed") =>
         setFilter(val)
       }
     >
@@ -29,7 +29,6 @@ const SessionFilterSelect = ({
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">All</SelectItem>
-        <SelectItem value="upcoming">Upcoming</SelectItem>
         <SelectItem value="attended">Attended</SelectItem>
         <SelectItem value="missed">Missed</SelectItem>
       </SelectContent>

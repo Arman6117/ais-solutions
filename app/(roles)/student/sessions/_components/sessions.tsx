@@ -8,24 +8,29 @@ import { Input } from "@/components/ui/input";
 
 import { dummySessions } from "@/lib/static";
 import SessionCard from "./session-card";
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import SessionModuleFilterSelect from "./session-module-filter-select";
+import { useCourseStore } from "@/store/use-course-store";
 
 const ITEMS_PER_PAGE = 5; //TODO: Number of sessions per page change later
 const Sessions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
   const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState<
-    "all" | "upcoming" | "attended" | "missed"
-  >("all");
+  const [filter, setFilter] = useState<"all" | "attended" | "missed">("all");
 
+  const {selectedCourse} = useCourseStore()
   const now = new Date();
   const filteredSessions = useMemo(() => {
     let sessions = [...dummySessions];
 
-    if (filter === "upcoming") {
-      sessions = sessions.filter((session) => new Date(session.date) > now);
-    } else if (filter === "attended") {
+    if (filter === "attended") {
       sessions = sessions.filter((session) => session.attended);
     } else if (filter === "missed") {
       sessions = sessions.filter((session) => !session.attended);
@@ -67,14 +72,18 @@ const Sessions = () => {
           />
           <div className="flex gap-3 flex-wrap">
             <SessionFilterSelect filter={filter} setFilter={setFilter} />
+            <React.Suspense fallback={null}>
+
+            <SessionModuleFilterSelect moduleFilter={selectedCourse?.modules} />
+            </React.Suspense>
             <SessionSortSelect setSortBy={setSortBy} sortBy={sortBy} />
           </div>
-            </div>
-          <div className="flex flex-col gap-5 mt-10">
-            {paginatedSessions.map((session) => (
-              <SessionCard key={session.id} session={session} />
-            ))}
-          </div>
+        </div>
+        <div className="flex flex-col gap-5 mt-10">
+          {paginatedSessions.map((session) => (
+            <SessionCard key={session.id} session={session} />
+          ))}
+        </div>
       </div>
       <Pagination className="mt-5">
         <PaginationContent>

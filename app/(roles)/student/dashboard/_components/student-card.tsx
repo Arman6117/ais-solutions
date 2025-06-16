@@ -6,6 +6,7 @@ import { MdAlternateEmail, MdOutlineEmail } from "react-icons/md";
 import StudentNotification from "./student-notification";
 import { FaSchool } from "react-icons/fa";
 import StudentBatchName from "./student-batch-name";
+import StudentGroupJoinButton from "./student-group-join-button";
 
 const StudentCard = () => {
   return (
@@ -40,6 +41,7 @@ const StudentCard = () => {
               <span className="text-neutral-800 font-medium text-sm">24</span>
             </div>
            <StudentNotification/>
+           <StudentGroupJoinButton/>
           </div>
         </div>
       </div>

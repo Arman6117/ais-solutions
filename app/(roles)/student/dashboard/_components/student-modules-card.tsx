@@ -20,7 +20,7 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
 
   //  console.log(bgStyle)
   return (
-    <StudentModulesMeetingDialog session={dummySessions} >
+    <StudentModulesMeetingDialog session={dummySessions} status={module.status} >
       <div
         className={cn(
           "flex rounded  cursor-pointer border-2 transition-all p-4 gap-6",

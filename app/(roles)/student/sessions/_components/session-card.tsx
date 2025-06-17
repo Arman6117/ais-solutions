@@ -42,8 +42,9 @@ const SessionCard = ({ session }: SessionCardProps) => {
             />
           )}
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
+          <SessionCardViewNotesButton/>
         </div>
       </div>
 
@@ -64,7 +65,7 @@ const SessionCard = ({ session }: SessionCardProps) => {
         <span className="font-medium">Module:</span> {session.module}
         <span className="font-medium sm:ml-4">Chapter:</span> {session.chapter}
       </div>
-   <SessionCardViewNotesButton/>
+  
     </div>
   );
 };

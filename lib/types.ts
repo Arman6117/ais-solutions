@@ -58,8 +58,8 @@ export type DummyStudent = {
   feesStatus: "paid" | "unpaid";
   totalFeePaid: number;
   feesRemaining: number;
-  refCoins?:number
-  gender:string
+  refCoins?: number;
+  gender: string;
 };
 
 export type DummyModules = {
@@ -71,5 +71,7 @@ export type DummyModules = {
   discount: number;
   offerPrice: number;
   rating: number;
-  status:"Ongoing" | "Upcoming" | "Completed";
+  status: "Ongoing" | "Upcoming" | "Completed";
 };
+
+export type Mode = "online" | "offline" | "hybrid";

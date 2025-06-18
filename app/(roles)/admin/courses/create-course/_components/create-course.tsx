@@ -14,7 +14,7 @@ const CreateCourse = () => {
         <CreateCourseBasicInfo />
         <CreateCourseInstructors />
         <CreateCourseModules />
-        <Button className="bg-primary-bg">Create Course</Button>
+        <Button className="bg-primary-bg mb-5">Create Course</Button>
       </form>
     </main>
   );

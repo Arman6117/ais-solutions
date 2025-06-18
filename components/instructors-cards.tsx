@@ -37,7 +37,7 @@ const InstructorsCards = ({
               <h2 className="text-2xl font-bold text-gray-800">Instructors</h2>
               <p className="text-sm text-gray-500">
                 {instructors.length} instructor
-                {instructors.length !== 1 && "s"} {label}
+                {instructors.length !== 1 && "s"} in this {label}
               </p>
             </div>
           )}

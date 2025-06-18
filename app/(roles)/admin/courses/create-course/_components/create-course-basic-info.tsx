@@ -11,32 +11,47 @@ import { formatCurrency } from "@/lib/utils";
 import { formatDistance } from "date-fns";
 
 import { MdOutlineClass } from "react-icons/md";
-import { BookOpen, CalendarCheck, IndianRupee, Percent, Text } from "lucide-react";
+import {
+  BookOpen,
+  Calendar1,
+  CalendarCheck,
+  CalendarClock,
+  IndianRupee,
+  Percent,
+  Text,
+} from "lucide-react";
 
 import { Mode } from "@/lib/types";
-
+import { useCreateCourseStore } from "@/store/use-create-course-store";
 
 const CreateCourseBasicInfo = () => {
-  const [courseName, setCourseName] = useState("");
-  const [courseDescription, setCourseDescription] = useState("");
-  const [coursePrice, setCoursePrice] = useState(0);
-  const [courseDiscount, setCourseDiscount] = useState(0);
-  const [courseOfferPrice, setCourseOfferPrice] = useState(
-    coursePrice - (coursePrice * Number(courseDiscount)) / 100 || 0
-  );
-  const [courseMode, setCourseMode] = useState<Mode>("online");
-  const [courseStartDate, setCourseStartDate] = useState(new Date());
-  const [courseEndDate, setCourseEndDate] = useState(new Date());
+  const {
+    courseName, courseDescription, coursePrice, courseDiscount, courseOfferPrice,
+    courseMode, courseStartDate, courseEndDate,
+    setBasicInfo,
+  } = useCreateCourseStore();
+  // const{courseName, setCourseName} = useCreateCourseStore("");
+  // const{courseDescription, setCourseDescription} = useCreateCourseStore("");
+  // const{coursePrice, setCoursePrice} = useCreateCourseStore(0);
+  // const{courseDiscount, setCourseDiscount} = useCreateCourseStore(0);
+  // const{courseOfferPrice, setCourseOfferPrice} = useCreateCourseStore(
+  //   coursePrice - (coursePrice * Number(courseDiscount)) / 100 || 0
+  // );
+  // const{courseMode, setCourseMode} = useCreateCourseStore<Mode>("online");
+  // const{courseStartDate, setCourseStartDate} = useCreateCourseStore(new Date());
+  // const{courseEndDate, setCourseEndDate} = useCreateCourseStore(new Date());
 
-  const [courseDuration, setCourseDuration] = useState(
-    formatDistance(courseStartDate, courseEndDate)
+  const[courseDuration, setCourseDuration] = useState(
+    formatDistance(courseStartDate ?? new Date(), courseEndDate ?? new Date())
   );
   useEffect(() => {
-    setCourseOfferPrice(Math.round(coursePrice - (coursePrice * courseDiscount) / 100));
+    setBasicInfo({
+      courseOfferPrice: Math.round(coursePrice - (coursePrice * courseDiscount) / 100)
+    });
   }, [coursePrice, courseDiscount]);
   useEffect(() => {
-    setCourseDuration(  formatDistance(courseStartDate, courseEndDate));
-  }, [courseStartDate, courseEndDate]);
+    setCourseDuration(formatDistance(courseStartDate ?? new Date(), courseEndDate ?? new Date()));
+  },[courseStartDate, courseEndDate]);
   return (
     <Card className="px-5 mt-7 w-full h-auto py-3">
       <CardContent className="p-2 w-full">
@@ -44,7 +59,7 @@ const CreateCourseBasicInfo = () => {
           <CardTitle className="text-2xl">Basic info for course</CardTitle>
         </CardHeader>
         <div className="flex flex-col mt-5">
-          <form className="flex flex-col gap-7">
+          <div className="flex flex-col gap-7">
             <div className="flex flex-col gap-3 justify-center">
               <Label className="text-lg flex gap-2 items-center">
                 <BookOpen />
@@ -52,7 +67,7 @@ const CreateCourseBasicInfo = () => {
               </Label>
               <Input
                 value={courseName}
-                onChange={(e) => setCourseName(e.target.value)}
+                onChange={(e) => setBasicInfo({courseName:e.target.value})}
                 required
                 type="text"
                 placeholder="Enter course name"
@@ -66,7 +81,7 @@ const CreateCourseBasicInfo = () => {
               </Label>
               <Textarea
                 value={courseDescription}
-                onChange={(e) => setCourseDescription(e.target.value)}
+                onChange={(e) => setBasicInfo({courseDescription:e.target.value})}
                 required
                 placeholder="Enter course description"
                 className="focus w-64 ml-5 sm:w-96 transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
@@ -83,7 +98,7 @@ const CreateCourseBasicInfo = () => {
                   <Input
                     value={coursePrice}
                     type="number"
-                    onChange={(e) => setCoursePrice(Number(e.target.value))}
+                    onChange={(e) =>setBasicInfo({coursePrice:Number(e.target.value)})}
                     required
                     placeholder="Enter course description"
                     className="focus pl-6 w-64 ml-5 sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
@@ -100,7 +115,7 @@ const CreateCourseBasicInfo = () => {
                   <Input
                     value={courseDiscount}
                     type="number"
-                    onChange={(e) => setCourseDiscount(Number(e.target.value))}
+                    onChange={(e) => setBasicInfo({courseDiscount:Number(e.target.value)})}
                     placeholder="Enter course description"
                     className="focus pl-6 w-64 ml-5 sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                   />
@@ -135,17 +150,17 @@ const CreateCourseBasicInfo = () => {
                   <MdOutlineClass className="size-6" />
                   Course Mode
                 </Label>
-                <CourseModeSelector mode={courseMode} setMode={setCourseMode} />
+                <CourseModeSelector />
               </div>
               <div className="flex flex-col gap-3 justify-center">
                 <Label className="text-lg flex gap-2 items-center">
-                  <CalendarCheck />
+                  <Calendar1 />
                   Course Start Date
                 </Label>
                 <Input
-                //   value={String(courseStartDate)}
+                  //   value={String(courseStartDate)}
                   type="date"
-                  onChange={(e) => setCourseStartDate(new Date(e.target.value))}
+                  onChange={(e) => setBasicInfo({courseStartDate: new Date(e.target.value)})}
                   className="focus  ml-5  relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                 />
               </div>
@@ -155,27 +170,26 @@ const CreateCourseBasicInfo = () => {
                   Course End Date
                 </Label>
                 <Input
-                //   value={String(courseStartDate)}
+                  //   value={String(courseStartDate)}
                   type="date"
-                  onChange={(e) => setCourseStartDate(new Date(e.target.value))}
+                  onChange={(e) =>setBasicInfo({courseEndDate: new Date(e.target.value)})}
                   className="focus  ml-5  relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                 />
               </div>
             </div>
             <div className="flex flex-col gap-3  justify-center">
-                <Label className="text-lg flex gap-2 items-center">
-                  <CalendarCheck />
-                  Course Duration
-                </Label>
-                <Input
-                  value={courseDuration}
-              
-                  readOnly
-                  placeholder="Enter course description"
-                  className="focus pl-6 w-64 ml-5 sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
-                />
-              </div>
-          </form>
+              <Label className="text-lg flex gap-2 items-center">
+                <CalendarClock />
+                Course Duration
+              </Label>
+              <Input
+                value={courseDuration}
+                readOnly
+                placeholder="Enter course description"
+                className="focus w-64 ml-5 sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

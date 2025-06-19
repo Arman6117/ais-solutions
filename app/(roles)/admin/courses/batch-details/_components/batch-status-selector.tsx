@@ -14,8 +14,8 @@ const BatchStatusSelector = ({
   status,
   setStatus,
 }: {
-  status: string;
-  setStatus: (val: string) => void;
+  status: 'Ongoing' | 'Upcoming' | 'Completed';
+  setStatus: (val: 'Ongoing' | 'Upcoming'|'Completed') => void;
 }) => {
   return (
     <div className="flex flex-col gap-3">
@@ -25,7 +25,7 @@ const BatchStatusSelector = ({
       >
         <Select
           value={status}
-          onValueChange={(val) => {
+          onValueChange={(val: 'Ongoing' | 'Upcoming' | 'Completed') => {
             setStatus(val);
           }}
         >

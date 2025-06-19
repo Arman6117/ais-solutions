@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
 import { Calendar } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 type Meeting = {
@@ -134,12 +135,16 @@ const BatchMeetings = ({ batch, courseId, mode, modules }: BatchMeetings) => {
           <Separator className="my-2" />
 
           <div className="mt-4 pt-2">
-            <Button
-              variant="outline"
-              className="w-full cursor-pointer border-violet-200 text-violet-600 hover:bg-violet-50 hover:text-violet-700"
+            <Link
+              href={`/admin/courses/batch-details/${courseId}/batch/${batch}/schedule-meet`}
             >
-              Schedule a meet
-            </Button>
+              <Button
+                variant="outline"
+                className="w-full cursor-pointer border-violet-200 text-violet-600 hover:bg-violet-50 hover:text-violet-700"
+              >
+                Schedule a meet
+              </Button>
+            </Link>
           </div>
         </div>
       </CardContent>

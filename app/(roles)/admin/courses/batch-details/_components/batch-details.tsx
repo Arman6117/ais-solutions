@@ -73,8 +73,8 @@ const BatchDetails = ({
   }
   const [name, setName] = useState(batch.name || "");
   const [status, setStatus] = useState<
-    "Ongoing" | "Upcoming" | "Completed" | string
-  >(batch.status || "");
+    "Ongoing" | "Upcoming" | "Completed" 
+  >(batch.status || 'Upcoming');
 
   const [students, setStudents] = useState(dummyStudents || []);
   const [startDate, setStartDate] = useState(batch.startDate || "");
@@ -289,7 +289,7 @@ const BatchDetails = ({
           <BatchMeetings
             mode={mode}
             courseId={courseId}
-            batch={batch.name}
+            batch={batch.id as string}
             modules={dummyModules}
           />
           <StatusCard name="Batch" />

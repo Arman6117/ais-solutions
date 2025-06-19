@@ -1,6 +1,6 @@
 import { IoBookOutline } from "react-icons/io5";
 import { LuFileStack, LuLayoutDashboard, LuSchool } from "react-icons/lu";
-import { MdOutlineLocalOffer } from "react-icons/md";
+import { MdOutlineLocalOffer, MdSupportAgent } from "react-icons/md";
 import {
   PiChalkboardTeacher,
   PiFolderSimpleUser,
@@ -40,6 +40,11 @@ export const adminSidebarLinks = [
     label: "Offers",
     link: "/admin/offers",
     icon: MdOutlineLocalOffer,
+  },
+  {
+    label: "Support",
+    link: "/admin/support",
+    icon: MdSupportAgent,
   },
 ];
 export const studentSidebarLinks = [
@@ -838,3 +843,67 @@ export const dummyEnrolledCourseData = {
     },
   ],
 };
+
+
+export const dummySupportCards = [
+  {
+    id: "1",
+    name: "Prajyot Patil",
+    designation: "Project Lead",
+    department: "Project Management",
+    contact: "+91 9876543210",
+    email: "prajyot@example.com",
+    availableTime: "Mon–Fri, 10 AM – 6 PM",
+    description: "Handles technical issues and overall project guidance.",
+  },
+  {
+    id: "2",
+    name: "Sana Sheikh",
+    designation: "Communication Trainer",
+    department: "Communication",
+    contact: "+91 9000012345",
+    email: "sana.sheikh@example.com",
+    availableTime: "Tue–Sat, 12 PM – 5 PM",
+    description: "Helps with spoken English, presentation skills, and confidence building.",
+  },
+  {
+    id: "3",
+    name: "Harshit Mehta",
+    designation: "Technical Support",
+    department: "Back Office",
+    contact: "+91 9988776655",
+    email: "harshit.m@example.com",
+    availableTime: "Mon–Fri, 2 PM – 8 PM",
+    description: "Solves code errors, bugs, and tool issues students face.",
+  },
+  {
+    id: "4",
+    name: "Harshit Mehta",
+    designation: "Technical Support",
+    department: "Back Office",
+    contact: "+91 9988776655",
+    email: "harshit.m@example.com",
+    availableTime: "Mon–Fri, 2 PM – 8 PM",
+    description: "Solves code errors, bugs, and tool issues students face.",
+  },
+  {
+    id: "5",
+    name: "Kritika Sharma",
+    designation: "Student Mentor",
+    department: "Student Support",
+    contact: "+91 8123456789",
+    email: "kritika.mentor@example.com",
+    availableTime: "Flexible – Responds within 24 hrs",
+    description: "Guides on study plans, assignments, and emotional well-being.",
+  },
+  {
+    id: "6",
+    name: "Raghav Verma",
+    designation: "Placement Coordinator",
+    department: "Placement Cell",
+    contact: "+91 7000099990",
+    email: "raghav.v@example.com",
+    availableTime: "Mon–Fri, 11 AM – 4 PM",
+    description: "Prepares students for interviews and internships.",
+  },
+];

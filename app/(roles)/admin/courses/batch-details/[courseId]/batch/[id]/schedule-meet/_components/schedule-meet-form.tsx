@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+
 import {
   Card,
   CardHeader,
@@ -8,7 +9,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +19,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
-// @/lib/static.ts
+
+import { format } from "date-fns";
+
+import {
+  BookCheck,
+  CalendarClock,
+  Clock,
+  Link,
+  PackageCheckIcon,
+  Text,
+} from "lucide-react";
+import { PiChalkboardTeacher } from "react-icons/pi";
+
 
 export const modulesWithSubtopics = [
   {
@@ -43,6 +54,7 @@ export const modulesWithSubtopics = [
 
 export default function ScheduleMeetingForm() {
   const [meetingName, setMeetingName] = useState("");
+  const [meetingLink, setMeetingLink] = useState("");
   const [selectedModuleId, setSelectedModuleId] = useState("");
   const [selectedSubtopics, setSelectedSubtopics] = useState<string[]>([]);
   const [instructor, setInstructor] = useState("");
@@ -64,6 +76,7 @@ export default function ScheduleMeetingForm() {
   const handleSubmit = () => {
     const payload = {
       meetingName,
+      meetingLink,
       module: selectedModule?.name || "",
       subtopics: selectedSubtopics,
       instructor,
@@ -81,24 +94,42 @@ export default function ScheduleMeetingForm() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col gap-3 justify-center">
-          <Label>Meeting Name</Label>
+          <Label className="text-lg flex gap-2 items-center">
+            <Text />
+            Meeting Name
+          </Label>
           <Input
             value={meetingName}
             onChange={(e) => setMeetingName(e.target.value)}
             placeholder="Enter meeting name"
-            className="focus  w-64  sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+            className="focus  ml-6 w-64  sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+          />
+        </div>
+        <div className="flex flex-col gap-3 justify-center">
+          <Label className="text-lg flex gap-2 items-center">
+            <Link />
+            Meeting Name
+          </Label>
+          <Input
+            value={meetingLink}
+            onChange={(e) => setMeetingLink(e.target.value)}
+            placeholder="Enter meeting link"
+            className="focus ml-6 w-64  sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
           />
         </div>
 
         <div className="flex flex-col gap-3 justify-center">
-          <Label>Select Module</Label>
+          <Label className="text-lg flex gap-2 items-center">
+            <PackageCheckIcon />
+            Select Module
+          </Label>
           <Select
             onValueChange={(val) => {
               setSelectedModuleId(val);
               setSelectedSubtopics([]); // Reset subtopics when module changes
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="ml-6">
               <SelectValue placeholder="Choose a module" />
             </SelectTrigger>
             <SelectContent>
@@ -113,7 +144,10 @@ export default function ScheduleMeetingForm() {
 
         {selectedModule && (
           <div className="flex flex-col gap-3 justify-center">
-            <Label>Select Subtopics</Label>
+            <Label className="text-lg flex gap-2 items-center">
+              <BookCheck />
+              Select Subtopics
+            </Label>
             <div className="grid grid-cols-2 gap-2">
               {selectedModule.subtopics.map((sub) => (
                 <Label key={sub} className="flex items-center gap-2">
@@ -129,9 +163,12 @@ export default function ScheduleMeetingForm() {
         )}
 
         <div className="flex flex-col gap-3 justify-center">
-          <Label>Instructor</Label>
+          <Label className="text-lg flex gap-2 items-center">
+            <PiChalkboardTeacher />
+            Instructor
+          </Label>
           <Select onValueChange={setInstructor}>
-            <SelectTrigger>
+            <SelectTrigger className="ml-6">
               <SelectValue placeholder="Choose an instructor" />
             </SelectTrigger>
             <SelectContent>
@@ -146,13 +183,20 @@ export default function ScheduleMeetingForm() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label>Select Date</Label>
+            <Label className="text-lg flex gap-2 items-center">
+              <CalendarClock />
+              Select Date
+            </Label>
             <Calendar mode="single" selected={date} onSelect={setDate} />
           </div>
           <div className="flex flex-col gap-3 justify-center">
-            <Label>Time (HH:MM)</Label>
+            <Label className="text-lg flex gap-2 items-center">
+              <Clock />
+              Time (HH:MM)
+            </Label>
             <Input
               type="time"
+              className="ml-6"
               value={time}
               onChange={(e) => setTime(e.target.value)}
             />

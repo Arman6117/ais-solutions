@@ -906,4 +906,14 @@ export const dummySupportCards = [
     availableTime: "Mon–Fri, 11 AM – 4 PM",
     description: "Prepares students for interviews and internships.",
   },
+  {
+    id: "7",
+    name: "Raghav Verma",
+    designation: "Placement Coordinator",
+    department: "Back Office",
+    contact: "+91 7000099990",
+    email: "raghav.v@example.com",
+    availableTime: "Mon–Fri, 11 AM – 4 PM",
+    description: "Prepares students for interviews and internships.",
+  },
 ];

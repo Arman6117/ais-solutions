@@ -9,6 +9,20 @@ import {
 import { IconType } from "react-icons/lib";
 import { PiFileZip } from "react-icons/pi";
 import { twMerge } from "tailwind-merge";
+import {
+  Building2,
+  Laptop,
+  Phone,
+  Users,
+  ShieldCheck,
+  HelpCircle,
+  MessageCircle,
+  FileText,
+  BookOpen,
+  Briefcase,
+  Wrench,
+  Globe,
+} from "lucide-react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -156,3 +170,19 @@ export function generateReadableLightColor(): string {
     }
   }
 }
+
+
+export const ICON_COMPONENTS: Record<string, React.ComponentType<{ className?: string }>> = {
+  Building2,
+  Laptop,
+  Phone,
+  Users,
+  ShieldCheck,
+  HelpCircle,
+  MessageCircle,
+  FileText,
+  BookOpen,
+  Briefcase,
+  Wrench,
+  Globe,
+};

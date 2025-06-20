@@ -12,7 +12,7 @@ type SupportCardAccordionProps = {
   departmentName: string;
   description?: string;
   icon: React.ReactNode;
-  colorTheme?: "blue" | "green" | "purple" | "orange" | "red";
+  colorTheme?: string;
   children?: React.ReactNode;
 };
 
@@ -45,9 +45,8 @@ const SupportCardAccordion = ({
     <Accordion type="single" collapsible className="max-w-4xl w-full">
       <AccordionItem value={departmentId}>
         <AccordionTrigger
-          className={`p-6 hover:no-underline relative bg-gradient-to-br ${getGradient(
-            colorTheme
-          )} rounded-md text-white`}
+          className={`p-6 hover:no-underline relative bg-gradient-to-br 
+            ${colorTheme} rounded-md text-white`}
         >
           <div className="flex gap-2 items-center w-full">
             <div className="w-14 h-14 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center">

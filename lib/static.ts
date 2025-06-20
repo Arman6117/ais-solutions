@@ -6,9 +6,10 @@ import {
   PiFolderSimpleUser,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Offer } from "./types";
 import { UserCircleIcon } from "lucide-react";
 import { FaUser } from "react-icons/fa";
+
 
 export const adminSidebarLinks = [
   {
@@ -917,3 +918,56 @@ export const dummySupportCards = [
     description: "Prepares students for interviews and internships.",
   },
 ];
+
+
+export const dummyOffers: Offer[] = [
+  {
+    id: "offer1",
+    title: "New Year Special",
+    description: "Get flat ₹500 off on any course enrollment. Limited time only!",
+    discountType: "flat",
+    discountValue: 500,
+    validFrom: "2025-01-01",
+    validTill: "2025-01-10",
+    applicableCourses: ["MERN Fullstack", "DSA Bootcamp"],
+    isActive: true,
+    image: "https://images.unsplash.com/photo-1606760727775-b2d2b2128e2e?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: "offer2",
+    title: "Summer Sale",
+    description: "20% off on all Web Development courses",
+    discountType: "percentage",
+    discountValue: 20,
+    validFrom: "2025-06-01",
+    validTill: "2025-06-30",
+    applicableCourses: ["Frontend Mastery", "Backend Node.js"],
+    isActive: true,
+    image: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: "offer3",
+    title: "Referral Bonus",
+    description: "Get ₹300 off when you join via a referral link!",
+    discountType: "flat",
+    discountValue: 300,
+    validFrom: "2025-05-01",
+    validTill: "2025-12-31",
+    applicableCourses: ["All"],
+    isActive: true,
+    image: "https://images.unsplash.com/photo-1620712943543-f33ec90d9793?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: "offer4",
+    title: "Last Minute Deal",
+    description: "Enroll before the batch starts & get 15% off!",
+    discountType: "percentage",
+    discountValue: 15,
+    validFrom: "2025-06-20",
+    validTill: "2025-06-25",
+    applicableCourses: ["MERN Fullstack"],
+    isActive: false,
+    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80",
+  },
+];
+

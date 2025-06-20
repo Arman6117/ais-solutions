@@ -75,3 +75,18 @@ export type DummyModules = {
 };
 
 export type Mode = "online" | "offline" | "hybrid";
+
+export type Offer = {
+  id: string;
+  title: string;
+  description: string;
+  discountType: "percentage" | "flat"; // strict type
+  discountValue: number;
+  validFrom: string;
+  validTill: string;
+  applicableCourses: string[];
+  isActive: boolean;
+  image: string;
+};
+
+

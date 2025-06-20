@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import AddSupportMemberDialog from "./add-support-member-dialog";
 
 type SupportCardAccordionProps = {
   departmentId: string;
@@ -63,7 +64,16 @@ const SupportCardAccordion = ({
           </div>
         </AccordionTrigger>
 
+        {/* <AccordionContent className="bg-gray-100 p-5 rounded-b-md"> */}
         <AccordionContent className="bg-gray-100 p-5 rounded-b-md">
+          <div className="flex justify-end mb-4">
+            <AddSupportMemberDialog
+              onSubmit={(member) => {
+                console.log("New member added to", departmentName, member);
+                // 👉 Store or backend logic here
+              }}
+            />
+          </div>
           {children}
         </AccordionContent>
       </AccordionItem>

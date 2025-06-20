@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Mail, Phone, Clock, Pencil, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AddSupportMemberDialog from "./add-support-member-dialog";
 
 type SupportCardProps = {
   name: string;
@@ -26,7 +27,6 @@ const SupportCard = ({
   email,
   phone,
   availableTime,
- 
 }: SupportCardProps) => {
   return (
     <Card className="w-full max-w-md border border-gray-200 shadow-sm">
@@ -50,12 +50,25 @@ const SupportCard = ({
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end gap-3 pt-4">
-        <Button variant="outline" size="sm" >
-          <Pencil className="w-4 h-4 mr-1" />
-          Edit
-        </Button>
-        <Button variant="destructive" size="sm" >
+      <CardFooter className="flex justify-end gap-3 items-center pt-4">
+        {/* AccordionContent className="bg-gray-100 p-5 rounded-b-md"> */}
+        <div className="flex justify-end ">
+          <AddSupportMemberDialog
+            initialData={{
+              name,
+              availableTime,
+              contact: phone,
+              designation: role,
+              email,
+            }}
+            triggerLabel="Edit"
+            onSubmit={(member) => {
+              console.log("Member updated  to", member);
+              // 👉 Store or backend logic here
+            }}
+          />
+        </div>
+        <Button variant="destructive" size="sm">
           <Trash className="w-4 h-4 mr-1" />
           Delete
         </Button>

@@ -186,10 +186,22 @@ export const ICON_COMPONENTS: Record<string, React.ComponentType<{ className?: s
   Wrench,
   Globe,
 };
+export function extractVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
 
-function extractVideoId(url: string): string | null {
-  const match = url.match(
-    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/
-  );
-  return match ? match[1] : null;
+    // Short URL format: https://youtu.be/VIDEO_ID
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1);
+    }
+
+    // Long URL format: https://www.youtube.com/watch?v=VIDEO_ID
+    if (parsed.hostname.includes("youtube.com")) {
+      return parsed.searchParams.get("v");
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
 }

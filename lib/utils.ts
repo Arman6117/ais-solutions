@@ -186,3 +186,10 @@ export const ICON_COMPONENTS: Record<string, React.ComponentType<{ className?: s
   Wrench,
   Globe,
 };
+
+function extractVideoId(url: string): string | null {
+  const match = url.match(
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/
+  );
+  return match ? match[1] : null;
+}

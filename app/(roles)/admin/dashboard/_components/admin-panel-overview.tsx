@@ -7,6 +7,7 @@ import { FaChalkboardTeacher } from "react-icons/fa";
 import { RiArtboardLine } from "react-icons/ri";
 import {  BookOpen, Users } from "lucide-react";
 import MeetingsPanel from "./meetings-panel";
+import NotificationPanel from "./notification-panel";
 
 const AdminPanelOverview = () => {
   return (
@@ -15,6 +16,7 @@ const AdminPanelOverview = () => {
 
       <Greetings>Admin</Greetings>
       <MeetingsPanel/>
+      <NotificationPanel/>
       </div>
       <div className="flex gap-10 md:flex-row flex-col items-center ">
         <AdminOverviewCard

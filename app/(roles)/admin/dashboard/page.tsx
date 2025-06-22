@@ -12,7 +12,7 @@ const AdminDashboardPage = () => {
 
         <div className="pr-4 w-full h-full">
           <ScheduleTabs/>
-       \
+       
         </div>
       </div>
       <div className="w-1/3 md:flex hidden h-full p-5 bg-soft-white rounded-4xl">

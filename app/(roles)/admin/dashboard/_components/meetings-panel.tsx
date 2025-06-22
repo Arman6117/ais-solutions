@@ -88,7 +88,7 @@ const MeetingsPanel = () => {
                     key={status}
                     size="sm"
                     variant="ghost"
-                    className={cn("text-xs px-3 py-1 border rounded-full  transition", statusColors[status])}
+                    className="text-xs px-3 py-1 border rounded-full hover:bg-muted transition"
                     onClick={() => handleStatusChange(meeting.id, status)}
                   >
                     {status}

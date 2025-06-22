@@ -6,11 +6,16 @@ import Greetings from "@/components/greetings";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { RiArtboardLine } from "react-icons/ri";
 import {  BookOpen, Users } from "lucide-react";
+import MeetingsPanel from "./meetings-panel";
 
 const AdminPanelOverview = () => {
   return (
     <div className="w-[90%] flex flex-col gap-10">
+      <div className="flex items-center gap-4">
+
       <Greetings>Admin</Greetings>
+      <MeetingsPanel/>
+      </div>
       <div className="flex gap-10 md:flex-row flex-col items-center ">
         <AdminOverviewCard
           value="1,000"

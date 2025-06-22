@@ -1,8 +1,8 @@
 import React from "react";
 import AdminPanelOverview from "./_components/admin-panel-overview";
-import ScheduleCalender from "./_components/schedule-calender";
-import OngoingBatches from "./_components/ongoing-courses";
 import OngoingCourses from "./_components/ongoing-courses";
+
+import ScheduleTabs from "./_components/schedule-tabs";
 
 const AdminDashboardPage = () => {
   return (
@@ -11,7 +11,8 @@ const AdminDashboardPage = () => {
         <AdminPanelOverview />
 
         <div className="pr-4 w-full h-full">
-          <ScheduleCalender />
+          <ScheduleTabs/>
+          {/* <ScheduleCalender /> */}
         </div>
       </div>
       <div className="w-1/3 md:flex hidden h-full p-5 bg-soft-white rounded-4xl">

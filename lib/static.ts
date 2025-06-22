@@ -74,7 +74,7 @@ export const studentSidebarLinks = [
 export const sampleMeetings = [
   {
     _id: "1",
-    date: "2025-06-01",
+    date: "2025-06-22",
     course: "JavaScript Bootcamp",
     module: "Promise",
     batch: "Batch A",
@@ -82,7 +82,7 @@ export const sampleMeetings = [
   },
   {
     _id: "2",
-    date: "2025-05-01",
+    date: "2025-06-22",
     course: "Python Basics",
     module: "Datatypes",
     batch: "Batch B",
@@ -90,7 +90,7 @@ export const sampleMeetings = [
   },
   {
     _id: "3",
-    date: "2025-06-04",
+    date: "2025-06-24",
     course: "React Hooks",
     module: "useState",
     batch: "Batch C",
@@ -98,7 +98,7 @@ export const sampleMeetings = [
   },
   {
     _id: "4",
-    date: "2025-06-06",
+    date: "2025-06-26",
     course: "Data Structures",
     module: "Array",
     batch: "Batch A",
@@ -122,7 +122,7 @@ export const sampleMeetings = [
   },
   {
     _id: "7",
-    date: "2025-06-26",
+    date: "2025-06-25",
     course: "Next.js 15",
     module: "Dynamic Routing",
     batch: "Batch B",

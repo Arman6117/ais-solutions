@@ -68,7 +68,7 @@ const NotificationPanel = () => {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-[340px] p-2 rounded-xl border shadow-lg bg-white">
+      <DropdownMenuContent className="w-[340px] max-h-[340px] overflow-y-auto p-2 rounded-xl border shadow-lg bg-white">
         <DropdownMenuLabel className="text-base text-gray-800 px-2 mb-1">
           Notifications
         </DropdownMenuLabel>

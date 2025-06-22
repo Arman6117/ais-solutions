@@ -132,6 +132,7 @@ export const sampleMeetings = [
 
 export const ongoingCourses = [
   {
+    id:1,
     courseName: "JavaScript Bootcamp",
     batchName: "Batch A",
     lectureNumber: 12,
@@ -139,27 +140,28 @@ export const ongoingCourses = [
     instructor: "Mr. Arman Patel",
   },
   {
+    id:2,
     courseName: "React.js Mastery",
     batchName: "Batch B",
     lectureNumber: 8,
     module: "useState",
     instructor: "Ms. Robin Teach",
   },
-  {
+  {id:3,
     courseName: "Python for Data Science",
     batchName: "Batch C",
     lectureNumber: 5,
     module: "Datatypes",
     instructor: "Mr. Zoro Bytes",
   },
-  {
+  {id:4,
     courseName: "MongoDB Essentials",
     batchName: "Batch D",
     lectureNumber: 15,
     module: "Indexing",
     instructor: "Dr. Nami Data",
   },
-  {
+  {id:5,
     courseName: "Node.js API Development",
     batchName: "Batch E",
     lectureNumber: 9,

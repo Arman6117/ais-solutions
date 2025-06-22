@@ -4,11 +4,16 @@ import { Calendar } from "lucide-react";
 import { format, isSameDay, isAfter } from "date-fns";
 import { Button } from "@/components/ui/button";
 
-export const MeetingCard = ({ meeting, isTodayOrFuture }: {
+export const MeetingCard = ({
+  meeting,
+  isTodayOrFuture,
+}: {
   meeting: {
     course: string;
     module: string;
     batch: string;
+    instructor?: string;
+    chapters?: string;
     time: string;
     date: string;
   };
@@ -21,17 +26,25 @@ export const MeetingCard = ({ meeting, isTodayOrFuture }: {
         <h3 className="font-bold text-gray-800">{meeting.course}</h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div>
-          <p className="text-gray-500 text-xs">Module</p>
-          <p className="font-medium">{meeting.module}</p>
+      <div className="flex  gap-28 mt-4">
+        <div className="flex flex-col gap-2">
+          <div>
+            <p className="text-gray-500 ">Module</p>
+            <p className="font-medium">{meeting.module}</p>
+          </div>
+          <div >
+            <p className="text-gray-500 ">Chapters</p>
+            <p className="font-medium">Intro</p>
+          </div>
         </div>
-        <div>
-          <p className="text-gray-500 text-xs">Batch</p>
+        <div className="flex flex-col">
+          <p className="text-gray-500 ">Batch</p>
           <p className="font-medium">{meeting.batch}</p>
+          <p className="text-gray-500  mt-2">Instructor</p>
+          <p className="font-medium">John Doe</p>
         </div>
         <div className="col-span-2">
-          <p className="text-gray-500 text-xs">Time</p>
+          <p className="text-gray-500 ">Time</p>
           <p className="font-medium">{meeting.time}</p>
         </div>
       </div>
@@ -41,7 +54,7 @@ export const MeetingCard = ({ meeting, isTodayOrFuture }: {
           <Button
             size="sm"
             variant="outline"
-            className="text-xs px-2 py-1 h-auto"
+            className=" px-2 py-1 h-auto"
             onClick={() => console.log("Edit", meeting)}
           >
             Edit
@@ -49,7 +62,7 @@ export const MeetingCard = ({ meeting, isTodayOrFuture }: {
           <Button
             size="sm"
             variant="destructive"
-            className="text-xs px-2 py-1 h-auto"
+            className=" px-2 py-1 h-auto"
             onClick={() => console.log("Delete", meeting)}
           >
             Delete

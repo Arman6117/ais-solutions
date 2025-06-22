@@ -1,46 +1,116 @@
+"use client";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Calendar, Clock, PencilIcon, Plus, Trash2, Users } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import { toast } from "sonner";
-
+import { parseISO, compareDesc } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 const CourseBatchesCards = ({
+  courseId,
   batches,
   mode,
-  courseId,
 }: {
   courseId: string;
   batches: any[];
   mode: "view" | "edit";
 }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+
+  const filteredBatches = batches
+    .filter((batch) => {
+      const matchSearch = batch.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      const matchStatus =
+        selectedStatus === "all"
+          ? true
+          : batch.status.toLowerCase() === selectedStatus;
+
+      return matchSearch && matchStatus;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.startDate);
+      const dateB = new Date(b.startDate);
+
+      return sortOrder === "newest"
+        ? dateA.getTime() - dateB.getTime()
+        : dateB.getTime() - dateA.getTime();
+    });
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
         <h2 className="text-xl font-bold">Batches</h2>
-        {mode === "edit" && (
-          <Button
-          asChild
-            size="sm"
-            className="flex items-center gap-1 cursor-pointer bg-primary-bg hover:bg-primary-bg/90"
+        <div className="flex gap-2 w-full md:w-auto items-center">
+          <Select
+            value={sortOrder}
+            onValueChange={(val) => setSortOrder(val as "newest" | "oldest")}
           >
-            <Link href={`/admin/courses/${courseId}/create-batch`}>
+            <SelectTrigger className="w-[160px] flex gap-2 items-center">
+              <Calendar  className="text-primary-bg"/>
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+            </SelectContent>
+          </Select>
 
-              <Plus size={16} /> Add Batch
-            </Link>
-          </Button>
-        )}
+          <Input
+            placeholder="Search batches..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-64"
+          />
+          {mode === "edit" && (
+            <Button
+              asChild
+              size="sm"
+              className="flex items-center gap-1 bg-primary-bg hover:bg-primary-bg/90"
+            >
+              <Link href={`/admin/courses/${courseId}/create-batch`}>
+                <Plus size={16} /> Add Batch
+              </Link>
+            </Button>
+          )}
+        </div>
       </div>
+
+      <Tabs
+        value={selectedStatus}
+        onValueChange={(value) => setSelectedStatus(value)}
+        className="mb-4"
+      >
+        <TabsList className="bg-muted w-full md:w-auto overflow-x-auto whitespace-nowrap">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+          <TabsTrigger value="ongoing">Ongoing</TabsTrigger>
+          <TabsTrigger value="completed">Completed</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       <div className="grid grid-cols-1 gap-4">
-        {batches.map((batch) => (
+        {filteredBatches.map((batch) => (
           <Card
             key={batch.id}
             className={cn(
-              "border border-gray-200  hover:border-gray-300 transition-all",
+              "border border-gray-200 hover:border-gray-300 transition-all",
               mode === "view" &&
-                "cursor-pointer hover:border-violet-300 hover:scale-102 hover:shadow-lg hover:shadow-violet-100"
+                "cursor-pointer hover:border-violet-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-violet-100"
             )}
           >
             <Link
@@ -57,7 +127,15 @@ const CourseBatchesCards = ({
                       <h3 className="font-semibold text-lg">{batch.name}</h3>
                       <Badge
                         variant="outline"
-                        className="bg-green-50 text-green-700 border-green-200"
+                        className={cn(
+                          "border",
+                          batch.status.toLowerCase() === "upcoming" &&
+                            "bg-yellow-50 text-yellow-800 border-yellow-200",
+                          batch.status.toLowerCase() === "ongoing" &&
+                            "bg-blue-50 text-blue-700 border-blue-200",
+                          batch.status.toLowerCase() === "completed" &&
+                            "bg-green-50 text-green-700 border-green-200"
+                        )}
                       >
                         {batch.status}
                       </Badge>
@@ -108,14 +186,10 @@ const CourseBatchesCards = ({
           </Card>
         ))}
       </div>
-      {batches.length === 0 && (
-        <div className="text-center p-8 border border-dashed rounded-lg bg-gray-50">
-          <p className="text-muted-foreground">
-            No batches created for this course yet.
-          </p>
-          <Button className="mt-2  cursor-pointer bg-primary-bg hover:bg-primary-bg/90">
-            <Plus size={16} className="mr-1" /> Create Your First Batch
-          </Button>
+
+      {filteredBatches.length === 0 && (
+        <div className="text-center p-8 border border-dashed rounded-lg bg-gray-50 mt-4">
+          <p className="text-muted-foreground">No matching batches found.</p>
         </div>
       )}
     </>

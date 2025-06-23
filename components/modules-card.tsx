@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PencilIcon, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { AddModulesDialog } from "./add-moduels-dialog";
+import { toast } from "sonner";
 
 const ModulesCard = ({
   modules,
@@ -19,12 +21,7 @@ const ModulesCard = ({
         <CardHeader className="flex flex-row items-center justify-between pb-3 bg-gray-50 border-b">
           <CardTitle className="text-xl">{name} Modules</CardTitle>
           {mode === "edit" && (
-            <Button
-              size="sm"
-              className="flex bg-primary-bg cursor-pointer hover:bg-primary-bg/90 items-center gap-1"
-            >
-              <Plus size={16} /> Add Module
-            </Button>
+            <AddModulesDialog onAdd={() => toast.success("Module added")} />
           )}
         </CardHeader>
         <CardContent className="space-y-1 p-4 overflow-y-auto max-h-[400px]">

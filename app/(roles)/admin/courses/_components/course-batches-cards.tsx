@@ -96,7 +96,7 @@ const CourseBatchesCards = ({
         onValueChange={(value) => setSelectedStatus(value)}
         className="mb-4"
       >
-        <TabsList className="bg-muted w-full md:w-auto overflow-x-auto whitespace-nowrap">
+        <TabsList className="bg-muted w-full md:w-auto overflow-x-ato whitespace-nowrap">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
           <TabsTrigger value="ongoing">Ongoing</TabsTrigger>

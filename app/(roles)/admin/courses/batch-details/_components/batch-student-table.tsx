@@ -5,6 +5,7 @@ import { DummyStudent } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { toast } from "sonner";
+import { AddStudentsDialog } from "./add-student-dialog";
 
 const studentTableCol = [
   {
@@ -70,16 +71,14 @@ const BatchStudentTable = ({
           </CardTitle>
 
           <div>
-            <Button className="bg-white hover:bg-purple-50 text-black cursor-pointer">
-              Add Student
-            </Button>
+            <AddStudentsDialog onAdd={()=>toast.success("Student added")}/>
           </div>
         </CardHeader>
         <CardContent>
           <DataTable
             data={dummyStudents}
             columns={studentTableCol}
-            href={`/admin/courses/batch-details/${courseId}/batch/${batchId}`}
+            href={`/admin/students/student-details`}
             searchPlaceholder="Search by email or name"
             getRowId={(row) => row.id}
             onDeleteSelected={(ids) => {

@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   EditCourseDescription,
   EditCourseDiscount,
+  EditCourseDuration,
+  EditCourseMode,
   EditCourseName,
   EditCourseOfferPrice,
   EditCoursePrice,
@@ -22,6 +24,7 @@ import CourseStatusCard from "@/components/status-card";
 import {
   ViewCourseDescription,
   ViewCourseDiscountAndOfferPrice,
+  ViewCourseDuration,
   ViewCourseNameAndPrice,
   ViewCourseThumbnail,
 } from "./view-course-components";
@@ -30,6 +33,10 @@ import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
+import { Input } from "../ui/input";
+import CourseSyllabusCard from "@/app/(roles)/admin/courses/course-details/_components/course-syllabus-card";
+import PendingRequestPanel from "@/app/(roles)/admin/courses/course-details/_components/pending-request-panel";
+import { formatDistance } from "date-fns";
 
 type CourseDetailsProps = {
   // mode: "view" | "edit";
@@ -65,6 +72,14 @@ const CourseDetails = ({
     );
   }
   const [name, setName] = useState(course.name || "");
+  const [courseMode, setCourseMode] = useState<"Hybrid" | "Offline" | "Online">(
+    "Hybrid"
+  );
+  const [startDate,setStartDate] = useState<Date | null>(null)
+  const [endDate,setEndDate] = useState<Date | null>(null)
+  const[courseDuration, setCourseDuration] = useState(
+    formatDistance(startDate ?? new Date(), endDate ?? new Date())
+  );
   const [description, setDescription] = useState(course.description || "");
   const [price, setPrice] = useState(course.price || 0);
   const [discount, setDiscount] = useState(course.discount || 0);
@@ -90,7 +105,9 @@ const CourseDetails = ({
   useEffect(() => {
     setOfferPrice(price - (price * discount) / 100);
   }, [price, discount]);
-
+  useEffect(() => {
+    setCourseDuration(formatDistance(startDate ?? new Date(), endDate ?? new Date()));
+  },[startDate, endDate]);
   const handleSave = () => {
     //TODO:Handle saving logic and API call here
     setIsLoading(true);
@@ -144,7 +161,7 @@ const CourseDetails = ({
                   <Button
                     variant="outline"
                     className="border-gray-300 cursor-pointer"
-                    onClick={() => router.back()}
+                    onClick={() => setMode("view")}
                   >
                     <X size={16} className="mr-1" /> Cancel
                   </Button>
@@ -194,14 +211,33 @@ const CourseDetails = ({
               )}
             </div>
             {mode === "edit" ? (
-              <EditCourseDescription
-                description={description}
-                setDescription={setDescription}
-              />
+              <>
+              <EditCourseDuration startDate={startDate} endDate={endDate} duration={courseDuration} setStartDate={setStartDate} setEndDate={setEndDate}/>
+                <EditCourseDescription
+                  description={description}
+                  setDescription={setDescription}
+                />
+                <EditCourseMode mode={courseMode} setMode={setCourseMode} />
+              </>
             ) : (
               <>
                 <Separator className="my-6" />
+                <ViewCourseDuration startDate={startDate} endDate={endDate} duration={courseDuration} />
+                <Separator className="my-6" />
                 <ViewCourseDescription description={description} />
+                <div className="space-y-2 mt-0">
+                  <Separator className="my-6" />
+                  <div className="flex gap-2">
+                    <div className="flex flex-col gap-3">
+                      <h1 className="text-2xl font-bold text-neutral-800">
+                        Mode
+                      </h1>
+                      <p className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold">
+                        Hybrid
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
             <Separator className="my-6" />
@@ -211,7 +247,7 @@ const CourseDetails = ({
               label={`${dummyInstructors.length} are assigned to this course`}
             />
             <Separator className="my-6" />
-    
+
             <div>
               <CourseBatchesCards
                 courseId={course.id}
@@ -232,7 +268,8 @@ const CourseDetails = ({
           <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
         )}
         <CourseModulesCard name="Course" mode={mode} modules={course.modules} />
-
+        <CourseSyllabusCard mode={mode} />
+        <PendingRequestPanel />
         <CourseStatusCard name="Course" batches={batches} course={course} />
       </div>
     </div>

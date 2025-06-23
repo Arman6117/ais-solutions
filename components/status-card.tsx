@@ -21,7 +21,6 @@ const StatusCard = ({
       <Card className="border-0 shadow-md">
         <CardHeader className={"pb-3 bg-gray-50 border-b flex justify-between"}>
           <CardTitle className="text-xl">{name} Status</CardTitle>
-          <Button variant={'destructive'} size={'sm'}>Delete</Button>
         </CardHeader>
         <CardContent className="p-4 ">
           <div className={cn("space-y-4")}>

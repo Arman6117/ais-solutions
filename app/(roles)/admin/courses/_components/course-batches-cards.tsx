@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Calendar, Clock, PencilIcon, Plus, Trash2, Users } from "lucide-react";
+import { Calendar, Clock, FileStack, PencilIcon, Plus, Trash2, Users } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { parseISO, compareDesc } from "date-fns";
@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PiChalkboardTeacherFill } from "react-icons/pi";
 const CourseBatchesCards = ({
   courseId,
   batches,
@@ -74,7 +75,7 @@ const CourseBatchesCards = ({
             placeholder="Search batches..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-64"
+            className="w-full "
           />
           {mode === "edit" && (
             <Button
@@ -146,12 +147,20 @@ const CourseBatchesCards = ({
                         <span>Starts: {batch.startDate}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <FileStack size={14} className="text-primary" />
+                        <span>Modules: Promise,Async Await</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar size={14} className="text-primary" />
                         <span>Ends: {batch.endDate}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Users size={14} className="text-primary" />
                         <span>{batch.students} Students</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <PiChalkboardTeacherFill size={14} className="text-primary" />
+                        <span>Instructors: John Doe</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock size={14} className="text-primary" />

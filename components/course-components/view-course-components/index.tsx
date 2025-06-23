@@ -78,13 +78,9 @@ export function ViewCourseDescription({
           {/* <div className="h-8 w-10 rounded-full bg-primary-bg"></div> */}
           <div className="flex flex-col gap-3">
             <h1 className="text-2xl font-bold text-neutral-800">Description</h1>
-            <Textarea
-              readOnly
-              value={description}
-              className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold"
-            />
-            {/* {description} */}
-            {/* </Textarea> */}
+            <p className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold">
+              {description}
+            </p>
           </div>
         </div>
       </div>
@@ -113,3 +109,34 @@ export function ViewCourseThumbnail({ thumbnail }: { thumbnail: string }) {
     </>
   );
 }
+
+export const ViewCourseDuration = ({
+  startDate,
+  endDate,
+  duration,
+}: {
+  startDate: Date | null;
+  endDate: Date | null;
+  duration: string;
+}) => {
+  return <div className="flex justify-between flex-wrap">
+    <div className="flex flex-col gap-3">
+            <h1 className="text-2xl font-bold text-neutral-800">Start Date</h1>
+            <p className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold">
+              {startDate?.toString()}
+            </p>
+          </div>
+    <div className="flex flex-col gap-3">
+            <h1 className="text-2xl font-bold text-neutral-800">End Date</h1>
+            <p className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold">
+              {endDate?.toString()}
+            </p>
+          </div>
+    <div className="flex flex-col gap-3">
+            <h1 className="text-2xl font-bold text-neutral-800">Duration</h1>
+            <p className="md:text-xl  border-none focus-visible:border-none focus-visible:ring-0 font-semibold">
+              {duration}
+            </p>
+          </div>
+  </div>;
+};

@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency } from "@/lib/utils";
-import { Upload } from "lucide-react";
+import { Upload, Calendar, CalendarCheck, CalendarClock } from "lucide-react";
 import Image from "next/image";
 
 export function EditCourseName({
@@ -163,3 +164,79 @@ export function EditCourseThumbnail({
     </>
   );
 }
+
+export const EditCourseMode = ({
+  mode,
+  setMode,
+}: {
+  mode: "Hybrid" | "Online" | "Offline";
+  setMode: (mode: "Hybrid" | "Online" | "Offline") => void;
+}) => {
+  return <Select value={mode} onValueChange={setMode}>
+   <SelectTrigger>
+    <SelectValue placeholder="Select course mode"/>
+   </SelectTrigger>
+   <SelectContent>
+    <SelectItem value="Hybrid">Hybrid</SelectItem>
+    <SelectItem value="Online">Online</SelectItem>
+    <SelectItem value="Offline">Offline</SelectItem>
+   </SelectContent>
+  </Select>;
+};
+
+export const EditCourseDuration = ({
+  startDate,
+  endDate,
+  duration,
+  setEndDate, 
+  setStartDate
+}: {
+  startDate: Date | null;
+  endDate: Date | null;
+  duration: string;
+  setStartDate:(date:Date) => void
+  setEndDate:(date:Date) => void
+})=> {
+  return (
+    <div className="space-y-4">
+      <div className="flex ju  flex-wrap gap-10">
+        <div className="flex flex-col gap-3 justify-center">
+          <Label className="text-lg flex gap-2 items-center">
+            <Calendar />
+            Course Start Date
+          </Label>
+          <Input
+            value={startDate?.toISOString().split('T')[0]}
+            type="date"
+            onChange={(e) => setStartDate(new Date(e.target.value))}
+            className="focus ml-5 relative transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+          />
+        </div>
+        <div className="flex flex-col gap-3 justify-center">
+          <Label className="text-lg flex gap-2 items-center">
+            <CalendarCheck />
+            Course End Date
+          </Label>
+          <Input
+            value={endDate?.toISOString().split('T')[0]}
+            type="date"
+            onChange={(e) => setEndDate(new Date(e.target.value))}
+            className="focus ml-5 relative transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+          />
+        </div>
+      <div className="flex flex-col gap-3 justify-center">
+        <Label className="text-lg flex gap-2 items-center">
+          <CalendarClock />
+          Course Duration
+        </Label>
+        <Input
+          value={duration}
+          readOnly
+          placeholder="Course duration"
+          className="focus w-64 ml-5 sm:w96 relative transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+          />
+          </div>
+      </div>
+    </div>
+  );
+};

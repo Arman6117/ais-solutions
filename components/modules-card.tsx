@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PencilIcon, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const ModulesCard = ({
@@ -29,7 +30,8 @@ const ModulesCard = ({
         <CardContent className="space-y-1 p-4 overflow-y-auto max-h-[400px]">
           {modules && modules.length > 0 ? (
             modules?.map((mod, i) => (
-              <div
+              <Link
+                href={`/admin/modules/module-details/${i}`}
                 key={i}
                 className="flex items-center cursor-pointer group justify-between p-3 rounded-md hover:bg-gray-50 border-b last:border-0"
               >
@@ -57,7 +59,7 @@ const ModulesCard = ({
                     </Button>
                   </div>
                 )}
-              </div>
+              </Link>
             ))
           ) : (
             <div className="text-center p-6 border border-dashed rounded-lg">

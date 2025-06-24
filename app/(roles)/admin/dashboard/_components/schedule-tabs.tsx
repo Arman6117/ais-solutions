@@ -59,9 +59,9 @@ const ScheduleTabs = () => {
             plugins={[Autoplay({ delay: 2500 })]}
             className="w-full max-w-5xl"
           >
-            <CarouselContent>
+            <CarouselContent className="w-full">
               {meetingsTomorrow.map((meeting, i) => (
-                <CarouselItem key={i} className="basis-1/2 md:basis-1/3 lg:basis-1/4">
+                <CarouselItem key={i}  className="w-full">
                   <MeetingCard meeting={meeting} isTodayOrFuture={true} />
                 </CarouselItem>
               ))}

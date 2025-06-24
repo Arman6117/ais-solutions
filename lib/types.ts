@@ -34,6 +34,8 @@ export type DummyBatches = {
   startDate: string;
   endDate: string;
   status: "Ongoing" | "Upcoming" | "Completed";
+  whatsappLink?: string;
+
 };
 
 export type DummyInstructors = {

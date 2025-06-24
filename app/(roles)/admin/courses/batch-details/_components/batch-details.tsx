@@ -3,8 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-
-
 import InfoWrapper from "@/components/info-wrapper";
 import BatchStudentTable from "./batch-student-table";
 import InstructorsCards from "../../../../../../components/instructors-cards";
@@ -35,6 +33,8 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
+import Link from "next/link";
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
   dummyModules: string[];
@@ -72,9 +72,10 @@ const BatchDetails = ({
     );
   }
   const [name, setName] = useState(batch.name || "");
-  const [status, setStatus] = useState<
-    "Ongoing" | "Upcoming" | "Completed" 
-  >(batch.status || 'Upcoming');
+  const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed">(
+    batch.status || "Upcoming"
+  );
+  const [whatsappLink, setWhatsappLink] = useState(batch.whatsappLink || "");
 
   const [students, setStudents] = useState(dummyStudents || []);
   const [startDate, setStartDate] = useState(batch.startDate || "");
@@ -241,28 +242,70 @@ const BatchDetails = ({
                 )}
                 {/* </div> */}
                 {mode === "view" ? (
-                  <div className="flex flex-col gap-3">
-                    <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
-                      <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
-                      <CheckCircle className="text-indigo-600 mr-2" size={20} />
-                      Status
-                    </h1>
-                    <Badge
-                      className={cn(
-                        "flex gap-2 items-center text-lg w-fit px-4 py-2",
-                        statusColor.bg,
-                        statusColor.text,
-                        statusColor.border
-                      )}
+                  <div className="grid md:grid-cols-2 gap-7">
+                    <div className="flex flex-col gap-3">
+                      <h1 className="text-xl font-bold text-neutral-800 mb-2 flex items-center">
+                        <div className="w-1 h-6 bg-indigo-600 rounded-full mr-2"></div>
+                        <CheckCircle
+                          className="text-indigo-600 mr-2"
+                          size={20}
+                        />
+                        Status
+                      </h1>
+                      <Badge
+                        className={cn(
+                          "flex gap-2 items-center text-lg w-fit px-4 py-2",
+                          statusColor.bg,
+                          statusColor.text,
+                          statusColor.border
+                        )}
+                      >
+                        <div
+                          className={cn("size-3 rounded-full", statusColor.dot)}
+                        ></div>
+                        {status}
+                      </Badge>
+                    </div>
+                    <InfoWrapper
+                      label="WhatsApp Group Link"
+                      icon={<FaWhatsapp className="text-green-500" size={20} />}
                     >
-                      <div
-                        className={cn("size-3 rounded-full", statusColor.dot)}
-                      ></div>
-                      {status}
-                    </Badge>
+                      {whatsappLink ? (
+                        <Link
+                          href={whatsappLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-600 underline"
+                        >
+                          {whatsappLink}
+                        </Link>
+                      ) : (
+                        <span className="text-muted-foreground">
+                          No link provided
+                        </span>
+                      )}
+                    </InfoWrapper>
                   </div>
                 ) : (
-                  <BatchStatusSelector setStatus={setStatus} status={status} />
+                  <>
+                    <EditInfo
+                      label="WhatsApp Group Link"
+                      icon={
+                        <FaWhatsapp className="text-green-500" size={20} />
+                      }
+                    >
+                      <Input
+                        placeholder="Enter WhatsApp group invite link"
+                        value={whatsappLink}
+                        onChange={(e) => setWhatsappLink(e.target.value)}
+                        className="focus-visible:ring-0 w-64"
+                      />
+                    </EditInfo>
+                    <BatchStatusSelector
+                      setStatus={setStatus}
+                      status={status}
+                    />
+                  </>
                 )}
                 <Separator />
                 <div className="flex flex-col gap-6">

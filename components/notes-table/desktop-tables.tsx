@@ -28,10 +28,11 @@ type DesktopTableProps = {
   searchTerm: string;
   startIndex: number;
   handleRowCheckboxChange: (index: number) => void;
-  mode: "edit" | "view" |"create";
+  mode: "edit" | "view" | "create";
   updateNoteLinks: (noteIndex: number, newLinks: any[]) => void;
   handleDelete: (index: number) => void;
 };
+
 const DesktopTable = ({
   paginatedNotes,
   selectedRows,
@@ -62,6 +63,7 @@ const DesktopTable = ({
           </TableHead>
           <TableHead className="text-center">Module</TableHead>
           <TableHead className="text-center">Chapter</TableHead>
+          <TableHead className="text-center">Session</TableHead>
           <TableHead className="text-center">
             <div className="flex items-center justify-center gap-1">
               Date Created
@@ -84,7 +86,7 @@ const DesktopTable = ({
 
         {paginatedNotes.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={7} className="text-center py-8">
+            <TableCell colSpan={8} className="text-center py-8">
               No notes found. {searchTerm && "Try adjusting your search."}
             </TableCell>
           </TableRow>
@@ -104,6 +106,7 @@ const DesktopTable = ({
               </TableCell>
               <TableCell>{note.module}</TableCell>
               <TableCell>{note.chapter}</TableCell>
+              <TableCell>{note.session || "—"}</TableCell>
               <TableCell>{note.dateCreated}</TableCell>
 
               <TableCell className="text-center truncate max-w-44">
@@ -187,7 +190,6 @@ const DesktopTable = ({
                 </div>
               </TableCell>
 
-              {/* ROW ACTIONS */}
               <TableCell>
                 <div className="flex justify-center gap-2">
                   <Button size="icon" variant="outline">

@@ -27,6 +27,9 @@ import AddLinkDialog from "./add-link-dialog";
 import MobileNewNoteForm from "./mobile-new-note-form";
 import { MdCancel } from "react-icons/md";
 import AddFileDialog from "./add-file-dialog";
+import { Session } from "@/lib/types";
+import SelectSessionDialog from "./select-sessioin-dialog";
+import { dummyNoteSessions } from "@/lib/static";
 
 const NewNoteForm = ({
   setIsCreating,
@@ -46,6 +49,7 @@ const NewNoteForm = ({
     Array<{ label: string; link: string }>
   >([]);
   const [files, setFiles] = useState<Array<string>>(["a file"]);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
   const handleSave = () => {
     // Validate required fields
@@ -123,6 +127,25 @@ const NewNoteForm = ({
           className="max-w-40"
         />
       </TableCell>
+      <TableCell>
+  <div className="flex flex-col gap-2 max-w-40">
+    {selectedSession ? (
+      <div className="text-sm space-y-1">
+        <p className="font-medium">{selectedSession.name}</p>
+        <p className="text-xs text-muted-foreground">{format(selectedSession.date, "MMM dd, yyyy")}</p>
+        <p className="text-xs text-muted-foreground">Module: {selectedSession.module}</p>
+        <p className="text-xs text-muted-foreground">Instructor: {selectedSession.instructor}</p>
+      </div>
+    ) : (
+      <p className="text-xs text-muted-foreground">No session selected</p>
+    )}
+    <SelectSessionDialog
+      sessions={dummyNoteSessions} // Replace with real filtered batch sessions
+      onSelect={(session) => setSelectedSession(session)}
+    />
+  </div>
+</TableCell>
+
       <TableCell>
         <Popover>
           <PopoverTrigger asChild>

@@ -90,3 +90,11 @@ export type Offer = {
 };
 
 
+export type Session = {
+  id: string;
+  name: string;
+  date: Date;
+  module: string;
+  chapter: string;
+  instructor: string;
+};

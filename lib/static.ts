@@ -973,3 +973,21 @@ export const dummyOffers: Offer[] = [
   },
 ];
 
+export const dummyNoteSessions = [
+  {
+    id: "s1",
+    name: "JavaScript Basics",
+    date: new Date(),
+    module: "Module 1",
+    chapter: "Intro to JS",
+    instructor: "Arman Patel",
+  },
+  {
+    id: "s2",
+    name: "Loops & Conditions",
+    date: new Date(new Date().setDate(new Date().getDate() - 1)),
+    module: "Module 2",
+    chapter: "Control Flow",
+    instructor: "Sadaf A.",
+  },
+];

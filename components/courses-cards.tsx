@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -87,18 +87,17 @@ const dummyCourses: CourseType[] = [
   },
 ];
 
-// Dynamic chunk size based on screen width
+// Determine chunk size based on screen width
 const useChunkSize = () => {
   const [chunkSize, setChunkSize] = useState(getInitialChunkSize());
 
   function getInitialChunkSize() {
-    if (typeof window === "undefined") return 1; // Default for SSR
-
+    if (typeof window === "undefined") return 1;
     const width = window.innerWidth;
-    if (width < 640) return 1; // Mobile
-    if (width < 1024) return 1; // Tablet
-    if (width < 1280) return 2; // Small desktop
-    return 2; // Large desktop
+    if (width < 640) return 1;
+    if (width < 1024) return 1;
+    if (width < 1280) return 2;
+    return 2;
   }
 
   useEffect(() => {
@@ -138,15 +137,13 @@ const CoursesCards = ({ courses, mode, label }: CoursesCardsProps) => {
   const filteredCourses = dummyCourses.filter((course) =>
     course.title.toLowerCase().includes(search.toLowerCase())
   );
-
   const chunkedCourses = chunkArray(filteredCourses, chunkSize);
 
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
-      {/* Header - Responsive padding and font sizes */}
-        {label && (
-      <div className="flex justify-between px-3 w-full sm:px-5 py-3 sm:py-5 rounded-lg items-center bg-primary-bg text-white">
-          <div className="flex  flex-col  ">
+      {label && (
+        <div className="flex justify-between px-3 w-full sm:px-5 py-3 sm:py-5 rounded-lg items-center bg-primary-bg text-white">
+          <div className="flex flex-col">
             <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 flex items-center">
               <div className="w-1 h-5 sm:h-6 bg-white rounded-full mr-2"></div>
               <BookOpen className="mr-2" size={24} />
@@ -156,25 +153,20 @@ const CoursesCards = ({ courses, mode, label }: CoursesCardsProps) => {
               The following courses include this module
             </p>
           </div>
-        {mode === "edit" && (
-          <Button className="bg-white hover:text-white text-black cursor-pointer">
-            Add course
-          </Button>
-        )}
-      </div>
-          )}
+         
+        </div>
+      )}
 
-      {/* Search and Carousel Container */}
-      <div className="w-full flex flex-col space-y-3 sm:space-y-4">
-        {/* Search Input - Responsive width */}
-        <Input
-          placeholder="Search by course name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-64 focus-visible:ring-0 border focus:border-violet-400"
-        />
+      {/* Search Input */}
+      <Input
+        placeholder="Search by course name..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full sm:w-64 focus-visible:ring-0 border focus:border-violet-400"
+      />
 
-        {/* Carousel - Adjusted spacing */}
+      {/* Responsive Display: Carousel for large, Scrollable list for small */}
+      {chunkSize > 1 ? (
         <div className="mt-4 sm:mt-8 w-full relative">
           <Carousel className="w-full">
             <CarouselContent className="w-full">
@@ -202,12 +194,23 @@ const CoursesCards = ({ courses, mode, label }: CoursesCardsProps) => {
               )}
             </CarouselContent>
 
-            {/* Carousel Navigation - Moved to absolute positioning */}
             <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 ml-0 sm:ml-2 rounded-lg cursor-pointer hover:border-violet-300 hover:bg-violet-50" />
             <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 mr-0 sm:mr-2 rounded-lg cursor-pointer hover:border-violet-300 hover:bg-violet-50" />
           </Carousel>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col gap-7 max-h-[450px] overflow-y-auto py-3">
+          {filteredCourses.length > 0 ? (
+            filteredCourses.map((course) => (
+              <div key={course.id} className="w-full">
+                <CourseCard course={course} />
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500 text-center">No courses found.</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

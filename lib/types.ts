@@ -68,6 +68,7 @@ export type DummyModules = {
   id: string;
   name: string;
   createdAt: string;
+  description:string
   course: string[];
   price: number;
   discount: number;

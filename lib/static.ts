@@ -511,6 +511,7 @@ export const dummyModules:DummyModules[] = [
     offerPrice: 900,
     rating: 4.5,
     status: "Ongoing", // Example status
+    description:"The example description"
   },
   {
     id: "2",
@@ -522,6 +523,7 @@ export const dummyModules:DummyModules[] = [
     offerPrice: 900,
     rating: 4,
     status: "Completed", 
+     description:"The example description"
   },
   {
     id: "3",
@@ -533,6 +535,7 @@ export const dummyModules:DummyModules[] = [
     offerPrice: 5900,
     rating: 5,
     status: "Upcoming", 
+     description:"The example description"
   },
   {
     id: "4",
@@ -544,6 +547,7 @@ export const dummyModules:DummyModules[] = [
     offerPrice: 4900,
     rating: 2,
     status: "Ongoing", 
+     description:"The example description"
   },
 ];
 

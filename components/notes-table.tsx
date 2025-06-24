@@ -1,38 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "./ui/pagination";
-import AddLinkButton from "./batch-components/add-link-button";
+
 import NewNoteForm from "./batch-components/new-note-form";
-import { Button } from "./ui/button";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
 
 import { Card, CardContent } from "./ui/card";
-import { FaYoutube } from "react-icons/fa";
-import { Pencil, Trash2, Search, Filter } from "lucide-react";
-import { getIcon } from "@/lib/utils";
-import { IconType } from "react-icons/lib";
-import { ScrollArea } from "./ui/scroll-area";
 import MobileCardView from "./batch-components/mobile-card-view";
 import DeleteConfirmationDialog from "./batch-components/delete-confirmation-dialog";
 import NotesTablePagination from "./notes-table/notes-table-pagination";
+import SearchAndControls from "./notes-table/search-and-controls";
+import DesktopTable from "./notes-table/desktop-tables";
 
 type NotesTableProps = {
   mode: "view" | "edit" | "create";
@@ -218,230 +195,59 @@ const NotesTable = ({
   return (
     <div className="space-y-4">
       {/* Search and controls */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="relative w-full sm:w-auto">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by module, chapter or file..."
-            className="pl-8 w-full sm:w-[300px]"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="flex items-center gap-2"
-              onClick={toggleSortDirection}
-            >
-              <Filter className="size-4" />
-              Sort by date {sortDirection === "asc" ? "↑" : "↓"}
-            </Button>
-
-            {selectedRows.size > 0 && (
-              <Button
-                variant="destructive"
-                onClick={handleBulkDelete}
-                className="flex items-center gap-2"
-              >
-                <Trash2 className="size-4" />
-                Delete ({selectedRows.size})
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
+      <SearchAndControls
+        handleBulkDelete={handleBulkDelete}
+        searchTerm={searchTerm}
+        selectedRows={selectedRows}
+        setSearchTerm={setSearchTerm}
+        sortDirection={sortDirection}
+        toggleSortDirection={toggleSortDirection}
+      />
       {/* Desktop view table */}
       <div className="hidden md:block overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="items-center text-base font-semibold">
-              <TableHead className="text-center w-12">
-                <Checkbox
-                  checked={
-                    paginatedNotes.length > 0 &&
-                    selectedRows.size === paginatedNotes.length
-                  }
-                  onCheckedChange={handleSelectAllChange}
-                />
-              </TableHead>
-              <TableHead className="text-center">Module</TableHead>
-              <TableHead className="text-center">Chapter</TableHead>
-              <TableHead className="text-center">
-                <div className="flex items-center justify-center gap-1">
-                  Date Created
-                </div>
-              </TableHead>
-              <TableHead className="text-center">Video Link</TableHead>
-              <TableHead className="text-center">Files</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {!isMobile && isCreating && (
-              <NewNoteForm
-                setIsCreating={setIsCreating}
-                createNewNote={createNewNote}
-                isMobile={false}
-              />
-            )}
-
-            {paginatedNotes.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
-                  No notes found. {searchTerm && "Try adjusting your search."}
-                </TableCell>
-              </TableRow>
-            ) : (
-              paginatedNotes.map((note, i) => (
-                <TableRow
-                  key={startIndex + i}
-                  className="text-center space-x-4 text-sm font-medium"
-                >
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedRows.has(startIndex + i)}
-                      onCheckedChange={() =>
-                        handleRowCheckboxChange(startIndex + i)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>{note.module}</TableCell>
-                  <TableCell>{note.chapter}</TableCell>
-                  <TableCell>{note.dateCreated}</TableCell>
-
-                  <TableCell className="text-center truncate max-w-44">
-                    <div className="flex flex-col items-center gap-4">
-                      {(note.videoLinks || []).map((v: any, index: number) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between w-full gap-2 border-b pb-2"
-                        >
-                          <div
-                            className="flex items-center gap-3 cursor-pointer"
-                            onClick={() => window.open(v.link)}
-                          >
-                            <FaYoutube className="text-purple-600" />
-                            <span className="truncate">{v.label}</span>
-                          </div>
-                          {mode === "edit" && (
-                            <div className="flex gap-">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer"
-                              >
-                                <Pencil className="size-4 text-violet-600" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer"
-                              >
-                                <Trash2 className="size-4 text-destructive" />
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-
-                      {mode === "edit" && (
-                        <AddLinkButton
-                          notesLinks={note.videoLinks || []}
-                          setNotesLinks={(newLinks) =>
-                            updateNoteLinks(startIndex + i, newLinks)
-                          }
-                        />
-                      )}
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="flex flex-col items-center gap-4">
-                      {(note.files || []).map((f: any, index: number) => {
-                        const ext = f.split(".").pop()?.toLowerCase() || "";
-                        const FileIcon: IconType = getIcon(ext);
-                        return (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between w-full gap-2 border-b pb-2"
-                          >
-                            <div className="flex items-center gap-2">
-                              <FileIcon className="text-purple-600" />
-                              <span className="truncate max-w-40">{f}</span>
-                            </div>
-                            {mode === "edit" && (
-                              <div className="flex gap-1">
-                                <Button variant="ghost" size="icon">
-                                  <Pencil className="size-4 text-violet-600" />
-                                </Button>
-                                <Button variant="ghost" size="icon">
-                                  <Trash2 className="size-4 text-destructive" />
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                      {mode === "edit" && (
-                        <Button size="sm" className="mt-2 bg-primary-bg">
-                          Add File
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-
-                  {/* ROW ACTIONS */}
-                  <TableCell>
-                    <div className="flex justify-center gap-2">
-                      <Button size="icon" variant="outline">
-                        <Pencil className="size-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => handleDelete(startIndex + i)}
-                      >
-                        <Trash2 className="size-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <DesktopTable
+          createNewNote={createNewNote}
+          handleDelete={handleDelete}
+          handleRowCheckboxChange={handleRowCheckboxChange}
+          handleSelectAllChange={handleSelectAllChange}
+          isCreating={isCreating}
+          isMobile={isMobile}
+          mode={mode}
+          paginatedNotes={paginatedNotes}
+          searchTerm={searchTerm}
+          selectedRows={selectedRows}
+          setIsCreating={setIsCreating}
+          startIndex={startIndex}
+          updateNoteLinks={updateNoteLinks}
+        />
       </div>
 
       {/* Mobile view cards */}
-      {/* Mobile view cards */}
-{isMobile && (
-  <div className="md:hidden">
-    {isCreating && (
-      <Card className="mb-4">
-        <CardContent className="pt-4">
-          <NewNoteForm
-            setIsCreating={setIsCreating}
-            createNewNote={createNewNote}
-            isMobile={true}
-          />
-        </CardContent>
-      </Card>
-    )}
+      {isMobile && (
+        <div className="md:hidden">
+          {isCreating && (
+            <Card className="mb-4">
+              <CardContent className="pt-4">
+                <NewNoteForm
+                  setIsCreating={setIsCreating}
+                  createNewNote={createNewNote}
+                  isMobile={true}
+                />
+              </CardContent>
+            </Card>
+          )}
 
-    {paginatedNotes.length === 0 ? (
-      <Card className="p-8 text-center">
-        <p>No notes found. {searchTerm && "Try adjusting your search."}</p>
-      </Card>
-    ) : (
-      paginatedNotes.map((note, i) => renderMobileCard(note, i))
-    )}
-  </div>
-)}
+          {paginatedNotes.length === 0 ? (
+            <Card className="p-8 text-center">
+              <p>
+                No notes found. {searchTerm && "Try adjusting your search."}
+              </p>
+            </Card>
+          ) : (
+            paginatedNotes.map((note, i) => renderMobileCard(note, i))
+          )}
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

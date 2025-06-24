@@ -25,13 +25,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import AddLinkDialog from "./add-link-dialog";
 import MobileNewNoteForm from "./mobile-new-note-form";
+import { MdCancel } from "react-icons/md";
+import AddFileDialog from "./add-file-dialog";
 
 const NewNoteForm = ({
   setIsCreating,
   createNewNote,
+  isMobile,
 }: {
   setIsCreating: (state: boolean) => void;
   createNewNote: (newNote: any) => void;
+  isMobile: boolean;
 }) => {
   const [moduleName, setModuleName] = useState("");
   const [chapterName, setChapterName] = useState("");
@@ -42,13 +46,6 @@ const NewNoteForm = ({
     Array<{ label: string; link: string }>
   >([]);
   const [files, setFiles] = useState<Array<string>>(["a file"]);
-
-  const isMobileView = () => {
-    if (typeof window !== "undefined") {
-      return window.innerWidth < 768;
-    }
-    return false;
-  };
 
   const handleSave = () => {
     // Validate required fields
@@ -82,7 +79,7 @@ const NewNoteForm = ({
     }
   };
 
-  if (isMobileView()) {
+  if (isMobile) {
     return (
       <MobileNewNoteForm
         chapterName={chapterName}
@@ -198,20 +195,18 @@ const NewNoteForm = ({
               <span className="truncate max-w-32">{file}</span>
             </div>
           ))}
-          <Button variant="outline" size="sm" className="mt-1">
-            <Plus className="mr-2 h-3 w-3" />
-            Add File
-          </Button>
+          <AddFileDialog
+            onAddFile={(file: string) => setFiles([...files, file])}
+          />
         </div>
       </TableCell>
       <TableCell>
         <div className="flex gap-2 justify-center">
           <Button variant="ghost" onClick={handleCancel}>
-            Cancel
+            <X />
           </Button>
           <Button onClick={handleSave}>
-            <Save className="mr-2 h-4 w-4" />
-            Save
+            <Save className=" h-4 w-4" />
           </Button>
         </div>
       </TableCell>

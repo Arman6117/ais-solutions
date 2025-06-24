@@ -3,7 +3,7 @@ import NotesTable from "@/components/notes-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type BatchNotesTable = {
   mode: "view" | "edit" | "create";
@@ -141,46 +141,53 @@ const notesData = [
     files: ["project-setup.zip"],
   },
 ];
-
-const BatchNotesTable = ({ batchId, mode }: BatchNotesTable) => {
+type BatchNotesTableProps = {
+  mode: "view" | "edit" | "create";
+  batchId: string;
+};
+const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
   const [isCreating, setIsCreating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
-    <>
-      <Card className="border-0 w-full shadow-md p-0 mb-10 overflow-hidden mt-">
-        <CardHeader
-          className={cn(
-            "px-8 py-6 flex justify-between",
-            mode === "view"
-              ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white"
-              : "bg-gray-50 border-b"
-          )}
-        >
-          <CardTitle className="text-2xl md:text-3xl font-bold mb-2">
-            Notes
-          </CardTitle>
+    <Card className="border-0 w-full shadow-md p-0 mb-10 overflow-hidden">
+      <CardHeader
+        className={cn(
+          "px-8 py-6 flex justify-between",
+          mode === "view"
+            ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white"
+            : "bg-gray-50 border-b"
+        )}
+      >
+        <CardTitle className="text-2xl md:text-3xl font-bold mb-2">Notes</CardTitle>
 
-          <div>
-            <Button
-              className="bg-white hover:bg-purple-50 text-black cursor-pointer"
-              onClick={() => setIsCreating(true)}
-            >
-              Create Note
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <NotesTable
-            notes={mode ==='create' ? [] : notesData}
-            role="admin"
-            mode={mode}
-            batchId={batchId}
-            isCreating={isCreating}
-            setIsCreating={setIsCreating}
-          />
-        </CardContent>
-      </Card>
-    </>
+        <div>
+          <Button
+            className="bg-white hover:bg-purple-50 text-black cursor-pointer"
+            onClick={() => setIsCreating(true)}
+          >
+            Create Note
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <NotesTable
+          notes={mode === "create" ? [] : notesData}
+          role="admin"
+          mode={mode}
+          batchId={batchId}
+          isCreating={isCreating}
+          setIsCreating={setIsCreating}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

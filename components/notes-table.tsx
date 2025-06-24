@@ -24,27 +24,18 @@ import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 
-
-import {
-  Card,
-  CardContent,
-
-} from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { FaYoutube } from "react-icons/fa";
-import {
-  Pencil,
-  Trash2,
-  Search,
-  Filter,
-} from "lucide-react";
+import { Pencil, Trash2, Search, Filter } from "lucide-react";
 import { getIcon } from "@/lib/utils";
 import { IconType } from "react-icons/lib";
 import { ScrollArea } from "./ui/scroll-area";
 import MobileCardView from "./batch-components/mobile-card-view";
 import DeleteConfirmationDialog from "./batch-components/delete-confirmation-dialog";
+import NotesTablePagination from "./notes-table/notes-table-pagination";
 
 type NotesTableProps = {
-  mode: "view" | "edit" |"create";
+  mode: "view" | "edit" | "create";
   role: "admin" | "student";
   notes: any[];
   batchId?: string;
@@ -72,6 +63,13 @@ const NotesTable = ({
   const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
 
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredNotes.length / ITEMS_PER_PAGE);
@@ -284,10 +282,11 @@ const NotesTable = ({
           </TableHeader>
 
           <TableBody>
-            {isCreating && (
+            {!isMobile && isCreating && (
               <NewNoteForm
                 setIsCreating={setIsCreating}
                 createNewNote={createNewNote}
+                isMobile={false}
               />
             )}
 
@@ -419,77 +418,43 @@ const NotesTable = ({
       </div>
 
       {/* Mobile view cards */}
-      <div className="md:hidden">
-        {isCreating && (
-          <Card className="mb-4">
-            <CardContent className="pt-4">
-              <NewNoteForm
-                setIsCreating={setIsCreating}
-                createNewNote={createNewNote}
-              />
-            </CardContent>
-          </Card>
-        )}
+      {/* Mobile view cards */}
+{isMobile && (
+  <div className="md:hidden">
+    {isCreating && (
+      <Card className="mb-4">
+        <CardContent className="pt-4">
+          <NewNoteForm
+            setIsCreating={setIsCreating}
+            createNewNote={createNewNote}
+            isMobile={true}
+          />
+        </CardContent>
+      </Card>
+    )}
 
-        {paginatedNotes.length === 0 ? (
-          <Card className="p-8 text-center">
-            <p>No notes found. {searchTerm && "Try adjusting your search."}</p>
-          </Card>
-        ) : (
-          paginatedNotes.map((note, i) => renderMobileCard(note, i))
-        )}
-      </div>
+    {paginatedNotes.length === 0 ? (
+      <Card className="p-8 text-center">
+        <p>No notes found. {searchTerm && "Try adjusting your search."}</p>
+      </Card>
+    ) : (
+      paginatedNotes.map((note, i) => renderMobileCard(note, i))
+    )}
+  </div>
+)}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                className={
-                  currentPage === 1
-                    ? "pointer-events-none cursor-pointer opacity-50"
-                    : ""
-                }
-              />
-            </PaginationItem>
-
-            {getPageNumbers().map((page, i) =>
-              page === "ellipsis-start" || page === "ellipsis-end" ? (
-                <PaginationItem key={`ellipsis-${i}`}>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              ) : (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    onClick={() => setCurrentPage(Number(page))}
-                    isActive={currentPage === page}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              )
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                className={
-                  currentPage === totalPages
-                    ? "pointer-events-none cursor-pointer opacity-50"
-                    : ""
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <NotesTablePagination
+          currentPage={currentPage}
+          getPageNumbers={getPageNumbers}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+        />
       )}
 
       {/* Delete confirmation dialog */}
-      <DeleteConfirmationDialog 
+      <DeleteConfirmationDialog
         confirmDelete={confirmDelete}
         deleteDialogOpen={deleteDialogOpen}
         itemsToDelete={itemsToDelete}

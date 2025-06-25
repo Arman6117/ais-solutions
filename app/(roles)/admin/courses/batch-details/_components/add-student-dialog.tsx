@@ -1,4 +1,3 @@
-// components/students/AddStudentsDialog.tsx
 "use client";
 
 import {
@@ -13,16 +12,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { SearchIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+type Student = {
+  id: string;
+  name: string;
+  email: string;
+  joinedAt: string;
+  avatar: string;
+};
 
 export function AddStudentsDialog({
   onAdd,
 }: {
-  onAdd: (students: string[]) => void;
+  onAdd: (students: Student[]) => void;
 }) {
   const [input, setInput] = useState("");
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState<Student[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
 
   const handleSearch = () => {
@@ -34,12 +44,31 @@ export function AddStudentsDialog({
     if (parsed.length === 0) return;
 
     setLoading(true);
-    // simulate API search or return fake users
     setTimeout(() => {
-      setResults(parsed);
+      const fakeResults: Student[] = parsed.map((entry, idx) => ({
+        id: `id-${idx}`,
+        name: `Student ${idx + 1}`,
+        email: entry,
+        joinedAt: "2024-01-15",
+        avatar: `https://api.dicebear.com/7.x/thumbs/svg?seed=${entry}`,
+      }));
+      setResults(fakeResults);
+      setSelectedIds(new Set()); // Reset selection
       setLoading(false);
-    }, 500);
+    }, 600);
   };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const updated = new Set(prev);
+      updated.has(id) ? updated.delete(id) : updated.add(id);
+      return updated;
+    });
+  };
+
+  const selectedStudents = results.filter((student) =>
+    selectedIds.has(student.id)
+  );
 
   return (
     <Dialog>
@@ -52,7 +81,7 @@ export function AddStudentsDialog({
         <DialogHeader>
           <DialogTitle>Add Students</DialogTitle>
           <DialogDescription>
-            Enter student emails or IDs, separated by commas.
+            Search by email or ID (comma separated). Select students to add.
           </DialogDescription>
         </DialogHeader>
 
@@ -68,20 +97,35 @@ export function AddStudentsDialog({
             </Button>
           </div>
 
-          <ScrollArea className="max-h-52 rounded-md border p-2">
+          <ScrollArea className="max-h-64 rounded-md border p-3">
             {loading ? (
               <p className="text-muted-foreground">Searching...</p>
             ) : results.length > 0 ? (
-              <ul className="space-y-1">
-                {results.map((res, idx) => (
-                  <li
-                    key={idx}
-                    className="text-sm text-gray-800 border-b pb-1"
+              <div className="grid gap-3">
+                {results.map((student) => (
+                  <div
+                    key={student.id}
+                    className="flex items-start gap-4 p-3 rounded-md border hover:bg-muted/30 transition-all"
                   >
-                    {res}
-                  </li>
+                    <Checkbox
+                      checked={selectedIds.has(student.id)}
+                      onCheckedChange={() => toggleSelect(student.id)}
+                      className="mt-1"
+                    />
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={student.avatar} />
+                      <AvatarFallback>{student.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{student.name}</p>
+                      <p className="text-sm text-gray-500">{student.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Joined on {student.joinedAt}
+                      </p>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p className="text-sm text-muted-foreground">
                 No students found.
@@ -93,11 +137,12 @@ export function AddStudentsDialog({
         <DialogFooter className="mt-4">
           <Button
             onClick={() => {
-              onAdd(results);
+              onAdd(selectedStudents);
             }}
-            disabled={results.length === 0}
+            disabled={selectedStudents.length === 0}
           >
-            Add {results.length} Students
+            Add {selectedStudents.length} Student
+            {selectedStudents.length > 1 ? "s" : ""}
           </Button>
         </DialogFooter>
       </DialogContent>

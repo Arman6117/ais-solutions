@@ -82,7 +82,7 @@ export const sampleMeetings = [
   },
   {
     _id: "2",
-    date: "2025-06-22",
+    date: "2025-06-25",
     course: "Python Basics",
     module: "Datatypes",
     batch: "Batch B",
@@ -90,7 +90,7 @@ export const sampleMeetings = [
   },
   {
     _id: "3",
-    date: "2025-06-24",
+    date: "2025-06-25",
     course: "React Hooks",
     module: "useState",
     batch: "Batch C",

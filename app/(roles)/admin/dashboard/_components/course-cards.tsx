@@ -53,7 +53,7 @@ const CourseCards = () => {
     >
       {ongoingCourses.map((course, i) => (
         <Link
-          href={`/admin/courses/course-details/${course.id}`}
+          href={`/admin/all-batches/batch-details/${course.id}`}
           key={i}
           className="w-full h-auto p-4 bg-white border-violet-300 border rounded-lg cursor-pointer flex flex-col hover:bg-violet-50 justify-center gap-4 hover:shadow-sm transition-all duration-200 group"
           onClick={() => {}}
@@ -61,16 +61,16 @@ const CourseCards = () => {
           <div className="flex gap-3">
             <div className="w-1 h-8 rounded-3xl bg-primary-bg"></div>
             <h1 className="text-lg font-semibold text-violet-950 group-hover:underline">
-              {course.courseName}
+              {course.batchName}
             </h1>
           </div>
           <div className="flex justify-between items-center max-w-[90%]">
             <div className="flex flex-col">
               <span className="text-neutral-600 text-xs font-medium">
-                Batch
+                Course
               </span>
               <span className="text-neutral-900 font-medium">
-                {course.batchName}
+                {course.courseName}
               </span>
             </div>
             <div className="flex flex-col">
@@ -95,9 +95,14 @@ const CourseCards = () => {
               <span className="text-neutral-600 text-xs font-medium">
                 Instructor
               </span>
-              <span className="text-neutral-900 text-sm font-medium">
-                {course.instructor}
-              </span>
+              <div className="flex flex-col items-center">
+                <span className="text-neutral-900 flex flex-col text-sm font-medium">
+                  {course.instructor}
+                </span>
+                <span className="text-neutral-900 flex flex-col text-sm font-medium">
+                  John Doe
+                </span>
+              </div>
             </div>
           </div>
         </Link>

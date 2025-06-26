@@ -49,7 +49,7 @@ const CourseCards = () => {
   return (
     <div
       ref={containerRef}
-      className="mt-10 flex flex-col gap-4 max-h-[550px] overflow-y-auto no-scrollbar"
+      className="mt-10 flex flex-col gap-4 max-h-lvh overflow-y-auto no-scrollbar"
     >
       {ongoingCourses.map((course, i) => (
         <Link

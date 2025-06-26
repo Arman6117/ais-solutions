@@ -25,7 +25,7 @@ export const MeetingCard = ({
         <h3 className="font-bold text-gray-800">{meeting.course}</h3>
       </div>
 
-      <div className="flex  gap-28 mt-4">
+      <div className="flex flex-wrap gap-28 mt-4">
         <div className="flex flex-col gap-2">
           <div>
             <p className="text-gray-500 ">Module</p>

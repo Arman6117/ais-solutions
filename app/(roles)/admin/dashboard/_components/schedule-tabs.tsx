@@ -22,7 +22,7 @@ const ScheduleTabs = () => {
   );
 
   return (
-    <Tabs defaultValue="today" className="w-full mt-4">
+    <Tabs defaultValue="today" className="sm:w-full mt-4">
       <TabsList className="mb-4">
         <TabsTrigger value="today">Today</TabsTrigger>
         <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
@@ -34,11 +34,11 @@ const ScheduleTabs = () => {
           <Carousel
             opts={{ align: "start", loop: true }}
             plugins={[Autoplay({ delay: 2500 })]}
-            className="w-full max-w-5xl"
+            className="sm:w-full sm:max-w-5xl"
           >
-            <CarouselContent className="w-full">
+            <CarouselContent className="sm:w-full">
               {meetingsToday.map((meeting, i) => (
-                <CarouselItem key={i} className="w-full">
+                <CarouselItem key={i} className="sm:w-full">
                   <MeetingCard meeting={meeting} isTodayOrFuture={true} />
                 </CarouselItem>
               ))}
@@ -57,7 +57,7 @@ const ScheduleTabs = () => {
           <Carousel
             opts={{ align: "start", loop: true }}
             plugins={[Autoplay({ delay: 2500 })]}
-            className="w-full max-w-5xl"
+            className="w-full sm:max-w-5xl "
           >
             <CarouselContent className="w-full">
               {meetingsTomorrow.map((meeting, i) => (

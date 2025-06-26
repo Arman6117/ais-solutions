@@ -11,15 +11,21 @@ import { CalendarRange } from "lucide-react";
 import React from "react";
 
 type GraphFiltersProps = {
-  year: string;
-  setYear: (year: string) => void;
-  month: string;
-  setMonth: (month: string) => void;
-  startDate: string;
-  setStartDate: (date: string) => void;
-  endDate: string;
-  setEndDate: (date: string) => void;
+  year?: string;
+  setYear?: (year: string) => void;
+  month?: string;
+  setMonth?: (month: string) => void;
+  startDate?: string;
+  setStartDate?: (date: string) => void;
+  endDate?: string;
+  setEndDate?: (date: string) => void;
   resetFilters?: () => void;
+  course?: string;
+  setCourse?: (value: string) => void;
+  batch?: string;
+  setBatch?: (value: string) => void;
+  courseOptions?: string[];
+  batchOptions?: string[];
 };
 const GraphFilters = ({
   setYear,
@@ -30,12 +36,52 @@ const GraphFilters = ({
   setEndDate,
   setStartDate,
   startDate,
-  resetFilters
+  resetFilters,
+  course, 
+  setCourse,
+  batch,
+  setBatch,
+  batchOptions,
+  courseOptions
 }: GraphFiltersProps) => {
   return (
     <div className="flex sm:flex-row flex-col gap-4">
-      {/* Year Filter */}
       <div className="flex flex-wrap gap-3 items-center">
+       {setCourse && (
+        <Select value={course} onValueChange={setCourse}>
+          <SelectTrigger className="flex gap-2 size-auto text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
+          <SelectValue placeholder="Select Course" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="All">All Courses</SelectItem>
+            {courseOptions?.map((courseName) => (
+              <SelectItem key={courseName} value={courseName}>
+                {courseName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      {/* Batch Filter */}
+      {setBatch && (
+        <Select value={batch} onValueChange={setBatch}>
+          <SelectTrigger className="flex gap-2 size-auto text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
+          <SelectValue placeholder="Select Batch" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="All">All Batches</SelectItem>
+            {batchOptions?.map((batchName) => (
+              <SelectItem key={batchName} value={batchName}>
+                {batchName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      {/* Year Filter */}
+      {setYear && (
         <Select value={year} onValueChange={setYear}>
           <SelectTrigger className="flex gap-2 size-auto text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
             <CalendarRange className="size-4 text-primary-bg" />
@@ -47,7 +93,7 @@ const GraphFilters = ({
             <SelectItem value="2023">2023</SelectItem>
           </SelectContent>
         </Select>
-
+      )}
         {/* Month Filter */}
         <Select value={month} onValueChange={setMonth}>
           <SelectTrigger className="flex gap-2 size-auto text-xs sm:text-sm border-primary-bg font-medium text-violet-950">

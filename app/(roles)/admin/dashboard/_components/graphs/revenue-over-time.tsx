@@ -2,53 +2,40 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { parseISO, format } from "date-fns";
-import { CalendarRange } from "lucide-react";
 import GraphFilters from "./graph-filters";
 
 
-
-type RawDataItem = {
+type RevenueData = {
   date: string;
-  students: number;
+  amount: number;
 };
 
 type ChartDataItem = {
   label: string;
-  students: number;
+  amount: number;
 };
 
-const dummyData: RawDataItem[] = [
-  { date: "2025-01-12", students: 12 },
-  { date: "2025-01-28", students: 28 },
-  { date: "2025-02-10", students: 40 },
-  { date: "2025-03-15", students: 50 },
-  { date: "2025-03-30", students: 70 },
-  { date: "2025-04-05", students: 30 },
-  { date: "2025-05-08", students: 25 },
-  { date: "2025-06-01", students: 35 },
-  { date: "2025-06-15", students: 40 },
+const dummyData: RevenueData[] = [
+  { date: "2025-01-12", amount: 10000 },
+  { date: "2025-01-30", amount: 5000 },
+  { date: "2025-02-10", amount: 15000 },
+  { date: "2025-03-05", amount: 7000 },
+  { date: "2025-04-18", amount: 12000 },
+  { date: "2025-05-02", amount: 18000 },
+  { date: "2025-06-15", amount: 20000 },
 ];
 
-export default function NewStudentRegistrationsChart() {
+export default function RevenueOverTimeChart() {
   const [year, setYear] = useState("2025");
   const [month, setMonth] = useState("All");
   const [startDate, setStartDate] = useState("");
@@ -82,15 +69,14 @@ export default function NewStudentRegistrationsChart() {
         month === "All"
           ? format(parseISO(item.date), "MMM")
           : format(parseISO(item.date), "dd MMM");
-      grouped[label] = (grouped[label] || 0) + item.students;
+      grouped[label] = (grouped[label] || 0) + item.amount;
     });
 
-    const chartData = Object.entries(grouped).map(([label, students]) => ({
+    const chartData = Object.entries(grouped).map(([label, amount]) => ({
       label,
-      students,
+      amount,
     }));
 
-    // Sort labels (basic sort based on date)
     chartData.sort(
       (a, b) =>
         new Date(`01 ${a.label} ${year}`).getTime() -
@@ -101,19 +87,18 @@ export default function NewStudentRegistrationsChart() {
   }, [year, month, startDate, endDate]);
 
   return (
-    <Card className="w-full ring ring-[#6366f1]/30 shadow-[#6366f1]/20">
+    <Card className="w-full shadow ring ring-[#10b981]/30 shadow-[#10b981]/20">
       <CardHeader className="flex flex-col sm: justify-between sm:items-center gap-4">
-        <CardTitle className="text-2xl">New Student Registrations</CardTitle>
-
+        <CardTitle className="text-2xl">Revenue Over Time</CardTitle>
         <GraphFilters
-          endDate={endDate}
-          month={month}
-          setEndDate={setEndDate}
-          setMonth={setMonth}
-          setStartDate={setStartDate}
-          setYear={setYear}
-          startDate={startDate}
           year={year}
+          setYear={setYear}
+          month={month}
+          setMonth={setMonth}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
           resetFilters={resetFilters}
         />
       </CardHeader>
@@ -121,23 +106,24 @@ export default function NewStudentRegistrationsChart() {
       <CardContent className="h-[400px] w-full">
         {data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-            No student registrations found for selected filters.
+            No revenue data found for selected filters.
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" />
               <YAxis />
-              <Tooltip />
-              <Area
+              <Tooltip formatter={(value: number) => `₹${value}`} />
+              <Line
                 type="monotone"
-                dataKey="students"
-                stroke="#6366f1"
-                fill="#c7d2fe"
+                dataKey="amount"
+                stroke="#10b981"
                 strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         )}
       </CardContent>

@@ -4,10 +4,12 @@ import OngoingCourses from "./_components/ongoing-courses";
 
 import ScheduleTabs from "./_components/schedule-tabs";
 import NewStudentRegistrationsChart from "./_components/graphs/new-students-registration-chart";
+import RevenueOverTimeChart from "./_components/graphs/revenue-over-time";
+import FeeStatusDonutChart from "./_components/graphs/fee-status-donut-chart";
 
 const AdminDashboardPage = () => {
   return (
-    <div className=" flex flex-col w-full h-full">
+    <div className=" flex flex-col   w-full h-full">
       <div className="h-auto w-full flex">
         <div className="flex sm:justify-normal items-center   sm:w-2/3 flex-col py-1 gap-10">
           <AdminPanelOverview />
@@ -20,9 +22,12 @@ const AdminDashboardPage = () => {
           <OngoingCourses />
         </div>
       </div>
-      <div className=" mt-10">
+      <div className=" flex flex-col  gap-7  mt-10">
         <NewStudentRegistrationsChart/>
-        {/* <div>Graph</div> */}
+        <RevenueOverTimeChart/>
+        <div className="flex justify-between max-w-7xl">
+          <FeeStatusDonutChart/>
+        </div>
       </div>
     </div>
   );

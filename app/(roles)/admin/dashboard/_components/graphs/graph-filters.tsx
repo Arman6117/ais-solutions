@@ -95,6 +95,7 @@ const GraphFilters = ({
         </Select>
       )}
         {/* Month Filter */}
+        {setMonth && (
         <Select value={month} onValueChange={setMonth}>
           <SelectTrigger className="flex gap-2 size-auto text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
             {/* <Montj className="size-4 text-primary-bg" /> */}
@@ -116,20 +117,26 @@ const GraphFilters = ({
             <SelectItem value="12">December</SelectItem>
           </SelectContent>
         </Select>
-
+        )}
         {/* Date Range */}
-        <Input
+        {setStartDate && (
+          
+          <Input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           className="focus w-fit border-black focus-visible:-0 focus-visible:ring-2 focus-visible:ring-primary-bg"
-        />
+          />
+        )}
+        {setEndDate && (
         <Input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           className="focus w-fit border-black focus-visible:-0 focus-visible:ring-2 focus-visible:ring-primary-bg"
-        />
+          />
+        )}
+         
       </div>
 
       {/* Clear Filters Button */}

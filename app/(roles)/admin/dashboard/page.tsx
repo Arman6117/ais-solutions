@@ -6,6 +6,7 @@ import ScheduleTabs from "./_components/schedule-tabs";
 import NewStudentRegistrationsChart from "./_components/graphs/new-students-registration-chart";
 import RevenueOverTimeChart from "./_components/graphs/revenue-over-time";
 import FeeStatusDonutChart from "./_components/graphs/fee-status-donut-chart";
+import StudentDistributionPieChart from "./_components/graphs/student-distribution-pie-chart";
 
 const AdminDashboardPage = () => {
   return (
@@ -22,11 +23,12 @@ const AdminDashboardPage = () => {
           <OngoingCourses />
         </div>
       </div>
-      <div className=" flex flex-col  gap-7  mt-10">
+      <div className=" flex flex-col pb-10 gap-10  mt-10">
         <NewStudentRegistrationsChart/>
         <RevenueOverTimeChart/>
-        <div className="flex justify-between max-w-7xl">
+        <div className="flex justify-between gap-5 md:flex-row flex-col max-w-7xl">
           <FeeStatusDonutChart/>
+          <StudentDistributionPieChart/>
         </div>
       </div>
     </div>

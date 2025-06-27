@@ -22,7 +22,7 @@ const ScheduleTabs = () => {
   );
 
   return (
-    <Tabs defaultValue="today" className="sm:w-full mt-4">
+    <Tabs defaultValue="today" className="sm:w-full bg-soft-white p-2 rounded-md shadow mt-4">
       <TabsList className="mb-4">
         <TabsTrigger value="today">Today</TabsTrigger>
         <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>

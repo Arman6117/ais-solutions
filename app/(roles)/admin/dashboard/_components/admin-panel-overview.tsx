@@ -8,6 +8,7 @@ import { RiArtboardLine } from "react-icons/ri";
 import { BookOpen, Users } from "lucide-react";
 import MeetingsPanel from "./meetings-panel";
 import NotificationPanel from "./notification-panel";
+import QuickActionPanel from "./quick-action-panel";
 
 const AdminPanelOverview = () => {
   return (
@@ -15,6 +16,7 @@ const AdminPanelOverview = () => {
       <div className="flex items-center gap-4">
         <Greetings>Admin</Greetings>
         <NotificationPanel />
+        <QuickActionPanel/>
       </div>
       <div className="flex gap-10 md:flex-row flex-col items-center ">
         <AdminOverviewCard

@@ -85,7 +85,7 @@ const AdminOverviewCard = ({
 
   return (
     <div
-      className="rounded-xl w-56 shadow-lg overflow-hidden relative"
+      className="rounded-xl z-0 w-56 shadow-lg overflow-hidden relative"
       style={{
         background: style.bg,
         boxShadow: `0 10px 25px ${style.shadow}`,

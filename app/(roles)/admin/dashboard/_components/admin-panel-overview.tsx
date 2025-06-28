@@ -9,6 +9,7 @@ import { BookOpen, Users } from "lucide-react";
 import MeetingsPanel from "./meetings-panel";
 import NotificationPanel from "./notification-panel";
 import QuickActionPanel from "./quick-action-panel";
+import GlobalSearchBar from "./global-search-bar";
 
 const AdminPanelOverview = () => {
   return (
@@ -18,6 +19,7 @@ const AdminPanelOverview = () => {
         <NotificationPanel />
         <QuickActionPanel/>
       </div>
+        <GlobalSearchBar/>
       <div className="flex gap-10 md:flex-row flex-col items-center ">
         <AdminOverviewCard
           value="1,000"

@@ -240,7 +240,7 @@ const CourseDetails = ({
                 </div>
               </>
             )}
-            <Separator className="my-6" />
+            {/* <Separator className="my-6" />
             <CourseInstructorsCards
               mode={mode}
               instructors={instructors}
@@ -254,7 +254,7 @@ const CourseDetails = ({
                 mode={mode}
                 batches={batches}
               />
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
@@ -269,7 +269,7 @@ const CourseDetails = ({
         )}
         <CourseModulesCard name="Course" mode={mode} modules={course.modules} />
         <CourseSyllabusCard mode={mode} />
-        <PendingRequestPanel />
+        {/* <PendingRequestPanel /> */}
         <CourseStatusCard name="Course" batches={batches} course={course} />
       </div>
     </div>

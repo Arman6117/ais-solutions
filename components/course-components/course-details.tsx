@@ -75,9 +75,9 @@ const CourseDetails = ({
   const [courseMode, setCourseMode] = useState<"Hybrid" | "Offline" | "Online">(
     "Hybrid"
   );
-  const [startDate,setStartDate] = useState<Date | null>(null)
-  const [endDate,setEndDate] = useState<Date | null>(null)
-  const[courseDuration, setCourseDuration] = useState(
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [courseDuration, setCourseDuration] = useState(
     formatDistance(startDate ?? new Date(), endDate ?? new Date())
   );
   const [description, setDescription] = useState(course.description || "");
@@ -106,8 +106,10 @@ const CourseDetails = ({
     setOfferPrice(price - (price * discount) / 100);
   }, [price, discount]);
   useEffect(() => {
-    setCourseDuration(formatDistance(startDate ?? new Date(), endDate ?? new Date()));
-  },[startDate, endDate]);
+    setCourseDuration(
+      formatDistance(startDate ?? new Date(), endDate ?? new Date())
+    );
+  }, [startDate, endDate]);
   const handleSave = () => {
     //TODO:Handle saving logic and API call here
     setIsLoading(true);
@@ -118,7 +120,7 @@ const CourseDetails = ({
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
-      <div className="w-full lg:w-2/3 flex-grow">
+      <div className="w-full  flex-grow">
         <Card className="border-0 shadow-md p-0">
           <CardHeader
             className={cn(
@@ -212,7 +214,13 @@ const CourseDetails = ({
             </div>
             {mode === "edit" ? (
               <>
-              <EditCourseDuration startDate={startDate} endDate={endDate} duration={courseDuration} setStartDate={setStartDate} setEndDate={setEndDate}/>
+                <EditCourseDuration
+                  startDate={startDate}
+                  endDate={endDate}
+                  duration={courseDuration}
+                  setStartDate={setStartDate}
+                  setEndDate={setEndDate}
+                />
                 <EditCourseDescription
                   description={description}
                   setDescription={setDescription}
@@ -222,7 +230,11 @@ const CourseDetails = ({
             ) : (
               <>
                 <Separator className="my-6" />
-                <ViewCourseDuration startDate={startDate} endDate={endDate} duration={courseDuration} />
+                <ViewCourseDuration
+                  startDate={startDate}
+                  endDate={endDate}
+                  duration={courseDuration}
+                />
                 <Separator className="my-6" />
                 <ViewCourseDescription description={description} />
                 <div className="space-y-2 mt-0">
@@ -240,37 +252,30 @@ const CourseDetails = ({
                 </div>
               </>
             )}
-            {/* <Separator className="my-6" />
-            <CourseInstructorsCards
+            <CourseSyllabusCard mode={mode} />
+            <CourseModulesCard
+              name="Course"
               mode={mode}
-              instructors={instructors}
-              label={`${dummyInstructors.length} are assigned to this course`}
+              modules={course.modules}
             />
-            <Separator className="my-6" />
+            <div className="w-full  space-y-6">
+              {mode === "edit" ? (
+                <EditCourseThumbnail
+                  setThumbnail={() => {}}
+                  thumbnail="https://placehold.co/600x400.png"
+                />
+              ) : (
+                <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
+              )}
 
-            <div>
-              <CourseBatchesCards
-                courseId={course.id}
-                mode={mode}
+              <CourseStatusCard
+                name="Course"
                 batches={batches}
+                course={course}
               />
-            </div> */}
+            </div>
           </CardContent>
         </Card>
-      </div>
-      <div className="w-full lg:w-1/3 space-y-6">
-        {mode === "edit" ? (
-          <EditCourseThumbnail
-            setThumbnail={() => {}}
-            thumbnail="https://placehold.co/600x400.png"
-          />
-        ) : (
-          <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
-        )}
-        <CourseModulesCard name="Course" mode={mode} modules={course.modules} />
-        <CourseSyllabusCard mode={mode} />
-        {/* <PendingRequestPanel /> */}
-        <CourseStatusCard name="Course" batches={batches} course={course} />
       </div>
     </div>
   );

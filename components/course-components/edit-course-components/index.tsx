@@ -153,7 +153,7 @@ export function EditCourseThumbnail({
               src={thumbnail}
               alt="Course Thumbnail"
               fill
-              className="object-cover"
+              className="object-contain"
             />
           </div>
           <Button className="w-full cursor-pointer flex items-center bg-primary-bg hover:bg-primary-bg/90 justify-center gap-2">

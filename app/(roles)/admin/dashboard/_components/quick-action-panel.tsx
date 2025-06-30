@@ -13,9 +13,8 @@ const QuickActionPanel = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className=" cursor-pointer p-2 relative">
-          <Rocket className="size-4 text-violet-600" />
-          Quick Actions
+      <Button variant="outline" className="w-14 h-10 cursor-pointer p-2 ">
+          <Rocket className="size-6 text-violet-600" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className=" p-2  max-w-md">
@@ -43,31 +42,30 @@ const QuickActionPanel = () => {
                   Create Module
                 </Button>
               </DropdownMenuItem>
-              
             </div>
           </div>
-          <Separator/>
+          <Separator />
           <div className="flex flex-col gap-4 p-3">
-          <h2 className="text-muted-foreground font-medium text-sm">
+            <h2 className="text-muted-foreground font-medium text-sm">
               Student,Sessions and Notes
             </h2>
             <div className="flex gap-5  flex-wrap ">
-            <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild>
                 <Button className="bg-primary-bg group text-white cursor-pointer hover:text-black font-semibold">
                   <Plus className="group-hover:text-black text-white" />
                   Pending Student Requests
                 </Button>
               </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild>
                 <Button className="bg-primary-bg group text-white cursor-pointer hover:text-black font-semibold">
                   <Plus className="group-hover:text-black text-white" />
                   Post A Session Link
                 </Button>
               </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild>
                 <Button className="bg-primary-bg group text-white cursor-pointer hover:text-black font-semibold">
                   <Plus className="group-hover:text-black text-white" />
-                   Add New Note
+                  Add New Note
                 </Button>
               </DropdownMenuItem>
             </div>

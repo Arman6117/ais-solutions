@@ -3,10 +3,6 @@ import React from "react";
 import AdminOverviewCard from "./admin-overview-card";
 import Greetings from "@/components/greetings";
 
-import { FaChalkboardTeacher } from "react-icons/fa";
-import { RiArtboardLine } from "react-icons/ri";
-import { BookOpen, Users } from "lucide-react";
-import MeetingsPanel from "./meetings-panel";
 import NotificationPanel from "./notification-panel";
 import QuickActionPanel from "./quick-action-panel";
 import GlobalSearchBar from "./global-search-bar";
@@ -14,7 +10,7 @@ import GlobalSearchBar from "./global-search-bar";
 const AdminPanelOverview = () => {
   return (
     <div className="w-[90%] flex flex-col gap-10">
-      <div className="flex items-center gap-4">
+      <div className="flex  items-center gap-4">
         <Greetings>Admin</Greetings>
         <NotificationPanel />
         <QuickActionPanel/>

@@ -354,6 +354,7 @@ export const dummyStudents: DummyStudent[] = [
     feesRemaining: 0,
     refCoins: 50,
     gender: "Male",
+    batches:['Batch A', 'Batch B', 'Batch C'],
   },
   {
     id: "stu-2",
@@ -371,6 +372,7 @@ export const dummyStudents: DummyStudent[] = [
     feesRemaining: 10000,
     refCoins: 10,
     gender: "Female",
+    batches:['Batch E', 'Batch F', 'Batch G'],
   },
   {
     id: "stu-3",
@@ -388,6 +390,7 @@ export const dummyStudents: DummyStudent[] = [
     feesRemaining: 10000,
     refCoins: 90,
     gender: "Male",
+    batches:['Batch D', 'Batch E', 'Batch F'],
   },
   {
     id: "stu-4",
@@ -405,6 +408,7 @@ export const dummyStudents: DummyStudent[] = [
     feesRemaining: 0,
     refCoins: 20,
     gender: "Female",
+    batches:['Batch A', 'Batch B', 'Batch C'],
   },
   {
     id: "stu-5",
@@ -422,6 +426,7 @@ export const dummyStudents: DummyStudent[] = [
     feesRemaining: 7500,
     refCoins: 400,
     gender: "Male",
+    batches:['Batch D', 'Batch E', 'Batch F'],
   },
 ];
 

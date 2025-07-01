@@ -4,34 +4,26 @@ import { dummyStudents } from "@/lib/static";
 import { DummyStudent } from "@/lib/types";
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import StudentTableFilters from "./student-table-filter";
+import { Badge } from "@/components/ui/badge";
 
 const StudentTable = () => {
-  const [feeStatusFilter, setFeeStatusFilter] = useState<string>("all");
-  const [genderFilter, setGenderFilter] = useState<string>("all");
+  const [feeStatusFilter, setFeeStatusFilter] = useState("all");
+  const [genderFilter, setGenderFilter] = useState("all");
+  const [batchFilter, setBatchFilter] = useState("all");
 
-  // Filter the data based on selected filters before passing to DataTable
   const filteredStudents = useMemo(() => {
     return dummyStudents.filter((student) => {
-      // Apply fee status filter
-      if (feeStatusFilter !== "all" && student.feesStatus !== feeStatusFilter) {
+      if (feeStatusFilter !== "all" && student.feesStatus !== feeStatusFilter) return false;
+      if (genderFilter !== "all" && student.gender !== genderFilter) return false;
+      if (
+        batchFilter !== "all" &&
+        !student.batches?.some((batch: string) => batch === batchFilter)
+      )
         return false;
-      }
-
-    //   Apply gender filter
-        if (genderFilter !== 'all' && student.gender !== genderFilter) {
-          return false;
-        }
-
       return true;
     });
-  }, [feeStatusFilter, genderFilter]);
+  }, [feeStatusFilter, genderFilter, batchFilter]);
 
   const studentTableCol = [
     {
@@ -64,54 +56,43 @@ const StudentTable = () => {
       header: "Fees Status",
       accessor: (row: DummyStudent) => row.feesStatus,
     },
+    {
+      id: "batches",
+      header: "Batches",
+      accessor: (row: DummyStudent) => (
+        <div className="flex flex-wrap gap-1">
+          {row.batches?.map((batch: string, i: number) => (
+            <Badge key={i} variant="secondary" className="text-xs">
+              {batch}
+            </Badge>
+          ))}
+        </div>
+      ),
+    },
   ];
 
   const studentTableFilter = [
-    {
-      label: "Name: A to Z",
-      value: "name-asc",
-    },
-    {
-      label: "Name: Z to A",
-      value: "name-desc",
-    },
-    {
-      label: "Join Date: Newest",
-      value: "joinedAt-desc",
-    },
-    {
-      label: "Join Date: Oldest",
-      value: "joinedAt-asc",
-    },
+    { label: "Name: A to Z", value: "name-asc" },
+    { label: "Name: Z to A", value: "name-desc" },
+    { label: "Join Date: Newest", value: "joinedAt-desc" },
+    { label: "Join Date: Oldest", value: "joinedAt-asc" },
   ];
 
-  // Get unique fee statuses from data
   const uniqueFeeStatuses = useMemo(() => {
-    const statuses = new Set<string>();
-    dummyStudents.forEach((student) => {
-      if (student.feesStatus) {
-        statuses.add(student.feesStatus);
-      }
-    });
-    return Array.from(statuses);
+    return Array.from(new Set(dummyStudents.map((s) => s.feesStatus)));
   }, []);
 
-  //   // Get unique genders from data
   const uniqueGenders = useMemo(() => {
-    const genders = new Set<string>();
-    dummyStudents.forEach((student) => {
-      if (student.gender) {
-        genders.add(student.gender);
-      }
-    });
-    return Array.from(genders);
+    return Array.from(new Set(dummyStudents.map((s) => s.gender)));
+  }, []);
+
+  const uniqueBatches = useMemo(() => {
+    const allBatches = dummyStudents.flatMap((s) => s.batches || []);
+    return Array.from(new Set(allBatches));
   }, []);
 
   return (
     <>
-      {/* Additional Filter Controls */}
-
-      {/* </div> */}
 
       {/* DataTable Component */}
       <DataTable
@@ -120,41 +101,17 @@ const StudentTable = () => {
         getRowId={(row: DummyStudent) => row.id}
         href="/admin/students/student-details"
         additionalFilter={
-          <div className="flex flex-col md:flex-row gap-3 mb-4">
-            <div className="flex-1">
-              <Select
-                value={feeStatusFilter}
-                onValueChange={setFeeStatusFilter}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Filter by fee status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  {uniqueFeeStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1">
-              <Select value={genderFilter} onValueChange={setGenderFilter}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Filter by gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Genders</SelectItem>
-                  {uniqueGenders.map((gender) => (
-                    <SelectItem key={gender} value={gender}>
-                      {gender}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <StudentTableFilters
+          feeStatusFilter={feeStatusFilter}
+          genderFilter={genderFilter}
+          batchFilter={batchFilter}
+          setFeeStatusFilter={setFeeStatusFilter}
+          setGenderFilter={setGenderFilter}
+          setBatchFilter={setBatchFilter}
+          uniqueFeeStatuses={uniqueFeeStatuses}
+          uniqueGenders={uniqueGenders}
+          uniqueBatches={uniqueBatches}
+        />
         }
         filterOptions={studentTableFilter}
         onDeleteSelected={(ids) => {

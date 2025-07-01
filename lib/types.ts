@@ -62,6 +62,7 @@ export type DummyStudent = {
   feesRemaining: number;
   refCoins?: number;
   gender: string;
+  batches:string[]
 };
 
 export type DummyModules = {

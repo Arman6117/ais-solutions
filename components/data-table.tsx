@@ -328,7 +328,7 @@ export function DataTable<T>({
     <div className="flex flex-col gap-4 w-full">
       {/* Desktop controls */}
       {!isMobile && (
-        <div className="flex flex-col md:flex-row gap-3 md:gap-6 md:items-center">
+        <div className="flex flex-col  gap-3 md:gap-6 md:s-center">
           <div className="flex gap-2 w-full md:w-auto md:flex-1">
             <Input
               value={searchTerm}
@@ -350,7 +350,7 @@ export function DataTable<T>({
           </div>
 
           {(filterOptions ?? []).length > 0 && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 items-center flex-wrap">
               <Select
                 value={sortType}
                 onValueChange={(val) => {

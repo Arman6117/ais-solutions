@@ -21,7 +21,13 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { PiChalkboardTeacher } from "react-icons/pi";
 
-import { DummyBatches, DummyInstructors, DummyStudent } from "@/lib/types";
+import {
+  BatchType,
+  DummyBatches,
+  DummyInstructors,
+  DummyStudent,
+  Mode,
+} from "@/lib/types";
 
 import { cn, getStatusColor } from "@/lib/utils";
 import {
@@ -32,9 +38,13 @@ import {
   Users,
   Calendar,
   CheckCircle,
+  University,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
+import { MdBookOnline } from "react-icons/md";
+import BatchModeSelector from "./batch-mode-selector";
+import BatchTypeSelector from "./batch-type-selector";
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
   dummyModules: string[];
@@ -80,6 +90,8 @@ const BatchDetails = ({
   const [students, setStudents] = useState(dummyStudents || []);
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
+  const [batchMode, setBatchMode] = useState<Mode>("hybrid");
+  const [batchType, setBatchType] = useState<BatchType>("weekdays");
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -285,6 +297,22 @@ const BatchDetails = ({
                         </span>
                       )}
                     </InfoWrapper>
+                    <InfoWrapper
+                      label="Batch Mode"
+                      icon={
+                        <MdBookOnline className="text-indigo-600" size={20} />
+                      }
+                    >
+                      {batchMode.toUpperCase()}
+                    </InfoWrapper>
+                    <InfoWrapper
+                      label="Batch type"
+                      icon={
+                        <University className="text-indigo-600" size={20} />
+                      }
+                    >
+                      {batchType.toUpperCase()}
+                    </InfoWrapper>
                   </div>
                 ) : (
                   <>
@@ -302,6 +330,14 @@ const BatchDetails = ({
                     <BatchStatusSelector
                       setStatus={setStatus}
                       status={status}
+                    />
+                    <BatchModeSelector
+                      batchMode={batchMode}
+                      setBatchMode={setBatchMode}
+                    />
+                    <BatchTypeSelector
+                      batchType={batchType}
+                      setBatchType={setBatchType}
                     />
                   </>
                 )}
@@ -341,7 +377,7 @@ const BatchDetails = ({
           courseId={courseId}
           batchId={batch.id as string}
         />
-              <StatusCard name="Batch" />
+        <StatusCard name="Batch" />
       </div>
     </div>
   );

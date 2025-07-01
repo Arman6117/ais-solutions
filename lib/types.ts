@@ -78,6 +78,7 @@ export type DummyModules = {
 };
 
 export type Mode = "online" | "offline" | "hybrid";
+export type BatchType = "weekend" | "weekdays" ;
 
 export type Offer = {
   id: string;

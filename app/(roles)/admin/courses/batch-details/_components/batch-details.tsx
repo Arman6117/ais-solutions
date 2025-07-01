@@ -109,7 +109,7 @@ const BatchDetails = ({
   return (
     <div className="w-full p mb-4 flex flex-col gap-6">
       <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
-        <div className="w-full lg:w-2/3 flex-grow">
+        <div className="w-full  flex-grow">
           <Card className="border-0 shadow-md p-0 overflow-hidden">
             <CardHeader
               className={cn(
@@ -290,9 +290,7 @@ const BatchDetails = ({
                   <>
                     <EditInfo
                       label="WhatsApp Group Link"
-                      icon={
-                        <FaWhatsapp className="text-green-500" size={20} />
-                      }
+                      icon={<FaWhatsapp className="text-green-500" size={20} />}
                     >
                       <Input
                         placeholder="Enter WhatsApp group invite link"
@@ -324,18 +322,15 @@ const BatchDetails = ({
                   />
                 </div>
               </div>
+              <BatchMeetings
+                mode={mode}
+                courseId={courseId}
+                batch={batch.id as string}
+                modules={dummyModules}
+              />
+              <ModulesCard name="Batch" mode={mode} modules={dummyModules} />
             </CardContent>
           </Card>
-        </div>
-        <div className="w-full lg:w-1/3 space-y-6 ">
-          <ModulesCard name="Batch" mode={mode} modules={dummyModules} />
-          <BatchMeetings
-            mode={mode}
-            courseId={courseId}
-            batch={batch.id as string}
-            modules={dummyModules}
-          />
-          <StatusCard name="Batch" />
         </div>
       </div>
       <div className="w-full">
@@ -346,6 +341,7 @@ const BatchDetails = ({
           courseId={courseId}
           batchId={batch.id as string}
         />
+              <StatusCard name="Batch" />
       </div>
     </div>
   );

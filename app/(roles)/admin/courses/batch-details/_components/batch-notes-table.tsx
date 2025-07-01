@@ -10,7 +10,7 @@ type BatchNotesTable = {
   batchId: string;
 };
 
-interface Attachment {
+export interface Attachment {
   id: string;
   type: "link" | "file";
   url: string;
@@ -19,12 +19,17 @@ interface Attachment {
 
 export interface Note {
   id: string;
-  moduleId: string;
-  moduleName: string;
-  chapterName: string;
-  lectureDate: string;
-  attachments: Attachment[];
+  module: string;
+  chapter: string;
+  files?: string[];
+  videoLinks?: {
+    id: number;
+    label: string;
+    link: string;
+  }[];
+  dateCreated: string;
 }
+
 const notesData = [
   {
     id: "note-1",

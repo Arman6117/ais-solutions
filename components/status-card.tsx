@@ -51,20 +51,18 @@ const StatusCard = ({
               </div>
             )}
 
-            {batches && (
-              <>
-                <Separator className="my-2" />
+            <>
+              <Separator className="my-2" />
 
-                <div className="mt-4 pt-2">
-                  <Button
-                    variant="outline"
-                    className="w-full cursor-pointer border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                  >
-                    Remove {name}
-                  </Button>
-                </div>
-              </>
-            )}
+              <div className="mt-4 pt-2">
+                <Button
+                  variant="outline"
+                  className="w-full cursor-pointer border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                >
+                  Remove {name}
+                </Button>
+              </div>
+            </>
           </div>
         </CardContent>
       </Card>

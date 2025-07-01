@@ -1,8 +1,27 @@
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
 
+type PendingRequest = {
+  id: string;
+  name: string;
+  email: string;
+  course: string;
+  modules: string[];
+  price: number;
+  availableBatches: string[];
+};
 
-const mockPendingRequests = [
+const mockPendingRequests: PendingRequest[] = [
   {
     id: "1",
     name: "John Doe",
@@ -23,39 +42,58 @@ const mockPendingRequests = [
   },
 ];
 
-const PendingRequestPanel = () => {
-  return (
-    <Card className="border-0 shadow-md">
-      <CardHeader className="pb-3 bg-gray-50 border-b flex justify-between">
-        <CardTitle className="text-xl text-violet-900 font-semibold">
-          Pending Requests
-        </CardTitle>
-      </CardHeader>
+const PendingRequestDropdown = () => {
+  const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-      <div className="p-4 space-y-4">
-        {mockPendingRequests.map((request) => (
-          <div
-            key={request.id}
-            className="bg-white border rounded-lg p-4 shadow-sm flex justify-between items-center hover:bg-violet-50 transition-colors"
-          >
-            <div>
-              <p className="text-sm font-semibold text-gray-900">
-                {request.name}
-              </p>
-              <p className="text-xs text-gray-500">{request.email}</p>
-              <p className="text-sm text-gray-700 mt-1">{request.course}</p>
-            </div>
-            <ApproveRequestDialog request={request} />
-          </div>
-        ))}
-        {mockPendingRequests.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            No pending requests found.
-          </p>
-        )}
-      </div>
-    </Card>
+  const handleApproveClick = (req: PendingRequest) => {
+    setSelectedRequest(req);
+    setIsDialogOpen(true);
+  };
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="justify-between">
+            Pending Requests
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent className="w-[320px]">
+          {mockPendingRequests.length > 0 ? (
+            mockPendingRequests.map((req) => (
+              <DropdownMenuItem
+                key={req.id}
+                className="flex flex-col items-start p-3 gap-2"
+              >
+                <div className="w-full">
+                  <p className="text-sm font-medium">{req.name}</p>
+                  <p className="text-xs text-muted-foreground">{req.email}</p>
+                  <p className="text-sm">{req.course}</p>
+                </div>
+
+                
+              </DropdownMenuItem>
+            ))
+          ) : (
+            <DropdownMenuItem disabled className="text-muted-foreground text-sm">
+              No pending requests
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {selectedRequest && (
+        <ApproveRequestDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          request={selectedRequest}
+        />
+      )}
+    </>
   );
 };
 
-export default PendingRequestPanel;
+export default PendingRequestDropdown;

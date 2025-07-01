@@ -14,15 +14,7 @@ const CourseSection = ({ course }: { course: any }) => {
           {course.batches.length}{" "}
           {course.batches.length === 1 ? "Batch" : "Batches"}
         </Badge>
-        <Button
-          asChild
-          size="sm"
-          className="flex items-center gap-1 cursor-pointer bg-primary-bg hover:bg-primary-bg/90"
-        >
-          <Link href={`/admin/courses/${course.id}/create-batch`}>
-            <Plus size={16} /> Add Batch
-          </Link>
-        </Button>
+       
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

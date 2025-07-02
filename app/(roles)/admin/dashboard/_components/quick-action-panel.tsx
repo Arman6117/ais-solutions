@@ -8,6 +8,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Plus, Rocket } from "lucide-react";
 import React from "react";
+import AddSalesPersonDialog from "./add-sales-person-dialog";
 
 const QuickActionPanel = () => {
   return (
@@ -67,6 +68,29 @@ const QuickActionPanel = () => {
                   <Plus className="group-hover:text-black text-white" />
                   Add New Note
                 </Button>
+              </DropdownMenuItem>
+            </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-4 p-3">
+            <h2 className="text-muted-foreground font-medium text-sm">
+              Offers, Support and Sales
+            </h2>
+            <div className="flex gap-5  flex-wrap ">
+              <DropdownMenuItem asChild>
+                <Button className="bg-primary-bg group text-white cursor-pointer hover:text-black font-semibold">
+                  <Plus className="group-hover:text-black text-white" />
+                  Create Offer Banner
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button className="bg-primary-bg group text-white cursor-pointer hover:text-black font-semibold">
+                  <Plus className="group-hover:text-black text-white" />
+                  Create New Support Card
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+               <AddSalesPersonDialog/>
               </DropdownMenuItem>
             </div>
           </div>

@@ -7,6 +7,7 @@ import NewStudentRegistrationsChart from "./_components/graphs/new-students-regi
 import RevenueOverTimeChart from "./_components/graphs/revenue-over-time";
 import FeeStatusDonutChart from "./_components/graphs/fee-status-donut-chart";
 import StudentDistributionPieChart from "./_components/graphs/student-distribution-pie-chart";
+import SalesChart from "./_components/graphs/sales-chart";
 
 const AdminDashboardPage = () => {
   return (
@@ -25,7 +26,9 @@ const AdminDashboardPage = () => {
       </div>
       <div className=" flex flex-col pb-10 gap-10  mt-10">
         <NewStudentRegistrationsChart/>
+        <SalesChart/>
         <RevenueOverTimeChart/>
+
         <div className="flex justify-between gap-5 md:flex-row flex-col max-w-7xl">
           <FeeStatusDonutChart/>
           <StudentDistributionPieChart/>

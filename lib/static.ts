@@ -4,11 +4,12 @@ import { MdOutlineLocalOffer, MdSupportAgent } from "react-icons/md";
 import {
   PiChalkboardTeacher,
   PiFolderSimpleUser,
+  PiInvoice,
   PiStudent,
 } from "react-icons/pi";
 import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Offer } from "./types";
 import { UserCircleIcon } from "lucide-react";
-import { FaUser } from "react-icons/fa";
+import { FaMoneyBill, FaUser } from "react-icons/fa";
 
 
 export const adminSidebarLinks = [
@@ -36,6 +37,11 @@ export const adminSidebarLinks = [
     label: "Students",
     link: "/admin/students",
     icon: PiStudent,
+  },
+  {
+    label: "Payments",
+    link: "/admin/payments",
+    icon: PiInvoice,
   },
   {
     label: "Offers",

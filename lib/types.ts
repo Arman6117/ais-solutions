@@ -103,3 +103,18 @@ export type Session = {
   chapter: string;
   instructor: string;
 };
+export type InvoiceStatus = "Paid" | "Due" | "Overdue";
+export type PaymentMode = "cash" | "upi" | "card";
+
+export type Invoice = {
+  id: string;
+  studentName: string;
+  email: string;
+  courseNames: string[]; // ✅ Updated to array
+  amountPaid: number;
+  totalFee: number;
+  paymentMode: "cash" | "upi" | "card";
+  createdAt: string;
+  status: "Paid" | "Due" | "Overdue";
+};
+

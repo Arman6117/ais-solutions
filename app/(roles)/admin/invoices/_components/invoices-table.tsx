@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { invoicesData } from "@/lib/static"; // your invoice data + type
 import { Badge } from "@/components/ui/badge";
-import { Invoice, InvoiceStatus, PaymentMode } from "@/lib/types";
+import { InvoiceTable as InvoiceTableType, InvoiceStatus, PaymentMode } from "@/lib/types";
 import InvoiceTableFilters from "../../students/_components/invoice-table-filters";
 import { cn } from "@/lib/utils";
 
@@ -33,17 +33,17 @@ const InvoiceTable = () => {
     {
       id: "studentName",
       header: "Student Name",
-      accessor: (row: Invoice) => row.studentName,
+      accessor: (row: InvoiceTableType) => row.studentName,
     },
     {
       id: "email",
       header: "Email",
-      accessor: (row: Invoice) => row.email,
+      accessor: (row: InvoiceTableType) => row.email,
     },
     {
       id: "courseName",
       header: "Course",
-      accessor: (row: Invoice) => (
+      accessor: (row: InvoiceTableType) => (
         <div className="flex flex-wrap gap-1">
           {row.courseNames.map((course, i) => (
             <span
@@ -59,22 +59,22 @@ const InvoiceTable = () => {
     {
       id: "amountPaid",
       header: "Paid",
-      accessor: (row: Invoice) => `₹${row.amountPaid}`,
+      accessor: (row: InvoiceTableType) => `₹${row.amountPaid}`,
     },
     {
       id: "totalFee",
       header: "Total Fee",
-      accessor: (row: Invoice) => `₹${row.totalFee}`,
+      accessor: (row: InvoiceTableType) => `₹${row.totalFee}`,
     },
     {
       id: "paymentMode",
       header: "Mode",
-      accessor: (row: Invoice) => row.paymentMode,
+      accessor: (row: InvoiceTableType) => row.paymentMode,
     },
     {
       id: "status",
       header: "Status",
-      accessor: (row: Invoice) => (
+      accessor: (row: InvoiceTableType) => (
         <Badge
           className={cn(
             "text-xs px-2 py-1 rounded-md",
@@ -93,7 +93,7 @@ const InvoiceTable = () => {
     {
       id: "createdAt",
       header: "Date",
-      accessor: (row: Invoice) =>
+      accessor: (row: InvoiceTableType) =>
         new Date(row.createdAt).toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "short",
@@ -121,7 +121,7 @@ const InvoiceTable = () => {
     <DataTable
       columns={invoiceTableCols}
       data={filteredInvoices}
-      getRowId={(row: Invoice) => row.id}
+      getRowId={(row: InvoiceTableType) => row.id}
       href="/admin/invoices/invoice-details"
       filterOptions={sortOptions}
       searchPlaceholder="Search by student or course"

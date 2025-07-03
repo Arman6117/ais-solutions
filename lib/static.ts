@@ -7,7 +7,7 @@ import {
   PiInvoice,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, Offer } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, Offer, Student } from "./types";
 import { UserCircleIcon } from "lucide-react";
 import { FaMoneyBill, FaUser } from "react-icons/fa";
 
@@ -1119,3 +1119,74 @@ export const invoicesData: Invoice[] = [
     status: "Overdue",
   },
 ];
+
+export const mockStudentData: Student = {
+  id: 1,
+  name: "Rahul Sharma",
+  email: "rahul.sharma@email.com",
+  phone: "+91 9876543210",
+  courses: [
+    {
+      id: 1,
+      name: "Full Stack Web Development",
+      batch: "FSWD-2024-A",
+      batchType: "hybrid",
+      totalFees: 50000,
+      paidFees: 30000,
+      remainingFees: 20000,
+      modules: [
+        { id: 1, name: "HTML/CSS Basics", price: 8000, paid: true },
+        { id: 2, name: "JavaScript Fundamentals", price: 12000, paid: true },
+        { id: 3, name: "React Development", price: 15000, paid: true },
+        { id: 4, name: "Node.js Backend", price: 10000, paid: false },
+        { id: 5, name: "Database Design", price: 5000, paid: false }
+      ],
+      nextDueDate: "2024-08-15"
+    },
+    {
+      id: 2,
+      name: "Data Science Bootcamp",
+      batch: "DS-2024-B",
+      batchType: "online",
+      totalFees: 75000,
+      paidFees: 75000,
+      remainingFees: 0,
+      modules: [
+        { id: 6, name: "Python Basics", price: 15000, paid: true },
+        { id: 7, name: "Data Analysis", price: 20000, paid: true },
+        { id: 8, name: "Machine Learning", price: 25000, paid: true },
+        { id: 9, name: "Deep Learning", price: 15000, paid: true }
+      ],
+      nextDueDate: null
+    }
+  ],
+  invoiceHistory: [
+    {
+      id: 1,
+      date: "2024-06-15",
+      amount: 15000,
+      course: "Full Stack Web Development",
+      module: "HTML/CSS Basics + JavaScript Fundamentals",
+      paymentMethod: "upi",
+      notes: "First installment payment"
+    },
+    {
+      id: 2,
+      date: "2024-07-01",
+      amount: 15000,
+      course: "Full Stack Web Development",
+      module: "React Development",
+      paymentMethod: "card",
+      notes: "Second installment payment"
+    },
+    {
+      id: 3,
+      date: "2024-05-20",
+      amount: 75000,
+      course: "Data Science Bootcamp",
+      module: "Complete Course Fee",
+      paymentMethod: "cash",
+      notes: "Full payment received"
+    }
+  ]
+};

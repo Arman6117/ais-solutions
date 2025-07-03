@@ -50,7 +50,9 @@ const InvoiceTableFilters: React.FC<InvoiceTableFiltersProps> = ({
       {/* Payment Mode Filter */}
       <Select
         value={paymentModeFilter}
-        onValueChange={(val) => setPaymentModeFilter(val as PaymentMode | "all")}
+        onValueChange={(val) =>
+          setPaymentModeFilter(val as PaymentMode | "all")
+        }
       >
         <SelectTrigger className="w-40">
           <SelectValue placeholder="Payment mode" />

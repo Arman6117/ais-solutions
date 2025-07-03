@@ -106,7 +106,7 @@ export type Session = {
 export type InvoiceStatus = "Paid" | "Due" | "Overdue";
 export type PaymentMode = "cash" | "upi" | "card";
 
-export type Invoice = {
+export type InvoiceTable = {
   id: string;
   studentName: string;
   email: string;
@@ -116,5 +116,52 @@ export type Invoice = {
   paymentMode: "cash" | "upi" | "card";
   createdAt: string;
   status: "Paid" | "Due" | "Overdue";
+  notes?: string;
+  dueDate?: string;
 };
+
+// type BatchType = 'online' | 'hybrid' | 'offline';
+
+
+interface Module {
+  id: number;
+  name: string;
+  price: number;
+  paid: boolean;
+}
+
+export type CourseInvoice = {
+  id: number;
+  name: string;
+  batch: string;
+  batchType: Mode;
+  totalFees: number;
+  paidFees: number;
+  remainingFees: number;
+  modules: Module[];
+  nextDueDate: string | null;
+}
+
+export type Invoice = {
+  id: number;
+  date: string;
+  amount: number;
+  course: string;
+  module?: string;
+  paymentMethod: PaymentMode;
+  notes: string;
+  dueDate?: string;
+}
+
+
+
+export type Student= {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  courses: CourseInvoice[];
+  invoiceHistory: Invoice[];
+}
+// Props interfaces
 

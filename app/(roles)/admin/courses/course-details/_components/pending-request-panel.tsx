@@ -11,12 +11,17 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
 
+type Module = {
+  name: string;
+  price:number
+};
+
 type PendingRequest = {
   id: string;
   name: string;
   email: string;
   course: string;
-  modules: string[];
+  modules: Module[];
   price: number;
   availableBatches: string[];
 };
@@ -27,23 +32,33 @@ const mockPendingRequests: PendingRequest[] = [
     name: "John Doe",
     email: "john@example.com",
     course: "Web Development",
-    modules: ["HTML", "CSS", "JavaScript"],
     price: 12000,
     availableBatches: ["Batch A", "Batch B", "Batch C"],
+    modules: [
+      { name: "HTML", price: 3000 },
+      { name: "CSS", price: 4000 },
+      { name: "JavaScript", price: 5000 },
+    ],
   },
   {
     id: "2",
     name: "Sara Ali",
     email: "sara@example.com",
     course: "Data Science",
-    modules: ["Python", "Pandas", "ML"],
     price: 15000,
     availableBatches: ["DS Batch 1", "DS Batch 2"],
+    modules: [
+      { name: "Python", price: 5000 },
+      { name: "Pandas", price: 4000 },
+      { name: "ML", price: 6000 },
+    ],
   },
 ];
 
 const PendingRequestDropdown = () => {
-  const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(
+    null
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleApproveClick = (req: PendingRequest) => {
@@ -73,12 +88,14 @@ const PendingRequestDropdown = () => {
                   <p className="text-xs text-muted-foreground">{req.email}</p>
                   <p className="text-sm">{req.course}</p>
                 </div>
-
-                
+                <Button onClick={() => handleApproveClick(req)}>Approve</Button>
               </DropdownMenuItem>
             ))
           ) : (
-            <DropdownMenuItem disabled className="text-muted-foreground text-sm">
+            <DropdownMenuItem
+              disabled
+              className="text-muted-foreground text-sm"
+            >
               No pending requests
             </DropdownMenuItem>
           )}

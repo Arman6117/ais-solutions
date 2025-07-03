@@ -40,7 +40,7 @@ export const adminSidebarLinks = [
   },
   {
     label: "Payments",
-    link: "/admin/payments",
+    link: "/admin/invoices",
     icon: PiInvoice,
   },
   {

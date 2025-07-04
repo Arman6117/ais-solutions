@@ -3,11 +3,12 @@ import { LuFileStack, LuLayoutDashboard, LuSchool } from "react-icons/lu";
 import { MdOutlineLocalOffer, MdSupportAgent } from "react-icons/md";
 import {
   PiChalkboardTeacher,
+  PiChalkboardTeacherDuotone,
   PiFolderSimpleUser,
   PiInvoice,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, Offer, Student } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, InvoiceTable, Offer, Student } from "./types";
 import { UserCircleIcon } from "lucide-react";
 import { FaMoneyBill, FaUser } from "react-icons/fa";
 
@@ -32,6 +33,11 @@ export const adminSidebarLinks = [
     label: "Modules",
     link: "/admin/modules",
     icon: LuFileStack,
+  },
+  {
+    label: "Instructors",
+    link: "/admin/instructors",
+    icon: PiChalkboardTeacherDuotone,
   },
   {
     label: "Students",
@@ -1007,7 +1013,7 @@ export const dummyNoteSessions = [
   },
 ];
 
-export const invoicesData: Invoice[] = [
+export const invoicesData: InvoiceTable[] = [
   {
     id: "inv001",
     studentName: "Ravi Sharma",
@@ -1190,3 +1196,97 @@ export const mockStudentData: Student = {
     }
   ]
 };
+
+
+export const dummyInstructorTable = [
+  {
+    id: "1",
+    name: "Ankit Verma",
+    email: "ankit@example.com",
+    phone: "9876543210",
+    joinedAt: "2023-10-12",
+    modules: ["Python", "Machine Learning"],
+    batches: ["PY-2024-A", "ML-2024-B"],
+  },
+  {
+    id: "2",
+    name: "Sneha Reddy",
+    email: "sneha@example.com",
+    phone: "9123456780",
+    joinedAt: "2024-01-05",
+    modules: ["React", "JavaScript"],
+    batches: ["RE-2024-A", "JS-2024-C"],
+  },
+  {
+    id: "3",
+    name: "Rohit Sharma",
+    email: "rohit@example.com",
+    phone: "9871234567",
+    joinedAt: "2023-09-18",
+    modules: ["Node.js", "Express"],
+    batches: ["ND-2023-A", "EX-2023-B"],
+  },
+  {
+    id: "4",
+    name: "Meera Joshi",
+    email: "meera@example.com",
+    phone: "9812345678",
+    joinedAt: "2024-02-22",
+    modules: ["Python", "Data Analysis"],
+    batches: ["PY-2024-B", "DA-2024-A"],
+  },
+  {
+    id: "5",
+    name: "Aditya Kulkarni",
+    email: "aditya@example.com",
+    phone: "9090909090",
+    joinedAt: "2024-03-10",
+    modules: ["JavaScript", "TypeScript"],
+    batches: ["JS-2024-D", "TS-2024-A"],
+  },
+  {
+    id: "6",
+    name: "Neha Kapoor",
+    email: "neha@example.com",
+    phone: "9898989898",
+    joinedAt: "2023-12-01",
+    modules: ["React", "Redux"],
+    batches: ["RE-2024-B", "RD-2024-C"],
+  },
+  {
+    id: "7",
+    name: "Deepak Nair",
+    email: "deepak@example.com",
+    phone: "9786543210",
+    joinedAt: "2024-01-25",
+    modules: ["DevOps", "Docker"],
+    batches: ["DV-2024-A", "DK-2024-B"],
+  },
+  {
+    id: "8",
+    name: "Tanvi Desai",
+    email: "tanvi@example.com",
+    phone: "9654321876",
+    joinedAt: "2024-02-14",
+    modules: ["HTML/CSS", "UI Design"],
+    batches: ["UI-2024-A", "HT-2024-C"],
+  },
+  {
+    id: "9",
+    name: "Karan Batra",
+    email: "karan@example.com",
+    phone: "9765432187",
+    joinedAt: "2023-11-07",
+    modules: ["Node.js", "MongoDB"],
+    batches: ["ND-2023-C", "MDB-2023-B"],
+  },
+  {
+    id: "10",
+    name: "Ayesha Khan",
+    email: "ayesha@example.com",
+    phone: "9870001111",
+    joinedAt: "2024-04-05",
+    modules: ["Machine Learning", "Deep Learning"],
+    batches: ["ML-2024-A", "DL-2024-A"],
+  },
+];

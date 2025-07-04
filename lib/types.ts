@@ -165,3 +165,12 @@ export type Student= {
 }
 // Props interfaces
 
+export type DummyInstructor = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  joinedAt: string;
+  modules: string[];
+  batches: string[];
+};

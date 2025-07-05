@@ -5,7 +5,7 @@ const InstructorsPage = () => {
   return (
     <main className="p-3 w-full">
       <div className="flex w-full justify-between">
-        <h1 className="text-5xl font-bold">Manage Students</h1>
+        <h1 className="text-5xl font-bold">Manage Instructors</h1>
         
               </div>
       <div className="mt-10">

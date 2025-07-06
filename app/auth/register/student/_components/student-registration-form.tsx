@@ -13,7 +13,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { parseStudentForm } from "@/lib/helpers/parse-student-registration"
+import { redirect } from "next/navigation"
 import { registerStudent } from "@/actions/student/register-student"
+
 
 const StudentRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -73,20 +76,19 @@ const StudentRegistrationForm = () => {
     setErrors({})
 
     try {
-      const validated = studentSchema.parse(formData)
       const data = new FormData()
-      data.append("name", validated.name)
-      data.append("email", validated.email)
-      data.append("phone", validated.phone)
-      data.append("gender",validated)
+      Object.entries(formData).forEach(([key, value]) => data.append(key, value))
+      if (profilePicture) data.append("profilePicture", profilePicture)
+  console.log(data.get('profilePicture'))
+      await registerStudent(data)
+
+      // if (res.success) {
+      //   redirect("/student/dashboard") // or wherever you want
+      // } else {
+      //   setErrors(res.errors || {})
+      // }
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors: Record<string, string> = {}
-        error.errors.forEach(err => fieldErrors[err.path[0] as string] = err.message)
-        setErrors(fieldErrors)
-      } else {
-        setErrors({ submit: 'Something went wrong.' })
-      }
+      setErrors({ submit: "Something went wrong!" })
     } finally {
       setIsSubmitting(false)
     }

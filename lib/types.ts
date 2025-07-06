@@ -35,7 +35,6 @@ export type DummyBatches = {
   endDate: string;
   status: "Ongoing" | "Upcoming" | "Completed";
   whatsappLink?: string;
-
 };
 
 export type DummyInstructors = {
@@ -62,14 +61,14 @@ export type DummyStudent = {
   feesRemaining: number;
   refCoins?: number;
   gender: string;
-  batches:string[]
+  batches: string[];
 };
 
 export type DummyModules = {
   id: string;
   name: string;
   createdAt: string;
-  description:string
+  description: string;
   course: string[];
   price: number;
   discount: number;
@@ -79,7 +78,7 @@ export type DummyModules = {
 };
 
 export type Mode = "online" | "offline" | "hybrid";
-export type BatchType = "weekend" | "weekdays" ;
+export type BatchType = "weekend" | "weekdays";
 
 export type Offer = {
   id: string;
@@ -93,7 +92,6 @@ export type Offer = {
   isActive: boolean;
   image: string;
 };
-
 
 export type Session = {
   id: string;
@@ -122,7 +120,6 @@ export type InvoiceTable = {
 
 // type BatchType = 'online' | 'hybrid' | 'offline';
 
-
 interface Module {
   id: number;
   name: string;
@@ -140,7 +137,7 @@ export type CourseInvoice = {
   remainingFees: number;
   modules: Module[];
   nextDueDate: string | null;
-}
+};
 
 export type Invoice = {
   id: number;
@@ -151,18 +148,16 @@ export type Invoice = {
   paymentMethod: PaymentMode;
   notes: string;
   dueDate?: string;
-}
+};
 
-
-
-export type Student= {
+export type Student = {
   id: number;
   name: string;
   email: string;
   phone: string;
   courses: CourseInvoice[];
   invoiceHistory: Invoice[];
-}
+};
 // Props interfaces
 
 export type DummyInstructor = {
@@ -173,4 +168,22 @@ export type DummyInstructor = {
   joinedAt: string;
   modules: string[];
   batches: string[];
+};
+
+export type prStudentCourse = {
+  courseId: string;
+  moduleId: string[];
+  approvedAt: Date | null;
+  isApproved: boolean;
+};
+
+export type prStudent = {
+  id: string;
+  name: string;
+  email: string;
+  profilePic: string;
+  gender: string;
+  courses: prStudentCourse[];
+  batchId: string[];
+  invoiceId: string[];
 };

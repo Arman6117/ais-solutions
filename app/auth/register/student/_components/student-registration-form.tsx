@@ -1,43 +1,68 @@
-'use client'
+"use client";
 
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
-
-import { ArrowLeft, Camera, Eye, EyeOff, GraduationCap, Lock, Mail, Phone, Upload, User, Users, X, AlertCircle } from "lucide-react"
-import { z } from "zod"
-import Link from "next/link"
-import React, { useState } from "react"
-import { studentSchema } from "@/lib/validations/student-schema"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { parseStudentForm } from "@/lib/helpers/parse-student-registration"
-import { redirect } from "next/navigation"
-import { registerStudent } from "@/actions/student/register-student"
-
+import {
+  ArrowLeft,
+  Camera,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  Lock,
+  Mail,
+  Phone,
+  Upload,
+  User,
+  Users,
+  X,
+  AlertCircle,
+} from "lucide-react";
+import { z } from "zod";
+import Link from "next/link";
+import React, { useState } from "react";
+import { studentSchema } from "@/lib/validations/student-schema";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { parseStudentForm } from "@/lib/helpers/parse-student-registration";
+import { redirect, useRouter } from "next/navigation";
+import { registerStudent } from "@/actions/student/register-student";
+import { toast } from "sonner";
 
 const StudentRegistrationForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    gender: '',
-    password: '',
-    confirmPassword: '',
-    referralCode: '',
-  })
+    name: "",
+    email: "",
+    phone: "",
+    gender: "",
+    password: "",
+    confirmPassword: "",
+    referralCode: "",
+  });
 
-  const [profilePicture, setProfilePicture] = useState<File | null>(null)
-  const [profilePreview, setProfilePreview] = useState<string | null>(null)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+const router = useRouter()
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -45,59 +70,73 @@ const StudentRegistrationForm = () => {
         return newErrors;
       });
     }
-  }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      if (!file.type.startsWith('image/')) {
-        setErrors(prev => ({ ...prev, profilePicture: 'Please select an image file' }))
-        return
+      if (!file.type.startsWith("image/")) {
+        setErrors((prev) => ({
+          ...prev,
+          profilePicture: "Please select an image file",
+        }));
+        return;
       }
       if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, profilePicture: 'File size must be < 5MB' }))
-        return
+        setErrors((prev) => ({
+          ...prev,
+          profilePicture: "File size must be < 5MB",
+        }));
+        return;
       }
 
-      setProfilePicture(file)
-      const reader = new FileReader()
-      reader.onload = (e) => setProfilePreview(e.target?.result as string)
-      reader.readAsDataURL(file)
+      setProfilePicture(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setProfilePreview(e.target?.result as string);
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const removeProfilePicture = () => {
-    setProfilePicture(null)
-    setProfilePreview(null)
-  }
+    setProfilePicture(null);
+    setProfilePreview(null);
+  };
 
   const handleSubmit = async () => {
-    setIsSubmitting(true)
-    setErrors({})
+    setIsSubmitting(true);
+    setErrors({});
 
     try {
-      const data = new FormData()
-      Object.entries(formData).forEach(([key, value]) => data.append(key, value))
-      if (profilePicture) data.append("profilePicture", profilePicture)
-  console.log(data.get('profilePicture'))
-      await registerStudent(data)
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) =>
+        data.append(key, value)
+      );
+      if (profilePicture) data.append("profilePic", profilePicture);
 
-      // if (res.success) {
-      //   redirect("/student/dashboard") // or wherever you want
-      // } else {
-      //   setErrors(res.errors || {})
-      // }
+      // console.log(data.get('profilePicture'))
+      const res = await registerStudent(data);
+     console.log(res)
+      if (res.success) {
+        toast.success(res.message);
+        router.push("/auth/login/student");
+      } else {
+        toast.error(res.message);
+        setErrors(res.error || {});
+      }
     } catch (error) {
-      setErrors({ submit: "Something went wrong!" })
+      setErrors({ submit: "Something went wrong!" });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-2xl relative z-10">
-        <Link href="/auth/register" className="mb-6 flex gap-2 text-purple-600 font-medium">
+        <Link
+          href="/auth/register"
+          className="mb-6 flex gap-2 text-purple-600 font-medium"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Role Selection
         </Link>
@@ -111,7 +150,9 @@ const StudentRegistrationForm = () => {
               Student Registration
             </h1>
           </div>
-          <p className="text-gray-600">Create your student account to start learning</p>
+          <p className="text-gray-600">
+            Create your student account to start learning
+          </p>
         </div>
 
         <Card>
@@ -135,7 +176,11 @@ const StudentRegistrationForm = () => {
                 <div className="relative">
                   {profilePreview ? (
                     <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-purple-100">
-                      <img src={profilePreview} alt="preview" className="w-full h-full object-cover" />
+                      <img
+                        src={profilePreview}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                      />
                       <Button
                         type="button"
                         variant="destructive"
@@ -154,7 +199,13 @@ const StudentRegistrationForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="profilePicture" />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="profilePicture"
+                  />
                   <Label
                     htmlFor="profilePicture"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 cursor-pointer font-medium"
@@ -165,7 +216,11 @@ const StudentRegistrationForm = () => {
                   <p className="text-xs text-muted-foreground">Max size: 5MB</p>
                 </div>
               </div>
-              {errors.profilePicture && <p className="text-sm text-destructive">{errors.profilePicture}</p>}
+              {errors.profilePicture && (
+                <p className="text-sm text-destructive">
+                  {errors.profilePicture}
+                </p>
+              )}
             </div>
 
             {/* Fields */}
@@ -176,7 +231,8 @@ const StudentRegistrationForm = () => {
             ].map(({ id, label, icon: Icon, required }) => (
               <div key={id} className="space-y-2">
                 <Label htmlFor={id}>
-                  {label} {required && <span className="text-destructive">*</span>}
+                  {label}{" "}
+                  {required && <span className="text-destructive">*</span>}
                 </Label>
                 <div className="relative">
                   <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -185,17 +241,25 @@ const StudentRegistrationForm = () => {
                     value={(formData as any)[id]}
                     onChange={(e) => handleInputChange(id, e.target.value)}
                     className="pl-10"
-                    type={id === "email" ? "email" : id === "phone" ? "tel" : "text"}
+                    type={
+                      id === "email" ? "email" : id === "phone" ? "tel" : "text"
+                    }
                   />
                 </div>
-                {errors[id] && <p className="text-sm text-destructive">{errors[id]}</p>}
+                {errors[id] && (
+                  <p className="text-sm text-destructive">{errors[id]}</p>
+                )}
               </div>
             ))}
 
             {/* Gender */}
             <div className="space-y-2">
-              <Label htmlFor="gender">Gender <span className="text-destructive">*</span></Label>
-              <Select onValueChange={(value) => handleInputChange("gender", value)}>
+              <Label htmlFor="gender">
+                Gender <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                onValueChange={(value) => handleInputChange("gender", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
@@ -205,16 +269,30 @@ const StudentRegistrationForm = () => {
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
-              {errors.gender && <p className="text-sm text-destructive">{errors.gender}</p>}
+              {errors.gender && (
+                <p className="text-sm text-destructive">{errors.gender}</p>
+              )}
             </div>
 
             {/* Passwords */}
             {[
-              { id: "password", label: "Password", show: showPassword, setShow: setShowPassword },
-              { id: "confirmPassword", label: "Confirm Password", show: showConfirmPassword, setShow: setShowConfirmPassword }
+              {
+                id: "password",
+                label: "Password",
+                show: showPassword,
+                setShow: setShowPassword,
+              },
+              {
+                id: "confirmPassword",
+                label: "Confirm Password",
+                show: showConfirmPassword,
+                setShow: setShowConfirmPassword,
+              },
             ].map(({ id, label, show, setShow }) => (
               <div key={id} className="space-y-2">
-                <Label htmlFor={id}>{label} <span className="text-destructive">*</span></Label>
+                <Label htmlFor={id}>
+                  {label} <span className="text-destructive">*</span>
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -231,10 +309,16 @@ const StudentRegistrationForm = () => {
                     className="absolute right-0 top-0 h-full px-3"
                     onClick={() => setShow(!show)}
                   >
-                    {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {show ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
-                {errors[id] && <p className="text-sm text-destructive">{errors[id]}</p>}
+                {errors[id] && (
+                  <p className="text-sm text-destructive">{errors[id]}</p>
+                )}
               </div>
             ))}
 
@@ -246,7 +330,9 @@ const StudentRegistrationForm = () => {
                 <Input
                   id="referralCode"
                   value={formData.referralCode}
-                  onChange={(e) => handleInputChange("referralCode", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("referralCode", e.target.value)
+                  }
                   className="pl-10"
                   placeholder="Enter referral code if any"
                 />
@@ -259,13 +345,13 @@ const StudentRegistrationForm = () => {
               className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold"
               size="lg"
             >
-              {isSubmitting ? 'Creating Account...' : 'Create Student Account'}
+              {isSubmitting ? "Creating Account..." : "Create Student Account"}
             </Button>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default StudentRegistrationForm
+export default StudentRegistrationForm;

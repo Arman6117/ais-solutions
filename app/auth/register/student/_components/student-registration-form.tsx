@@ -60,7 +60,7 @@ const StudentRegistrationForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-const router = useRouter()
+  const router = useRouter();
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -115,7 +115,7 @@ const router = useRouter()
 
       // console.log(data.get('profilePicture'))
       const res = await registerStudent(data);
-     console.log(res)
+      console.log(res);
       if (res.success) {
         toast.success(res.message);
         router.push("/auth/login/student");

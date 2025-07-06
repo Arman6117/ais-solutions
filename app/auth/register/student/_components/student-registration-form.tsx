@@ -1,5 +1,9 @@
 "use client";
 
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import {
   Select,
   SelectTrigger,
@@ -7,6 +11,20 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+
+import { registerStudent } from "@/actions/student/register-student";
 
 import {
   ArrowLeft,
@@ -23,25 +41,6 @@ import {
   X,
   AlertCircle,
 } from "lucide-react";
-import { z } from "zod";
-import Link from "next/link";
-import React, { useState } from "react";
-import { studentSchema } from "@/lib/validations/student-schema";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { parseStudentForm } from "@/lib/helpers/parse-student-registration";
-import { redirect, useRouter } from "next/navigation";
-import { registerStudent } from "@/actions/student/register-student";
-import { toast } from "sonner";
 
 const StudentRegistrationForm = () => {
   const [formData, setFormData] = useState({

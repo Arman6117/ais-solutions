@@ -1,8 +1,11 @@
 import React from 'react'
+import StudentLoginForm from './_components/student-login-form'
 
 const StudentLoginPage = () => {
   return (
-    <div>StudentLoginPage</div>
+    <>
+    <StudentLoginForm/>
+    </>
   )
 }
 

@@ -14,6 +14,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { IoExit } from "react-icons/io5";
+import LogOutButton from "./logout-button";
 const StudentSidebar = () => {
   // const [active, setActive] = useState(false);
 
@@ -53,9 +54,7 @@ const StudentSidebar = () => {
               );
             })}
           </div>
-          <Button className="size-10 cursor-pointer hover:bg-muted-foreground"  variant={"ghost"}>
-            <IoExit className="text-white size-9" />
-          </Button>
+        <LogOutButton/>
         </div>
       </div>
     </div>

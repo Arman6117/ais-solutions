@@ -26,6 +26,6 @@ export async function parseStudentForm(formData: FormData) {
     referralCode: formData.get("referralCode") || undefined,
     profilePic: formData.get("profilePic")
   }
-console.log(raw)
+
   return studentSchema.parse(raw)
 }

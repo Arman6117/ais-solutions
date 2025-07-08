@@ -3,6 +3,7 @@ import CreateCourseBasicInfo from "./create-course-basic-info";
 import CreateCourseInstructors from "./create-course-intstrcutors";
 import CreateCourseModules from "./create-course-modules";
 import { Button } from "@/components/ui/button";
+import CreateCourseButton from "./create-course-button";
 
 const CreateCourse = () => {
   return (
@@ -14,7 +15,7 @@ const CreateCourse = () => {
         <CreateCourseBasicInfo />
         <CreateCourseInstructors />
         <CreateCourseModules />
-        <Button className="bg-primary-bg mb-5">Create Course</Button>
+       <CreateCourseButton/>
       </form>
     </main>
   );

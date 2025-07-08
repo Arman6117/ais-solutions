@@ -170,6 +170,7 @@ export type DummyInstructor = {
   batches: string[];
 };
 
+//!Final Types
 export type prStudentCourse = {
   courseId: string;
   moduleId: string[];
@@ -177,6 +178,19 @@ export type prStudentCourse = {
   isApproved: boolean;
 };
 
+export type prBatch  = {
+  id: string;
+  name: string;
+  schedule: string;
+  time: string;
+  students: number;
+  startDate: Date | null;
+  endDate: Date | null;
+  status: "Ongoing" | "Upcoming" | "Completed";
+  whatsappLink?: string;
+  type: Mode;
+  typeOfBatch: BatchType;
+}
 export type prStudent = {
   id: string;
   name: string;
@@ -186,4 +200,45 @@ export type prStudent = {
   courses: prStudentCourse[];
   batchId: string[];
   invoiceId: string[];
+};
+
+export type prChapter = {
+  id: string;
+  name: string;
+  description: string;
+  moduleId: string;
+};
+export type prModule = {
+  name: string;
+  description: string;
+  price: number;
+  discount: number;
+  offerPrice: number;
+  rating: number;
+  chapter: prChapter[];
+  courseId: string[];
+  batchId: string[];
+  instructors: string[];
+};
+export type prInstructors = {
+  id: string;
+  name: string;
+  email: string;
+  profilePic: string;
+  phone: string;
+  modules: prModule[];
+  batches: string[];
+  rating?: number;
+};
+export type prCourse = {
+  name: string;
+  description: string;
+  price: number;
+  discount: number;
+  offerPrice: number;
+  mode: Mode;
+  startDate: Date | null;
+  endDate: Date | null;
+  instructorId: string[];
+  moduleId: string[];
 };

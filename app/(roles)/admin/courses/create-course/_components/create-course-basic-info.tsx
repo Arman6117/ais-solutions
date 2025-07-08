@@ -25,33 +25,35 @@ import { Mode } from "@/lib/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 
 const CreateCourseBasicInfo = () => {
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+
   const {
-    courseName, courseDescription, coursePrice, courseDiscount, courseOfferPrice,
-    courseMode, courseStartDate, courseEndDate,
+    courseName,
+    courseDescription,
+    coursePrice,
+    courseDiscount,
+    courseOfferPrice,
+    courseStartDate,
+    courseEndDate,
+    courseThumbnail,
     setBasicInfo,
   } = useCreateCourseStore();
-  // const{courseName, setCourseName} = useCreateCourseStore("");
-  // const{courseDescription, setCourseDescription} = useCreateCourseStore("");
-  // const{coursePrice, setCoursePrice} = useCreateCourseStore(0);
-  // const{courseDiscount, setCourseDiscount} = useCreateCourseStore(0);
-  // const{courseOfferPrice, setCourseOfferPrice} = useCreateCourseStore(
-  //   coursePrice - (coursePrice * Number(courseDiscount)) / 100 || 0
-  // );
-  // const{courseMode, setCourseMode} = useCreateCourseStore<Mode>("online");
-  // const{courseStartDate, setCourseStartDate} = useCreateCourseStore(new Date());
-  // const{courseEndDate, setCourseEndDate} = useCreateCourseStore(new Date());
 
-  const[courseDuration, setCourseDuration] = useState(
+  const [courseDuration, setCourseDuration] = useState(
     formatDistance(courseStartDate ?? new Date(), courseEndDate ?? new Date())
   );
   useEffect(() => {
     setBasicInfo({
-      courseOfferPrice: Math.round(coursePrice - (coursePrice * courseDiscount) / 100)
+      courseOfferPrice: Math.round(
+        coursePrice - (coursePrice * courseDiscount) / 100
+      ),
     });
   }, [coursePrice, courseDiscount]);
   useEffect(() => {
-    setCourseDuration(formatDistance(courseStartDate ?? new Date(), courseEndDate ?? new Date()));
-  },[courseStartDate, courseEndDate]);
+    setCourseDuration(
+      formatDistance(courseStartDate ?? new Date(), courseEndDate ?? new Date())
+    );
+  }, [courseStartDate, courseEndDate]);
   return (
     <Card className="px-5 mt-7 w-full h-auto py-3">
       <CardContent className="p-2 w-full">
@@ -67,7 +69,7 @@ const CreateCourseBasicInfo = () => {
               </Label>
               <Input
                 value={courseName}
-                onChange={(e) => setBasicInfo({courseName:e.target.value})}
+                onChange={(e) => setBasicInfo({ courseName: e.target.value })}
                 required
                 type="text"
                 placeholder="Enter course name"
@@ -81,7 +83,9 @@ const CreateCourseBasicInfo = () => {
               </Label>
               <Textarea
                 value={courseDescription}
-                onChange={(e) => setBasicInfo({courseDescription:e.target.value})}
+                onChange={(e) =>
+                  setBasicInfo({ courseDescription: e.target.value })
+                }
                 required
                 placeholder="Enter course description"
                 className="focus w-64 ml-5 sm:w-96 transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
@@ -98,7 +102,9 @@ const CreateCourseBasicInfo = () => {
                   <Input
                     value={coursePrice}
                     type="number"
-                    onChange={(e) =>setBasicInfo({coursePrice:Number(e.target.value)})}
+                    onChange={(e) =>
+                      setBasicInfo({ coursePrice: Number(e.target.value) })
+                    }
                     required
                     placeholder="Enter course description"
                     className="focus pl-6 w-64 ml-5 sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
@@ -115,7 +121,9 @@ const CreateCourseBasicInfo = () => {
                   <Input
                     value={courseDiscount}
                     type="number"
-                    onChange={(e) => setBasicInfo({courseDiscount:Number(e.target.value)})}
+                    onChange={(e) =>
+                      setBasicInfo({ courseDiscount: Number(e.target.value) })
+                    }
                     placeholder="Enter course description"
                     className="focus pl-6 w-64 ml-5 sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                   />
@@ -144,6 +152,35 @@ const CreateCourseBasicInfo = () => {
                 />
               </div>
             </div>
+            <div className="flex flex-col gap-3 justify-center">
+              <Label className="text-lg flex gap-2 items-center">
+                <BookOpen />
+                Course Thumbnail
+              </Label>
+              <div className="flex sm:flex-row flex-col items-center gap-5 ml-5">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setBasicInfo({ courseThumbnail: file });
+                      const imageUrl = URL.createObjectURL(file);
+                      setThumbnailPreview(imageUrl); // this is local state
+                    }
+                  }}
+                  className="focus w-64 sm:w-96 transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+                />
+                {thumbnailPreview && (
+                  <img
+                    src={thumbnailPreview}
+                    alt="Thumbnail Preview"
+                    className="w-32 h-32 rounded object-cover border"
+                  />
+                )}
+              </div>
+            </div>
+
             <div className="flex w-full sm:flex-row flex-col  gap-7 justify-between sm:items-center max-w-3xl">
               <div className="flex flex-col gap-3 justify-center">
                 <Label className="text-lg flex gap-2 items-center">
@@ -158,9 +195,10 @@ const CreateCourseBasicInfo = () => {
                   Course Start Date
                 </Label>
                 <Input
-                  //   value={String(courseStartDate)}
                   type="date"
-                  onChange={(e) => setBasicInfo({courseStartDate: new Date(e.target.value)})}
+                  onChange={(e) =>
+                    setBasicInfo({ courseStartDate: new Date(e.target.value) })
+                  }
                   className="focus  ml-5  relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                 />
               </div>
@@ -172,7 +210,9 @@ const CreateCourseBasicInfo = () => {
                 <Input
                   //   value={String(courseStartDate)}
                   type="date"
-                  onChange={(e) =>setBasicInfo({courseEndDate: new Date(e.target.value)})}
+                  onChange={(e) =>
+                    setBasicInfo({ courseEndDate: new Date(e.target.value) })
+                  }
                   className="focus  ml-5  relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                 />
               </div>

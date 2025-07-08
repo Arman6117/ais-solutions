@@ -6,6 +6,7 @@ import Greetings from "@/components/greetings";
 import NotificationPanel from "./notification-panel";
 import QuickActionPanel from "./quick-action-panel";
 import GlobalSearchBar from "./global-search-bar";
+import AdminSignOutButton from "./admin-sign-out";
 
 const AdminPanelOverview = () => {
   return (
@@ -14,6 +15,7 @@ const AdminPanelOverview = () => {
         <Greetings>Admin</Greetings>
         <NotificationPanel />
         <QuickActionPanel/>
+        <AdminSignOutButton/>
       </div>
         <GlobalSearchBar/>
       <div className="flex gap-10 md:flex-row flex-col items-center ">

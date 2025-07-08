@@ -12,6 +12,7 @@ import {
 import { adminSidebarLinks } from "@/lib/static";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import AdminSignOutButton from "./admin-sign-out";
 
 const AdminSidebar = () => {
   // const [active, setActive] = useState(false);
@@ -48,7 +49,7 @@ const AdminSidebar = () => {
             );
           })}
         </div>
-          
+          {/* <AdminSignOutButton/> */}
           </div>
       </div>
     </div>

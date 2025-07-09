@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { Student } from "@/models/student.schema";
+import { Student } from "@/models/student.model";
 
 export const getAdminDashboardStats = async () => {
     await connectToDB()

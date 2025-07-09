@@ -1,5 +1,5 @@
 // lib/helpers/create-student-id.ts
-import { Counter } from "@/models/counter.schema";
+import { Counter } from "@/models/counter.model";
 import { connectToDB } from "@/lib/db"; // Make sure this connects to MongoDB
 
 export async function getNextStudentId(): Promise<string> {

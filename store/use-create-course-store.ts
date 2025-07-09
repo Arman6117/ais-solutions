@@ -8,13 +8,13 @@ interface CourseFormState {
   courseDiscount: number;
   courseOfferPrice: number;
   courseMode: Mode;
-  courseThumbnail?: File | null;
+  courseThumbnail?: File | null | string;
   courseStartDate: Date | null;
   courseEndDate: Date | null;
 
   instructors: prInstructors[];
 
-  modules: prModule[];
+  modules: prModule[] | string[];
 
   setBasicInfo: (
     info: Partial<Omit<CourseFormState, "instructors" | "modules">>
@@ -36,7 +36,7 @@ export const useCreateCourseStore = create<CourseFormState>((set) => ({
   courseOfferPrice: 0,
   courseStartDate: null,
   courseEndDate: null,
-  courseThumbnail: null,
+  courseThumbnail: "",
   
 
   instructors: [],
@@ -54,7 +54,7 @@ export const useCreateCourseStore = create<CourseFormState>((set) => ({
       courseName: "",
       courseDescription: "",
       coursePrice: 0,
-      courseThumbnail:null,
+      courseThumbnail:"",
       courseDiscount: 0,
       courseOfferPrice: 0,
       courseMode: "online",

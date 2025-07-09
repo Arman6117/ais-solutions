@@ -209,6 +209,7 @@ export type prChapter = {
   moduleId: string;
 };
 export type prModule = {
+  id:string;
   name: string;
   description: string;
   price: number;
@@ -231,14 +232,14 @@ export type prInstructors = {
   rating?: number;
 };
 export type prCourse = {
-  name: string;
-  description: string;
-  price: number;
-  discount: number;
-  offerPrice: number;
-  mode: Mode;
-  startDate: Date | null;
-  endDate: Date | null;
-  instructorId: string[];
-  moduleId: string[];
+  courseName: string;
+  courseDescription: string;
+  coursePrice: number;
+  courseDiscount: number;
+  courseOfferPrice: number;
+  courseMode: Mode;
+  courseThumbnail:string | File | null | undefined
+  courseStartDate: Date | null ;
+  courseEndDate: Date | null;
+  modules: prModule[] |string[];
 };

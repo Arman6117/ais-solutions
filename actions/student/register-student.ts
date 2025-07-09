@@ -5,7 +5,7 @@ import { connectToDB } from "@/lib/db";
 import { getNextStudentId } from "@/lib/helpers/create-student-id";
 import { parseStudentForm } from "@/lib/helpers/parse-student-registration";
 import { uploadToCloudinary } from "@/lib/helpers/upload-to-cloudinary";
-import { Student } from "@/models/student.schema";
+import { Student } from "@/models/student.model";
 import { ZodError } from "zod";
 
 export const registerStudent = async (formData: FormData) => {

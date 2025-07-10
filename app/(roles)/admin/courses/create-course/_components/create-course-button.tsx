@@ -1,5 +1,5 @@
 "use client";
-import { createCourse } from "@/actions/admin/create-course";
+import { createCourse } from "@/actions/admin/course/create-course";
 import { Button } from "@/components/ui/button";
 import { uploadToCloudinary } from "@/lib/helpers/upload-to-cloudinary";
 import { useCreateCourseStore } from "@/store/use-create-course-store";

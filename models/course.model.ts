@@ -15,6 +15,7 @@ const CourseSchema = new Schema(
       enum: ["online", "offline", "hybrid"],
       required: true,
     },
+    numberOfStudents: { type: Number, default: 0, required: true }, 
     modules: [{ type: String, ref: "Module", index: true }],
     batches: [{ type: String, ref: "Batch", default: [], index: true }],
   },

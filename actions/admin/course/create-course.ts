@@ -38,6 +38,7 @@ export const createCourse = async (data: createCourseProps) => {
     const courseDoc = {
       ...validated,
       batches: [],
+      numberOfStudents:0,
       courseStartDate: new Date(validated.courseStartDate),
       courseEndDate: new Date(validated.courseEndDate),
     };

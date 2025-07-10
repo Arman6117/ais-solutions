@@ -231,6 +231,16 @@ export type prInstructors = {
   batches: string[];
   rating?: number;
 };
+
+export type CourseTable = {
+  _id: string;
+  courseName: string;
+  createdAt: string;
+  coursePrice: number;
+  courseDiscount: number;
+  courseOfferPrice: number;
+  numberOfStudents: number;
+};
 export type prCourse = {
   courseName: string;
   courseDescription: string;

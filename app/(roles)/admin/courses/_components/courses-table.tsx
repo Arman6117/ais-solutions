@@ -1,7 +1,6 @@
 "use client";
 import { DataTable } from "@/components/data-table";
-import { coursesData } from "@/lib/static";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Grid } from "react-loader-spinner";
 // import EditCourseDialog from "./edit-course-dialog";
@@ -9,29 +8,35 @@ import { Grid } from "react-loader-spinner";
 import { getAllCoursesTable } from "@/actions/admin/course/get-all-courses";
 import { CourseTable } from "@/lib/types";
 
+import { useRouter } from "next/navigation";
+import { deleteCourses } from "@/actions/admin/course/delete-course";
+
 const CoursesTable = () => {
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [course, setCourse] = useState<CourseTable[]>([]);
-
+  const [tableKey, setTableKey] = useState(0);
+  const router = useRouter();
+  const fetchCourses = async () => {
+    setLoading(true);
+    const res = await getAllCoursesTable();
+    if (res.success) {
+      setCourse(res.data!);
+    } else {
+      toast.error(res.message || "Failed to load courses");
+    }
+    setLoading(false);
+  };
+  
   useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      const res = await getAllCoursesTable();
-      if (res.success) {
-        setCourse(res.data!);
-      } else {
-        toast.error(res.message || "Failed to load courses");
-      }
-      setLoading(false);
-    };
-
     fetchCourses();
   }, []);
+  
   //TODO:Make API Call for data fetching
   //TODO:Instead of batches and batchesCompleted show price discount and offer price
 
   {
-   ( loading &&  course.length === 0) && (
+    loading && course.length === 0 && (
       <div className="flex items-center justify-center h-fit mt-[30%] w-full">
         <Grid
           visible={true}
@@ -47,6 +52,26 @@ const CoursesTable = () => {
     );
   }
 
+  const handleDelete = async (ids: string[]) => {
+    setDeleting(true);
+    try {
+      const res = await deleteCourses(ids);
+
+      if (res.success) {
+        toast.success(res.message || "Courses deleted successfully");
+        await fetchCourses()
+        setTableKey(prev => prev + 1)
+      } else {
+        toast.error(res.message || "Failed to delete courses");
+      }
+    } catch (error) {
+      toast.error("Failed to delete courses");
+      console.error("Error deleting course:", error);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <>
       {course.length === 0 && loading === false ? (
@@ -55,6 +80,7 @@ const CoursesTable = () => {
         </div>
       ) : (
         <DataTable
+        key={tableKey}
           href={`/admin/courses/course-details/`}
           data={course}
           columns={[
@@ -112,7 +138,7 @@ const CoursesTable = () => {
           ]}
           getRowId={(row) => row._id as unknown as string}
           onDeleteSelected={(ids) => {
-            toast.success(`${ids.length} courses deleted successfully`); //TODO: make delete API call
+            handleDelete(ids);
           }}
           searchPlaceholder="Search by Course Name"
           // openDialog={handleDialogOpen}

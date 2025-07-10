@@ -31,6 +31,8 @@ import { ArrowRight, Menu, PencilIcon, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import DeleteSelectedDialog from "./delete-selected-dialog";
+import DeleteDialog from "./delete-selected-dialog";
 
 type DataTableProps<T> = {
   data: T[];
@@ -166,12 +168,10 @@ export function DataTable<T>({
                   >
                     <PencilIcon className="size-4" />
                   </Button>
-                  <Button
-                    className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-destructive hover:text-white"
-                    variant="outline"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
+                  <DeleteDialog
+                    onDelete={onDeleteSelected}
+                    singleId={getRowId(item)}
+                  />
                 </div>
               </div>
               <Link
@@ -246,12 +246,10 @@ export function DataTable<T>({
                     >
                       <PencilIcon className="size-4" />
                     </Button>
-                    <Button
-                      className="flex items-center size-7 justify-center rounded-full cursor-pointer hover:bg-destructive hover:text-white"
-                      variant="outline"
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
+                    <DeleteDialog
+                      onDelete={onDeleteSelected}
+                      singleId={getRowId(item)}
+                    />
                   </TableCell>
                 </TableRow>
               ))
@@ -310,15 +308,7 @@ export function DataTable<T>({
         </Button>
 
         {selectedIds.length > 0 && (
-          <Button
-            className="cursor-pointer"
-            variant="destructive"
-            size="sm"
-            onClick={() => onDeleteSelected(selectedIds)}
-          >
-            <Trash2 className="mr-1 size-4" />
-            {selectedIds.length}
-          </Button>
+          <DeleteDialog onDelete={onDeleteSelected} selectedIds={selectedIds} />
         )}
       </div>
     );
@@ -379,13 +369,10 @@ export function DataTable<T>({
             </div>
           )}
           {selectedIds.length > 0 && (
-            <Button
-              className="cursor-pointer"
-              variant="destructive"
-              onClick={() => onDeleteSelected(selectedIds)}
-            >
-              <Trash2 className="mr-1" />({selectedIds.length})
-            </Button>
+            <DeleteDialog
+            onDelete={onDeleteSelected}
+            selectedIds={selectedIds}
+          />
           )}
         </div>
       )}

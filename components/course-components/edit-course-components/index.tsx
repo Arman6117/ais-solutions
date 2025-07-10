@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Mode } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { Upload, Calendar, CalendarCheck, CalendarClock } from "lucide-react";
 import Image from "next/image";
@@ -169,8 +170,8 @@ export const EditCourseMode = ({
   mode,
   setMode,
 }: {
-  mode: "Hybrid" | "Online" | "Offline";
-  setMode: (mode: "Hybrid" | "Online" | "Offline") => void;
+  mode: Mode;
+  setMode: (mode: Mode) => void;
 }) => {
   return <Select value={mode} onValueChange={setMode}>
    <SelectTrigger>
@@ -191,11 +192,11 @@ export const EditCourseDuration = ({
   setEndDate, 
   setStartDate
 }: {
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: string;
+  endDate: string;
   duration: string;
-  setStartDate:(date:Date) => void
-  setEndDate:(date:Date) => void
+  setStartDate:(date:string) => void
+  setEndDate:(date:string) => void
 })=> {
   return (
     <div className="space-y-4">
@@ -206,9 +207,9 @@ export const EditCourseDuration = ({
             Course Start Date
           </Label>
           <Input
-            value={startDate?.toISOString().split('T')[0]}
+            value={startDate}
             type="date"
-            onChange={(e) => setStartDate(new Date(e.target.value))}
+            onChange={(e) => setStartDate((e.target.value))}
             className="focus ml-5 relative transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
           />
         </div>
@@ -218,9 +219,9 @@ export const EditCourseDuration = ({
             Course End Date
           </Label>
           <Input
-            value={endDate?.toISOString().split('T')[0]}
+            value={endDate}
             type="date"
-            onChange={(e) => setEndDate(new Date(e.target.value))}
+            onChange={(e) => setEndDate((e.target.value))}
             className="focus ml-5 relative transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
           />
         </div>

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Grid } from "react-loader-spinner";
 // import EditCourseDialog from "./edit-course-dialog";
 // import { Course } from "@/lib/types";
-import { getAllCoursesTable } from "@/actions/admin/course/get-all-courses";
+import { getAllCoursesTable } from "@/actions/admin/course/get-courses";
 import { CourseTable } from "@/lib/types";
 
 import { useRouter } from "next/navigation";

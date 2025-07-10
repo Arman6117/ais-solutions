@@ -29,18 +29,15 @@ import {
   ViewCourseThumbnail,
 } from "./view-course-components";
 
-import { Course, DummyBatches, DummyInstructors } from "@/lib/types";
+import { Course, DummyBatches, DummyInstructors, Mode, prCourse } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
-import { Input } from "../ui/input";
 import CourseSyllabusCard from "@/app/(roles)/admin/courses/course-details/_components/course-syllabus-card";
-import PendingRequestPanel from "@/app/(roles)/admin/courses/course-details/_components/pending-request-panel";
 import { formatDistance } from "date-fns";
 
 type CourseDetailsProps = {
-  // mode: "view" | "edit";
-  course: Course | undefined;
+  course: prCourse | undefined;
   dummyBatches: DummyBatches[];
   dummyInstructors: DummyInstructors[];
 };
@@ -71,18 +68,18 @@ const CourseDetails = ({
       </div>
     );
   }
-  const [name, setName] = useState(course.name || "");
-  const [courseMode, setCourseMode] = useState<"Hybrid" | "Offline" | "Online">(
-    "Hybrid"
+  const [name, setName] = useState(course.courseName || "");
+  const [courseMode, setCourseMode] = useState<Mode>(
+    course.courseMode
   );
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<string>(course.courseStartDate);
+  const [endDate, setEndDate] = useState<string>(course.courseEndDate );
   const [courseDuration, setCourseDuration] = useState(
     formatDistance(startDate ?? new Date(), endDate ?? new Date())
   );
-  const [description, setDescription] = useState(course.description || "");
-  const [price, setPrice] = useState(course.price || 0);
-  const [discount, setDiscount] = useState(course.discount || 0);
+  const [description, setDescription] = useState(course.courseDescription || "");
+  const [price, setPrice] = useState(course.coursePrice || 0);
+  const [discount, setDiscount] = useState(course.courseDiscount || 0);
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100 || 0
   );
@@ -256,16 +253,16 @@ const CourseDetails = ({
             <CourseModulesCard
               name="Course"
               mode={mode}
-              modules={course.modules}
+              modules={course.modules as string[]}
             />
             <div className="w-full  space-y-6">
               {mode === "edit" ? (
                 <EditCourseThumbnail
                   setThumbnail={() => {}}
-                  thumbnail="https://placehold.co/600x400.png"
+                  thumbnail={course.courseThumbnail as string}
                 />
               ) : (
-                <ViewCourseThumbnail thumbnail="https://placehold.co/600x400.png" />
+                <ViewCourseThumbnail thumbnail={course.courseThumbnail as string}/>
               )}
 
               <CourseStatusCard

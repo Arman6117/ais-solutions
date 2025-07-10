@@ -115,8 +115,8 @@ export const ViewCourseDuration = ({
   endDate,
   duration,
 }: {
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate:string;
+  endDate:string;
   duration: string;
 }) => {
   return <div className="flex justify-between flex-wrap">

@@ -242,6 +242,7 @@ export type CourseTable = {
   numberOfStudents: number;
 };
 export type prCourse = {
+  _id: string;
   courseName: string;
   courseDescription: string;
   coursePrice: number;
@@ -249,7 +250,7 @@ export type prCourse = {
   courseOfferPrice: number;
   courseMode: Mode;
   courseThumbnail:string | File | null | undefined
-  courseStartDate: Date | null ;
-  courseEndDate: Date | null;
+  courseStartDate:string ;
+  courseEndDate: string;
   modules: prModule[] |string[];
 };

@@ -1,6 +1,7 @@
 import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
 import React from "react";
 import CourseDetails from "@/components/course-components/course-details";
+import { getCourseById } from "@/actions/admin/course/get-courses";
 
 const CourseDetailsPage = async ({
   params,
@@ -8,12 +9,12 @@ const CourseDetailsPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const id = (await params).id;
-  const data = coursesData.find((course) => course.id === id);
+  const data = await getCourseById(id)
   return (
     <main className="flex w-full">
       {/* <EditCourse course={data} /> */}
       <CourseDetails
-        course={data}
+        course={data.data}
         dummyBatches={dummyBatches}
         dummyInstructors={dummyInstructors}
       />

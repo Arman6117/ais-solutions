@@ -42,7 +42,7 @@ const StatusCard = ({
             )}
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Total Students</span>
-              <span className="font-medium">65</span>
+              <span className="font-medium">{course?.numberOfStudents}</span>
             </div>
             {batches && (
               <div className="flex justify-between items-center">

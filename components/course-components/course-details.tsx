@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 import CourseSyllabusCard from "@/app/(roles)/admin/courses/course-details/_components/course-syllabus-card";
 import { formatDistance } from "date-fns";
+import { updateCourse } from "@/actions/admin/course/update-course";
 
 type CourseDetailsProps = {
   course: prCourse | undefined;
@@ -49,7 +50,7 @@ const CourseDetails = ({
 }: CourseDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  console.log(course)
+  
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
@@ -86,6 +87,7 @@ const CourseDetails = ({
   );
   const [instructors, setInstructors] = useState(dummyInstructors || []);
   const [batches, setBatches] = useState(dummyBatches || []);
+  const [modules, setModules] = useState( []);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -108,12 +110,38 @@ const CourseDetails = ({
       formatDistance(startDate ?? new Date(), endDate ?? new Date())
     );
   }, [startDate, endDate]);
-  const handleSave = () => {
-    //TODO:Handle saving logic and API call here
+  const handleSave = async() => {
     setIsLoading(true);
-    toast.success("Changes saved successfully!");
-    setIsLoading(false);
-    setMode("view");
+    try {
+      const res  = await updateCourse({
+        courseId:course._id,
+        courseDescription:description,
+        courseDiscount:discount,
+        courseEndDate:endDate,
+        courseMode,
+        courseName:name,
+        courseOfferPrice:offerPrice,
+        coursePrice:price,
+        courseStartDate:startDate,
+        // courseThumbnail,
+        //modules
+         syllabusLink
+      })
+      if(!res.success) {
+        toast.error(res.message)
+      } else {
+        toast.success(res.message)
+        setMode("view")
+      }
+
+    } catch (error) {
+      toast.error("Something went wrong")
+    } finally {
+
+      setIsLoading(false);
+    }
+  
+
   };
 
   return (

@@ -244,6 +244,7 @@ export type CourseTable = {
 export type prCourse = {
   _id: string;
   courseName: string;
+  numberOfStudents: number;
   courseDescription: string;
   syllabusLink: string;
   coursePrice: number;

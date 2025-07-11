@@ -11,6 +11,7 @@ import { ZodError } from "zod";
 type createCourseProps = {
   courseName: string;
   courseDescription: string;
+  syllabusLink?: string;
   coursePrice: number;
   courseDiscount: number;
   courseOfferPrice: number;
@@ -23,6 +24,7 @@ type createCourseProps = {
 export const createCourse = async (data: createCourseProps) => {
   try {
     await connectToDB();
+   
     const uploadResult = await uploadToCloudinary(
       data.courseThumbnail as File,
       "course"

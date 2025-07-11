@@ -36,6 +36,7 @@ const CreateCourseBasicInfo = () => {
     courseStartDate,
     courseEndDate,
     courseThumbnail,
+    courseSyllabusLink,
     setBasicInfo,
   } = useCreateCourseStore();
 
@@ -152,6 +153,22 @@ const CreateCourseBasicInfo = () => {
                 />
               </div>
             </div>
+            <div className="flex flex-col gap-3 justify-center">
+              <Label className="text-lg flex gap-2 items-center">
+                <BookOpen />
+                Course Syllabus Link
+              </Label>
+              <Input
+                type="url"
+                value={courseSyllabusLink}
+                onChange={(e) =>
+                  setBasicInfo({ courseSyllabusLink: e.target.value })
+                }
+                placeholder="Paste Google Drive link or file URL"
+                className="focus w-64 ml-5 sm:w-96 transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
+              />
+            </div>
+
             <div className="flex flex-col gap-3 justify-center">
               <Label className="text-lg flex gap-2 items-center">
                 <BookOpen />

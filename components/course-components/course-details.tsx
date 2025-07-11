@@ -49,7 +49,7 @@ const CourseDetails = ({
 }: CourseDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  console.log(course)
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
@@ -78,6 +78,7 @@ const CourseDetails = ({
     formatDistance(startDate ?? new Date(), endDate ?? new Date())
   );
   const [description, setDescription] = useState(course.courseDescription || "");
+  const [syllabusLink, setSyllabusLink] = useState(course.syllabusLink || "");
   const [price, setPrice] = useState(course.coursePrice || 0);
   const [discount, setDiscount] = useState(course.courseDiscount || 0);
   const [offerPrice, setOfferPrice] = useState(
@@ -249,7 +250,7 @@ const CourseDetails = ({
                 </div>
               </>
             )}
-            <CourseSyllabusCard mode={mode} />
+            <CourseSyllabusCard setSyllabusLink={setSyllabusLink} syllabusLink={syllabusLink} mode={mode} />
             <CourseModulesCard
               name="Course"
               mode={mode}

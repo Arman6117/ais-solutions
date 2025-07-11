@@ -66,6 +66,7 @@ export const getCourseById = async (id: string) => {
       _id: `${course._id}`,
       courseName: course.courseName as string,
       courseDescription: course.courseDescription as string,
+      syllabusLink: course.syllabusLink as string,
       createdAt: format(new Date(course.createdAt), "PP"),
       coursePrice: Number(course.coursePrice),
       courseDiscount: Number(course.courseDiscount),

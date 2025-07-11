@@ -19,6 +19,7 @@ const CreateCourseButton = () => {
     courseStartDate,
     courseEndDate,
     courseMode,
+    courseSyllabusLink: syllabusLink,
     instructors,
     modules,
     courseThumbnail,
@@ -31,13 +32,13 @@ const CreateCourseButton = () => {
       const mid = modules.map((module) =>
         typeof module === "string" ? module : module.id
       );
-
       const data = {
         courseName,
         courseDescription,
         coursePrice,
         courseDiscount,
         courseOfferPrice,
+        syllabusLink, 
         courseStartDate: courseStartDate?.toISOString(), // Convert Date to string
         courseEndDate: courseEndDate?.toISOString(), // Convert Date to string
         courseMode,
@@ -45,6 +46,7 @@ const CreateCourseButton = () => {
         courseThumbnail: courseThumbnail as File,
         // Extract url if it's an object
       };
+      console.log(data)
 
       const res = await createCourse(data);
       if (!res.success) {

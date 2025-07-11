@@ -11,9 +11,9 @@ interface CourseFormState {
   courseThumbnail?: File | null | string;
   courseStartDate: Date | null;
   courseEndDate: Date | null;
+  courseSyllabusLink?: string; // ✅ Add this
 
   instructors: prInstructors[];
-
   modules: prModule[] | string[];
 
   setBasicInfo: (
@@ -27,6 +27,7 @@ interface CourseFormState {
   resetCourseForm: () => void;
 }
 
+
 export const useCreateCourseStore = create<CourseFormState>((set) => ({
   courseName: "",
   courseDescription: "",
@@ -37,7 +38,7 @@ export const useCreateCourseStore = create<CourseFormState>((set) => ({
   courseStartDate: null,
   courseEndDate: null,
   courseThumbnail: "",
-  
+  courseSyllabusLink: "", // ✅ Add this
 
   instructors: [],
   modules: [],
@@ -54,12 +55,13 @@ export const useCreateCourseStore = create<CourseFormState>((set) => ({
       courseName: "",
       courseDescription: "",
       coursePrice: 0,
-      courseThumbnail:"",
+      courseThumbnail: "",
       courseDiscount: 0,
       courseOfferPrice: 0,
       courseMode: "online",
       courseStartDate: null,
       courseEndDate: null,
+      courseSyllabusLink: "", // ✅ Reset it too
       instructors: [],
       modules: [],
     }),

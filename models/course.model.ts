@@ -5,6 +5,7 @@ const CourseSchema = new Schema(
     courseName: { type: String, required: true },
     courseDescription: { type: String, required: true },
     courseThumbnail: { type: String, required: true },
+    syllabusLink: { type: String },
     coursePrice: { type: Number, required: true },
     courseDiscount: { type: Number, default: 0 },
     courseOfferPrice: { type: Number, required: true },

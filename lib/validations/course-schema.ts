@@ -3,6 +3,7 @@ import { z } from "zod";
 export const courseSchema = z.object({
   courseName: z.string().min(3),
   courseDescription: z.string().min(10),
+  syllabusLink: z.string().url().optional(),
   courseThumbnail: z.string().url(),
   coursePrice: z.number().nonnegative(),
   courseDiscount: z.number().min(0).max(100).optional(),

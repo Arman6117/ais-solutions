@@ -245,6 +245,7 @@ export type prCourse = {
   _id: string;
   courseName: string;
   courseDescription: string;
+  syllabusLink: string;
   coursePrice: number;
   courseDiscount: number;
   courseOfferPrice: number;

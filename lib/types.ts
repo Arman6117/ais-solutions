@@ -241,6 +241,18 @@ export type CourseTable = {
   courseOfferPrice: number;
   numberOfStudents: number;
 };
+type ContentTopic = {
+  id: number;
+  title: string;
+  description: string;
+};
+
+export type ChapterInput = {
+  id: number;
+  name: string;
+  description: string;
+  topics: ContentTopic[];
+};
 export type prCourse = {
   _id: string;
   courseName: string;

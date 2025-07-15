@@ -19,6 +19,8 @@ const CourseSchema = new Schema(
     numberOfStudents: { type: Number, default: 0, required: true }, 
     modules: [{ type: String, ref: "Module", index: true }],
     batches: [{ type: String, ref: "Batch", default: [], index: true }],
+    rating:{type:Number, default: 0, min: 0, max: 5},
+    // comments:[{}]
   },
   { timestamps: true }
 );

@@ -34,6 +34,7 @@ const AddModuleChapterButton = ({
   setChapter,
 }: AddModuleChapterButtonProps) => {
   const [name, setName] = useState("");
+  const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,7 +43,7 @@ const AddModuleChapterButton = ({
     setChapter([...(chapter || []), { ...newChap }]);
   };
   return (
-    <Dialog>
+    <Dialog open={open}>
       <DialogTrigger asChild>
         <Button className="bg-white  text-black hover:text-white cursor-pointer">
           Add Chapter
@@ -80,7 +81,11 @@ const AddModuleChapterButton = ({
             />
           </div>
           <DialogFooter className="mt-6">
-            <Button className="bg-primary-bg cursor-pointer" type="submit">
+            <Button
+              className="bg-primary-bg cursor-pointer"
+              type="submit"
+              onClick={() => setOpen(false)}
+            >
               Submit
             </Button>
             <DialogClose asChild>

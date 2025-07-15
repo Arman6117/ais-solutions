@@ -36,10 +36,12 @@ export const createCourse = async (data: createCourseProps) => {
     };
     const validated = courseSchema.parse(courseData);
 
-    console.log(validated);
+
     const courseDoc = {
       ...validated,
       batches: [],
+      rating:0,
+      // comments: [], // Initialize with an empty array
       numberOfStudents:0,
       courseStartDate: new Date(validated.courseStartDate),
       courseEndDate: new Date(validated.courseEndDate),

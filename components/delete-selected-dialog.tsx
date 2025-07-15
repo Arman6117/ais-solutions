@@ -17,7 +17,7 @@ export default function DeleteDialog({ onDelete, selectedIds = [], singleId }: P
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
-          className={singleId ? "p-2 hover:bg-destructive" : "cursor-pointer"}
+          className={singleId ? "p-2 hover:bg-destructive rounded-full cursor-pointer hover:text-white" : "cursor-pointer"}
           variant={singleId ? "outline" : "destructive"}
           size={singleId ? "icon" : "sm"}
         >
@@ -29,7 +29,7 @@ export default function DeleteDialog({ onDelete, selectedIds = [], singleId }: P
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. {idsToDelete.length} course{idsToDelete.length > 1 ? "s" : ""} will be deleted.
+            This action cannot be undone. {idsToDelete.length} item{idsToDelete.length > 1 ? "s" : ""} will be deleted.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

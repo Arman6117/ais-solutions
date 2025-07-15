@@ -209,17 +209,18 @@ export type prChapter = {
   moduleId: string;
 };
 export type prModule = {
-  id:string;
+  _id:string;
   name: string;
   description: string;
   price: number;
   discount: number;
-  offerPrice: number;
+  offerPrice?: number
   rating: number;
-  chapter: prChapter[];
+  chapters: ChapterInput[];
   courseId: string[];
   batchId: string[];
-  instructors: string[];
+  instructors?: string[];
+  createdAt: string;
 };
 export type prInstructors = {
   id: string;

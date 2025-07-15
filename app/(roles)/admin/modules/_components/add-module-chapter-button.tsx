@@ -44,7 +44,7 @@ const AddModuleChapterButton = ({
   };
   return (
     <Dialog open={open}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild onClick={()=> setOpen(true)}>
         <Button className="bg-white  text-black hover:text-white cursor-pointer">
           Add Chapter
         </Button>

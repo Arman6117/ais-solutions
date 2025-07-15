@@ -21,7 +21,7 @@ export const createModule = async (data: ModuleData) => {
     console.log("called")
     await connectToDB();
     const validated = CreateModuleSchema.parse(data);
-  console.log("Validated Module Data:", validated);
+
     const moduleDoc = {
       ...validated,
       courseId: [],

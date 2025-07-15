@@ -32,8 +32,7 @@ const CoursesTable = () => {
     fetchCourses();
   }, []);
   
-  //TODO:Make API Call for data fetching
-  //TODO:Instead of batches and batchesCompleted show price discount and offer price
+  
 
   {
     loading && course.length === 0 && (

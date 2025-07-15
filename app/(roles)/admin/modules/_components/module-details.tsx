@@ -10,7 +10,7 @@ import ModuleChapters from "./module-chapters";
 import CoursesCards from "../../../../../components/courses-cards";
 
 import { dummyChapters } from "@/lib/static";
-import { DummyModules } from "@/lib/types";
+import { DummyModules, prModule } from "@/lib/types";
 import { cn, formatCurrency } from "@/lib/utils";
 
 import {
@@ -52,7 +52,7 @@ import {
 } from "lucide-react";
 
 type ModuleDetailsProps = {
-  module: DummyModules | undefined;
+  module: prModule | undefined;
 };
 
 const ModuleDetails = ({ module }: ModuleDetailsProps) => {
@@ -80,13 +80,13 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   const [description, setDescription] = useState(module.description || "");
   const [price, setPrice] = useState(module.price || 0);
   const [discount, setDiscount] = useState(module.discount || 0);
-  const [createdAt] = useState(
-    module.createdAt || new Date().toISOString().split("T")[0]
-  );
+  // const [createdAt] = useState(
+  //   module.createdAt || new Date().toISOString().split("T")[0]
+  // );
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100
   );
-  const [chapter, setChapter] = useState(dummyChapters || []);
+  const [chapter, setChapter] = useState(module.chapters || []);
   const [syllabusFileName, setSyllabusFileName] = useState(
     "module_syllabus.pdf"
   );
@@ -212,7 +212,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                     label="Created At"
                     icon={<CalendarClock size={18} />}
                   >
-                    {new Date(createdAt).toLocaleDateString()}
+                    {module.createdAt}
                   </InfoWrapper>
                 </>
               ) : (

@@ -16,6 +16,8 @@ const moduleSchema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
+    syllabusLink: { type: String },
+    syllabusLabel: { type: String },
     price: { type: Number, required: true },
     discount: { type: Number },
     chapters: [chapterSchema],

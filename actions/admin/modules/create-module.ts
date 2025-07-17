@@ -10,6 +10,8 @@ import { ZodError } from "zod";
 type ModuleData = {
   name: string;
   description: string;
+  syllabusLink?: string;
+  syllabusLabel?: string;
   price: number;
   discount: number;
   courseId?: string[];
@@ -18,7 +20,7 @@ type ModuleData = {
 };
 export const createModule = async (data: ModuleData) => {
   try {
-    console.log("called")
+    
     await connectToDB();
     const validated = CreateModuleSchema.parse(data);
 

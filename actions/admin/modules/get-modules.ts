@@ -63,11 +63,11 @@ export const getModuleById = async (id: string) => {
     };
   }
   try {
-    console.log("called")
+    
     await connectToDB();
     
     const module = await Module.findById(new ObjectId(id));
-    console.log("called")
+
     
     if (!module) {
         return {

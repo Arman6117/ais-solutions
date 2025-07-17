@@ -15,6 +15,8 @@ export const ChapterSchema = z.object({
 export const CreateModuleSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
+  syllabusLink: z.string().min(1).optional(),
+  syllabusLabel: z.string().min(1).optional(),
   price: z.number().min(1),
   discount: z.number().min(0).max(100),
 

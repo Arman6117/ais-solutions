@@ -13,12 +13,7 @@ import { dummyChapters } from "@/lib/static";
 import { DummyModules, prModule } from "@/lib/types";
 import { cn, formatCurrency } from "@/lib/utils";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -49,7 +44,10 @@ import {
   FileUp,
   Users,
   AlertTriangle,
+  Link2,
+  Text,
 } from "lucide-react";
+import Link from "next/link";
 
 type ModuleDetailsProps = {
   module: prModule | undefined;
@@ -80,17 +78,12 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   const [description, setDescription] = useState(module.description || "");
   const [price, setPrice] = useState(module.price || 0);
   const [discount, setDiscount] = useState(module.discount || 0);
-  // const [createdAt] = useState(
-  //   module.createdAt || new Date().toISOString().split("T")[0]
-  // );
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100
   );
   const [chapter, setChapter] = useState(module.chapters || []);
-  const [syllabusFileName, setSyllabusFileName] = useState(
-    "module_syllabus.pdf"
-  );
-  const [syllabusFile, setSyllabusFile] = useState<File | null>(null);
+  const [syllabusLabel, setSyllabusLabel] = useState( module.syllabusLabel || "" );
+  const [syllabusLink, setSyllabusLink] = useState(module.syllabusLink || "");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -106,18 +99,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     setMode("view");
   };
 
-  const handleSyllabusUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      const file = e.target.files[0];
-      setSyllabusFile(file);
-      setSyllabusFileName(file.name);
-      toast.success(`Syllabus file "${file.name}" selected`);
-    }
-  };
 
-  const handleDownloadSyllabus = () => {
-    toast.success(`Downloading ${syllabusFileName}`);
-  };
 
   const handleDeleteModule = () => {
     setIsDeleting(true);
@@ -166,10 +148,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                         </>
                       )}
                     </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => router.back()}
-                    >
+                    <Button variant="outline" onClick={() => router.back()}>
                       <X size={16} className="mr-1" />
                       Cancel
                     </Button>
@@ -240,19 +219,31 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
 
               {mode === "view" ? (
                 <div className="grid md:grid-cols-3 gap-6">
-                  <InfoWrapper label="Price" icon={<BadgeIndianRupeeIcon size={18} />}>
+                  <InfoWrapper
+                    label="Price"
+                    icon={<BadgeIndianRupeeIcon size={18} />}
+                  >
                     ₹{price}
                   </InfoWrapper>
-                  <InfoWrapper label="Discount" icon={<PercentCircle size={18} />}>
+                  <InfoWrapper
+                    label="Discount"
+                    icon={<PercentCircle size={18} />}
+                  >
                     {discount}%
                   </InfoWrapper>
-                  <InfoWrapper label="Offer Price" icon={<BadgeIndianRupeeIcon size={18} />}>
+                  <InfoWrapper
+                    label="Offer Price"
+                    icon={<BadgeIndianRupeeIcon size={18} />}
+                  >
                     ₹{offerPrice}
                   </InfoWrapper>
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 gap-6">
-                  <EditInfo label="Price" icon={<BadgeIndianRupeeIcon size={18} />}>
+                  <EditInfo
+                    label="Price"
+                    icon={<BadgeIndianRupeeIcon size={18} />}
+                  >
                     <Input
                       type="number"
                       value={price}
@@ -260,7 +251,10 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                     />
                   </EditInfo>
 
-                  <EditInfo label="Discount (%)" icon={<PercentCircle size={18} />}>
+                  <EditInfo
+                    label="Discount (%)"
+                    icon={<PercentCircle size={18} />}
+                  >
                     <Input
                       type="number"
                       value={discount}
@@ -269,9 +263,58 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                   </EditInfo>
                 </div>
               )}
+              <div>
 
+                <div className="flex justify-between">
+                
+                  {mode === "view" ? (
+                    <div className="flex flex-col gap-2">
+                       <InfoWrapper label="Module Syllabus" icon={<Link2 size={18}/>}>
+                        
+                      <Link
+                        href={syllabusLink || "#"}
+                        className="text-lg font-semibold"
+                        >
+                        {syllabusLink !== ""? syllabusLabel :  "No Link Provided"} 
+                      </Link>
+                        </InfoWrapper>
+                    </div>
+                  ) : (
+                    <EditInfo
+                    label="Module Syllabus"
+                    className="flex  gap-7  "
+                    icon={<Link2 size={18} />}
+                  >
+                    <div className="flex md:flex-row gap-10 flex-col ">
+
+                    <EditInfo label="Label" icon={<Text size={18} />} >
+
+                    <Input
+                      type="text"
+                      value={syllabusLink}
+                      placeholder="Enter link label"
+                      onChange={(e) => setSyllabusLink(e.target.value)}
+                      />
+                      </EditInfo>
+                      <EditInfo label="Link" icon={<Link2 size={18} />} >
+                    <Input
+                      type="text"
+                      value={syllabusLink}
+                       placeholder="Enter link"
+                      onChange={(e) => setSyllabusLink(e.target.value)}
+                      />
+                      </EditInfo>
+                      </div>
+                    </EditInfo>
+                  )}
+                </div>
+              </div>
               <Separator />
-              <ModuleChapters chapter={chapter} setChapter={setChapter} mode={mode} />
+              <ModuleChapters
+                chapter={chapter}
+                setChapter={setChapter}
+                mode={mode}
+              />
               <Separator />
               <CoursesCards mode={mode} label="Course Usage" />
             </div>

@@ -216,6 +216,8 @@ export type prModule = {
   discount: number;
   offerPrice?: number
   rating: number;
+  syllabusLink?: string;
+  syllabusLabel?: string;
   chapters: ChapterInput[];
   courseId: string[];
   batchId: string[];

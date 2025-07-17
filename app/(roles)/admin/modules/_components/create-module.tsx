@@ -35,6 +35,8 @@ type Chapter = {
 const CreateModule = () => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [name, setName] = useState("");
+  const [syllabusLabel, setSyllabusLabel] = useState(  "" );
+  const [syllabusLink, setSyllabusLink] = useState( "");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(0);
@@ -42,7 +44,7 @@ const CreateModule = () => {
   const router = useRouter();
 
   const handleSubmit = async () => {
-    console.log("called")
+
     try {
       const res = await createModule({
         name,
@@ -110,6 +112,26 @@ const CreateModule = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
+                </div>
+                <div className="flex w-full gap-10 mt-5">
+                <div className="space-y-2">
+                  <Label htmlFor="linkLabel">Syllabus file name</Label>
+                  <Input
+                    id="linkLabel"
+                    placeholder="Enter module name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="linkLabel">Syllabus file name</Label>
+                  <Input
+                    id="linkLabel"
+                    placeholder="Enter module name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    />
+                    </div>
                 </div>
 
                 <div className="flex w-full gap-10 mt-5">

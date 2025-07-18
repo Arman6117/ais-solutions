@@ -51,6 +51,8 @@ const CreateModule = () => {
         description,
         price,
         discount,
+        syllabusLabel,
+        syllabusLink,
         chapters: chapters.map((chap) => ({
           id:chap.id,
           name: chap.name,
@@ -114,23 +116,28 @@ const CreateModule = () => {
                   />
                 </div>
                 <div className="flex w-full gap-10 mt-5">
-                <div className="space-y-2">
+              
+              <div className="flex flex-col gap-10 md:flex-row">
+                  <div className="space-y-2">
+
                   <Label htmlFor="linkLabel">Syllabus file name</Label>
                   <Input
                     id="linkLabel"
-                    placeholder="Enter module name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                    </div>
-                <div className="space-y-2">
-                  <Label htmlFor="linkLabel">Syllabus file name</Label>
-                  <Input
-                    id="linkLabel"
-                    placeholder="Enter module name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter file name "
+                    value={syllabusLabel}
+                    onChange={(e) => setSyllabusLabel(e.target.value)}
                     />
+                    </div>
+                  <div className="space-y-2">
+
+                  <Label htmlFor="link">Syllabus file link</Label>
+                  <Input
+                    id="link"
+                    placeholder="Enter module syllabus link"
+                    value={syllabusLink}
+                    onChange={(e) => setSyllabusLink(e.target.value)}
+                    />
+                    </div>
                     </div>
                 </div>
 

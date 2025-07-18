@@ -55,7 +55,7 @@ export const getAllModulesTable = async () => {
   }
 };
 export const getModuleById = async (id: string) => {
-    console.log("called")
+
   if (!id) {
     return {
       success: false,
@@ -90,6 +90,8 @@ export const getModuleById = async (id: string) => {
         _id: `${module._id}`,
         name: module.name as string,
         courseId:module.courseId as string[],
+        syllabusLabel:module.syllabusLabel as string,
+        syllabusLink:module.syllabusLink as string,
         batchId:module.batchId as string[],
         description: module.description as string,
         price: Number(module.price),

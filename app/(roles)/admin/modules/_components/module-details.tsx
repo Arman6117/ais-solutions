@@ -9,9 +9,8 @@ import EditInfo from "@/components/edit-info";
 import ModuleChapters from "./module-chapters";
 import CoursesCards from "../../../../../components/courses-cards";
 
-import { dummyChapters } from "@/lib/static";
-import { DummyModules, prModule } from "@/lib/types";
-import { cn, formatCurrency } from "@/lib/utils";
+import { prModule } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -35,19 +34,17 @@ import {
   Save,
   X,
   Trash2,
-  Star,
   BookOpen,
   CalendarClock,
   BadgeIndianRupeeIcon,
   PercentCircle,
-  FileDown,
-  FileUp,
   Users,
   AlertTriangle,
   Link2,
   Text,
 } from "lucide-react";
 import Link from "next/link";
+import { updateModules } from "@/actions/admin/modules/update-modules";
 
 type ModuleDetailsProps = {
   module: prModule | undefined;
@@ -82,7 +79,9 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     price - (price * discount) / 100
   );
   const [chapter, setChapter] = useState(module.chapters || []);
-  const [syllabusLabel, setSyllabusLabel] = useState( module.syllabusLabel || "" );
+  const [syllabusLabel, setSyllabusLabel] = useState(
+    module.syllabusLabel || ""
+  );
   const [syllabusLink, setSyllabusLink] = useState(module.syllabusLink || "");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -94,12 +93,15 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
 
   const handleSave = () => {
     setIsLoading(true);
-    toast.success("Changes saved successfully!");
-    setIsLoading(false);
-    setMode("view");
+    try {
+      setMode("view");
+      const res = updateModules()
+      toast.success("Changes saved successfully!");
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-
 
   const handleDeleteModule = () => {
     setIsDeleting(true);
@@ -264,46 +266,44 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                 </div>
               )}
               <div>
-
                 <div className="flex justify-between">
-                
                   {mode === "view" ? (
                     <div className="flex flex-col gap-2">
-                       <InfoWrapper label="Module Syllabus" icon={<Link2 size={18}/>}>
-                        
-                      <Link
-                        href={syllabusLink || "#"}
-                        className="text-lg font-semibold"
+                      <InfoWrapper
+                        label="Module Syllabus"
+                        icon={<Link2 size={18} />}
+                      >
+                        <Link
+                          href={syllabusLink || "#"}
+                          className="text-lg font-semibold hover:text-primary-bg"
                         >
-                        {syllabusLink !== ""? syllabusLabel :  "No Link Provided"} 
-                      </Link>
-                        </InfoWrapper>
+                          {syllabusLabel ? syllabusLabel : "No Link Provided"}
+                        </Link>
+                      </InfoWrapper>
                     </div>
                   ) : (
                     <EditInfo
-                    label="Module Syllabus"
-                    className="flex  gap-7  "
-                    icon={<Link2 size={18} />}
-                  >
-                    <div className="flex md:flex-row gap-10 flex-col ">
-
-                    <EditInfo label="Label" icon={<Text size={18} />} >
-
-                    <Input
-                      type="text"
-                      value={syllabusLink}
-                      placeholder="Enter link label"
-                      onChange={(e) => setSyllabusLink(e.target.value)}
-                      />
-                      </EditInfo>
-                      <EditInfo label="Link" icon={<Link2 size={18} />} >
-                    <Input
-                      type="text"
-                      value={syllabusLink}
-                       placeholder="Enter link"
-                      onChange={(e) => setSyllabusLink(e.target.value)}
-                      />
-                      </EditInfo>
+                      label="Module Syllabus"
+                      className="flex  gap-7  "
+                      icon={<Link2 size={18} />}
+                    >
+                      <div className="flex md:flex-row gap-10 flex-col ">
+                        <EditInfo label="Label" icon={<Text size={18} />}>
+                          <Input
+                            type="text"
+                            value={syllabusLabel}
+                            placeholder="Enter link label"
+                            onChange={(e) => setSyllabusLabel(e.target.value)}
+                          />
+                        </EditInfo>
+                        <EditInfo label="Link" icon={<Link2 size={18} />}>
+                          <Input
+                            type="text"
+                            value={syllabusLink}
+                            placeholder="Enter link"
+                            onChange={(e) => setSyllabusLink(e.target.value)}
+                          />
+                        </EditInfo>
                       </div>
                     </EditInfo>
                   )}

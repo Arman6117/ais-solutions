@@ -18,28 +18,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
-
-import {
   PencilIcon,
   RefreshCcw,
   Save,
   X,
-  Trash2,
+
   BookOpen,
   CalendarClock,
   BadgeIndianRupeeIcon,
   PercentCircle,
   Users,
-  AlertTriangle,
   Link2,
   Text,
 } from "lucide-react";
@@ -85,7 +73,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     module.syllabusLabel || ""
   );
   const [syllabusLink, setSyllabusLink] = useState(module.syllabusLink || "");
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+ 
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 

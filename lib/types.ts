@@ -271,3 +271,10 @@ export type prCourse = {
   courseEndDate: string;
   modules: prModule[] |string[];
 };
+
+export type Modules  = {
+  _id:string,
+  name?:string
+}
+
+export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import CourseModeSelector from "./course-mode-selector";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,7 @@ import {
   Calendar1,
   CalendarCheck,
   CalendarClock,
+  HardHat,
   IndianRupee,
   Percent,
   Text,
@@ -23,6 +24,9 @@ import {
 
 import { Mode } from "@/lib/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
+import { FaLevelUpAlt } from "react-icons/fa";
+import CourseLevelSelector from "./course-level-selector";
+import CourseModeSelector from "./course-mode-selector";
 
 const CreateCourseBasicInfo = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -37,6 +41,7 @@ const CreateCourseBasicInfo = () => {
     courseEndDate,
     courseThumbnail,
     courseSyllabusLink,
+    
     setBasicInfo,
   } = useCreateCourseStore();
 
@@ -235,6 +240,13 @@ const CreateCourseBasicInfo = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3  justify-center">
+            <div className="flex flex-col gap-3 justify-center">
+                <Label className="text-lg flex gap-2 items-center">
+                  <HardHat className="size-6" />
+                  Course Level
+                </Label>
+                <CourseLevelSelector />
+              </div>
               <Label className="text-lg flex gap-2 items-center">
                 <CalendarClock />
                 Course Duration

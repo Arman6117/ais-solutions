@@ -13,7 +13,7 @@ const CreateCourse = () => {
       </div>
       <form className="flex flex-col gap-7">
         <CreateCourseBasicInfo />
-        <CreateCourseInstructors />
+        {/* <CreateCourseInstructors /> */}
         <CreateCourseModules />
        <CreateCourseButton/>
       </form>

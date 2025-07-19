@@ -11,5 +11,6 @@ export const courseSchema = z.object({
   courseStartDate: z.string(),
   courseEndDate: z.string(),
   courseMode: z.enum(["online", "offline", "hybrid"]),
+  courseLevel: z.enum(["beginner", "intermediate", "advanced"]),
   modules: z.array(z.string()).optional(), // array of module IDs
 });

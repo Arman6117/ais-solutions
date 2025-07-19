@@ -19,7 +19,7 @@ type createCourseProps = {
   courseThumbnail: File | null;
   courseStartDate: string | undefined;
   courseEndDate: string | undefined;
-  modules: string[];
+  modules?: string[];
 };
 export const createCourse = async (data: createCourseProps) => {
   try {

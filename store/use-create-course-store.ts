@@ -1,4 +1,4 @@
-import { DummyInstructors, prModule, Mode, prInstructors, } from "@/lib/types";
+import { DummyInstructors, prModule, Mode, prInstructors, Modules, CourseLevel, } from "@/lib/types";
 import { create } from "zustand";
 
 interface CourseFormState {
@@ -8,13 +8,14 @@ interface CourseFormState {
   courseDiscount: number;
   courseOfferPrice: number;
   courseMode: Mode;
+  courseLevel: CourseLevel;
   courseThumbnail?: File | null | string;
   courseStartDate: Date | null;
   courseEndDate: Date | null;
   courseSyllabusLink?: string; // ✅ Add this
 
   instructors: prInstructors[];
-  modules: prModule[] | string[];
+  modules:  Modules[];
 
   setBasicInfo: (
     info: Partial<Omit<CourseFormState, "instructors" | "modules">>
@@ -22,7 +23,7 @@ interface CourseFormState {
   setInstructors: (
     updater: prInstructors[] | ((prev: prInstructors[]) => prInstructors[])
   ) => void;
-  setModules: (modules: prModule[]) => void;
+  setModules: (modules: Modules[]) => void;
 
   resetCourseForm: () => void;
 }
@@ -32,6 +33,7 @@ export const useCreateCourseStore = create<CourseFormState>((set) => ({
   courseName: "",
   courseDescription: "",
   courseMode: "online",
+  courseLevel: "beginner",
   courseDiscount: 0,
   coursePrice: 0,
   courseOfferPrice: 0,

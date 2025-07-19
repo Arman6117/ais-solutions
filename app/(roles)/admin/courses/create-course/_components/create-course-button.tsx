@@ -19,6 +19,7 @@ const CreateCourseButton = () => {
     courseStartDate,
     courseEndDate,
     courseMode,
+    courseLevel,
     courseSyllabusLink: syllabusLink,
     instructors,
     modules,
@@ -30,7 +31,7 @@ const CreateCourseButton = () => {
     setIsCreating(true);
     try {
       const mid = modules.map((module) =>
-        typeof module === "string" ? module : module.id
+        typeof module === "string" ? module : module._id
       );
       const data = {
         courseName,
@@ -42,9 +43,10 @@ const CreateCourseButton = () => {
         courseStartDate: courseStartDate?.toISOString(), // Convert Date to string
         courseEndDate: courseEndDate?.toISOString(), // Convert Date to string
         courseMode,
+        courseLevel,
         modules: mid, // Stringify array of ids
         courseThumbnail: courseThumbnail as File,
-        // Extract url if it's an object
+      
       };
       console.log(data)
 

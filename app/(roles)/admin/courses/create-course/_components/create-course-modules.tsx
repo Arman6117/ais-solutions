@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import AddModuleButton from "@/components/add-module-button";
 import SelectedModulesAccordion from "./selected-modules-accoridian";
@@ -11,11 +11,29 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { DummyModules } from "@/lib/types";
+import { DummyModules, Modules } from "@/lib/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
+import { getAllModulesNames } from "@/actions/admin/modules/get-modules";
 
 const CreateCourseModules = () => {
   const { modules, setModules } = useCreateCourseStore();
+  const [availableModules,setAvailableModule] = useState<Modules[]>([])
+  const fetchModule = async () => {
+      try {
+        const res = await getAllModulesNames()
+        if(res.success) {
+
+          setAvailableModule(res.data);      
+        } else {
+          setAvailableModule([])
+        }
+      } catch (error) {
+        console.log(error)
+      }
+  }
+  useEffect(()=> {
+      fetchModule()
+  },[])
 
   return (
     <Card>
@@ -29,11 +47,11 @@ const CreateCourseModules = () => {
             <p>No modules added yet</p>
           </div>
         ) : (
-          <SelectedModulesAccordion modules={modules} />
+          <SelectedModulesAccordion data={availableModules} />
         )}
       </CardContent>
       <CardFooter>
-        <AddModuleButton setModules={setModules} />
+        <AddModuleButton modules={availableModules} setModules={setModules} />
       </CardFooter>
     </Card>
   );

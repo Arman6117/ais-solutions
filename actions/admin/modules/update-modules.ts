@@ -16,6 +16,7 @@ type ModulesData = {
   syllabusLink: string;
   syllabusLabel: string;
 };
+
 export const updateModules = async (data: ModulesData) => {
   try {
     await connectToDB();
@@ -30,14 +31,45 @@ export const updateModules = async (data: ModulesData) => {
       price,
     } = data;
 
-    if (!isValidObjectId(moduleId)) {
+    if (!moduleId || !isValidObjectId(moduleId)) {
       return { success: false, message: "Invalid module id" };
     }
 
     const module = await Module.findById(new ObjectId(moduleId));
-    if(name !== undefined) module.name = name;
-    if(price !== undefined) module.price = price;
-    if(discount !== undefined) module.discount = discount;
-    if(description !== undefined) module.description = description
-  } catch (error) {}
+    if (!module) {
+      return { success: false, message: "Module not found" };
+    }
+
+    if (name !== undefined) module.name = name;
+    if (price !== undefined) module.price = price;
+    if (discount !== undefined) module.discount = discount;
+    if (description !== undefined) module.description = description;
+    if (syllabusLink !== undefined) module.syllabusLink = syllabusLink;
+    if (syllabusLabel !== undefined) module.syllabusLabel = syllabusLabel;
+
+    if (chapters !== undefined) {
+      module.chapters = chapters.map((chapter) => ({
+        name: chapter.name,
+        description: chapter.description,
+        topics:
+          chapter.topics?.map((topic) => ({
+            title: topic.title,
+            description: topic.description,
+          })) || [],
+      }));
+    }
+
+    await module.save();
+
+    return {
+      success: true,
+      message: "Module updated successfully",
+    };
+  } catch (error) {
+    console.error("[UPDATE_MODULE_ERROR]", error);
+    return {
+      success: false,
+      message: "Something went wrong while updating the module",
+    };
+  }
 };

@@ -3,21 +3,23 @@
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 type Props = {
   onDelete: (ids: string[]) => void;
   selectedIds?: string[];
   singleId?: string;
+  className?:string
 };
 
-export default function DeleteDialog({ onDelete, selectedIds = [], singleId }: Props) {
+export default function DeleteDialog({ onDelete, selectedIds = [], singleId ,className}: Props) {
   const idsToDelete = singleId ? [singleId] : selectedIds;
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
-          className={singleId ? "p-2 hover:bg-destructive rounded-full cursor-pointer hover:text-white" : "cursor-pointer"}
+          className={cn(singleId ? "p-2 hover:bg-destructive rounded-full cursor-pointer hover:text-white" : "cursor-pointer",className )}
           variant={singleId ? "outline" : "destructive"}
           size={singleId ? "icon" : "sm"}
         >

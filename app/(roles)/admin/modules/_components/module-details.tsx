@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { updateModules } from "@/actions/admin/modules/update-modules";
+import DeleteDialog from "@/components/delete-selected-dialog";
+import { deleteModules } from "@/actions/admin/modules/delete-module";
 
 type ModuleDetailsProps = {
   module: prModule | undefined;
@@ -91,35 +93,57 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
     setOfferPrice(price - (price * discount) / 100);
   }, [price, discount]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsLoading(true);
     try {
-      setMode("view");
-      const res = updateModules()
-      toast.success("Changes saved successfully!");
+      const res = await updateModules({
+        syllabusLabel,
+        syllabusLink,
+        chapters: chapter,
+        description,
+        discount,
+        moduleId: module._id,
+        name,
+        price,
+      });
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success("Changes saved successfully!");
+        setMode("view");
+      }
     } catch (error) {
+      toast.error("Something went wrong while updating..");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDeleteModule = () => {
+  const handleDeleteModule = async () => {
     setIsDeleting(true);
-    setTimeout(() => {
+    try {
+      const res = await deleteModules(module._id);
+      if (res.success) {
+        toast.success("Module deleted successfully");
+        router.push("/admin/modules");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong while deleting module");
+    } finally {
       setIsDeleting(false);
-      setShowDeleteDialog(false);
-      toast.success("Module deleted successfully");
-      router.back();
-    }, 1000);
+    }
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
       <div className="flex flex-col w-full">
-        <Card className="px-2">
+        <Card className="px py-0">
           <CardHeader
             className={cn(
-              "bg-gray-50 border-b",
+              "bg-gray-50 border-b p-5",
               mode === "view" && "bg-primary-bg rounded-lg text-white"
             )}
           >
@@ -161,13 +185,18 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
                       <PencilIcon size={16} className="mr-1" />
                       Edit
                     </Button>
-                    <Button
+                    <DeleteDialog
+                      className="text-white bg-destructive border-none"
+                      singleId={module._id}
+                      onDelete={handleDeleteModule}
+                    />
+                    {/* <Button
                       variant="destructive"
                       onClick={() => setShowDeleteDialog(true)}
                     >
                       <Trash2 size={16} className="mr-1" />
                       Delete
-                    </Button>
+                    </Button> */}
                   </>
                 )}
               </div>
@@ -321,30 +350,6 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
           </CardContent>
         </Card>
       </div>
-
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-red-600 flex gap-2 items-center">
-              <AlertTriangle size={18} />
-              Delete Module
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the module. Are you sure?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700 text-white"
-              onClick={handleDeleteModule}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete Module"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };

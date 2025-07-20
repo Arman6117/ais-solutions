@@ -11,7 +11,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { DummyModules, Modules } from "@/lib/types";
+import {  Modules } from "@/lib/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 import { getAllModulesNames } from "@/actions/admin/modules/get-modules";
 

@@ -28,10 +28,12 @@ const AddModuleButton = ({ setModules,modules }: AddModuleButtonProps) => {
   const [selectedModules, setSelectedModules] = useState<Modules[]>([]);
   
   const filteredModules = useMemo(() => {
+    const trimmedSearch = search.trim().toLowerCase();
+    if (!trimmedSearch) return modules; 
     return modules.filter((module) =>
-      module.name?.toLowerCase().includes(search.trim().toLowerCase())
+      module.name?.toLowerCase().includes(trimmedSearch)
     );
-  }, [search]);
+  }, [search, modules]);
 
   const toggleModule = (module: Modules) => {
     const exists = selectedModules.some((m) => m._id === module._id);

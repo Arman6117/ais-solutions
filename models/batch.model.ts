@@ -42,6 +42,8 @@ const batchSchema = new Schema(
     instructors: [{ type: Schema.Types.ObjectId, ref: "Instructors" }],
     meetings: [{ type: Schema.Types.ObjectId, ref: "Meetings" }],
     modules: { type: [moduleSchema], required: true },
+    courseId: { type: Schema.Types.ObjectId, ref: "Course", required: true, index: true },
+
     notes: [{ type: Schema.Types.ObjectId, ref: "Notes" }],
     students: [{ type: Schema.Types.ObjectId, ref: "Students" }],
   },
@@ -55,5 +57,6 @@ batchSchema.index({ students: 1 });
 batchSchema.index({ instructors: 1 });
 batchSchema.index({ meetings: 1 });
 batchSchema.index({ notes: 1 });
+batchSchema.index({ courseId: 1 });
 
 export const Batch = models.Batch || model("Batch", batchSchema);

@@ -47,7 +47,7 @@ const CreateCourseModules = () => {
             <p>No modules added yet</p>
           </div>
         ) : (
-          <SelectedModulesAccordion data={availableModules} />
+          <SelectedModulesAccordion data={modules} />
         )}
       </CardContent>
       <CardFooter>

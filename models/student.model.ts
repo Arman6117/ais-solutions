@@ -21,8 +21,8 @@ const StudentSchema = new Schema(
       },
     ],
 
-    batches: [{ bid: { type: String, required: true, index: true } }],
-    invoices: [{ iid: { type: String, required: true, index: true } }],
+    batches: [{ bid: { type: Schema.Types.ObjectId,ref:"Batch", required: true, index: true } }],
+    invoices: [{ iid: {  type: Schema.Types.ObjectId,ref:"Invoice" ,required: true, index: true } }],
   },
   {
     timestamps: true,

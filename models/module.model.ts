@@ -2,8 +2,8 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
 const topicSchema = new Schema({
-  title: { type: String, },
-  description: { type: String, },
+  title: { type: String },
+  description: { type: String },
 });
 
 const chapterSchema = new Schema({
@@ -21,13 +21,15 @@ const moduleSchema = new Schema(
     price: { type: Number, required: true },
     discount: { type: Number },
     chapters: [chapterSchema],
-    courseId: [{ type: String, ref: "Course", required: true }],
-    batchId: [{ type: String, ref: "Batch", required: true }],
-    rating:{ type: Number, default: 0, min: 0, max: 5 },
+    courseId: [{ type: Schema.Types.ObjectId, ref: "Course", required: true }],
+    batchId: [{ type: Schema.Types.ObjectId, ref: "Batch", required: true }],
+    rating: { type: Number, default: 0, min: 0, max: 5 },
   },
   {
     timestamps: true,
   }
 );
+moduleSchema.index({ courseId: 1 });
+moduleSchema.index({ batchId: 1 });
 
 export const Module = models.Module || model("Module", moduleSchema);

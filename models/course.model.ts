@@ -22,12 +22,13 @@ const CourseSchema = new Schema(
       required: true,
     },
     numberOfStudents: { type: Number, default: 0, required: true }, 
-    modules: [{ type: String, ref: "Module", index: true }],
-    batches: [{ type: String, ref: "Batch", default: [], index: true }],
+    modules: [{ type: Schema.Types.ObjectId, ref: "Module" }],
+    batches: [{ type: String, ref: "Batch", default: [] }],
     rating:{type:Number, default: 0, min: 0, max: 5},
     // comments:[{}]
   },
   { timestamps: true }
 );
-
+CourseSchema.index({modules:1})
+CourseSchema.index({ batches: 1 });
 export const Course = models.Course || model("Course", CourseSchema);

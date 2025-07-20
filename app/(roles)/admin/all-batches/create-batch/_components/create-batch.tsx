@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,19 +15,62 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import InstructorsCards from "@/components/instructors-cards";
 import AddInstructorButton from "../../../courses/_components/add-instructor-button";
-
-
-
+import { getCourses } from "@/actions/admin/course/get-courses";
+import AddModuleButton from "@/components/add-module-button";
+import { Modules } from "@/lib/types";
+import SelectedModulesAccordion from "../../../courses/create-course/_components/selected-modules-accoridian";
+import { getModulesByCourseId } from "@/actions/admin/modules/get-modules";
 
 export default function CreateBatch() {
   const [instructors, setInstructors] = useState<any[]>([]);
-  const [modules, setModules] = useState([]);
+  const [modules, setModules] = useState<Modules[]>([]);
+  const [availableModules, setAvailableModules] = useState<Modules[]>([]);
+  const [courseId, setCourseId] = useState<string>("");
+  const [courseList, setCourseList] = useState<{ id: string; name: string }[]>(
+    []
+  );
 
-   
+  const [batchData, setBatchData] = useState({
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    status: "upcoming",
+    courseId: "",
+  });
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const res = await getCourses();
+      setCourseList(res);
+    };
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchModules = async () => {
+      const result = await getModulesByCourseId(courseId);
+      if (result.success) {
+        setAvailableModules(result.data!);
+      } else {
+        setAvailableModules([]);
+      }
+    };
+    fetchModules();
+  }, [courseId]);
+  const handleInputChange = (field: string, value: string) => {
+    setBatchData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="w-full p-6">
@@ -38,7 +82,6 @@ export default function CreateBatch() {
       </div>
 
       <div className="grid w-full grid-cols-1 lg:grid-cols-3 gap-6">
-      
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -47,10 +90,38 @@ export default function CreateBatch() {
                 Fill in the basic information about the batch
               </CardDescription>
             </CardHeader>
+
             <CardContent className="space-y-4">
+              {/* Course Selector */}
+              <div className="space-y-2">
+                <Label>Course</Label>
+                <Select
+                  onValueChange={(value) => {
+                    setCourseId(value);
+                    handleInputChange("courseId", value);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courseList.map((course) => (
+                      <SelectItem key={course.id} value={course.id}>
+                        {course.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="name">Batch Name</Label>
-                <Input id="name" placeholder="Enter batch name" />
+                <Input
+                  id="name"
+                  placeholder="Enter batch name"
+                  value={batchData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
@@ -59,6 +130,10 @@ export default function CreateBatch() {
                   id="description"
                   placeholder="Enter batch description"
                   className="min-h-32"
+                  value={batchData.description}
+                  onChange={(e) =>
+                    handleInputChange("description", e.target.value)
+                  }
                 />
               </div>
 
@@ -66,7 +141,14 @@ export default function CreateBatch() {
                 <div className="space-y-2">
                   <Label htmlFor="start-date">Start Date</Label>
                   <div className="relative">
-                    <Input id="start-date" type="date" />
+                    <Input
+                      id="start-date"
+                      type="date"
+                      value={batchData.startDate}
+                      onChange={(e) =>
+                        handleInputChange("startDate", e.target.value)
+                      }
+                    />
                     <Calendar className="absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
                   </div>
                 </div>
@@ -74,7 +156,14 @@ export default function CreateBatch() {
                 <div className="space-y-2">
                   <Label htmlFor="end-date">End Date</Label>
                   <div className="relative">
-                    <Input id="end-date" type="date" />
+                    <Input
+                      id="end-date"
+                      type="date"
+                      value={batchData.endDate}
+                      onChange={(e) =>
+                        handleInputChange("endDate", e.target.value)
+                      }
+                    />
                     <Calendar className="absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
                   </div>
                 </div>
@@ -84,12 +173,12 @@ export default function CreateBatch() {
                 <Label>Status</Label>
                 <div className="flex items-center">
                   <Badge className="bg-amber-500 hover:bg-amber-600">
-                    Upcoming
+                    {batchData.status}
                   </Badge>
                 </div>
               </div>
 
-              {/* Instructors Card */}
+              {/* Instructors */}
               <Card>
                 <CardHeader>
                   <CardTitle>Instructors</CardTitle>
@@ -105,39 +194,32 @@ export default function CreateBatch() {
                       </div>
                     </div>
                   ) : (
-                    // Force remount with key to ensure refresh when array changes
-                    <div key={instructors.length}>
-                      <InstructorsCards
-                        instructors={instructors}
-                        label="Batch"
-                        mode="create"
-                      />
-                    </div>
+                    <InstructorsCards
+                      key={instructors.length}
+                      instructors={instructors}
+                      label="Batch"
+                      mode="create"
+                    />
                   )}
                 </CardContent>
                 <CardFooter>
                   <AddInstructorButton
                     setInstructor={(newInstructor) => {
-                      // Use object for single instructor, array updater for array
                       if (typeof newInstructor === "function") {
                         setInstructors(newInstructor);
                       } else {
                         setInstructors((prev) => [...prev, newInstructor]);
                       }
-                      console.log("Instructor added:", newInstructor);
                     }}
                   />
                 </CardFooter>
               </Card>
             </CardContent>
           </Card>
-
-          
         </div>
 
-        {/* Sidebar with Modules */}
+        {/* Modules Sidebar */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Modules */}
           <Card>
             <CardHeader>
               <CardTitle>Modules</CardTitle>
@@ -149,15 +231,14 @@ export default function CreateBatch() {
                   <p>No modules added yet</p>
                 </div>
               ) : (
-                <div>{/* Module list would go here */}</div>
+                <SelectedModulesAccordion data={modules} />
               )}
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-primary-bg">Add Modules</Button>
+              <AddModuleButton modules={availableModules} setModules={setModules} />
             </CardFooter>
           </Card>
 
-          {/* Create Batch Button */}
           <Button className="w-full bg-primary-bg" size="lg">
             Create Batch
           </Button>

@@ -1,11 +1,12 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { ChapterInput, prModule } from "@/lib/types";
+import { ChapterInput, Modules, prModule } from "@/lib/types";
 import { Module } from "@/models/module.model";
 import { format } from "date-fns";
 import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
+import { Course } from "@/models/course.model";
 
 type ModuleTableData = {
   id: string;
@@ -85,20 +86,21 @@ export const getModuleById = async (id: string) => {
           })) || [],
       })) || [];
 
-    const cleanedModule:prModule = {
-      _id: `${module._id}`,
-      name: module.name as string,
-      courseId: module.courseId as string[],
-      syllabusLabel: module.syllabusLabel as string,
-      syllabusLink: module.syllabusLink as string,
-      batchId: module.batchId as string[],
-      description: module.description as string,
-      price: Number(module.price),
-      discount: Number(module.discount),
-      rating: Number(module.rating),
-      createdAt: format(module.createdAt, "PP"),
-      chapters: sanitizedChapters,
-    }||[];
+    const cleanedModule: prModule =
+      {
+        _id: `${module._id}`,
+        name: module.name as string,
+        courseId: module.courseId as string[],
+        syllabusLabel: module.syllabusLabel as string,
+        syllabusLink: module.syllabusLink as string,
+        batchId: module.batchId as string[],
+        description: module.description as string,
+        price: Number(module.price),
+        discount: Number(module.discount),
+        rating: Number(module.rating),
+        createdAt: format(module.createdAt, "PP"),
+        chapters: sanitizedChapters,
+      } || [];
 
     return { success: true, data: cleanedModule };
   } catch (error) {
@@ -134,5 +136,40 @@ export const getAllModulesNames = async () => {
   } catch (error) {
     console.log("Something went wrong");
     return { success: false, data: [] };
+  }
+};
+
+export const getModulesByCourseId = async (courseId: string) => {
+  try {
+    await connectToDB();
+
+    if (!isValidObjectId(courseId)) {
+      return { success: false, message: "Invalid course ID" };
+    }
+
+    const course = await Course.findById(new Object(courseId));
+
+    if (!course) {
+      return { success: false, message: "Course not found" };
+    }
+
+    // Fetch all module documents by their IDs
+    const data = await Module.find<Modules>(
+      { _id: { $in: course.modules } },
+      { _id: 1, name: 1 }
+    );
+   const modules = data.map((mod)=> {
+    return {
+      _id:mod._id,
+      name:mod.name
+    }
+   })
+    return {
+      success: true,
+      data: modules,
+    };
+  } catch (error) {
+    console.error("[getModuleByCourseId]", error);
+    return { success: false, message: "Something went wrong" };
   }
 };

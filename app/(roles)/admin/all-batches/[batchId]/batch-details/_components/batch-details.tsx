@@ -5,9 +5,7 @@ import { useEffect, useState } from "react";
 
 import InfoWrapper from "@/components/info-wrapper";
 import BatchStudentTable from "./batch-student-table";
-import InstructorsCards from "../../../../../../components/instructors-cards";
-import ModulesCard from "../../../../../../components/modules-card";
-import StatusCard from "../../../../../../components/status-card";
+
 import EditInfo from "@/components/edit-info";
 import BatchMeetings from "./batch-meetings";
 import BatchStatusSelector from "./batch-status-selector";
@@ -45,6 +43,9 @@ import Link from "next/link";
 import { MdBookOnline } from "react-icons/md";
 import BatchModeSelector from "./batch-mode-selector";
 import BatchTypeSelector from "./batch-type-selector";
+import InstructorsCards from "@/components/instructors-cards";
+import ModulesCard from "@/components/modules-card";
+import StatusCard from "@/components/status-card";
 type BatchDetailsProps = {
   batch: DummyBatches | undefined;
   dummyModules: string[];
@@ -87,7 +88,7 @@ const BatchDetails = ({
   );
   const [whatsappLink, setWhatsappLink] = useState(batch.whatsappLink || "");
 
-  const [students, setStudents] = useState(dummyStudents || []);
+
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
   const [batchMode, setBatchMode] = useState<Mode>("hybrid");

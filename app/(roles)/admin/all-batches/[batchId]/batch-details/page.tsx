@@ -1,6 +1,6 @@
 import { dummyBatches, dummyInstructors, dummyStudents } from "@/lib/static";
 import React from "react";
-import BatchDetails from "../../../_components/batch-details";
+import BatchDetails from "./_components/batch-details";
 
 export const batchModules = [
   "HTML & CSS Basics",
@@ -14,9 +14,9 @@ export const batchModules = [
 const BatchDetailsPage = async ({
   params,
 }: {
-  params: Promise<{ id: string,courseId:string }>;
+  params: Promise<{ batchId: string,courseId:string }>;
 }) => {
-  const id = (await params).id;
+  const id = (await params).batchId;
   const courseId = (await params).courseId;
   const batch = dummyBatches.find((batch) => batch.id === id);
   const students = dummyStudents.filter((stud) => stud.batchId === id);

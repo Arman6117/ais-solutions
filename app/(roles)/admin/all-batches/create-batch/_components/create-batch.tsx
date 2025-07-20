@@ -15,8 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
-import AddInstructorButton from "../../../_components/add-instructor-button";
+
 import InstructorsCards from "@/components/instructors-cards";
+import AddInstructorButton from "../../../courses/_components/add-instructor-button";
 
 
 

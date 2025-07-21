@@ -6,16 +6,13 @@ export const batchSchema = z.object({
   startDate: z.string().min(1),
   endDate: z.string().min(1),
   groupLink: z.string().url(),
-  status: z.enum(["upcoming", "ongoing", "completed"]),
+  status: z.enum(["Upcoming", "Ongoing", "Completed"]),
   mode: z.enum(["offline", "hybrid", "online"]),
   type: z.enum(["weekdays", "weekend"]),
 
   courseId: z.string().length(24, "Invalid course ID"),
+  modules:z.array(z.object({_id:z.string(), name:z.string()})),
 
   
-  instructors: z.any().optional(),
-  meetings: z.any().optional(),
-  modules: z.any().optional(),
-  notes: z.any().optional(),
-  students: z.any().optional(),
+
 });

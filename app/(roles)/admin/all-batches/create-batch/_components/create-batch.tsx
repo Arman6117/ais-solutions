@@ -20,11 +20,15 @@ import InstructorsCards from "@/components/instructors-cards";
 import AddInstructorButton from "../../../courses/_components/add-instructor-button";
 
 import AddModuleButton from "@/components/add-module-button";
-import { Modules } from "@/lib/types";
+import { BatchType, Mode, Modules } from "@/lib/types";
 import SelectedModulesAccordion from "../../../courses/create-course/_components/selected-modules-accoridian";
 
 import CourseSelector from "./course-selector";
-
+import { createBatch } from "@/actions/admin/batches/create-batch";
+import TypeSelector from "./type-selector";
+import ModeSelector from "./mode-selector";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type CreateBatchProps = {
   courses: {
@@ -32,34 +36,84 @@ type CreateBatchProps = {
     name: string;
   }[];
 };
+
 export default function CreateBatch({ courses }: CreateBatchProps) {
   const [instructors, setInstructors] = useState<any[]>([]);
   const [modules, setModules] = useState<Modules[]>([]);
   const [availableModules, setAvailableModules] = useState<Modules[]>([]);
   const [courseId, setCourseId] = useState<string>("");
-
+  const [isCreating, setIsCreating] = useState(false);
+  const router = useRouter();
   const [batchData, setBatchData] = useState({
     name: "",
     description: "",
     startDate: "",
     endDate: "",
-    status: "upcoming",
+    status: "Upcoming",
     courseId: "",
+    mode: "offline",
+    type: "weekdays",
+    groupLink: "",
   });
+
   useEffect(() => {
     const fetchModules = async () => {
-      const res = await fetch(`/api/modules?courseId=${courseId}`);
-      const result = await res.json()
-      if (result.success) {
-        setAvailableModules(result.data!);
-      } else {
-        setAvailableModules([]);
+      if (!courseId) return;
+      try {
+        const res = await fetch(`/api/modules?courseId=${courseId}`);
+        const result = await res.json();
+        if (result.success) {
+          setAvailableModules(result.data);
+        } else {
+          setAvailableModules([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch modules:", error);
       }
     };
     fetchModules();
   }, [courseId]);
+
   const handleInputChange = (field: string, value: string) => {
     setBatchData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCreateBatch = async () => {
+    setIsCreating(true);
+    try {
+      const res = await createBatch({
+        name: batchData.name,
+        description: batchData.description,
+        courseId: batchData.courseId,
+        startDate: batchData.startDate,
+        endDate: batchData.endDate,
+        groupLink: batchData.groupLink,
+        mode: batchData.mode as Mode,
+        type: batchData.type as BatchType,
+        status: batchData.status as "Upcoming" | "Ongoing" | "Completed",
+        modules,
+      });
+
+      if (res.success) {
+        toast.success(res.message);
+        router.push("/admin/all-batches");
+      } else {
+        toast.error(res.message);
+      }
+      if (res.errors) {
+        console.log(res.errors)
+        toast.custom(() => (
+          <div className="bg-destructive text-white font-semibold p-2">
+            {Object.values(res.errors).join(",")}
+          </div>
+        ));
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error("Batch creation failed:", error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -86,7 +140,10 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
               <CourseSelector
                 courseList={courses}
                 handleInputChange={handleInputChange}
-                setCourseId={setCourseId}
+                setCourseId={(id) => {
+                  setCourseId(id);
+                  handleInputChange("courseId", id);
+                }}
                 setCourseList={() => {}}
               />
 
@@ -109,6 +166,18 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                   value={batchData.description}
                   onChange={(e) =>
                     handleInputChange("description", e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="groupLink">Group Link</Label>
+                <Input
+                  id="groupLink"
+                  placeholder="Enter group link"
+                  value={batchData.groupLink}
+                  onChange={(e) =>
+                    handleInputChange("groupLink", e.target.value)
                   }
                 />
               </div>
@@ -145,13 +214,15 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                 </div>
               </div>
 
+              <TypeSelector handleInputChange={handleInputChange} />
+
+              <ModeSelector handleInputChange={handleInputChange} />
+
               <div className="space-y-2">
                 <Label>Status</Label>
-                <div className="flex items-center">
-                  <Badge className="bg-amber-500 hover:bg-amber-600">
-                    {batchData.status}
-                  </Badge>
-                </div>
+                <Badge className="bg-amber-500 hover:bg-amber-600 capitalize">
+                  {batchData.status}
+                </Badge>
               </div>
 
               {/* Instructors */}
@@ -223,8 +294,13 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
             </CardFooter>
           </Card>
 
-          <Button className="w-full bg-primary-bg" size="lg">
-            Create Batch
+          <Button
+            className="w-full bg-primary-bg"
+            size="lg"
+            onClick={handleCreateBatch}
+            disabled={isCreating}
+          >
+            {isCreating ? "Creating Batch..." : "Create Batch"}
           </Button>
         </div>
       </div>

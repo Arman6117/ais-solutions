@@ -179,13 +179,13 @@ export type prStudentCourse = {
 };
 
 export type prBatch  = {
-  id: string;
+  _id?: string;
   name: string;
   schedule: string;
   time: string;
   students: number;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: string;
+  endDate: string;
   status: "Ongoing" | "Upcoming" | "Completed";
   whatsappLink?: string;
   type: Mode;

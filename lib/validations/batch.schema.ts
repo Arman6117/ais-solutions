@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Optional: You can use z.string().length(24) if you're validating ObjectId length
 export const batchSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
@@ -13,7 +12,7 @@ export const batchSchema = z.object({
 
   courseId: z.string().length(24, "Invalid course ID"),
 
-  // Skipping validation for below fields
+  
   instructors: z.any().optional(),
   meetings: z.any().optional(),
   modules: z.any().optional(),

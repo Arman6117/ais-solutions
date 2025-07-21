@@ -15,15 +15,17 @@ import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox"; // Add a Checkbox component from Shadcn UI
 
 import {  Modules } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 
 
 type AddModuleButtonProps = {
   modules:Modules[]
   setModules?: (modules: Modules[]) => void;
+  className?:string
 };
 
-const AddModuleButton = ({ setModules,modules }: AddModuleButtonProps) => {
+const AddModuleButton = ({className, setModules,modules }: AddModuleButtonProps) => {
   const [search, setSearch] = useState("");
   const [selectedModules, setSelectedModules] = useState<Modules[]>([]);
   
@@ -56,7 +58,7 @@ const AddModuleButton = ({ setModules,modules }: AddModuleButtonProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-primary-bg">Add Modules</Button>
+        <Button className={cn("bg-primary-bg ", className)}>Add Modules</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>

@@ -29,16 +29,24 @@ import { getCourses } from "@/actions/admin/course/get-courses";
 import AddModuleButton from "@/components/add-module-button";
 import { Modules } from "@/lib/types";
 import SelectedModulesAccordion from "../../../courses/create-course/_components/selected-modules-accoridian";
-import { getModulesByCourseId } from "@/actions/admin/modules/get-modules";
 
-export default function CreateBatch() {
+import CourseSelector from "./course-selector";
+
+
+type CreateBatchProps = {
+  courses: {
+    id: string;
+    name: string;
+  }[];
+};
+export default function CreateBatch({ courses }: CreateBatchProps) {
   const [instructors, setInstructors] = useState<any[]>([]);
   const [modules, setModules] = useState<Modules[]>([]);
   const [availableModules, setAvailableModules] = useState<Modules[]>([]);
   const [courseId, setCourseId] = useState<string>("");
-  const [courseList, setCourseList] = useState<{ id: string; name: string }[]>(
-    []
-  );
+  // const [courseList, setCourseList] = useState<{ id: string; name: string }[]>(
+  //   []
+  // );
 
   const [batchData, setBatchData] = useState({
     name: "",
@@ -48,18 +56,20 @@ export default function CreateBatch() {
     status: "upcoming",
     courseId: "",
   });
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await getCourses();
-      setCourseList(res);
-    };
-    fetchCourses();
-  }, []);
+  // const fetchCourses = async () => {
+  //   const res = await getCourses();
+  //   console.log(res);
+  //   setCourseList(res);
+  // };
+  // useEffect(() => {
+  //   fetchCourses();
+  // }, []);
 
   useEffect(() => {
     const fetchModules = async () => {
-      const result = await getModulesByCourseId(courseId);
+      const res = await fetch(`/api/modules?courseId=${courseId}`);
+      const result = await res.json();
+      console.log(result)
       if (result.success) {
         setAvailableModules(result.data!);
       } else {
@@ -93,26 +103,12 @@ export default function CreateBatch() {
 
             <CardContent className="space-y-4">
               {/* Course Selector */}
-              <div className="space-y-2">
-                <Label>Course</Label>
-                <Select
-                  onValueChange={(value) => {
-                    setCourseId(value);
-                    handleInputChange("courseId", value);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {courseList.map((course) => (
-                      <SelectItem key={course.id} value={course.id}>
-                        {course.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <CourseSelector
+                courseList={courses}
+                handleInputChange={handleInputChange}
+                setCourseId={setCourseId}
+                setCourseList={() => {}}
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="name">Batch Name</Label>
@@ -235,7 +231,15 @@ export default function CreateBatch() {
               )}
             </CardContent>
             <CardFooter>
-              <AddModuleButton modules={availableModules} setModules={setModules} />
+              <AddModuleButton
+                className={
+                  courseId
+                    ? ""
+                    : "cursor-not-allowed pointer-events-none bg-primary-bg/40"
+                }
+                modules={availableModules}
+                setModules={setModules}
+              />
             </CardFooter>
           </Card>
 

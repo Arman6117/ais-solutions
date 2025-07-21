@@ -139,37 +139,3 @@ export const getAllModulesNames = async () => {
   }
 };
 
-export const getModulesByCourseId = async (courseId: string) => {
-  try {
-    await connectToDB();
-
-    if (!isValidObjectId(courseId)) {
-      return { success: false, message: "Invalid course ID" };
-    }
-
-    const course = await Course.findById(new Object(courseId));
-
-    if (!course) {
-      return { success: false, message: "Course not found" };
-    }
-
-    // Fetch all module documents by their IDs
-    const data = await Module.find<Modules>(
-      { _id: { $in: course.modules } },
-      { _id: 1, name: 1 }
-    );
-   const modules = data.map((mod)=> {
-    return {
-      _id:mod._id,
-      name:mod.name
-    }
-   })
-    return {
-      success: true,
-      data: modules,
-    };
-  } catch (error) {
-    console.error("[getModuleByCourseId]", error);
-    return { success: false, message: "Something went wrong" };
-  }
-};

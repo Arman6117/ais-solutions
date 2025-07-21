@@ -15,17 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import InstructorsCards from "@/components/instructors-cards";
 import AddInstructorButton from "../../../courses/_components/add-instructor-button";
-import { getCourses } from "@/actions/admin/course/get-courses";
+
 import AddModuleButton from "@/components/add-module-button";
 import { Modules } from "@/lib/types";
 import SelectedModulesAccordion from "../../../courses/create-course/_components/selected-modules-accoridian";
@@ -44,9 +37,6 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
   const [modules, setModules] = useState<Modules[]>([]);
   const [availableModules, setAvailableModules] = useState<Modules[]>([]);
   const [courseId, setCourseId] = useState<string>("");
-  // const [courseList, setCourseList] = useState<{ id: string; name: string }[]>(
-  //   []
-  // );
 
   const [batchData, setBatchData] = useState({
     name: "",
@@ -56,20 +46,10 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
     status: "upcoming",
     courseId: "",
   });
-  // const fetchCourses = async () => {
-  //   const res = await getCourses();
-  //   console.log(res);
-  //   setCourseList(res);
-  // };
-  // useEffect(() => {
-  //   fetchCourses();
-  // }, []);
-
   useEffect(() => {
     const fetchModules = async () => {
       const res = await fetch(`/api/modules?courseId=${courseId}`);
-      const result = await res.json();
-      console.log(result)
+      const result = await res.json()
       if (result.success) {
         setAvailableModules(result.data!);
       } else {

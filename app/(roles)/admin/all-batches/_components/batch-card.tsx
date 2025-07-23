@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { getStatusColor } from "@/lib/utils";
 
-import { Calendar, ChevronRight, Clock, Users } from "lucide-react";
+import { Calendar, CalendarDays, ChevronRight, Clock, Users } from "lucide-react";
+import { CourseBatch } from "@/lib/types";
 
 type BatchCardProps = {
-  batch: any;
+  batch: CourseBatch;
   courseId: string;
 };
 const BatchCard = ({ batch, courseId }: BatchCardProps) => {
@@ -35,8 +36,8 @@ const BatchCard = ({ batch, courseId }: BatchCardProps) => {
         </div>
 
         <div className="flex items-center text-sm text-gray-600">
-          <Users size={16} className="mr-3 text-primary-bg" />
-          <span>{batch.studentsCount} Students</span>
+          <CalendarDays size={16} className="mr-3 text-primary-bg" />
+          <span>Type: {batch.type} </span>
         </div>
 
         <div className="flex items-center text-sm text-gray-600">
@@ -47,7 +48,7 @@ const BatchCard = ({ batch, courseId }: BatchCardProps) => {
 
       <Button className="w-full cursor-pointer bg-primary-bg  " asChild>
         <Link
-          href={`/admin/courses/batch-details/${courseId}/batch/${batch.id}?mode=view`}
+          href={`/admin/courses/batch-details/${courseId}/batch/${batch._id}?mode=view`}
         >
           View Details
           <ChevronRight size={16} className="ml-2" />

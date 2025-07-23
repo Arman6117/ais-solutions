@@ -178,7 +178,7 @@ export type prStudentCourse = {
   isApproved: boolean;
 };
 
-export type prBatch  = {
+export type prBatch = {
   _id?: string;
   name: string;
   schedule: string;
@@ -190,7 +190,7 @@ export type prBatch  = {
   whatsappLink?: string;
   type: Mode;
   typeOfBatch: BatchType;
-}
+};
 export type prStudent = {
   id: string;
   name: string;
@@ -209,12 +209,12 @@ export type prChapter = {
   moduleId: string;
 };
 export type prModule = {
-  _id:string;
+  _id: string;
   name: string;
   description: string;
   price: number;
   discount: number;
-  offerPrice?: number
+  offerPrice?: number;
   rating: number;
   syllabusLink?: string;
   syllabusLabel?: string;
@@ -266,15 +266,25 @@ export type prCourse = {
   courseDiscount: number;
   courseOfferPrice: number;
   courseMode: Mode;
-  courseThumbnail:string | File | null | undefined
-  courseStartDate:string ;
+  courseThumbnail: string | File | null | undefined;
+  courseStartDate: string;
   courseEndDate: string;
-  modules: prModule[] |string[];
+  modules: prModule[] | string[];
 };
 
-export type Modules  = {
-  _id:string,
-  name?:string
-}
+export type Modules = {
+  _id: string;
+  name?: string;
+};
 
-export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'
+export type CourseLevel = "beginner" | "intermediate" | "advanced";
+
+export type CourseBatch = {
+  _id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  status: "Ongoing" | "Upcoming" | "Completed";
+  type: BatchType;
+  instructor: string;
+};

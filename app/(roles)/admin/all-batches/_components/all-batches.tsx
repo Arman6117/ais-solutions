@@ -1,19 +1,26 @@
 "use client";
 import { useState } from "react";
 import CourseSection from "./course-section";
-import { coursesWithBatches } from "@/lib/static";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import CourseFilterSelect from "./course-filter-select";
+import { BatchType, CourseBatch } from "@/lib/types";
 
-export default function AllBatchesPage() {
+type AllBatchesProps = {
+  data: {
+    id: string;
+    courseName: string;
+    batches: CourseBatch[];
+  }[];
+};
+export default function AllBatches({ data }: AllBatchesProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [courseFilter, setCourseFilter] = useState("All");
 
-  const filteredCourses = coursesWithBatches
+  const filteredCourses = data
     .filter((course) => {
-      return courseFilter === "All" || course.name === courseFilter;
+      return courseFilter === "All" || course.courseName === courseFilter;
     })
     .map((course) => {
       const filteredBatches = course.batches.filter((batch) => {
@@ -57,7 +64,9 @@ export default function AllBatchesPage() {
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-wrap gap-3">
-          <span className="text-sm font-medium text-gray-700 mr-2 self-center">Status:</span>
+          <span className="text-sm font-medium text-gray-700 mr-2 self-center">
+            Status:
+          </span>
           {["All", "Ongoing", "Upcoming", "Completed"].map((status) => (
             <Button
               key={status}
@@ -80,7 +89,9 @@ export default function AllBatchesPage() {
         ))
       ) : (
         <div className="text-center py-10 bg-white rounded-lg shadow-md">
-          <div className="text-gray-500 mb-2">No batches found matching your criteria.</div>
+          <div className="text-gray-500 mb-2">
+            No batches found matching your criteria.
+          </div>
           <Button
             className="text-primary-bg hover:underline"
             onClick={() => {

@@ -1,10 +1,14 @@
 import React from "react";
-import AllBatches from "./_components/all-batches";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { getAllBatches } from "@/actions/admin/batches/get-all-batches";
+import AllBatches from "./_components/all-batches";
 
-const AllBatchesPage = () => {
+const AllBatchesPage = async() => {
+  const res = await getAllBatches()
+  
   return (
     <main className="p-3 w-full">
       <div className="flex flex-col gap-10">
@@ -20,7 +24,7 @@ const AllBatchesPage = () => {
             </Link>
           </Button>
         </div>
-        <AllBatches />
+        <AllBatches data = {res.data} />
       </div>
     </main>
   );

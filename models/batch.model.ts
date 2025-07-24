@@ -6,7 +6,7 @@ const moduleSchema = new Schema(
     name: { type: String, required: true },
     startDate: { type: String},
     endDate: { type: String },
-    instructor: { type: String},
+    instructor:[ { type: String}],
     status: {
       type: String,
       enum: ["Upcoming", "Ongoing", "Completed"],

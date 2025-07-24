@@ -288,3 +288,32 @@ export type CourseBatch = {
   type: BatchType;
   instructor: string;
 };
+
+
+export type BatchModules = {
+  id:string,
+  name:string,
+  startDate:string,
+  endDate:string,
+  instructor:string[],
+  status: "Ongoing" | "Upcoming" | "Completed";
+  numberOfStudent:number
+}
+
+export type Batch = {
+  _id:string,
+  name:string,
+  description:string,
+  startDate:string,
+  endDate:string,
+  groupLink:string,
+  status:"Upcoming"| "Ongoing"| "Completed",
+  mode:Mode,
+  type:BatchType,
+  instructors:string;
+  // meetings:string[],
+  // modules:BatchModules[],
+  courseId:string[],
+  // notes:string[],
+  // students:string[]
+}

@@ -1,6 +1,7 @@
-import { dummyBatches, dummyInstructors, dummyStudents } from "@/lib/static";
+import {  dummyInstructors, dummyStudents } from "@/lib/static";
 import React from "react";
 import BatchDetails from "./_components/batch-details";
+import { getBatchById } from "@/actions/admin/batches/get-batch-by-id";
 
 export const batchModules = [
   "HTML & CSS Basics",
@@ -18,13 +19,19 @@ const BatchDetailsPage = async ({
 }) => {
   const id = (await params).batchId;
   const courseId = (await params).courseId;
-  const batch = dummyBatches.find((batch) => batch.id === id);
+  const  res = await getBatchById(id);
   const students = dummyStudents.filter((stud) => stud.batchId === id);
  
+  if(!res.success) {
+    return (
+      <h1>No batch</h1>
+    )
+  }
   return (
     <main className="w-screen flex">
+    
       <BatchDetails
-        batch={batch}
+        batch={res.data!}
         dummyInstructors={dummyInstructors}
         dummyModules={batchModules}
         dummyStudents={students}

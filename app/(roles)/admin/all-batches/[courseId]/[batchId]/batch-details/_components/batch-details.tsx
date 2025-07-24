@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { PiChalkboardTeacher } from "react-icons/pi";
 
 import {
+  Batch,
   BatchType,
   DummyBatches,
   DummyInstructors,
@@ -47,7 +48,7 @@ import InstructorsCards from "@/components/instructors-cards";
 import ModulesCard from "@/components/modules-card";
 import StatusCard from "@/components/status-card";
 type BatchDetailsProps = {
-  batch: DummyBatches | undefined;
+  batch: Batch ;
   dummyModules: string[];
   dummyInstructors: DummyInstructors[];
   dummyStudents: DummyStudent[] | undefined;
@@ -86,7 +87,7 @@ const BatchDetails = ({
   const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed">(
     batch.status || "Upcoming"
   );
-  const [whatsappLink, setWhatsappLink] = useState(batch.whatsappLink || "");
+  const [whatsappLink, setWhatsappLink] = useState(batch.groupLink || "");
 
 
   const [startDate, setStartDate] = useState(batch.startDate || "");
@@ -362,7 +363,7 @@ const BatchDetails = ({
               <BatchMeetings
                 mode={mode}
                 courseId={courseId}
-                batch={batch.id as string}
+                batch={batch._id as string}
                 modules={dummyModules}
               />
               <ModulesCard name="Batch" mode={mode} modules={dummyModules} />
@@ -371,12 +372,12 @@ const BatchDetails = ({
         </div>
       </div>
       <div className="w-full">
-        <BatchNotesTable mode={mode} batchId={batch.id as string} />
+        <BatchNotesTable mode={mode} batchId={batch._id } />
         <BatchStudentTable
           mode={mode}
           dummyStudents={dummyStudents!}
           courseId={courseId}
-          batchId={batch.id as string}
+          batchId={batch._id as string}
         />
         <StatusCard name="Batch" />
       </div>

@@ -48,7 +48,7 @@ const BatchCard = ({ batch, courseId }: BatchCardProps) => {
 
       <Button className="w-full cursor-pointer bg-primary-bg  " asChild>
         <Link
-          href={`/admin/courses/batch-details/${courseId}/batch/${batch._id}?mode=view`}
+          href={`/admin/all-batches/${courseId}/${batch._id}/batch-details?mode=view`}
         >
           View Details
           <ChevronRight size={16} className="ml-2" />

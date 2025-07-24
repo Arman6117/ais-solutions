@@ -27,8 +27,8 @@ const CourseSection = ({ course }:  CourseSectionProps ) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {course.batches.map((batch: any) => (
-          <BatchCard key={batch.id} courseId={course.id} batch={batch} />
+        {course.batches.map((batch: CourseBatch) => (
+          <BatchCard key={batch._id} courseId={course.id} batch={batch} />
         ))}
       </div>
       <Separator className="mb-10" />

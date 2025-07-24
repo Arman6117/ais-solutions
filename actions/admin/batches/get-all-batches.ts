@@ -28,7 +28,7 @@ export const getAllBatches = async () => {
             name: batch.name as string,
             startDate: batch.startDate as string,
             endDate: batch.endDate as string,
-            status: batch.status as string,
+            status: batch.status as 'Upcoming' | 'Ongoing' | "Completed",
             type: batch.type as BatchType,
             instructor:"John Doe"
           };

@@ -21,23 +21,32 @@ export const getBatchById = async(batchId:string) => {
             return {success:false, message:"No batch found"}
         }
         const formattedBatch = {
-            _id:`${batch._id}`,
-            name:batch.name as string,
-            description:batch.description as string,
-            startDate:batch.startDate as string,
-            endDate:batch.endDate as string,
-            status:batch.status as "Upcoming"| "Ongoing" | "Completed",
+            _id: `${batch._id}`,
+            name: batch.name as string,
+            description: batch.description as string,
+            startDate: batch.startDate as string,
+            endDate: batch.endDate as string,
+            status: batch.status as "Upcoming" | "Ongoing" | "Completed",
             type: batch.type as BatchType,
-            groupLink:batch.groupLink as string,
-            instructors:"John Doe",
-            // meetings:[] as string[],
-            mode:batch.mode as Mode,
-            // modules:batch.modules as BatchModules[],
-            courseId:batch.courseId as string[],
-            // notes:[] as string[],
-            // students:[] as string[]
-        }
-
+            groupLink: batch.groupLink as string,
+            instructors: [] as string[], // explicitly typed
+            meetings: [] as string[],    // explicitly typed
+            mode: batch.mode as Mode,
+            modules: (batch.modules as BatchModules[]).map((mod) => ({
+              id: mod.id?.toString?.() ?? "",
+              name: mod.name,
+              startDate: mod.startDate,
+              endDate: mod.endDate,
+              instructor: mod.instructor,
+              status: mod.status,
+              numberOfStudent: mod.numberOfStudent,
+            })),
+            courseId: `${batch.courseId}`,
+            notes: [] as string[],      
+            students: [] as string[],   
+          };
+          
+      
         return {success:true,data:formattedBatch}
     } catch (error) {
         console.log(error)

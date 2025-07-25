@@ -310,10 +310,10 @@ export type Batch = {
   status:"Upcoming"| "Ongoing"| "Completed",
   mode:Mode,
   type:BatchType,
-  instructors:string;
-  // meetings:string[],
-  // modules:BatchModules[],
-  courseId:string[],
-  // notes:string[],
-  // students:string[]
+  instructors:string[];
+  meetings:string[],
+  modules:BatchModules[],
+  courseId:string,
+  notes:string[],
+  students:string[]
 }

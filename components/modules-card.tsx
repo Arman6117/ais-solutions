@@ -14,20 +14,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BatchModules } from "@/lib/types";
+import { format } from "date-fns";
 
-// Type definitions
-type ModuleStatus = "ongoing" | "upcoming" | "completed";
 
-interface Module {
-  id: number;
-  name: string;
-  instructor: string;
-  status: ModuleStatus;
-  startDate: string;
-  endDate: string;
-  progress: number;
-  studentsCount: number;
-}
+type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
+
 
 interface StatusConfig {
   label: string;
@@ -37,63 +29,30 @@ interface StatusConfig {
 }
 
 interface ModulesCardProps {
-  modules?: string[];
+  modules: BatchModules[];
   mode?: "view" | "edit";
   name?: string;
   onModuleAdd?: () => void;
-  onModuleEdit?: (moduleId: number) => void;
-  onModuleDelete?: (moduleId: number) => void;
-  onStatusChange?: (moduleId: number, status: ModuleStatus) => void;
+  onModuleEdit?: (moduleId: string) => void;
+  onModuleDelete?: (moduleId: string) => void;
+  onStatusChange?: (moduleId: string, status: ModuleStatus) => void;
   onAddInstructor?: () => void;
 }
 
-const mockModules: Module[] = [
-  {
-    id: 1,
-    name: "Introduction to React",
-    instructor: "Dr. Sarah Johnson",
-    status: "ongoing",
-    startDate: "2024-01-15",
-    endDate: "2024-03-15",
-    progress: 65,
-    studentsCount: 24,
-  },
-  {
-    id: 2,
-    name: "Advanced JavaScript Concepts",
-    instructor: "Prof. Michael Chen",
-    status: "upcoming",
-    startDate: "2024-02-01",
-    endDate: "2024-04-01",
-    progress: 0,
-    studentsCount: 18,
-  },
-  {
-    id: 3,
-    name: "Database Design Fundamentals",
-    instructor: "Dr. Emily Rodriguez",
-    status: "completed",
-    startDate: "2023-11-01",
-    endDate: "2024-01-01",
-    progress: 100,
-    studentsCount: 32,
-  },
-];
-
 const statusConfig: Record<ModuleStatus, StatusConfig> = {
-  ongoing: {
+  Ongoing: {
     label: "Ongoing",
     color: "bg-blue-100 text-blue-800 border-blue-200",
     icon: Play,
     bgGradient: "from-blue-50 to-blue-100",
   },
-  upcoming: {
+  Upcoming: {
     label: "Upcoming",
     color: "bg-amber-100 text-amber-800 border-amber-200",
     icon: Clock,
     bgGradient: "from-amber-50 to-amber-100",
   },
-  completed: {
+  Completed: {
     label: "Completed",
     color: "bg-emerald-100 text-emerald-800 border-emerald-200",
     icon: CheckCircle,
@@ -102,7 +61,7 @@ const statusConfig: Record<ModuleStatus, StatusConfig> = {
 };
 
 const ModulesCard: React.FC<ModulesCardProps> = ({
-  modules: propModules = mockModules,
+  modules: propModules ,
   mode = "edit",
   name = "Course",
   onModuleAdd,
@@ -111,22 +70,22 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
   onStatusChange,
   onAddInstructor,
 }) => {
-  const [modules, setModules] = useState<Module[]>(mockModules);
+  const [modules, setModules] = useState<BatchModules[]>(propModules);
   const [filter, setFilter] = useState<ModuleStatus | "all">("all");
 
-  const handleStatusChange = (moduleId: number, newStatus: ModuleStatus) => {
+  const handleStatusChange = (moduleId: string, newStatus: ModuleStatus) => {
     setModules((prev) =>
       prev.map((m) => (m.id === moduleId ? { ...m, status: newStatus } : m))
     );
     onStatusChange?.(moduleId, newStatus);
   };
 
-  const handleDelete = (moduleId: number) => {
+  const handleDelete = (moduleId: string) => {
     setModules((prev) => prev.filter((m) => m.id !== moduleId));
     onModuleDelete?.(moduleId);
   };
 
-  const handleEdit = (moduleId: number) => {
+  const handleEdit = (moduleId: string) => {
     onModuleEdit?.(moduleId);
   };
 
@@ -139,9 +98,9 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
 
   const statusCounts = {
     all: modules.length,
-    ongoing: modules.filter((m) => m.status === "ongoing").length,
-    upcoming: modules.filter((m) => m.status === "upcoming").length,
-    completed: modules.filter((m) => m.status === "completed").length,
+    ongoing: modules.filter((m) => m.status === "Ongoing").length,
+    upcoming: modules.filter((m) => m.status === "Upcoming").length,
+    completed: modules.filter((m) => m.status === "Completed").length,
   };
 
   const filteredModules =
@@ -241,12 +200,12 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                         <div className="flex items-center gap-1">
                           <User size={14} />
                           <span className="font-medium">
-                            {module.instructor}
+                            Instructor name
                           </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Users size={14} />
-                          <span>{module.studentsCount} students</span>
+                          <span>{module.numberOfStudent} students</span>
                         </div>
                       </div>
                     </div>
@@ -285,31 +244,39 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                       <Calendar size={14} />
                       <span>Start:</span>
                       <span className="font-medium text-gray-800">
-                        {formatDate(module.startDate)}
+                        {
+                         module.startDate ?
+                        format(module.startDate, "PP"):
+                         "No date provided"
+                        }
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar size={14} />
                       <span>End:</span>
                       <span className="font-medium text-gray-800">
-                        {formatDate(module.endDate)}
+                      {
+                         module.endDate ?
+                        format(module.endDate, "PP"):
+                         "No date provided"
+                        }
                       </span>
                     </div>
                   </div>
 
                   <div className="mb-3">
-                    {module.status === "ongoing" && (
+                    {module.status === "Ongoing" && (
                       <>
                         <div className="flex justify-between text-xs text-gray-600 mb-1">
                           <span>Progress</span>
                           <span className="font-semibold text-gray-800">
-                            {module.progress}%
+                            {/* {module.progress}% */}
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
-                            style={{ width: `${module.progress}%` }}
+                            // style={{ width: `${module.progress}%` }}
                           />
                         </div>
                       </>

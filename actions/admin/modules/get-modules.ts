@@ -18,6 +18,18 @@ type ModuleTableData = {
   createdAt: Date;
   rating: number;
 };
+
+type Topic = {
+  title:string,
+  description:string,
+  id:number
+}
+type Chapter = {
+  name:string,
+  id:number,
+  description:string,
+  topics: Topic[]
+}
 export const getAllModulesTable = async () => {
   try {
     await connectToDB();
@@ -74,12 +86,12 @@ export const getModuleById = async (id: string) => {
       };
     }
     const sanitizedChapters =
-      module.chapters?.map((chapter: any, index: number) => ({
+      module.chapters?.map((chapter: Chapter, index: number) => ({
         id: index,
         name: chapter.name,
         description: chapter.description,
         topics:
-          chapter.topics?.map((topic: any, topicIndex: number) => ({
+          chapter.topics?.map((topic: Topic, topicIndex: number) => ({
             id: topicIndex,
             title: topic.title,
             description: topic.description,

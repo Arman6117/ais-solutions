@@ -251,6 +251,7 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                 </CardContent>
                 <CardFooter>
                   <AddInstructorButton
+                  showLabel
                     setInstructor={(newInstructor) => {
                       if (typeof newInstructor === "function") {
                         setInstructors(newInstructor);

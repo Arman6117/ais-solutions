@@ -295,7 +295,7 @@ export type BatchModules = {
   name:string,
   startDate:string,
   endDate:string,
-  instructor:string[],
+  instructor?:string[],
   status: "Ongoing" | "Upcoming" | "Completed";
   numberOfStudent:number
 }

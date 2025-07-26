@@ -22,11 +22,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const AddInstructorButton = ({
   setInstructor,
+  className,
+  showLabel,
 }: {
   setInstructor: (instructorOrUpdater: any) => void;
+  className?: string;
+  showLabel: boolean;
 }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,13 +57,11 @@ const AddInstructorButton = ({
       // Add a unique ID if it doesn't exist
       const instructorToAdd = {
         ...found,
-        id: found.id || `instructor-${Date.now()}`
+        id: found.id || `instructor-${Date.now()}`,
       };
-      
-      // Direct invocation of the setter with a single instructor
-      // The parent component will handle whether to use it as an updater or direct value
+
       setInstructor(instructorToAdd);
-      
+
       console.log("Added instructor:", instructorToAdd);
       toast.success(`${found?.name} has been added.`);
       setFound(null);
@@ -77,16 +80,20 @@ const AddInstructorButton = ({
 
   return (
     <>
-      <Dialog open={dialogOpen} onOpenChange={(isOpen) => {
-        setDialogOpen(isOpen);
-        if (!isOpen) handleReset();
-      }}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(isOpen) => {
+          setDialogOpen(isOpen);
+          if (!isOpen) handleReset();
+        }}
+      >
         <DialogTrigger asChild>
           <Button
             size="sm"
-            className="flex items-center gap-2 cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-sm "
+            className={cn("flex items-center gap-2 cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-sm ",className)}
           >
-            <Plus size={16} /> Add Instructor
+            <Plus size={16} />
+            {showLabel && <span>Add Instructor</span>}
           </Button>
         </DialogTrigger>
         <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl overflow-hidden">

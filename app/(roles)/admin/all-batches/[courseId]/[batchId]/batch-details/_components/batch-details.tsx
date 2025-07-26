@@ -366,7 +366,7 @@ const BatchDetails = ({
                 batch={batch._id as string}
                 modules={dummyModules}
               />
-              <ModulesCard name="Batch" mode={mode} modules={batch.modules} />
+              <ModulesCard batchId={batch._id} name="Batch" modules={batch.modules} />
             </CardContent>
           </Card>
         </div>

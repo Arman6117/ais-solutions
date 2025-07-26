@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   BookOpen,
   Calendar,
+  Check,
   CheckCircle,
   Clock,
   Eye,
@@ -11,15 +12,16 @@ import {
   Trash2,
   User,
   Users,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BatchModules } from "@/lib/types";
 import { format } from "date-fns";
-
+import { Input } from "./ui/input";
+import AddInstructorButton from "@/app/(roles)/admin/courses/_components/add-instructor-button";
 
 type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
-
 
 interface StatusConfig {
   label: string;
@@ -30,8 +32,8 @@ interface StatusConfig {
 
 interface ModulesCardProps {
   modules: BatchModules[];
-  mode?: "view" | "edit";
   name?: string;
+  batchId: string;
   onModuleAdd?: () => void;
   onModuleEdit?: (moduleId: string) => void;
   onModuleDelete?: (moduleId: string) => void;
@@ -60,19 +62,30 @@ const statusConfig: Record<ModuleStatus, StatusConfig> = {
   },
 };
 
+type ModuleEditData = {
+  startDate?: string;
+  endDate?: string;
+  instructor?: string[];
+  status?: ModuleStatus;
+};
 const ModulesCard: React.FC<ModulesCardProps> = ({
-  modules: propModules ,
-  mode = "edit",
+  modules: propModules,
   name = "Course",
   onModuleAdd,
   onModuleEdit,
   onModuleDelete,
   onStatusChange,
   onAddInstructor,
+  batchId,
 }) => {
   const [modules, setModules] = useState<BatchModules[]>(propModules);
   const [filter, setFilter] = useState<ModuleStatus | "all">("all");
-
+  const [moduleForEdit, setModuleForEdit] = useState<BatchModules | null>(null);
+  const [moduleEditData, setModuleEditData] = useState<ModuleEditData | null>(
+    null
+  );
+  const [isEditing, setIsEditing] = useState(false);
+  const [instructor,setIsInstructor] = useState('')
   const handleStatusChange = (moduleId: string, newStatus: ModuleStatus) => {
     setModules((prev) =>
       prev.map((m) => (m.id === moduleId ? { ...m, status: newStatus } : m))
@@ -85,17 +98,20 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
     onModuleDelete?.(moduleId);
   };
 
-  const handleEdit = (moduleId: string) => {
-    onModuleEdit?.(moduleId);
+  const handleEdit = (module: BatchModules) => {
+    setIsEditing(true);
+    setModuleForEdit(module);
+    setModuleEditData({
+      endDate: module.endDate,
+      instructor: module.instructor,
+      startDate: module.startDate,
+      status: module.status,
+    });
   };
 
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-
+  const handleSave = () => {
+    setIsEditing(false);
+  };
   const statusCounts = {
     all: modules.length,
     ongoing: modules.filter((m) => m.status === "Ongoing").length,
@@ -110,9 +126,9 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
 
   const filterTabs = [
     { key: "all", label: "All", count: statusCounts.all },
-    { key: "ongoing", label: "Ongoing", count: statusCounts.ongoing },
-    { key: "upcoming", label: "Upcoming", count: statusCounts.upcoming },
-    { key: "completed", label: "Completed", count: statusCounts.completed },
+    { key: "Ongoing", label: "Ongoing", count: statusCounts.ongoing },
+    { key: "Upcoming", label: "Upcoming", count: statusCounts.upcoming },
+    { key: "Completed", label: "Completed", count: statusCounts.completed },
   ];
 
   return (
@@ -196,12 +212,11 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                         </div>
                       </div>
 
-                      <div className="text-sm text-gray-600 flex gap-4 flex-wrap">
-                        <div className="flex items-center gap-1">
+                      <div className="text-sm text-gray-600 flex gap-4 flex-col">
+                        <div className="flex items-center gap-1 ">
                           <User size={14} />
-                          <span className="font-medium">
-                            Instructor name
-                          </span>
+                          <span className="font-medium">Instructor name</span>
+                          {isEditing && <AddInstructorButton className="size-7 ml-10" showLabel={false} setInstructor={setIsInstructor}/>}
                         </div>
                         <div className="flex items-center gap-1">
                           <Users size={14} />
@@ -210,80 +225,74 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                       </div>
                     </div>
 
-                    {mode === "edit" && (
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
-                        >
-                          <Eye size={16} />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
-                          onClick={() => handleEdit(module.id)}
-                        >
-                          <Pencil size={16} />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-gray-500 hover:text-red-600 hover:bg-red-50"
-                          onClick={() => handleDelete(module.id)}
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+                      >
+                        <Eye size={16} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+                        onClick={() => handleEdit(module)}
+                      >
+                        <Pencil size={16} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => handleDelete(module.id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap justify-between text-sm text-gray-600 gap-4 mb-3">
                     <div className="flex items-center gap-2">
                       <Calendar size={14} />
                       <span>Start:</span>
-                      <span className="font-medium text-gray-800">
-                        {
-                         module.startDate ?
-                        format(module.startDate, "PP"):
-                         "No date provided"
-                        }
-                      </span>
+                      {!isEditing ? (
+                        <span className="font-medium text-gray-800">
+                          {module.startDate
+                            ? format(module.startDate, "PP")
+                            : "No date provided"}
+                        </span>
+                      ) : (
+                        <Input
+                          type="date"
+                          value={moduleEditData?.startDate}
+                          onChange={(e) =>
+                            setModuleEditData({ startDate: e.target.value })
+                          }
+                        />
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar size={14} />
                       <span>End:</span>
-                      <span className="font-medium text-gray-800">
-                      {
-                         module.endDate ?
-                        format(module.endDate, "PP"):
-                         "No date provided"
-                        }
-                      </span>
+                      {!isEditing ? (
+                        <span className="font-medium text-gray-800">
+                          {module.endDate
+                            ? format(module.endDate, "PP")
+                            : "No date provided"}
+                        </span>
+                      ) : (
+                        <Input
+                          type="date"
+                          value={moduleEditData?.endDate}
+                          onChange={(e) =>
+                            setModuleEditData({ endDate: e.target.value })
+                          }
+                        />
+                      )}
                     </div>
                   </div>
-
-                  <div className="mb-3">
-                    {module.status === "Ongoing" && (
-                      <>
-                        <div className="flex justify-between text-xs text-gray-600 mb-1">
-                          <span>Progress</span>
-                          <span className="font-semibold text-gray-800">
-                            {/* {module.progress}% */}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
-                            // style={{ width: `${module.progress}%` }}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {mode === "edit" && (
+                  <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
                       <span className="text-sm text-gray-600 mr-2">
                         Change status:
@@ -311,7 +320,26 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                         </Button>
                       ))}
                     </div>
-                  )}
+                    {isEditing && (
+                      <div className="flex gap-4">
+                        <Button
+                          size={"sm"}
+                          className="bg-indigo-600 text-white"
+                          onClick={handleSave}
+                        >
+                          <Check />
+                        </Button>
+                        <Button
+                          size={"sm"}
+                          variant={"ghost"}
+                          className="cursor-pointer bg-muted"
+                          onClick={() => setIsEditing(false)}
+                        >
+                          <X />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })
@@ -327,15 +355,14 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                     ? "No modules have been added yet. Create your first module to get started."
                     : `No ${filter} modules at the moment.`}
                 </p>
-                {mode === "edit" && (
-                  <Button
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                    onClick={onModuleAdd}
-                  >
-                    <Plus size={16} className="mr-2" />
-                    Add Your First Module
-                  </Button>
-                )}
+
+                <Button
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  onClick={onModuleAdd}
+                >
+                  <Plus size={16} className="mr-2" />
+                  Add Your First Module
+                </Button>
               </div>
             </div>
           )}

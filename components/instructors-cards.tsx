@@ -42,7 +42,7 @@ const InstructorsCards = ({
             </div>
           )}
           {mode === "edit" && (
-            <AddInstructorButton setInstructor={setInstructor} />
+            <AddInstructorButton showLabel setInstructor={setInstructor} />
           )}
         </div>
 

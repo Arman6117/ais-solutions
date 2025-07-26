@@ -26,6 +26,7 @@ import {
   DummyInstructors,
   DummyStudent,
   Mode,
+  Modules,
 } from "@/lib/types";
 
 import { cn, getStatusColor } from "@/lib/utils";
@@ -48,7 +49,7 @@ import InstructorsCards from "@/components/instructors-cards";
 import ModulesCard from "@/components/modules-card";
 import StatusCard from "@/components/status-card";
 type BatchDetailsProps = {
-  batch: Batch ;
+  batch: Batch;
   dummyModules: string[];
   dummyInstructors: DummyInstructors[];
   dummyStudents: DummyStudent[] | undefined;
@@ -88,12 +89,19 @@ const BatchDetails = ({
     batch.status || "Upcoming"
   );
   const [whatsappLink, setWhatsappLink] = useState(batch.groupLink || "");
-
+  const [batchModuleIds, setBatchModuleIds] = useState<Modules[] >(
+    batch.modules.map((mod)=>{
+    return {
+      _id:mod.id,
+      // name:mod.name
+    }
+    })
+  );
 
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
-  const [batchMode, setBatchMode] = useState<Mode>("hybrid");
-  const [batchType, setBatchType] = useState<BatchType>("weekdays");
+  const [batchMode, setBatchMode] = useState<Mode>(batch.mode);
+  const [batchType, setBatchType] = useState<BatchType>(batch.type);
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -366,13 +374,19 @@ const BatchDetails = ({
                 batch={batch._id as string}
                 modules={dummyModules}
               />
-              <ModulesCard batchId={batch._id} name="Batch" modules={batch.modules} />
+              <ModulesCard
+                mode={mode}
+                batchId={batch._id}
+                name="Batch"
+                modules={batch.modules}
+                setModuleIds={setBatchModuleIds}
+              />
             </CardContent>
           </Card>
         </div>
       </div>
       <div className="w-full">
-        <BatchNotesTable mode={mode} batchId={batch._id } />
+        <BatchNotesTable mode={mode} batchId={batch._id} />
         <BatchStudentTable
           mode={mode}
           dummyStudents={dummyStudents!}

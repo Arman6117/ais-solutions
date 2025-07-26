@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BookOpen,
   Calendar,
@@ -16,10 +16,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BatchModules } from "@/lib/types";
+import { BatchModules, Modules } from "@/lib/types";
 import { format } from "date-fns";
 import { Input } from "./ui/input";
 import AddInstructorButton from "@/app/(roles)/admin/courses/_components/add-instructor-button";
+import AddModuleButton from "./add-module-button";
+import { getAllModulesNames } from "@/actions/admin/modules/get-modules";
 
 type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
 
@@ -34,10 +36,10 @@ interface ModulesCardProps {
   modules: BatchModules[];
   name?: string;
   batchId: string;
-  onModuleAdd?: () => void;
-  onModuleEdit?: (moduleId: string) => void;
+  mode: "view" | "edit";
+  setModuleIds: (ids:Modules[])=> void
   onModuleDelete?: (moduleId: string) => void;
-  onStatusChange?: (moduleId: string, status: ModuleStatus) => void;
+  
   onAddInstructor?: () => void;
 }
 
@@ -71,31 +73,51 @@ type ModuleEditData = {
 const ModulesCard: React.FC<ModulesCardProps> = ({
   modules: propModules,
   name = "Course",
-  onModuleAdd,
-  onModuleEdit,
-  onModuleDelete,
-  onStatusChange,
+  setModuleIds,
+  mode,
   onAddInstructor,
   batchId,
 }) => {
   const [modules, setModules] = useState<BatchModules[]>(propModules);
+  const [availableModules, setAvailableModules] = useState<Modules[] | []>([]);
   const [filter, setFilter] = useState<ModuleStatus | "all">("all");
-  const [moduleForEdit, setModuleForEdit] = useState<BatchModules | null>(null);
+  const [moduleForEdit, setModuleForEdit] = useState<BatchModules | []>([]);
   const [moduleEditData, setModuleEditData] = useState<ModuleEditData | null>(
     null
   );
   const [isEditing, setIsEditing] = useState(false);
-  const [instructor,setIsInstructor] = useState('')
+  const [instructor, setIsInstructor] = useState("");
+  const fetchAvailableModule = async () => {
+    try {
+      const res = await getAllModulesNames();
+      if (res.success && res.data) {
+        const filteredModules = res.data.filter((mod)=> {
+          !modules.some((m:{id:string})=> m.id === mod._id)
+        })
+
+        setAvailableModules(filteredModules)
+      } else {
+        setAvailableModules([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchAvailableModule();
+  }, []);
   const handleStatusChange = (moduleId: string, newStatus: ModuleStatus) => {
     setModules((prev) =>
       prev.map((m) => (m.id === moduleId ? { ...m, status: newStatus } : m))
     );
-    onStatusChange?.(moduleId, newStatus);
+    if (isEditing) {
+      setModuleEditData({ status: newStatus });
+    }
   };
 
   const handleDelete = (moduleId: string) => {
     setModules((prev) => prev.filter((m) => m.id !== moduleId));
-    onModuleDelete?.(moduleId);
+  
   };
 
   const handleEdit = (module: BatchModules) => {
@@ -150,28 +172,19 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              onClick={onModuleAdd}
-              size="sm"
-              className="bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 font-medium"
-            >
-              <Plus size={16} className="mr-2" />
-              Add Module
-            </Button>
-            <Button
-              onClick={onAddInstructor}
-              size="sm"
-              className="bg-white text-purple-600 hover:bg-purple-50 border border-purple-200 font-medium"
-            >
-              <User size={16} className="mr-2" />
-              Add Instructor
-            </Button>
+            {mode === "edit" && (
+              <AddModuleButton
+                className="bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 font-medium"
+                modules={availableModules}
+                setModules={setModuleIds}
+              />
+            )}
           </div>
         </div>
 
         <div className="flex gap-2 mt-6">
           {filterTabs.map(({ key, label, count }) => (
-            <button
+            <Button
               key={key}
               onClick={() => setFilter(key as ModuleStatus | "all")}
               className={`px-4 py-2 rounded-xl font-medium text-sm transition-all ${
@@ -181,7 +194,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
               }`}
             >
               {label} ({count})
-            </button>
+            </Button>
           ))}
         </div>
       </CardHeader>
@@ -216,7 +229,13 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                         <div className="flex items-center gap-1 ">
                           <User size={14} />
                           <span className="font-medium">Instructor name</span>
-                          {isEditing && <AddInstructorButton className="size-7 ml-10" showLabel={false} setInstructor={setIsInstructor}/>}
+                          {isEditing && (
+                            <AddInstructorButton
+                              className="size-7 ml-10"
+                              showLabel={false}
+                              setInstructor={setIsInstructor}
+                            />
+                          )}
                         </div>
                         <div className="flex items-center gap-1">
                           <Users size={14} />
@@ -265,7 +284,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                       ) : (
                         <Input
                           type="date"
-                          value={moduleEditData?.startDate}
+                          // value={moduleEditData?.startDate}
                           onChange={(e) =>
                             setModuleEditData({ startDate: e.target.value })
                           }
@@ -284,7 +303,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                       ) : (
                         <Input
                           type="date"
-                          value={moduleEditData?.endDate}
+                          // value={moduleEditData?.endDate}
                           onChange={(e) =>
                             setModuleEditData({ endDate: e.target.value })
                           }
@@ -292,35 +311,37 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                      <span className="text-sm text-gray-600 mr-2">
-                        Change status:
-                      </span>
-                      {(
-                        Object.entries(statusConfig) as Array<
-                          [ModuleStatus, StatusConfig]
-                        >
-                      ).map(([status, config]) => (
-                        <Button
-                          key={status}
-                          size="sm"
-                          variant={
-                            module.status === status ? "default" : "outline"
-                          }
-                          className={`text-xs ${
-                            module.status === status
-                              ? "bg-indigo-600 hover:bg-indigo-700"
-                              : "hover:bg-gray-50"
-                          }`}
-                          onClick={() => handleStatusChange(module.id, status)}
-                        >
-                          <config.icon size={12} className="mr-1" />
-                          {config.label}
-                        </Button>
-                      ))}
-                    </div>
-                    {isEditing && (
+                  {isEditing && (
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                        <span className="text-sm text-gray-600 mr-2">
+                          Change status:
+                        </span>
+                        {(
+                          Object.entries(statusConfig) as Array<
+                            [ModuleStatus, StatusConfig]
+                          >
+                        ).map(([status, config]) => (
+                          <Button
+                            key={status}
+                            size="sm"
+                            variant={
+                              module.status === status ? "default" : "outline"
+                            }
+                            className={`text-xs ${
+                              module.status === status
+                                ? "bg-indigo-600 hover:bg-indigo-700"
+                                : "hover:bg-gray-50"
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(module.id, status)
+                            }
+                          >
+                            <config.icon size={12} className="mr-1" />
+                            {config.label}
+                          </Button>
+                        ))}
+                      </div>
                       <div className="flex gap-4">
                         <Button
                           size={"sm"}
@@ -338,8 +359,8 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                           <X />
                         </Button>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -356,10 +377,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                     : `No ${filter} modules at the moment.`}
                 </p>
 
-                <Button
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                  onClick={onModuleAdd}
-                >
+                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
                   <Plus size={16} className="mr-2" />
                   Add Your First Module
                 </Button>

@@ -22,7 +22,6 @@ import { PiChalkboardTeacher } from "react-icons/pi";
 import {
   Batch,
   BatchType,
-  DummyBatches,
   DummyInstructors,
   DummyStudent,
   Mode,
@@ -39,6 +38,7 @@ import {
   Calendar,
   CheckCircle,
   University,
+  Text,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
@@ -48,6 +48,7 @@ import BatchTypeSelector from "./batch-type-selector";
 import InstructorsCards from "@/components/instructors-cards";
 import ModulesCard from "@/components/modules-card";
 import StatusCard from "@/components/status-card";
+import { updateBatchById } from "@/actions/admin/batches/update-batch";
 type BatchDetailsProps = {
   batch: Batch;
   dummyModules: string[];
@@ -85,16 +86,17 @@ const BatchDetails = ({
     );
   }
   const [name, setName] = useState(batch.name || "");
+  const [description, setDescription] = useState(batch.description || "");
   const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed">(
     batch.status || "Upcoming"
   );
   const [whatsappLink, setWhatsappLink] = useState(batch.groupLink || "");
-  const [batchModuleIds, setBatchModuleIds] = useState<Modules[] >(
-    batch.modules.map((mod)=>{
-    return {
-      _id:mod.id,
-      // name:mod.name
-    }
+  const [batchModuleIds, setBatchModuleIds] = useState<Modules[]>(
+    batch.modules.map((mod) => {
+      return {
+        _id: mod.id,
+        // name:mod.name
+      };
     })
   );
 
@@ -118,12 +120,32 @@ const BatchDetails = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleSave = () => {
-    //TODO:Handle saving logic and API call here
+  const handleSave = async () => {
     setIsLoading(true);
-    toast.success("Changes saved successfully!");
-    setIsLoading(false);
-    setMode("view");
+    try {
+      const res = await updateBatchById({
+        batchId: batch._id,
+        description,
+        endDate,
+        groupLink: whatsappLink,
+        mode: batchMode,
+        name,
+        startDate,
+        status,
+        type: batchType,
+      });
+      if (res.success) {
+        toast.success(res.message);
+        setMode("view");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.success("Something Went Wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const statusColor = getStatusColor(status);
@@ -195,7 +217,7 @@ const BatchDetails = ({
             <CardContent className="p-8 space-y-6">
               <div className="flex flex-col gap-14">
                 {mode === "view" ? (
-                  <>
+                  <div className="">
                     <InfoWrapper
                       className="max-w-full"
                       label="Name"
@@ -203,19 +225,39 @@ const BatchDetails = ({
                     >
                       {name}
                     </InfoWrapper>
-                  </>
+                    <InfoWrapper
+                      className="max-w-full mt-5"
+                      label="Description"
+                      icon={<Text className="text-indigo-600" size={20} />}
+                    >
+                      {description}
+                    </InfoWrapper>
+                  </div>
                 ) : (
-                  <EditInfo
-                    label="Name"
-                    icon={<Users className="text-indigo-600" size={20} />}
-                  >
-                    <Input
-                      placeholder="Enter batch name"
-                      onChange={(e) => setName(e.target.value)}
-                      value={name}
-                      className="focus-visible:ring-0"
-                    />
-                  </EditInfo>
+                  <>
+                    <EditInfo
+                      label="Name"
+                      icon={<Users className="text-indigo-600" size={20} />}
+                    >
+                      <Input
+                        placeholder="Enter batch name"
+                        onChange={(e) => setName(e.target.value)}
+                        value={name}
+                        className="focus-visible:ring-0"
+                      />
+                    </EditInfo>
+                    <EditInfo
+                      label="Description"
+                      icon={<Users className="text-indigo-600" size={20} />}
+                    >
+                      <Input
+                        placeholder="Enter batch name"
+                        onChange={(e) => setDescription(e.target.value)}
+                        value={description}
+                        className="focus-visible:ring-0"
+                      />
+                    </EditInfo>
+                  </>
                 )}
                 {/* <div className="grid md:grid-cols-2 gap-7"> */}
                 {mode === "view" ? (

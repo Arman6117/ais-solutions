@@ -37,12 +37,13 @@ const BatchTypeSelector = ({
               placeholder="Batch Type"
 
             />
+            {batchType}
           </SelectTrigger>
           <SelectContent>
-            <SelectItem className={`focus:bg-green-50`} value="Weekend">
+            <SelectItem className={`focus:bg-green-50`} value="weekend">
               Weekend
             </SelectItem>
-            <SelectItem className={`focus:bg-blue-50`} value="Weekdays">
+            <SelectItem className={`focus:bg-blue-50`} value="weekdays">
               Weekdays
             </SelectItem>
             

@@ -19,6 +19,7 @@ const BatchModeSelector = ({
   batchMode: Mode;
   setBatchMode: (val: Mode) => void;
 }) => {
+ 
   return (
     <div className="flex flex-col gap-3">
       <EditBatchInfo
@@ -38,15 +39,16 @@ const BatchModeSelector = ({
 
 
             />
+            {batchMode}
           </SelectTrigger>
           <SelectContent>
-            <SelectItem className={`focus:bg-green-50`} value="Online">
+            <SelectItem className={`focus:bg-green-50`} value="online">
               Online
             </SelectItem>
-            <SelectItem className={`focus:bg-blue-50`} value="Offline">
+            <SelectItem className={`focus:bg-blue-50`} value="offline">
               Offline
             </SelectItem>
-            <SelectItem className={`focus:bg-amber-50`} value="Hybrid">
+            <SelectItem className={`focus:bg-amber-50`} value="hybrid">
               Hybrid
             </SelectItem>
           </SelectContent>

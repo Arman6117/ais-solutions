@@ -4,7 +4,7 @@ import CourseSection from "./course-section";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import CourseFilterSelect from "./course-filter-select";
-import { BatchType, CourseBatch } from "@/lib/types";
+import { BatchType, CourseBatch } from "@/lib/types/types";
 
 type AllBatchesProps = {
   data: {

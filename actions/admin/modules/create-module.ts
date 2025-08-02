@@ -2,7 +2,7 @@
 
 import { connectToDB } from "@/lib/db";
 import { parseZodError } from "@/lib/helpers/parse-zod-errors";
-import { ChapterInput } from "@/lib/types";
+import { ChapterInput } from "@/lib/types/types";
 import { CreateModuleSchema } from "@/lib/validations/module.schema";
 import { Module } from "@/models/module.model";
 import { ZodError } from "zod";

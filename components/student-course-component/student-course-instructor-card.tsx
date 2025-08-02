@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DummyInstructors } from "@/lib/types";
+import { DummyInstructors } from "@/lib/types/types";
 import { PlayCircle, Star, Users } from "lucide-react";
 import React from "react";
 

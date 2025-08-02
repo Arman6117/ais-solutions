@@ -1,4 +1,4 @@
-import { Course } from "@/lib/types";
+import { Course } from "@/lib/types/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

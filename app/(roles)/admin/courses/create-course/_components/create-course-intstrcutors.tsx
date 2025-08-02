@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import InstructorsCards from "@/components/instructors-cards";
 import AddInstructorButton from "../../_components/add-instructor-button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { DummyInstructors } from "@/lib/types";
+import { DummyInstructors } from "@/lib/types/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 
 const CreateCourseInstructors = () => {

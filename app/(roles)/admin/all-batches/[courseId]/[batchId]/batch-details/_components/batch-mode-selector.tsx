@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Mode } from "@/lib/types";
+import { Mode } from "@/lib/types/types";
 
 import { CheckCircle } from "lucide-react";
 import React from "react";

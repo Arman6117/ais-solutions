@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Invoice, PaymentMode, Student } from "@/lib/types";
+import { Invoice, PaymentMode, Student } from "@/lib/types/types";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { AlertCircle, Plus } from "lucide-react";
 import { useState } from "react";

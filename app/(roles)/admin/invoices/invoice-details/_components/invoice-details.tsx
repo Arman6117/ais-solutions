@@ -33,7 +33,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import CreateInvoiceDialog from './create-invoice-dialog';
-import { CourseInvoice, Invoice, Mode, PaymentMode, Student } from '@/lib/types';
+import { CourseInvoice, Invoice, Mode, PaymentMode, Student } from '@/lib/types/types';
 import { mockStudentData } from '@/lib/static';
 
 // Type definitions

@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { CourseBatch } from "@/lib/types";
+import { CourseBatch } from "@/lib/types/types";
 
 type CourseSectionProps = {
   course:{

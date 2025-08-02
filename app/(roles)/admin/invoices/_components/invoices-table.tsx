@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { invoicesData } from "@/lib/static"; // your invoice data + type
 import { Badge } from "@/components/ui/badge";
-import { InvoiceTable as InvoiceTableType, InvoiceStatus, PaymentMode } from "@/lib/types";
+import { InvoiceTable as InvoiceTableType, InvoiceStatus, PaymentMode } from "@/lib/types/types";
 import InvoiceTableFilters from "../../students/_components/invoice-table-filters";
 import { cn } from "@/lib/utils";
 

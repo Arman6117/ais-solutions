@@ -22,7 +22,7 @@ import {
   Text,
 } from "lucide-react";
 
-import { Mode } from "@/lib/types";
+import { Mode } from "@/lib/types/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 import { FaLevelUpAlt } from "react-icons/fa";
 import CourseLevelSelector from "./course-level-selector";

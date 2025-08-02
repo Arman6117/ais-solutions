@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import AddLinkDialog from "./add-link-dialog";
 import AddFileDialog from "./add-file-dialog";
 import SelectSessionDialog from "./select-sessioin-dialog";
-import { Session } from "@/lib/types";
+import { Session } from "@/lib/types/types";
 import { dummyNoteSessions } from "@/lib/static";
 import ModuleSelector from "./module-selector";
 import ChapterSelector from "./chapter-selector";

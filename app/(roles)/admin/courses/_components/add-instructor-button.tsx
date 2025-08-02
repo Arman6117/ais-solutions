@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { dummyInstructors } from "@/lib/static";
-import { DummyInstructors } from "@/lib/types";
+import { DummyInstructors } from "@/lib/types/types";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";

@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { BatchType } from "@/lib/types";
+import { BatchType } from "@/lib/types/types";
 import { Batch } from "@/models/batch.model";
 import { Course } from "@/models/course.model";
 

@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-import { DummyModules } from "@/lib/types";
+import { DummyModules } from "@/lib/types/types";
 import { useCourseStore } from "@/store/use-course-store";
 import ModuleCardSkeleton from "@/components/skeletons/module-card";
 

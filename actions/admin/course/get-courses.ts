@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { Mode } from "@/lib/types";
+import { Mode } from "@/lib/types/types";
 import { Course } from "@/models/course.model";
 import { format } from "date-fns";
 import { ObjectId } from "mongodb";

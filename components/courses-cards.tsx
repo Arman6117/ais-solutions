@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Course } from "@/lib/types";
+import { Course } from "@/lib/types/types";
 import CourseCard from "./course-card";
 
 type CourseType = {

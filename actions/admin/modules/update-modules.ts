@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { ChapterInput } from "@/lib/types";
+import { ChapterInput } from "@/lib/types/types";
 import { Module } from "@/models/module.model";
 import { ObjectId } from "mongodb";
 import { isValidObjectId } from "mongoose";

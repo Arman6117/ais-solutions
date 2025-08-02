@@ -2,7 +2,7 @@
 
 import { connectToDB } from "@/lib/db";
 import { parseZodError } from "@/lib/helpers/parse-zod-errors";
-import { BatchType, Mode, Modules, prBatch } from "@/lib/types";
+import { BatchType, Mode, Modules, prBatch } from "@/lib/types/types";
 import { batchSchema } from "@/lib/validations/batch.schema";
 import { Batch } from "@/models/batch.model";
 import { ObjectId } from "mongodb";

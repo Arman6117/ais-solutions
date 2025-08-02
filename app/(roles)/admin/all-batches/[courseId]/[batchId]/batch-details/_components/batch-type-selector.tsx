@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BatchType } from "@/lib/types";
+import { BatchType } from "@/lib/types/types";
 
 import { CheckCircle, University } from "lucide-react";
 import React from "react";

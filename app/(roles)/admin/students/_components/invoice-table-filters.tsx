@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React from "react";
-import { InvoiceStatus, PaymentMode } from "@/lib/types";
+import { InvoiceStatus, PaymentMode } from "@/lib/types/types";
 
 interface InvoiceTableFiltersProps {
   statusFilter: InvoiceStatus | "all";

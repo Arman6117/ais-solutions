@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DummyStudent } from "@/lib/types";
+import { DummyStudent } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { toast } from "sonner";

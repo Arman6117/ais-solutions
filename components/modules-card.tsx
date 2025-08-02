@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BatchModules, Modules } from "@/lib/types";
+import { BatchModules, Modules } from "@/lib/types/types";
 import { format } from "date-fns";
 import { Input } from "./ui/input";
 import AddInstructorButton from "@/app/(roles)/admin/courses/_components/add-instructor-button";

@@ -3,7 +3,7 @@
 import { connectToDB } from "@/lib/db";
 import { parseZodError } from "@/lib/helpers/parse-zod-errors";
 import { uploadToCloudinary } from "@/lib/helpers/upload-to-cloudinary";
-import { Mode, prCourse } from "@/lib/types";
+import { Mode, prCourse } from "@/lib/types/types";
 import { courseSchema } from "@/lib/validations/course-schema";
 import { Course } from "@/models/course.model";
 import { ZodError } from "zod";

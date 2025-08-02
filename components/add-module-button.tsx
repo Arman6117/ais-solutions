@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox"; // Add a Checkbox component from Shadcn UI
 
-import {  Modules } from "@/lib/types";
+import {  Modules } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 
 

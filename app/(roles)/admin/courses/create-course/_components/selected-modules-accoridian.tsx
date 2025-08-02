@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 
-import {  Modules, prModule } from "@/lib/types";
+import {  Modules, prModule } from "@/lib/types/types";
 import { getModuleById } from "@/actions/admin/modules/get-modules";
 type Props = {
   data: Modules[];

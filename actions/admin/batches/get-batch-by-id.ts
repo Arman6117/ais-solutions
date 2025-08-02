@@ -4,7 +4,7 @@ import { connectToDB } from "@/lib/db"
 import { Batch } from "@/models/batch.model";
 import { isValidObjectId } from "mongoose";
 import  {ObjectId} from 'mongodb'
-import { BatchModules, BatchType, Mode } from "@/lib/types";
+import { BatchModules, BatchType, Mode } from "@/lib/types/types";
 
 export const getBatchById = async(batchId:string) => {
     try {

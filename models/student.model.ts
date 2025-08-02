@@ -14,15 +14,15 @@ const StudentSchema = new Schema(
 
     courses: [
       {
-        courseId: { type: String, required: true, index: true },
-        moduleId: [{ type: String, required: true }],
+        courseId: { type: Schema.Types.ObjectId,ref:"Course", required: true, index: true },
+        moduleId: [{  type: Schema.Types.ObjectId,ref:"Module", required: true }],
         approvedAt: { type: Date, default: null },
         isApproved: { type: Boolean, default: false },
       },
     ],
 
-    batches: [{ bid: { type: Schema.Types.ObjectId,ref:"Batch", required: true, index: true } }],
-    invoices: [{ iid: {  type: Schema.Types.ObjectId,ref:"Invoice" ,required: true, index: true } }],
+    batches: [ { type: Schema.Types.ObjectId,ref:"Batch", required: true, index: true } ],
+    invoices: [ {  type: Schema.Types.ObjectId,ref:"Invoice" ,required: true, index: true } ],
   },
   {
     timestamps: true,

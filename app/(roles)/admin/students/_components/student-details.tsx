@@ -9,7 +9,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Course, DummyModules, DummyStudent,  } from "@/lib/types";
+import { Course, DummyModules, DummyStudent,  } from "@/lib/types/types";
 import { format } from "date-fns";
 import CoursesCards from "@/components/courses-cards";
 import { useRouter, useSearchParams } from "next/navigation";

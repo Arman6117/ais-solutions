@@ -9,7 +9,7 @@ import EditInfo from "@/components/edit-info";
 import ModuleChapters from "./module-chapters";
 import CoursesCards from "../../../../../components/courses-cards";
 
-import { prModule } from "@/lib/types";
+import { prModule } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

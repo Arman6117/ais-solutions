@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import InstructorTableFilters from "./instructor-table-filters";
 import { dummyInstructorTable } from "@/lib/static";
-import { DummyInstructor } from "@/lib/types";
+import { DummyInstructor } from "@/lib/types/types";
 
 const InstructorTable = () => {
   const [selectedModule, setSelectedModule] = useState("all");

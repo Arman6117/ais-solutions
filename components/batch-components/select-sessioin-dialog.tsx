@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { useState } from "react";
 import { Input } from "../ui/input";
-import { Session } from "@/lib/types";
+import { Session } from "@/lib/types/types";
 
 type Props = {
   sessions: Session[];

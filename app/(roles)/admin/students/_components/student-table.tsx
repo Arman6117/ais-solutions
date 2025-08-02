@@ -1,7 +1,7 @@
 "use client";
 import { DataTable } from "@/components/data-table";
 import { dummyStudents } from "@/lib/static";
-import { DummyStudent } from "@/lib/types";
+import { DummyStudent } from "@/lib/types/types";
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
 import StudentTableFilters from "./student-table-filter";

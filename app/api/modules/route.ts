@@ -1,5 +1,5 @@
 import { connectToDB } from "@/lib/db";
-import { Modules } from "@/lib/types";
+import { Modules } from "@/lib/types/types";
 import { Course } from "@/models/course.model";
 import { Module } from "@/models/module.model";
 import { isValidObjectId } from "mongoose";

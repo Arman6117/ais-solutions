@@ -1,4 +1,4 @@
-import { DummyInstructors, prModule, Mode, prInstructors, Modules, CourseLevel, } from "@/lib/types";
+import { DummyInstructors, prModule, Mode, prInstructors, Modules, CourseLevel, } from "@/lib/types/types";
 import { create } from "zustand";
 
 interface CourseFormState {

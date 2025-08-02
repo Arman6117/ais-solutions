@@ -29,7 +29,7 @@ import {
   ViewCourseThumbnail,
 } from "./view-course-components";
 
-import { Course, DummyBatches, DummyInstructors, Mode, prCourse } from "@/lib/types";
+import { Course, DummyBatches, DummyInstructors, Mode, prCourse } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";

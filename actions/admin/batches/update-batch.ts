@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { BatchType, Mode } from "@/lib/types";
+import { BatchType, Mode } from "@/lib/types/types";
 import { Batch } from "@/models/batch.model";
 import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";

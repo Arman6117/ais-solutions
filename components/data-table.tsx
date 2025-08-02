@@ -23,7 +23,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Column, FilterOption } from "@/lib/types";
+import { Column, FilterOption } from "@/lib/types/types";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 

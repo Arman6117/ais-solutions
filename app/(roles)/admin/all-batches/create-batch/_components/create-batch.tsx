@@ -20,7 +20,7 @@ import InstructorsCards from "@/components/instructors-cards";
 import AddInstructorButton from "../../../courses/_components/add-instructor-button";
 
 import AddModuleButton from "@/components/add-module-button";
-import { BatchType, Mode, Modules } from "@/lib/types";
+import { BatchType, Mode, Modules } from "@/lib/types/types";
 import SelectedModulesAccordion from "../../../courses/create-course/_components/selected-modules-accoridian";
 
 import CourseSelector from "./course-selector";

@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Mode } from "@/lib/types";
+import { Mode } from "@/lib/types/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 import React from "react";
 import { MdClass } from "react-icons/md";

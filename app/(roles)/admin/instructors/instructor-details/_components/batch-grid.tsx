@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card,CardHeader,CardTitle,CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Mode } from "@/lib/types";
+import { Mode } from "@/lib/types/types";
 import { Activity, Calendar, GraduationCap, MapPin, Monitor, Users, Video } from "lucide-react";
 type BatchGridProps = {
     batches: {

@@ -1,5 +1,5 @@
 "use client";
-import { DummyModules } from "@/lib/types";
+import { DummyModules } from "@/lib/types/types";
 import { cn, getStatusColor } from "@/lib/utils";
 import { BookOpen, Calendar, CalendarCheckIcon, Clock } from "lucide-react";
 import Image from "next/image";

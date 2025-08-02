@@ -26,7 +26,7 @@ import {
   DummyStudent,
   Mode,
   Modules,
-} from "@/lib/types";
+} from "@/lib/types/types";
 
 import { cn, getStatusColor } from "@/lib/utils";
 import {

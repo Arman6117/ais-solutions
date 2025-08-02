@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import EditOfferDialog from "./edit-offer-dialog";
-import { Offer } from "@/lib/types";
+import { Offer } from "@/lib/types/types";
 
 
 type OfferCardProps = {

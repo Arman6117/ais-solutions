@@ -8,7 +8,7 @@ import {
   PiInvoice,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, InvoiceTable, Offer, Student } from "./types";
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, InvoiceTable, Offer, Student } from "./types/types";
 import { UserCircleIcon } from "lucide-react";
 import { FaMoneyBill, FaUser } from "react-icons/fa";
 

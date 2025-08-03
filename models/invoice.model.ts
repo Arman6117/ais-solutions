@@ -26,7 +26,7 @@ const courseDetailsSchema = new Schema(
 const paymentHistorySchema = new Schema({
   amount: { type: Number, required: true },
   courseName: { type: String, required: true },
-  modules: [{ type: String, required: true }],
+  // modules: [{ type: String, required: true }],
   dueDate: { type: String },
   notes: { type: String },
   mode: {

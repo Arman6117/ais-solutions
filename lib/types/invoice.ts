@@ -1,4 +1,4 @@
-// types/invoice.ts
+import { PaymentMode } from "./types";
 
 export interface CourseInfo {
     _id:string
@@ -40,7 +40,7 @@ export interface CourseInfo {
   export interface PaymentHistory {
     amount: number;
     courseName: string;
-    modules: string[];
+    // modules: string[];
     dueDate?: string;
     notes?: string;
     mode: "UPI" | "Cash" | "Card" | "Other";
@@ -57,3 +57,12 @@ export interface CourseInfo {
     status: "Due" | "Paid" | "Overdue";
   }
   
+  export interface CreateInvoicePayload {
+    invoiceID:string,
+    courseName:string,
+    courseId:string
+    amountPaid:number,
+    paymentMode:     "UPI" | "Cash" | "Card" | "Other";
+    dueDate?:string
+    notes?:string
+  }

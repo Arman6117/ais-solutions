@@ -115,7 +115,7 @@ export const getInvoiceById = async (id: string) => {
       (payment): PaymentHistory => ({
         amount: payment.amount,
         courseName: payment.courseName,
-        modules: payment.modules,
+        // modules: payment.modules,
         dueDate: payment.dueDate,
         notes: payment.notes,
         mode: payment.mode,

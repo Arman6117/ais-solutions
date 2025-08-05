@@ -1,4 +1,4 @@
-import { studentSchema } from "@/lib/helpers/parse-student-registration";
+
 import mongoose, { Schema, model, models } from "mongoose";
 import { string } from "zod";
 const StudentSchema = new Schema(
@@ -11,7 +11,7 @@ const StudentSchema = new Schema(
     gender: { type: String, enum: ["male", "female", "other"], required: true },
     profilePic: { type: String, required: true },
     role: { type: String, required: true },
-
+    feeStatus:{type:String, enum:["paid","partial","unpaid"], default:"unpaid", required:true},
     courses: [
       {
         courseId: { type: Schema.Types.ObjectId,ref:"Course", required: true, index: true },

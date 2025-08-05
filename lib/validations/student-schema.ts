@@ -5,6 +5,7 @@ export const studentSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits"),
   gender: z.enum(["male", "female", "other"], { required_error: "Please select a gender" }),
+  feeStatus:z.enum(["paid", "partial", "unpaid"], { required_error: "Please select a fee status" }),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
   referralCode: z.string().optional(),

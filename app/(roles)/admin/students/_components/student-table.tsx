@@ -94,7 +94,6 @@ const StudentTable = () => {
   return (
     <>
 
-      {/* DataTable Component */}
       <DataTable
         columns={studentTableCol}
         data={filteredStudents}

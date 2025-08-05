@@ -38,8 +38,8 @@ const StudentTableFilters = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Fee Status</SelectItem>
-          {uniqueFeeStatuses.map((status) => (
-            <SelectItem key={status} value={status}>
+          {uniqueFeeStatuses.map((status,index) => (
+            <SelectItem key={index} value={status}>
               {status}
             </SelectItem>
           ))}

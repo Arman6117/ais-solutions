@@ -45,7 +45,7 @@ const batchSchema = new Schema(
     courseId: { type: Schema.Types.ObjectId, ref: "Course", required: true },
 
     notes: [{ type: Schema.Types.ObjectId, ref: "Notes" }],
-    students: [{ type: Schema.Types.ObjectId, ref: "Students" }],
+    students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
   },
   {
     timestamps: true,

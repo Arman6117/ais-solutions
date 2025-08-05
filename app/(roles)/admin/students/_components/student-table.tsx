@@ -2,18 +2,33 @@
 import { DataTable } from "@/components/data-table";
 import { dummyStudents } from "@/lib/static";
 import { DummyStudent } from "@/lib/types/types";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import StudentTableFilters from "./student-table-filter";
 import { Badge } from "@/components/ui/badge";
+import { getStudentTable } from "@/actions/admin/student/get-student";
+import { StudentData, StudentTable as StudentTableType } from "@/lib/types/student";
 
 const StudentTable = () => {
   const [feeStatusFilter, setFeeStatusFilter] = useState("all");
   const [genderFilter, setGenderFilter] = useState("all");
   const [batchFilter, setBatchFilter] = useState("all");
+  const [student,setStudent]  = useState<StudentTableType[] >([])
+  const fetchStudent = async() => {
+     const res = await getStudentTable()
+     if(res.success) {
+      console.log(res)
+         setStudent(res.data!)
+     } else {
+      setStudent([])
+     }
+  }
 
+  useEffect(()=> {
+    fetchStudent()
+  },[])
   const filteredStudents = useMemo(() => {
-    return dummyStudents.filter((student) => {
+    return student.filter((student) => {
       if (feeStatusFilter !== "all" && student.feesStatus !== feeStatusFilter) return false;
       if (genderFilter !== "all" && student.gender !== genderFilter) return false;
       if (
@@ -29,37 +44,37 @@ const StudentTable = () => {
     {
       id: "name",
       header: "Student Name",
-      accessor: (row: DummyStudent) => row.name,
+      accessor: (row: StudentTableType) => row.name,
     },
     {
       id: "email",
       header: "Email",
-      accessor: (row: DummyStudent) => row.email,
+      accessor: (row: StudentTableType) => row.email,
     },
     {
       id: "phone",
       header: "Phone",
-      accessor: (row: DummyStudent) => row.phone,
+      accessor: (row: StudentTableType) => row.phone,
     },
     {
       id: "gender",
       header: "Gender",
-      accessor: (row: DummyStudent) => row.gender,
+      accessor: (row: StudentTableType) => row.gender,
     },
     {
       id: "joinedAt",
       header: "Joined At",
-      accessor: (row: DummyStudent) => row.joinedAt,
+      accessor: (row: StudentTableType) => row.createdAt,
     },
     {
       id: "feesStatus",
       header: "Fees Status",
-      accessor: (row: DummyStudent) => row.feesStatus,
+      accessor: (row: StudentTableType) => row.feesStatus,
     },
     {
       id: "batches",
       header: "Batches",
-      accessor: (row: DummyStudent) => (
+      accessor: (row: StudentTableType) => (
         <div className="flex flex-wrap gap-1">
           {row.batches?.map((batch: string, i: number) => (
             <Badge key={i} variant="secondary" className="text-xs">
@@ -79,15 +94,15 @@ const StudentTable = () => {
   ];
 
   const uniqueFeeStatuses = useMemo(() => {
-    return Array.from(new Set(dummyStudents.map((s) => s.feesStatus)));
+    return Array.from(new Set(student.map((s) => s.feesStatus)));
   }, []);
 
   const uniqueGenders = useMemo(() => {
-    return Array.from(new Set(dummyStudents.map((s) => s.gender)));
+    return Array.from(new Set(student.map((s) => s.gender)));
   }, []);
 
   const uniqueBatches = useMemo(() => {
-    const allBatches = dummyStudents.flatMap((s) => s.batches || []);
+    const allBatches = student.flatMap((s) => s.batches || []);
     return Array.from(new Set(allBatches));
   }, []);
 
@@ -97,7 +112,7 @@ const StudentTable = () => {
       <DataTable
         columns={studentTableCol}
         data={filteredStudents}
-        getRowId={(row: DummyStudent) => row.id}
+        getRowId={(row: StudentTableType) => row._id}
         href="/admin/students/student-details"
         additionalFilter={
           <StudentTableFilters

@@ -11,7 +11,7 @@ import "@/models/batch.model";
 export const getStudentTable = async () => {
   try {
     await connectToDB();
-    const student = (await Student.find({})
+    const student = (await Student.find({isApproved:true})
       .select("_id createdAt name email phone batches feeStatus gender")
       .sort({ createdAt: -1 })
       .populate({ path: "batches", select: "name" }).exec() as StudentTable[])

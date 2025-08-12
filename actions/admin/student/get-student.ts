@@ -16,7 +16,7 @@ export const getStudentTable = async () => {
       .sort({ createdAt: -1 })
       .populate({ path: "batches", select: "name" }).exec() as StudentTable[])
       
-  console.log("Fetched student table:", student);
+
     return {
       success: true,
       data: JSON.parse(JSON.stringify(student)), // Convert Mongoose documents to plain objects

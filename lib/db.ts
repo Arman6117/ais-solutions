@@ -24,6 +24,7 @@ const cache = (globalForMongoose.mongooseCache ??= {
 });
 
 export async function connectToDB() {
+  console.log("🔗 Connecting to MongoDB...");
   if (cache.conn) {
     return cache.conn;
   }
@@ -37,6 +38,9 @@ export async function connectToDB() {
       .then((mongoose) => {
         console.log("✅ MongoDB connected");
         return mongoose;
+      }).catch((err) => {
+        console.error("❌ MongoDB connection error:", err);
+        return Promise.reject(err);
       });
   }
 

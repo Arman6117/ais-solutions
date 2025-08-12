@@ -94,20 +94,3 @@ export const getCourseById = async (id: string) => {
 
 
 
-export const getCourses = async () => {
-  try {
-    await connectToDB();
-    const data = await Course.find({}, "_id courseName").lean(); 
-
-    const courses = data.map((course) => {
-      return {
-        id: `${course._id}`,
-        name: course.courseName as string,
-      };
-    });
-     return courses
-  } catch (err) {
-    console.error("Failed to fetch courses", err);
-    return [];
-  }
-};

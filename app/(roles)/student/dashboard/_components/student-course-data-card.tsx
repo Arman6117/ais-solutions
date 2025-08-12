@@ -9,12 +9,12 @@ import CourseDataSkeleton from "@/components/skeletons/course-data";
 
 const StudentCourseDataCard = () => {
   const {selectedCourse} = useCourseStore()
-  const completedModules = useMemo(()=> {
-    return selectedCourse?.modules.length || 0;
-  },[selectedCourse]);
-  const completedLectures = useMemo(()=> {
-    return selectedCourse?.modules.length || 0;
-  },[selectedCourse]);
+  // const completedModules = useMemo(()=> {
+  //   return selectedCourse?.modules.length || 0;
+  // },[selectedCourse]);
+  // const completedLectures = useMemo(()=> {
+  //   return selectedCourse?.modules.length || 0;
+  // },[selectedCourse]);
   return (
     <div className="flex flex-col  w-full items-center justify-between rounded-lg shadow-md  bg-white p-3 ">
      
@@ -25,7 +25,7 @@ const StudentCourseDataCard = () => {
             <BookOpen className="text-primary-bg size-7"/>
         </div>
         <div className="flex flex-col">
-            <h1 className="text-5xl text-primary-bg font-medium">{completedModules}</h1>
+            <h1 className="text-5xl text-primary-bg font-medium">0</h1>
             <span className="text-neutral-600 text-sm">Modules Completed</span>
         </div>
       </div>

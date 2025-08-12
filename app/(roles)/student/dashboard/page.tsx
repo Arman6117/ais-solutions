@@ -6,8 +6,14 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 const StudentDashboardPage =async () => {
-  const session = await auth.api.getSession({headers:await headers()})
-  if(!session) {
+  try{
+
+    const session = await auth.api.getSession({headers:await headers()})
+    if(!session) {
+      redirect('/auth/login/student')
+    }
+  }catch(err) {
+    console.log(err)
     redirect('/auth/login/student')
   }
   return (

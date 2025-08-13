@@ -51,12 +51,12 @@ const StudentCourseDetails = () => {
           <Pyramid className="text-white" />
           Intermediate
         </Badge>
-        <span className="text-white text-sm flex gap-2">
+        {/* <span className="text-white text-sm flex gap-2">
           Instructors:
           <Link href={""} className="hover:underline hover:text-blue-500">
             John Doe
           </Link>
-        </span>
+        </span> */}
         <div className="flex gap-2 items-center">
           <Calendar className="text-white size-4" />
           <span className="text-white text-sm">Last Updated: 2/2025</span>
@@ -66,7 +66,7 @@ const StudentCourseDetails = () => {
         <div className="flex flex-col">
           <CourseBasicInfoCard />
           <ModulesDescription modules={exampleModuleAndPrice} />
-          <StudentCourseInstructorCard instructors={dummyInstructors} />
+          {/* <StudentCourseInstructorCard instructors={dummyInstructors} /> */}
           <Separator className="mt-5"/>
           <StudentCourseReviews className="md:flex hidden" isEnrolled={false} />
         </div>

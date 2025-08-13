@@ -130,7 +130,7 @@ const AllCourses = () => {
 if(loading) {
   return (
     <div className="flex w-screen h-screen items-center justify-center">
-      <Loader2 className="text-primary-bg"/>
+      <Loader2 className="text-primary-bg animate-spin"/>
     </div>
   )
 }

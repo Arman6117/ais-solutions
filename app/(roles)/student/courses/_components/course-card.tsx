@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { differenceInMonths, differenceInDays } from "date-fns";
+import { differenceInMonths, differenceInDays, formatDistance } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,18 +15,12 @@ type CourseCardProps = {
 };
 
 const CourseCard = ({ course }: CourseCardProps) => {
-  const startDate = new Date(course.courseStartDate);
-  const endDate = new Date(course.courseEndDate);
+  const durationText = formatDistance(
+    new Date(course.courseStartDate),
+    new Date(course.courseEndDate),
+    { addSuffix: false } // removes "in" or "ago"
+  );
 
-  // Calculate duration in months
-  let durationText = "";
-  const months = differenceInMonths(endDate, startDate);
-  if (months >= 1) {
-    durationText = `${months} Month${months > 1 ? "s" : ""}`;
-  } else {
-    const days = differenceInDays(endDate, startDate);
-    durationText = `${days} Day${days > 1 ? "s" : ""}`;
-  }
 
   return (
     <Link href={`/student/courses/course-details/${course._id}`}>

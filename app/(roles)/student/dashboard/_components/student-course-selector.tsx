@@ -8,43 +8,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Loader } from "lucide-react";
 import { useCourseStore } from "@/store/use-course-store";
-import { CourseSelector } from "@/lib/types/course.type";
-import { getCourses } from "@/actions/shared/get-course";
+import {  StudentCourse,  } from "@/lib/types/course.type";
 
-const StudentCourseSelector = () => {
+
+type StudentCourseSelectorProps = {
+  courses: StudentCourse[]
+}
+const StudentCourseSelector = ({courses}:StudentCourseSelectorProps) => {
   const { selectedCourse, setSelectedCourse } = useCourseStore();
-  const [coursesData,setCoursesData]= useState<CourseSelector[] |[]>([]);
-  const fetchCourses = async () => {
-    try{
-      const data = await getCourses();
-      setCoursesData(data);
-    }catch(err) {
-      console.log(err)
-    }
-  }
+  const [coursesData,setCoursesData]= useState<StudentCourse[]>(courses);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(()=> {
-    fetchCourses()
-  },[])
-  const handleCourseChange = (courseName: string) => {
-    const course = coursesData.find((c) => c.courseName === courseName);
-    if (course) {
-      setSelectedCourse(course);
+  const fetchCourses = async () => {
+    try {
+      setLoading(true);
+ 
+      setCoursesData(courses );
+    
+    } catch (err) {
+      console.error("Failed to fetch courses:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const handleCourseChange = (courseName: string) => {
+    const course = coursesData.find((c) => c.courseName === courseName);
+    
+    if (course) {
+      
+      setSelectedCourse(course);
+    }
+  };
   useEffect(() => {
     if (selectedCourse) return;
     const defaultCourse = coursesData[0];
     setSelectedCourse(defaultCourse);
   }, [selectedCourse, setSelectedCourse]);
+  if(loading) {
+    return (
+      <Loader className="animate-spin"/>
+    )
+  }
+
   return (
     <Select value={selectedCourse?.courseName} onValueChange={handleCourseChange}>
       <SelectTrigger className="flex gap-2 w-64 text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
         <BookOpen className="size-4 text-primary-bg" />
-        <SelectValue placeholder="Select a course" />
+        <SelectValue placeholder="Select a course"  />
       </SelectTrigger>
       <SelectContent>
         {coursesData.map((course) => (

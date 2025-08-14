@@ -126,7 +126,7 @@ const AllCourses = () => {
   });
   
   return courses;
-}, [search, levelFilter, sortOrder, sortBy]);
+}, [search, levelFilter, sortOrder, sortBy, allCourses]);
 if(loading) {
   return (
     <div className="flex w-screen h-screen items-center justify-center">

@@ -6,22 +6,15 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+
 import { Separator } from "@/components/ui/separator";
+import { CourseModule } from "@/lib/types/course.type";
 import { cn } from "@/lib/utils";
 import { BookOpen, Download, PlayCircle } from "lucide-react";
 import React from "react";
 
-type Module = {
-  name: string;
-  price: number;
-};
 type ModulesDescriptionProps = {
-  modules: Module[];
+  modules: CourseModule[];
   className?: string;
 };
 const ModulesDescription = ({
@@ -50,7 +43,8 @@ const ModulesDescription = ({
                 <div className="flex gap-5 items-center">
                   <h1 className="text-xl font-semibold">{m.name}</h1>
                   <Badge className="border bg-transparent text-primary-bg border-primary-bg flex gap-2 items-center">
-                    <BookOpen />4 Chapters
+                    <BookOpen />
+                    {m.chapters.length} Chapters
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -64,11 +58,7 @@ const ModulesDescription = ({
                       className
                     )}
                   >
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. A
-                    itaque repudiandae cumque at, cum, quibusdam corrupti
-                    voluptatibus distinctio quis accusantium dignissimos maxime
-                    tempore aliquid, laborum velit dolore? Tempore, ipsum
-                    quaerat.
+                    {m.description}
                   </p>
                 </div>
                 <div className="flex gap-3 items-center mt-4">
@@ -84,16 +74,57 @@ const ModulesDescription = ({
                 </div>
                 <div className="flex flex-col mt-5 gap-4">
                   <h3 className="text-[16px] font-medium">
-                    Module Content (4 Chapter)
+                    Module Content ({m.chapters.length} Chapter)
                   </h3>
 
                   <div className="flex  items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0">
-                        {1}
-                      </div>
-                      <span className="font-medium">Chapter title</span>
-                    </div>
+                    {m.chapters.map((chapter, index) => (
+                      <Accordion
+                        type="single"
+                        className="w-full py-0"
+                        collapsible
+                        key={index}
+                      >
+                        <AccordionItem value={chapter.name}>
+                          <AccordionTrigger className="flex py-0 items-center  justify-between ">
+                            <div className="flex items-center w-full gap-3">
+                              <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0">
+                                {index + 1}
+                              </div>
+                              <h1 className="font-medium">{chapter.name}</h1>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="flex flex-col">
+                            <p className=" ml-11 text-muted-foreground max-w-[300px]">
+                              {chapter.description}
+                            </p>
+                            <Separator className="mt-4" />
+                            {chapter.topics.length > 0 && (
+                              <div className="flex flex-col gap-5">
+                                {chapter.topics.map((topic, i) => (
+                                  <div
+                                    className="flex flex-col ml-10 mt-5  w-full g3"
+                                    key={i}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0">
+                                        {index + 1}
+                                      </div>
+                                      <h1 className="font-medium">
+                                        {topic.title}
+                                      </h1>
+                                    </div>
+                                    <p className=" ml-11 text-muted-foreground max-w-[300px]">
+                                      {topic.description}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ))}
                   </div>
                 </div>
               </AccordionContent>

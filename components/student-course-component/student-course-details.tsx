@@ -19,19 +19,30 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 
-import { dummyInstructors } from "@/lib/static";
-
-import { Calendar, Pyramid, Star } from "lucide-react";
+import { AlertTriangle, Calendar, Pyramid, Star } from "lucide-react";
 import StudentCourseReviews from "./student-course-reviews";
+import { CourseDetails } from "@/lib/types/course.type";
+import { format } from "date-fns";
 
-const exampleModuleAndPrice = [
-  { name: "React Hooks", price: 200 },
-  { name: "JavaScript", price: 230 },
-  { name: "SQL", price: 400 },
-  { name: "PowerBI", price: 200 },
-];
-const StudentCourseDetails = () => {
-  const totalPrice = exampleModuleAndPrice.reduce(
+
+type StudentCourseDetailsProps = {
+  course: CourseDetails | undefined;
+  message?: string;
+};
+
+const StudentCourseDetails = ({
+  course,
+  message,
+}: StudentCourseDetailsProps) => {
+  if (!course) {
+    return (
+      <div className="flex h-screen w-screen text-lg items-center justify-center">
+        <AlertTriangle className="text-destructive" />
+        <h1 className="text-destructive">{message}</h1>
+      </div>
+    );
+  }
+  const totalPrice = course.modules.reduce(
     (acc, module) => acc + module.price,
     0
   );
@@ -39,17 +50,14 @@ const StudentCourseDetails = () => {
     <div className="flex flex-col w-full relative  ">
       <div className="h-auto bg-gradient-to-r gap-4 rounded-md from-[#16161d] to-indigo-950 p-10 flex flex-col">
         <h1 className="sm:text-[45px] text-4xl max-w-[550px] text-white font-bold ">
-          The Complete Web Development Bootcamp
+          {course.courseName}
         </h1>
         <p className="text-white text-sm max-w-[550px]">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, nobis,
-          voluptas ipsum, sequi neque cupiditate deleniti voluptatum placeat
-          repudiandae et dolores cumque! Nesciunt, accusamus? Atque quia
-          adipisci est porro beatae.
+          {course.courseDescription}
         </p>
         <Badge className="bg-primary-bg flex gap-2 mt-5">
           <Pyramid className="text-white" />
-          Intermediate
+          {course.courseLevel}
         </Badge>
         {/* <span className="text-white text-sm flex gap-2">
           Instructors:
@@ -59,21 +67,27 @@ const StudentCourseDetails = () => {
         </span> */}
         <div className="flex gap-2 items-center">
           <Calendar className="text-white size-4" />
-          <span className="text-white text-sm">Last Updated: 2/2025</span>
+          <span className="text-white text-sm">
+            Last Updated: {format(course.createdAt, "M/y")}
+          </span>
         </div>
       </div>
-      <div className="flex md:flex-row flex-col  justify-between">
+      <div className="flex md:flex-row flex-col sm:p-0 p-10  justify-between">
         <div className="flex flex-col">
-          <CourseBasicInfoCard />
-          <ModulesDescription modules={exampleModuleAndPrice} />
+          <CourseBasicInfoCard
+            learners={course.numberOfStudents}
+            mode={course.courseMode}
+            rating={course.rating}
+          />
+          <ModulesDescription modules={course.modules} />
           {/* <StudentCourseInstructorCard instructors={dummyInstructors} /> */}
-          <Separator className="mt-5"/>
-          <StudentCourseReviews className="md:flex hidden" isEnrolled={false} />
+          <Separator className="mt-5" />
+          {/* <StudentCourseReviews className="md:flex hidden" isEnrolled={false} /> */}
         </div>
         <Card className="p-0  md:fixed md:right-12 md:top-20 mt-4 max-h-[550px]">
           <CardContent className="p-3   flex flex-col">
             <Image
-              src={"https://placehold.co/200x120"}
+              src={course.courseThumbnail}
               width={350}
               height={300}
               alt="thumbnail"
@@ -82,7 +96,7 @@ const StudentCourseDetails = () => {
             <div className="flex flex-col mt-5">
               <h1 className="text-xl font-semibold">Modules Pricing</h1>
               <div className="flex-flex-col mt-4">
-                {exampleModuleAndPrice.map((module, index) => (
+                {course.modules.map((module, index) => (
                   <div key={index}>
                     <div
                       className="flex justify-between mb-2 items-center"
@@ -104,11 +118,13 @@ const StudentCourseDetails = () => {
                         ₹{totalPrice}
                       </span>
                       <span className="text-xl font-medium">
-                        ₹{totalPrice - (totalPrice * 40) / 100}
+                        ₹
+                        {totalPrice -
+                          (totalPrice * course.courseDiscount) / 100}
                       </span>
                     </div>
                     <span className="text-sm text-center text-green-600 font-light">
-                      40% Discount
+                      {course.courseDiscount}% Discount
                     </span>
                   </div>
                 </div>
@@ -130,12 +146,12 @@ const StudentCourseDetails = () => {
                     Only modules you want to purchase
                   </DialogDescription>
                 </DialogHeader>
-                <ModuleSelect modules={exampleModuleAndPrice} />
+                <ModuleSelect modules={course.modules} />
               </DialogContent>
             </Dialog>
           </CardContent>
         </Card>
-        <StudentCourseReviews className="flex md:hidden" isEnrolled={false}/>
+        <StudentCourseReviews className="flex md:hidden" isEnrolled={false} />
       </div>
     </div>
   );

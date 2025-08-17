@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+
 import Image from "next/image";
 
 import StudentCourseInstructorCard from "./student-course-instructor-card";
@@ -146,7 +146,7 @@ const StudentCourseDetails = ({
                     Only modules you want to purchase
                   </DialogDescription>
                 </DialogHeader>
-                <ModuleSelect modules={course.modules} />
+                <ModuleSelect modules={course.modules} courseId={course._id}/>
               </DialogContent>
             </Dialog>
           </CardContent>

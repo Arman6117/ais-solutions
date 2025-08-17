@@ -1,0 +1,29 @@
+"use server";
+
+import { connectToDB } from "@/lib/db";
+import { parseZodError } from "@/lib/helpers/parse-zod-errors";
+import { CreatePendingRequest } from "@/lib/types/pending-request";
+import { pendingRequestSchema } from "@/lib/validations/pending-request.schema";
+import { PendingRequest } from "@/models/pending-request.model";
+import { ZodError } from "zod";
+
+export const createApproveRequest = async (data: CreatePendingRequest) => {
+  try {
+    await connectToDB();
+    const validated = pendingRequestSchema.parse(data);
+    const pendingRequestDoc = {
+      ...validated,
+      status: "pending",
+    };
+    await PendingRequest.create(pendingRequestDoc);
+    return { success: true, message: "Request sent successfully" };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: parseZodError(error) };
+    }
+    return {
+      success: false,
+      message: "Something went wrong while sending the request",
+    };
+  }
+};

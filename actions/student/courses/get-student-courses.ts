@@ -24,7 +24,7 @@ export const getStudentCourses = async (
 
     const student = (await Student.findOne({ email: studentEmail })
       .select("courses")
-      .populate({ path: "courseId", select: "_id courseName" })
+      .populate({ path: "courses.courseId", select: "_id courseName" })
       .exec()) as unknown as CourseSelector;
     if (!student) {
       return { data: [] };

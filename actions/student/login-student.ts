@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 
 export const loginStudent = async (data: FormData) => {
   try {
+    // await connectToDB();
     const validatedData = await parseStudentLoginForm(data);
     const { email, password } = validatedData;
     if (!email || !password) {
@@ -12,11 +13,15 @@ export const loginStudent = async (data: FormData) => {
         error: { email: "Email is required", password: "Password is required" },
       };
     }
-
+    // const existingStudent = await Student.findOne({email})
+    // if(!existingStudent) {
+    //   return { success: false, message: "Student not found" };
+    // }
     const auth = await authClient.signIn.email({
       email: email,
       password: password,
     });
+    console.log(auth);
     if (auth.error) {
       return { success: false, message: auth.error.message };
     }

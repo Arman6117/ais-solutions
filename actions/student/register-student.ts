@@ -10,10 +10,18 @@ import { ZodError } from "zod";
 
 export const registerStudent = async (formData: FormData) => {
   try {
+    await connectToDB();
     const validatedData = await parseStudentForm(formData);
     const { email, gender, name, password, phone, profilePic, referralCode } =
       validatedData;
 
+    const existingStudent = await Student.findOne({ email });
+    if (existingStudent) {
+      return {
+        success: false,
+        message: "Student with this email already exists.",
+      };
+    }
     const profileUrl =
       profilePic instanceof File && profilePic.size > 0
         ? await uploadToCloudinary(validatedData.profilePic as File)
@@ -29,7 +37,6 @@ export const registerStudent = async (formData: FormData) => {
     if (auth.error) {
       return { success: false, message: auth.error.message };
     }
-    await connectToDB();
     const studentId = await getNextStudentId();
     await Student.create({
       _id: studentId,

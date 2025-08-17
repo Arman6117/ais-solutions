@@ -4,3 +4,10 @@ export interface AllPendingRequests {
   email: string;
   courseName: string;
 }
+
+export interface CreatePendingRequest {
+  studentId:string,
+  courseId:string
+  modules: string[];
+  finalPrice: number;
+}

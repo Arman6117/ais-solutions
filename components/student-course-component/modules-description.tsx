@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { CourseModule } from "@/lib/types/course.type";
 import { cn } from "@/lib/utils";
 import { BookOpen, Download, PlayCircle } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 type ModulesDescriptionProps = {
@@ -65,12 +66,14 @@ const ModulesDescription = ({
                   <h3 className="text-[16px]  font-medium">
                     Download Module Syllabus
                   </h3>
-                  <Button
-                    className="bg-primary-bg rounded-full cursor-pointer"
-                    size={"sm"}
-                  >
-                    <Download />
-                  </Button>
+                  <Link href={m.syllabusLink}>
+                    <Button
+                      className="bg-primary-bg rounded-full cursor-pointer"
+                      size={"sm"}
+                    >
+                      <Download />
+                    </Button>
+                  </Link>
                 </div>
                 <div className="flex flex-col mt-5 gap-4">
                   <h3 className="text-[16px] font-medium">

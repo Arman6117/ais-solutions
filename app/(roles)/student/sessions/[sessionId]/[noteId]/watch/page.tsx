@@ -9,7 +9,8 @@ const WatchPage = async ({ params }: watchPageProps) => {
   const noteId = (await params).noteId;
   return (
     <>
-      <WatchVideo noteId={noteId} />
+    <h1>Watch</h1>
+      {/* <WatchVideo noteId={noteId} /> */}
     </>
   );
 };

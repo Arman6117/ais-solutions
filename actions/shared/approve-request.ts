@@ -8,13 +8,16 @@ import { PendingRequest } from "@/models/pending-request.model";
 import { ZodError } from "zod";
 
 export const createApproveRequest = async (data: CreatePendingRequest) => {
+  console.log("Creating Approve Request with data:", data);
   try {
     await connectToDB();
     const validated = pendingRequestSchema.parse(data);
+
     const pendingRequestDoc = {
       ...validated,
       status: "pending",
     };
+    console.log("Pending Request Document:", pendingRequestDoc);
     await PendingRequest.create(pendingRequestDoc);
     return { success: true, message: "Request sent successfully" };
   } catch (error) {

@@ -16,9 +16,10 @@ type Module = {
 type ModuleSelectProps = {
   modules: Module[];
   courseId: string;
+  discount:number
 };
 
-const ModuleSelect = ({ modules, courseId }: ModuleSelectProps) => {
+const ModuleSelect = ({ modules, courseId ,discount}: ModuleSelectProps) => {
   const [selectedModules, setSelectedModules] = useState<Module[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -37,7 +38,7 @@ const ModuleSelect = ({ modules, courseId }: ModuleSelectProps) => {
   const allModulesSelected = selectedModules.length === modules.length && modules.length > 0;
   
 
-  const discountPercentage = 40;
+  const discountPercentage = discount > 0 ? discount : 0; 
   const finalPrice = allModulesSelected 
     ? totalPrice - (totalPrice * discountPercentage) / 100 
     : totalPrice;

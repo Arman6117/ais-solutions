@@ -146,7 +146,7 @@ const StudentCourseDetails = ({
                     Only modules you want to purchase
                   </DialogDescription>
                 </DialogHeader>
-                <ModuleSelect modules={course.modules} courseId={course._id}/>
+                <ModuleSelect modules={course.modules} courseId={course._id} discount={course.courseDiscount}/>
               </DialogContent>
             </Dialog>
           </CardContent>

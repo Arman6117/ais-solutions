@@ -2,9 +2,9 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Course } from "@/lib/types/student-profile.type";
 import {
   Calendar,
   CheckCircle,
@@ -15,23 +15,13 @@ import {
 import Link from "next/link";
 import React from "react";
 
-type Course = {
-  id: number;
-  name: string;
-  total: number;
-  paid: number;
-  status: string;
-  batch: string;
-  approved: boolean;
-};
-
 type EnrolledCourseCardProps = {
   course: Course;
 };
 
 const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
   const isApproved = course.approved;
-  const progressPercentage = (course.paid / course.total) * 100;
+  const progressPercentage = ((course.paid || 0) / (course.total || 1)) * 100;
 
   return (
     <Link
@@ -64,7 +54,7 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  {course.batch}
+                  {/* {course.} */}
                 </p>
               </div>
             </div>
@@ -106,7 +96,7 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
             </Card>
             <Card className="text-center p-4 bg-orange-50 border border-orange-100">
               <div className="text-lg font-bold text-orange-700">
-                ₹{course.total - course.paid}
+                ₹{(course.total || 0) - (course.paid || 0)}
               </div>
               <div className="text-xs text-orange-700 font-medium">Due</div>
             </Card>

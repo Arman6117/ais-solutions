@@ -11,7 +11,7 @@ import {
 import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, InvoiceTable, Offer, Student } from "./types/types";
 import { UserCircleIcon } from "lucide-react";
 import { FaMoneyBill, FaUser } from "react-icons/fa";
-
+import {Course as CourseType} from "../lib/types/student-profile.type"
 
 export const adminSidebarLinks = [
   {
@@ -729,6 +729,7 @@ export const dummySessions = [
 
 
 export const dummyStudentProfile ={
+  id:"1",
   name: "Rohan Sharma",
   email: "rohan@example.com",
   number: "+91 9876543210",
@@ -737,7 +738,7 @@ export const dummyStudentProfile ={
   paidFees: 10000,
   courses: [
     {
-      id:1,
+      id:"1",
       name: "Full Stack Web Development",
       total: 8000,
       paid: 8000,
@@ -746,7 +747,7 @@ export const dummyStudentProfile ={
       approved: true,
     },
     {
-      id:2,
+      id:"2",
       name: "Data Structures & Algorithms",
       total: 7000,
       paid: 2000,
@@ -755,7 +756,7 @@ export const dummyStudentProfile ={
       approved: true,
     },
     {
-      id:3,
+      id:"3",
       name: "DevOps Fundamentals",
       total: 5000,
       paid: 0,
@@ -763,7 +764,7 @@ export const dummyStudentProfile ={
       batch: "Batch C",
       approved: false,
     },
-  ],
+  ] as CourseType[],
 }
 
 

@@ -12,12 +12,14 @@ import {
 import SessionMarkAsWatchedButton from "./session-mark-as-watched-button";
 import { toast } from "sonner";
 import SessionCardViewNotesButton from "./session-card-view-notes-button";
+import { Session } from "@/lib/types/sessions.type";
 
 type SessionCardProps = {
-  session: (typeof dummySessions)[0];
+  session: Session
+  attended:boolean
 };
 
-const SessionCard = ({ session }: SessionCardProps) => {
+const SessionCard = ({ session ,attended}: SessionCardProps) => {
   const sessionDate = new Date(session.date);
   const formattedDate = format(sessionDate, "dd MMM yyyy");
   const formattedTime = format(sessionDate, "hh:mm a");
@@ -27,16 +29,16 @@ const SessionCard = ({ session }: SessionCardProps) => {
       <div className="flex items-center justify-between">
         <div className="flex gap-4">
           <Badge
-            variant={session.attended ? "default" : "outline"}
+            variant={attended ? "default" : "outline"}
             className={`text-xs px-3 py-1 ${
-              session.attended
+              attended
                 ? "bg-green-100 text-green-800"
                 : "bg-red-100 text-red-700"
             }`}
           >
-            {session.attended ? "Attended" : "Missed"}
+            {attended ? "Attended" : "Missed"}
           </Badge>
-          {!session.attended && (
+          {!attended && (
             <SessionMarkAsWatchedButton
               onClick={() => toast.success("Marked as watched")}
             />
@@ -45,7 +47,7 @@ const SessionCard = ({ session }: SessionCardProps) => {
         <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
           <SessionCardViewNotesButton
-            sessionId={session.id as unknown as string}
+            sessionId={session._id}
           />
         </div>
       </div>
@@ -59,13 +61,13 @@ const SessionCard = ({ session }: SessionCardProps) => {
 
       <div className="text-sm text-gray-700 flex items-center gap-2">
         <BookOpenCheck className="h-4 w-4" />
-        <span className="font-medium">Course:</span> {session.course}
+        <span className="font-medium">Course:</span> {session.courseName}
       </div>
 
       <div className="text-sm text-gray-700 sm:flex-row flex-col  flex sm:items-center gap-2">
         <Layers className="h-4 w-4" />
-        <span className="font-medium">Module:</span> {session.module}
-        <span className="font-medium sm:ml-4">Chapter:</span> {session.chapter}
+        <span className="font-medium">Module:</span> {session.modules}
+        <span className="font-medium sm:ml-4">Chapter:</span> {session.chapters}
       </div>
     </div>
   );

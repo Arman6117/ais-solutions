@@ -132,7 +132,7 @@ const Sessions = () => {
         </div>
         <div className="flex flex-col gap-5 mt-10">
           {paginatedSessions.map((session) => (
-            <SessionCard attended={session.studentId.includes(currentStudentId)} key={session._id} session={session} />
+            <SessionCard attended={session.studentId.includes(currentStudentId)} studentId={currentStudentId} key={session._id} session={session} />
           ))}
         </div>
       </div>

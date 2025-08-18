@@ -1,29 +1,45 @@
-import React from "react";
-import { dummySessions } from "@/lib/static";
+"use client";
+import React, { useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import {
-  CalendarDays,
-  Clock,
-  User2,
-  BookOpenCheck,
-  Layers,
-} from "lucide-react";
+import { User2, BookOpenCheck, Layers } from "lucide-react";
 import SessionMarkAsWatchedButton from "./session-mark-as-watched-button";
 import { toast } from "sonner";
 import SessionCardViewNotesButton from "./session-card-view-notes-button";
 import { Session } from "@/lib/types/sessions.type";
+import { markSessionAsWatched } from "@/actions/student/sessions/mark-as-watched";
+import { useRouter } from "next/navigation";
 
 type SessionCardProps = {
-  session: Session
-  attended:boolean
+  session: Session;
+  attended: boolean;
+  studentId: string;
 };
 
-const SessionCard = ({ session ,attended}: SessionCardProps) => {
+const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const sessionDate = new Date(session.date);
   const formattedDate = format(sessionDate, "dd MMM yyyy");
   const formattedTime = format(sessionDate, "hh:mm a");
+  const handleClick = async () => {
+    setIsLoading(true);
+    try {
+      const res = await markSessionAsWatched(session._id, studentId);
+      if (!res.success) {
+        toast.error(res.message);
+        setIsLoading(false);
+        return;
+      }
 
+      toast.success(res.message);
+      router.refresh();
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 bg-white space-y-3">
       <div className="flex items-center justify-between">
@@ -40,15 +56,14 @@ const SessionCard = ({ session ,attended}: SessionCardProps) => {
           </Badge>
           {!attended && (
             <SessionMarkAsWatchedButton
-              onClick={() => toast.success("Marked as watched")}
+              loading={isLoading}
+              onClick={handleClick}
             />
           )}
         </div>
         <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
-          <SessionCardViewNotesButton
-            sessionId={session._id}
-          />
+          <SessionCardViewNotesButton sessionId={session._id} />
         </div>
       </div>
 

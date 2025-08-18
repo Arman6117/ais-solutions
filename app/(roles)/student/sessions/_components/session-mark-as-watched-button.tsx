@@ -4,18 +4,22 @@ import React from "react";
 
 type SessionMarkAsWatchedButtonProps = {
   onClick: () => void;
+  loading: boolean;
 };
 
 const SessionMarkAsWatchedButton = ({
   onClick,
+  loading,
 }: SessionMarkAsWatchedButtonProps) => {
   return (
     <Button
       className="hover:bg-primary-bg/10 items-center flex gap-2 cursor-pointer border-primary-bg"
       variant={"outline"}
+      onClick={onClick}
+      disabled={loading}
     >
-     <CheckCircle className="text-primary-bg"/>
-     <span className="text-primary-bg">Mark As Watched</span>
+      <CheckCircle className="text-primary-bg" />
+      <span className="text-primary-bg">Mark As Watched</span>
     </Button>
   );
 };

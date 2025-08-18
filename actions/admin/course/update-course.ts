@@ -19,54 +19,42 @@ type UpdateCoursePayload = {
   syllabusLink?: string;
   modules?: string[];
 };
+
 export const updateCourse = async (data: UpdateCoursePayload) => {
   try {
     await connectToDB();
-    const {
-      courseId,
-      courseDescription,
-      courseDiscount,
-      courseEndDate,
-      courseMode,
-      courseName,
-      courseOfferPrice,
-      coursePrice,
-      courseStartDate,
-      courseThumbnail,
-      syllabusLink,
-      modules,
-    } = data;
+
+    const { courseId, ...rest } = data;
 
     if (!isValidObjectId(courseId)) {
       return { success: false, message: "Provide valid course id" };
     }
 
     const course = await Course.findById(new ObjectId(courseId));
-
     if (!course) {
       return { success: false, message: "Course not found" };
     }
 
-    // Update only provided fields
-    if (courseName !== undefined) course.courseName = courseName;
-    if (courseDescription !== undefined)
-      course.courseDescription = courseDescription;
-    if (courseThumbnail !== undefined) course.courseThumbnail = courseThumbnail;
-    if (coursePrice !== undefined) course.coursePrice = coursePrice;
-    if (courseDiscount !== undefined) course.courseDiscount = courseDiscount;
-    if (courseOfferPrice !== undefined)
-      course.courseOfferPrice = courseOfferPrice;
-    if (courseStartDate !== undefined)
-      course.courseStartDate = new Date(courseStartDate);
-    if (courseEndDate !== undefined)
-      course.courseEndDate = new Date(courseEndDate);
-    if (courseMode !== undefined) course.courseMode = courseMode;
-    if (syllabusLink !== undefined) course.syllabusLink = syllabusLink;
-    if (modules !== undefined && modules?.length > 0) course.modules = modules;
+    // filter out undefined fields
+    const updateData = Object.fromEntries(
+      Object.entries(rest).filter(([_, v]) => v !== undefined)
+    );
+
+    // handle date conversion if present
+    if (updateData.courseStartDate) {
+      updateData.courseStartDate = new Date(updateData.courseStartDate as any);
+    }
+    if (updateData.courseEndDate) {
+      updateData.courseEndDate = new Date(updateData.courseEndDate as any);
+    }
+
+    Object.assign(course, updateData);
 
     await course.save();
-    return { success: true, message: "Course updated successfully" };
+
+    return { success: true, message: "Course updated successfully", course };
   } catch (error) {
+    console.error("updateCourse error:", error);
     return { success: false, message: "Something went wrong" };
   }
 };

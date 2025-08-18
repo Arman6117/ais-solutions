@@ -9,11 +9,10 @@ const LogOutButton = () => {
   const handleLogOut = async () => {
     try {
       const res = await authClient.signOut();
-      console.log(res)
+
       toast.success("Successfully logged out");
-      redirect('/auth/login/student')
+      redirect("/auth/login/student");
     } catch (error) {
-        
       toast.error("Failed to logout");
     }
   };

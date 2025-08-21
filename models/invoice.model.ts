@@ -37,7 +37,6 @@ const paymentHistorySchema = new Schema({
 });
 const invoiceSchema = new Schema({
   studentId: { type: String, required: true },
-
   totalFees: { type: Number, required: true },
   remainingFees: { type: Number, required: true },
   amountPaid: { type: Number, required: true },

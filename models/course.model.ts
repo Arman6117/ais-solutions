@@ -23,12 +23,13 @@ const CourseSchema = new Schema(
     },
     numberOfStudents: { type: Number, default: 0, required: true },
     modules: [{ type: Schema.Types.ObjectId, ref: "Module" }],
-    batches: [{ type: String, ref: "Batch", default: [] }],
+    batches: [{ type: Schema.Types.ObjectId, ref: "Batch", default: [] }],
     rating: { type: Number, default: 0, min: 0, max: 5 },
     studentsEnrolled: [
       { type: Schema.Types.ObjectId, ref: "Student", default: [] },
     ],
     // comments:[{}]
+    //TODO:Add course status
   },
   { timestamps: true }
 );

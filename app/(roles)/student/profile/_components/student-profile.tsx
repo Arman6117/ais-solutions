@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { dummyStudentProfile } from "@/lib/static";
 import { useStudentProfile } from "@/hooks/use-student-profile";
 import ProfileHeader from "./profile-header";
 import StatsSection from "./stats-section";
@@ -69,7 +68,7 @@ const StudentProfile = () => {
         />
 
         
-        <CoursesSection courses={studentData?.courses} />
+        <CoursesSection courses={studentData?.courses || []} />
       </div>
     </div>
   );

@@ -103,7 +103,7 @@ const EnrolledCourse = () => {
 
       <div className="p-6 md:p-10">
         <div className="flex flex-col  justify-between mb-8">
-          <ModulesDescription modules={dummyModules} className="w-full max-w-full" />
+          <ModulesDescription modules={courseData.modules} className="w-full max-w-full" />
           <StudentCourseInstructorCard instructors={dummyInstructors} />
           <Separator className="mt-5"/>
           <StudentCourseReviews isEnrolled={true} />

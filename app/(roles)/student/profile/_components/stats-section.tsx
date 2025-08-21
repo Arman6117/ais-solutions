@@ -2,30 +2,32 @@
 import React from 'react';
 import { DollarSign, CheckCircle, Clock, Award } from "lucide-react";
 
-import { StudentProfile } from '@/lib/types/student-profile.type';
+
 import StatCard from './stat-card';
+import { StudentData } from '@/lib/types/student';
 
 
 interface StatsSectionProps {
-  studentData: StudentProfile;
+  studentData: StudentData | null;
 }
 
 const StatsSection: React.FC<StatsSectionProps> = ({ studentData }) => {
-  const remainingFees = studentData.totalFees - studentData.paidFees;
-  const completedCourses = studentData.courses.filter(
-    (course) => course.status === "Completed"
-  ).length;
+  if(!studentData) return
+  const remainingFees = (studentData.totalFees || 0) - (studentData.amountPaid || 0);
+  // const completedCourses = studentData.courses.filter(
+  //   (course) => course.status === "Completed"
+  // ).length;
 
   const stats = [
     {
       icon: <DollarSign />,
-      value: `₹${studentData.totalFees.toLocaleString()}`,
+      value: `₹${studentData.totalFees ?studentData.totalFees.toLocaleString() :0 }`,
       label: "Total Fees",
       color: 'blue' as const,
     },
     {
       icon: <CheckCircle />,
-      value: `₹${studentData.paidFees.toLocaleString()}`,
+      value: `₹${studentData.amountPaid ?studentData.amountPaid.toLocaleString():0}`,
       label: "Paid Amount",
       color: 'emerald' as const,
     },
@@ -37,7 +39,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ studentData }) => {
     },
     {
       icon: <Award />,
-      value: completedCourses,
+      value: "1",
       label: "Completed",
       color: 'purple' as const,
     },

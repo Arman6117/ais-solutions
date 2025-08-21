@@ -20,12 +20,12 @@ type EnrolledCourseCardProps = {
 };
 
 const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
-  const isApproved = course.approved;
+  const isApproved = course.isApproved;
   const progressPercentage = ((course.paid || 0) / (course.total || 1)) * 100;
-
+  console.log(course)
   return (
     <Link
-      href={`/student/profile/enrolled-courses/${course.id}`}
+      href={`/student/profile/enrolled-courses/${course._id}`}
       className="no-underline"
     >
       <Card className="group relative overflow-hidden border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">

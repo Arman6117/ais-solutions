@@ -11,6 +11,7 @@ interface CoursesSectionProps {
 }
 
 const CoursesSection: React.FC<CoursesSectionProps> = ({ courses }) => {
+  console.log(courses)
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center gap-4">
@@ -32,7 +33,7 @@ const CoursesSection: React.FC<CoursesSectionProps> = ({ courses }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         {courses.map((course, idx) => (
-          <EnrolledCourseCard course={course} key={course.id || idx} />
+          <EnrolledCourseCard course={course} key={course._id || idx} />
         ))}
       </div>
     </div>

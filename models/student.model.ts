@@ -14,7 +14,7 @@ const StudentSchema = new Schema(
     feeStatus:{type:String, enum:["paid","partial","unpaid"], default:"unpaid", required:true},
     courses: [
       {
-        courseId: { type: Schema.Types.ObjectId,ref:"Course", required: true, index: true },
+        courseId: [{ type: Schema.Types.ObjectId,ref:"Course", required: true, index: true }],
         moduleId: [{  type: Schema.Types.ObjectId,ref:"Module", required: true }],
         approvedAt: { type: Date, default: null },
         isApproved: { type: Boolean, default: false },

@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Edit3, Save, X, Phone, Camera, Mail } from "lucide-react";
 import { EditableData, StudentProfile } from "@/lib/types/student-profile.type";
 import ProfileDetail from "./profile-detail";
+import { StudentData } from "@/lib/types/student";
 
 type ProfileHeaderProps = {
-  studentData: StudentProfile;
+  studentData: StudentData | null;
   isEditing: boolean;
   editData: EditableData;
   onEditToggle: () => void;
@@ -33,6 +34,9 @@ const ProfileHeader = ({
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
+  if(!studentData) {
+    return <h1>No</h1>
+  }
 
   return (
     <Card className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 border-0 shadow-2xl">
@@ -43,11 +47,11 @@ const ProfileHeader = ({
       <CardContent className="relative p-6 md:p-8 lg:p-12">
         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
           <div className="relative group">
-            <Avatar className="w-28 h-28 md:w-36 md:h-36 border-4 border-white/30 shadow-2xl">
+            <Avatar className="size-28 md:size-36 border-4 border-white/30 shadow-2xl">
               <AvatarImage
-                src={studentData.image}
+                src={studentData.profilePic}
                 alt="Profile"
-                className="group-hover:scale-110 transition-transform duration-500"
+                className="group-hover:scale-110  object-cover transition-transform duration-500"
               />
               <AvatarFallback className="bg-white text-purple-600 text-2xl font-bold">
                 {studentData.name

@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { TrendingUp } from "lucide-react";
 
 type PaymentProgressProps = {
-    totalFees:number,
+    totalFees:number ,
     paidFees:number
 }
 const PaymentProgress = ({ totalFees, paidFees }:PaymentProgressProps) => {

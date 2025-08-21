@@ -14,6 +14,7 @@ export interface StudentData {
     name: string;
     email: string;
     phone: string;
+    profilePic:string
     gender:"male" | "female" | "other";
     batches: string[];
     feesStatus: "paid" | "partial" | "unpaid";
@@ -27,4 +28,8 @@ export interface StudentData {
     }
     invoices: string[];
     referralCode: string,
+    totalFees?:number
+    remainingFee?:number
+    amountPaid?:number
 }
+

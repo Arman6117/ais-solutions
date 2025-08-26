@@ -130,11 +130,11 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                               action cannot be undone.
                             </DialogDescription>
                           </DialogHeader>
-                          <DialogFooter className="gap-2 sm:gap-0">
+                          <DialogFooter className="flex gap-5 sm:gap-3">
                             <DialogClose>Cancel</DialogClose>
-                            <DialogClose>
+                            <DialogClose  asChild>
                               <Button
-                              asChild
+                             
                                 variant="destructive"
                                 onClick={() => handleDelete(meeting._id)}
                               >

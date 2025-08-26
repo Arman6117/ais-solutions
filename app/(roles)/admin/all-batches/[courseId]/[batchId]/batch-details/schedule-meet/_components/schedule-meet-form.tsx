@@ -1,214 +1,231 @@
 "use client";
-import { useState } from "react";
-
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
-
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
-import {
-  BookCheck,
-  CalendarClock,
-  Clock,
-  Link,
-  PackageCheckIcon,
-  Text,
-} from "lucide-react";
-import { PiChalkboardTeacher } from "react-icons/pi";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 
-export const modulesWithSubtopics = [
-  {
-    id: "react-basics",
-    name: "React Basics",
-    subtopics: ["JSX & Components", "Props & State", "Hooks", "Routing"],
-  },
-  {
-    id: "node-auth",
-    name: "Node.js Auth",
-    subtopics: ["JWT", "Session", "OAuth", "Rate Limiting"],
-  },
-  {
-    id: "mongodb-crud",
-    name: "MongoDB CRUD",
-    subtopics: ["Insert", "Find", "Update", "Delete"],
-  },
-];
+
+
+import { createSession } from "@/actions/admin/sessions/create-session";
+import { BatchesIdsNames, getBatchesIds } from "@/actions/shared/get-batches-ids";
+import MeetingDetailsSection from "./meetings-details-section";
+import BatchSelectionSection from "./batch-selection-section";
+import ModuleSelectionSection from "./module-selection-section";
+import SubtopicsSelectionSection from "./subtopic-selection-section";
+import InstructorSelectionSection from "./instructor-selection-section";
+import ScheduleSection from "./schedule-section";
+import { instructors, modulesWithSubtopics } from "./data/mockdata";
+import { validateForm } from "./validation";
+
+
+export interface FormData {
+  meetingName: string;
+  meetingLink: string;
+  selectedBatchId: string;
+  selectedModuleId: string;
+  selectedSubtopics: string[];
+  instructor: string;
+  date: Date | undefined;
+  time: string;
+}
+
+export interface FormErrors {
+  [key: string]: string;
+}
 
 export default function ScheduleMeetingForm() {
-  const [meetingName, setMeetingName] = useState("");
-  const [meetingLink, setMeetingLink] = useState("");
-  const [selectedModuleId, setSelectedModuleId] = useState("");
-  const [selectedSubtopics, setSelectedSubtopics] = useState<string[]>([]);
-  const [instructor, setInstructor] = useState("");
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [time, setTime] = useState("");
+  const params = useParams();
 
-  const instructors = ["John Doe", "Jane Smith", "Prajyot Patil"];
+  // Form states
+  const [formData, setFormData] = useState<FormData>({
+    meetingName: "",
+    meetingLink: "",
+    selectedBatchId: "",
+    selectedModuleId: "",
+    selectedSubtopics: [],
+    instructor: "",
+    date: new Date(),
+    time: "",
+  });
 
-  const selectedModule = modulesWithSubtopics.find(
-    (m) => m.id === selectedModuleId
-  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [batches, setBatches] = useState<BatchesIdsNames[]>([]);
 
-  const toggleSubtopic = (sub: string) => {
-    setSelectedSubtopics((prev) =>
-      prev.includes(sub) ? prev.filter((s) => s !== sub) : [...prev, sub]
-    );
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const courseId = params.courseId as string;
+        
+        if (!courseId) return;
+        const res = await getBatchesIds(courseId);
+        if (res.success) {
+          toast.success(res.message);
+          setBatches(res.data);
+        } else {
+          toast.error(res.message);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Something went wrong");
+      }
+    };
+    fetchBatches();
+  }, [params.courseId]);
+
+  useEffect(() => {
+    const batchIdFromUrl = params.batchId as string;
+    if (batchIdFromUrl && batches.find((b) => b._id === batchIdFromUrl)) {
+      setFormData(prev => ({ ...prev, selectedBatchId: batchIdFromUrl }));
+    } else if (batches.length > 0) {
+      setFormData(prev => ({ ...prev, selectedBatchId: batches[0]._id }));
+    }
+  }, [params, batches]);
+
+  const updateFormData = (updates: Partial<FormData>) => {
+    setFormData(prev => ({ ...prev, ...updates }));
   };
 
-  const handleSubmit = () => {
-    const payload = {
-      meetingName,
-      meetingLink,
-      module: selectedModule?.name || "",
-      subtopics: selectedSubtopics,
-      instructor,
-      date: format(date as Date, "yyyy-MM-dd"),
-      time,
-    };
-    console.log("🚀 Scheduling Meeting:", payload);
-    // Send to backend here
+  const selectedModule = modulesWithSubtopics.find(
+    (m) => m.id === formData.selectedModuleId
+  );
+
+  const selectedBatch = batches.find((b) => b._id === formData.selectedBatchId);
+
+  const handleSubmit = async () => {
+    const validation = validateForm(formData);
+    setErrors(validation.errors);
+    
+    if (!validation.isValid) return;
+
+    setIsLoading(true);
+
+    try {
+      const payload = {
+        meetingName: formData.meetingName.trim(),
+        meetingLink: formData.meetingLink.trim(),
+        batchId: formData.selectedBatchId,
+        batchName: selectedBatch?.name,
+        module: selectedModule?.name || "",
+        moduleId: formData.selectedModuleId,
+        chapters: formData.selectedSubtopics,
+        instructor: formData.instructor,
+        date: format(formData.date as Date, "yyyy-MM-dd"),
+        time: formData.time,
+        scheduledAt: new Date().toISOString(),
+      };
+
+      await createSession(payload);
+
+      // Reset form on success
+      setFormData({
+        meetingName: "",
+        meetingLink: "",
+        selectedBatchId: batches.length > 0 ? batches[0]._id : "",
+        selectedModuleId: "",
+        selectedSubtopics: [],
+        instructor: "",
+        date: new Date(),
+        time: "",
+      });
+
+      toast.success("Meeting scheduled successfully!");
+    } catch (error) {
+      console.error("Error scheduling meeting:", error);
+      toast.error("Failed to schedule meeting. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto p-5">
-      <CardHeader>
-        <CardTitle className="text-2xl">Schedule a Meeting</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex flex-col gap-3 justify-center">
-          <Label className="text-lg flex gap-2 items-center">
-            <Text />
-            Meeting Name
-          </Label>
-          <Input
-            value={meetingName}
-            onChange={(e) => setMeetingName(e.target.value)}
-            placeholder="Enter meeting name"
-            className="focus  ml-6 w-64  sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
-          />
-        </div>
-        <div className="flex flex-col gap-3 justify-center">
-          <Label className="text-lg flex gap-2 items-center">
-            <Link />
-            Meeting Name
-          </Label>
-          <Input
-            value={meetingLink}
-            onChange={(e) => setMeetingLink(e.target.value)}
-            placeholder="Enter meeting link"
-            className="focus ml-6 w-64  sm:w-96 relative  transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
-          />
-        </div>
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <Card className="w-full max-w-4xl mx-auto shadow-xl border-0 bg-white/95 backdrop-blur">
+        <CardHeader className="text-black rounded-t-lg">
+          <CardTitle className="text-3xl font-bold text-center">
+            Schedule a Meeting
+          </CardTitle>
+          <p className="text-purple-900 text-center mt-2">
+            Create and schedule a new meeting session for your batch
+          </p>
+        </CardHeader>
 
-        <div className="flex flex-col gap-3 justify-center">
-          <Label className="text-lg flex gap-2 items-center">
-            <PackageCheckIcon />
-            Select Module
-          </Label>
-          <Select
-            onValueChange={(val) => {
-              setSelectedModuleId(val);
-              setSelectedSubtopics([]); // Reset subtopics when module changes
+        <CardContent className="p-8 space-y-8">
+          <MeetingDetailsSection
+            meetingName={formData.meetingName}
+            meetingLink={formData.meetingLink}
+            errors={errors}
+            onUpdate={updateFormData}
+          />
+
+          <BatchSelectionSection
+            selectedBatchId={formData.selectedBatchId}
+            batches={batches}
+            selectedBatch={selectedBatch}
+            errors={errors}
+            onUpdate={updateFormData}
+          />
+
+          <ModuleSelectionSection
+            selectedModuleId={formData.selectedModuleId}
+            modules={modulesWithSubtopics}
+            errors={errors}
+            onUpdate={(moduleId:string) => {
+              updateFormData({ 
+                selectedModuleId: moduleId, 
+                selectedSubtopics: [] 
+              });
             }}
-          >
-            <SelectTrigger className="ml-6">
-              <SelectValue placeholder="Choose a module" />
-            </SelectTrigger>
-            <SelectContent>
-              {modulesWithSubtopics.map((mod) => (
-                <SelectItem key={mod.id} value={mod.id}>
-                  {mod.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          />
 
-        {selectedModule && (
-          <div className="flex flex-col gap-3 justify-center">
-            <Label className="text-lg flex gap-2 items-center">
-              <BookCheck />
-              Select Subtopics
-            </Label>
-            <div className="grid grid-cols-2 gap-2">
-              {selectedModule.subtopics.map((sub) => (
-                <Label key={sub} className="flex items-center gap-2">
-                  <Checkbox
-                    checked={selectedSubtopics.includes(sub)}
-                    onCheckedChange={() => toggleSubtopic(sub)}
-                  />
-                  {sub}
-                </Label>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3 justify-center">
-          <Label className="text-lg flex gap-2 items-center">
-            <PiChalkboardTeacher />
-            Instructor
-          </Label>
-          <Select onValueChange={setInstructor}>
-            <SelectTrigger className="ml-6">
-              <SelectValue placeholder="Choose an instructor" />
-            </SelectTrigger>
-            <SelectContent>
-              {instructors.map((inst) => (
-                <SelectItem key={inst} value={inst}>
-                  {inst}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Label className="text-lg flex gap-2 items-center">
-              <CalendarClock />
-              Select Date
-            </Label>
-            <Calendar mode="single" selected={date} onSelect={setDate} />
-          </div>
-          <div className="flex flex-col gap-3 justify-center">
-            <Label className="text-lg flex gap-2 items-center">
-              <Clock />
-              Time (HH:MM)
-            </Label>
-            <Input
-              type="time"
-              className="ml-6"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
+          {selectedModule && (
+            <SubtopicsSelectionSection
+              selectedModule={selectedModule}
+              selectedSubtopics={formData.selectedSubtopics}
+              errors={errors}
+              onUpdate={updateFormData}
             />
-          </div>
-        </div>
-      </CardContent>
+          )}
 
-      <CardFooter>
-        <Button onClick={handleSubmit} className="ml-auto bg-primary-bg">
-          Schedule
-        </Button>
-      </CardFooter>
-    </Card>
+          <InstructorSelectionSection
+            instructor={formData.instructor}
+            instructors={instructors}
+            errors={errors}
+            onUpdate={updateFormData}
+          />
+
+          <ScheduleSection
+            date={formData.date}
+            time={formData.time}
+            errors={errors}
+            onUpdate={updateFormData}
+          />
+        </CardContent>
+
+        <CardFooter className="bg-gray-50 p-8 rounded-b-lg">
+          <div className="flex items-center justify-between w-full">
+            <p className="text-sm text-gray-600">* Required fields</p>
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-8 py-2 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Scheduling...
+                </>
+              ) : (
+                "Schedule Meeting"
+              )}
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

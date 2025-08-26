@@ -14,23 +14,25 @@ export interface Session {
 
 export interface CreateSessionPayload {
   studentId?: string[];
-  courseName: string;
-  modules: string[];
-  chapters: string[];
+  batchName: string | undefined;
+  batchId?: string;
+  moduleId?: string;
+  module: string;         
+  chapters: string[];     // keep array for multiple subtopics
   instructor?: string;
-  title: string;
-  date: Date;
+  meetingName: string;
+  meetingLink: string;
+  date: string;
   time: string;
 }
+
 export interface UpdateSessionPayload {
   studentId?: string[];
-  courseName?: string;
-  modules?: string[];
+  meetingName?: string;
+  modules?: string;
   chapters?: string[];
   instructor?: string;
-  title?: string;
+  meetingLink?: string;
   date?: Date;
   time?: string;
-  notes?: string;
-  videoLink?: string;
 }

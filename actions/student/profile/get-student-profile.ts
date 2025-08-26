@@ -59,7 +59,7 @@ export const getStudentProfile = async (
       student.totalFees = 0;
       student.remainingFee = 0;
     }
-    console.log(student)
+  
     return {
       data: JSON.parse(JSON.stringify(student)),
       message: "Student profile fetched successfully",

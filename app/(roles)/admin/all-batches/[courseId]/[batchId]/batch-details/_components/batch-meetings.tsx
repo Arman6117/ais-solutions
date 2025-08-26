@@ -17,6 +17,7 @@ type Meeting = {
 };
 
 type BatchMeetings = {
+  
   courseId: string;
   batch: string;
   mode: "view" | "edit";
@@ -136,7 +137,7 @@ const BatchMeetings = ({ batch, courseId, mode, modules }: BatchMeetings) => {
 
           <div className="mt-4 pt-2">
             <Link
-              href={`/admin/courses/batch-details/${courseId}/batch/${batch}/schedule-meet`}
+              href={`/admin/all-batches/${courseId}/${batch}/batch-details/schedule-meet`}
             >
               <Button
                 variant="outline"

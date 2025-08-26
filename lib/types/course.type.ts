@@ -1,11 +1,11 @@
 import { Mode } from "./types";
 
-export interface CourseSelector {
-  courses: {
+export interface Courses {
+
     _id: string;
     courseName: string;
     isApproved?: boolean;
-  }[];
+  
 }
 export interface StudentCourse {
   _id: string;

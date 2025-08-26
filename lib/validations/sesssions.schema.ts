@@ -1,11 +1,12 @@
 import { z } from "zod";
 export const sessionSchema = z.object({
+  batchId:z.string(),
   meetingName: z.string().min(1, "Meeting name is required"),
   meetingLink: z.string().min(1, "Meeting link is required"),
-  modules:z.string().min(1, "Module is required"),
+  module:z.string().min(1, "Module is required"),
   chapters: z.array(z.string().min(1, "Chapter is required")),
   instructor: z.string().optional(),
-  date: z.date(),
+  date: z.string(),
   time: z.string().min(1, "Time is required"),
 });
 export const updateSessionSchema = z.object({

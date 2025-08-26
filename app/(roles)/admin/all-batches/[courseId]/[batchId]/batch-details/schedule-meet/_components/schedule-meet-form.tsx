@@ -4,14 +4,20 @@ import { useParams } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-
-
-
 import { createSession } from "@/actions/admin/sessions/create-session";
-import { BatchesIdsNames, getBatchesIds } from "@/actions/shared/get-batches-ids";
+import {
+  BatchesIdsNames,
+  getBatchesIds,
+} from "@/actions/shared/get-batches-ids";
 import MeetingDetailsSection from "./meetings-details-section";
 import BatchSelectionSection from "./batch-selection-section";
 import ModuleSelectionSection from "./module-selection-section";
@@ -20,7 +26,8 @@ import InstructorSelectionSection from "./instructor-selection-section";
 import ScheduleSection from "./schedule-section";
 import { instructors, modulesWithSubtopics } from "./data/mockdata";
 import { validateForm } from "./validation";
-
+import { ModulesForSession } from "@/lib/types/sessions.type";
+import { getModulesWithSubtopics } from "@/actions/shared/get-modules-with-subtopics";
 
 export interface FormData {
   meetingName: string;
@@ -55,12 +62,12 @@ export default function ScheduleMeetingForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [batches, setBatches] = useState<BatchesIdsNames[]>([]);
-
+  const [modules, setModules] = useState<ModulesForSession[]>([]);
   useEffect(() => {
     const fetchBatches = async () => {
       try {
         const courseId = params.courseId as string;
-        
+
         if (!courseId) return;
         const res = await getBatchesIds(courseId);
         if (res.success) {
@@ -76,22 +83,40 @@ export default function ScheduleMeetingForm() {
     };
     fetchBatches();
   }, [params.courseId]);
-
+  useEffect(()=> {
+    const fetchModules= async () => {
+      try{
+        const res = await getModulesWithSubtopics(formData.selectedBatchId)
+        if(!res.success) {
+          toast.error(res.message)
+          return
+        }
+        if(res.success) {
+          toast.success(res.message)
+          setModules(res.data);
+        }
+      }catch(error) {
+        console.log(error)
+        toast.error("Something went wrong")
+      }
+    }
+    fetchModules()
+  },[formData.selectedBatchId])
   useEffect(() => {
     const batchIdFromUrl = params.batchId as string;
     if (batchIdFromUrl && batches.find((b) => b._id === batchIdFromUrl)) {
-      setFormData(prev => ({ ...prev, selectedBatchId: batchIdFromUrl }));
+      setFormData((prev) => ({ ...prev, selectedBatchId: batchIdFromUrl }));
     } else if (batches.length > 0) {
-      setFormData(prev => ({ ...prev, selectedBatchId: batches[0]._id }));
+      setFormData((prev) => ({ ...prev, selectedBatchId: batches[0]._id }));
     }
   }, [params, batches]);
 
   const updateFormData = (updates: Partial<FormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
+    setFormData((prev) => ({ ...prev, ...updates }));
   };
 
-  const selectedModule = modulesWithSubtopics.find(
-    (m) => m.id === formData.selectedModuleId
+  const selectedModule = modules.find(
+    (m) => m._id === formData.selectedModuleId
   );
 
   const selectedBatch = batches.find((b) => b._id === formData.selectedBatchId);
@@ -99,7 +124,7 @@ export default function ScheduleMeetingForm() {
   const handleSubmit = async () => {
     const validation = validateForm(formData);
     setErrors(validation.errors);
-    
+
     if (!validation.isValid) return;
 
     setIsLoading(true);
@@ -119,21 +144,25 @@ export default function ScheduleMeetingForm() {
         scheduledAt: new Date().toISOString(),
       };
 
-      await createSession(payload);
+      const res = await createSession(payload);
+       if(res.success) {
 
-      // Reset form on success
-      setFormData({
-        meetingName: "",
-        meetingLink: "",
-        selectedBatchId: batches.length > 0 ? batches[0]._id : "",
-        selectedModuleId: "",
-        selectedSubtopics: [],
-        instructor: "",
-        date: new Date(),
-        time: "",
-      });
-
-      toast.success("Meeting scheduled successfully!");
+         // Reset form on success
+         setFormData({
+           meetingName: "",
+           meetingLink: "",
+           selectedBatchId: batches.length > 0 ? batches[0]._id : "",
+           selectedModuleId: "",
+           selectedSubtopics: [],
+           instructor: "",
+           date: new Date(),
+           time: "",
+          });
+          
+          toast.success("Meeting scheduled successfully!");
+        } else {
+          toast.error(res.message.toString())
+        }
     } catch (error) {
       console.error("Error scheduling meeting:", error);
       toast.error("Failed to schedule meeting. Please try again.");
@@ -141,7 +170,7 @@ export default function ScheduleMeetingForm() {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-4xl mx-auto shadow-xl border-0 bg-white/95 backdrop-blur">
@@ -172,12 +201,12 @@ export default function ScheduleMeetingForm() {
 
           <ModuleSelectionSection
             selectedModuleId={formData.selectedModuleId}
-            modules={modulesWithSubtopics}
+            modules={modules}
             errors={errors}
-            onUpdate={(moduleId:string) => {
-              updateFormData({ 
-                selectedModuleId: moduleId, 
-                selectedSubtopics: [] 
+            onUpdate={(moduleId: string) => {
+              updateFormData({
+                selectedModuleId: moduleId,
+                selectedSubtopics: [],
               });
             }}
           />

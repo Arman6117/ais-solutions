@@ -3,15 +3,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { BookCheck, AlertCircle } from "lucide-react";
 import { FormData, FormErrors } from "./schedule-meet-form";
+import { ModulesForSession } from "@/lib/types/sessions.type";
 
-interface Module {
-  id: string;
-  name: string;
-  subtopics: string[];
-}
+
 
 interface SubtopicsSelectionSectionProps {
-  selectedModule: Module;
+  selectedModule: ModulesForSession;
   selectedSubtopics: string[];
   errors: FormErrors;
   onUpdate: (updates: Partial<FormData>) => void;
@@ -38,17 +35,17 @@ export default function SubtopicsSelectionSection({
         Select Subtopics *
       </Label>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg">
-        {selectedModule.subtopics.map((sub) => (
+        {selectedModule.chapters.map((sub) => (
           <Label
-            key={sub}
+            key={sub.name}
             className="flex items-center gap-3 p-3 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow cursor-pointer border"
           >
             <Checkbox
-              checked={selectedSubtopics.includes(sub)}
-              onCheckedChange={() => toggleSubtopic(sub)}
+              checked={selectedSubtopics.includes(sub.name)}
+              onCheckedChange={() => toggleSubtopic(sub.name)}
               className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
             />
-            <span className="text-sm font-medium">{sub}</span>
+            <span className="text-sm font-medium">{sub.name}</span>
           </Label>
         ))}
       </div>

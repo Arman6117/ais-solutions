@@ -20,6 +20,7 @@ export const createSession = async (data: CreateSessionPayload) => {
     return { success: true, message: "Session created successfully" };
   } catch (error) {
     if (error instanceof ZodError) {
+      console.log(error)
       return { success: false, message: parseZodError(error) };
     }
     console.log(error);

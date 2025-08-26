@@ -2,15 +2,18 @@ import { Schema, model, models } from "mongoose";
 
 const sessionsSchema = new Schema({
   studentId: [{ type: String, required: true, ref: "Student" }],
-  courseName: { type: String, required: true },
-  modules: [{ type: String, required: true }],
+  meetingName: { type: String, required: true },
+  meetingLink:{type:String,required:true},
+  module: { type: String, required: true },
   chapters: [{ type: String, required: true }],
   instructor: { type: String },
-  title: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: String, required: true },
   time: { type: String, required: true },
-  notes: { type: String, required: true },
-  videoLink: { type: String, required: true },
+  notes: { type: String,  },
+  videoLink: { type: String, },
+  batchId:{type:Schema.Types.ObjectId, ref:"Batch"}
 });
+
+sessionsSchema.index({batchId:1})
 
 export const Sessions = models.Sessions || model("Sessions", sessionsSchema);

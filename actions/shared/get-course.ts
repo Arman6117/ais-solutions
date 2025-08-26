@@ -1,15 +1,15 @@
 "use server";
 import { connectToDB } from "@/lib/db";
-import { CourseSelector } from "@/lib/types/course.type";
+import { Courses } from "@/lib/types/course.type";
+
 import { Course } from "@/models/course.model";
 
-export const getCourses = async () => {
+export const getCourses = async ():Promise<Courses[]> => {
   try {
     await connectToDB();
     const courses= (await Course.find({})
       .select("_id courseName")
-      .lean()
-      .exec()) as unknown as CourseSelector[];
+      .exec())  as Courses[];
     
     return JSON.parse(JSON.stringify(courses)) || [];
   } catch (err) {

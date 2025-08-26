@@ -36,3 +36,9 @@ export interface UpdateSessionPayload {
   date?: Date;
   time?: string;
 }
+
+export interface ModulesForSession {
+  _id:string,
+  name:string,
+  chapters:[{name:string}]
+}

@@ -2,16 +2,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Package, AlertCircle } from "lucide-react";
 import { FormErrors } from "./schedule-meet-form";
+import { ModulesForSession } from "@/lib/types/sessions.type";
 
-interface Module {
-  id: string;
-  name: string;
-  subtopics: string[];
-}
+
 
 interface ModuleSelectionSectionProps {
   selectedModuleId: string;
-  modules: Module[];
+  modules: ModulesForSession[];
   errors: FormErrors;
   onUpdate: (moduleId: string) => void;
 }
@@ -41,7 +38,7 @@ export default function ModuleSelectionSection({
         </SelectTrigger>
         <SelectContent>
           {modules.map((mod) => (
-            <SelectItem key={mod.id} value={mod.id}>
+            <SelectItem key={mod._id} value={mod._id}>
               {mod.name}
             </SelectItem>
           ))}

@@ -42,3 +42,11 @@ export interface ModulesForSession {
   name:string,
   chapters:[{name:string}]
 }
+
+export interface BatchMeetings {
+  _id:string,
+  meetingName:string,
+  module:string
+  time:string
+  date:string
+}

@@ -1,23 +1,30 @@
+"use client";
+import { deleteSession } from "@/actions/admin/sessions/delete-session";
+import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
+import DeleteConfirmationDialog from "@/components/batch-components/delete-confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { BatchMeetings as BatchMeetingsType } from "@/lib/types/sessions.type";
 import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
-import { Calendar } from "lucide-react";
+import { AlertTriangle, Calendar, Trash2 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-type Meeting = {
-  id: string;
-  course: string;
-  module: string;
-  date: Date;
-  time: string;
-};
-
-type BatchMeetings = {
-  
+type BatchMeetingsProps = {
   courseId: string;
   batch: string;
   mode: "view" | "edit";
@@ -33,48 +40,47 @@ const formatShortDate = (date: Date) => {
   return date.toLocaleDateString("en-US", options);
 };
 
-const BatchMeetings = ({ batch, courseId, mode, modules }: BatchMeetings) => {
+const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
   const today = new Date();
-
+  const [meetings, setMeetings] = useState<BatchMeetingsType[]>([]);
   const formattedToday = format(today, "EEEE PP");
+  const fetchMeetings = async () => {
+    try {
+      const res = await getAllMeetingsByBatchId(batch);
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success(res.message);
+        setMeetings(res.data);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchMeetings();
+  }, []);
 
-  const dummyMeetings: Meeting[] = [
-    {
-      id: "1",
-      course: "Web Development",
-      module: "React Fundamentals",
-      date: new Date(2025, 4, 10), // May 10, 2025
-      time: "10:00 AM - 12:00 PM",
-    },
-    {
-      id: "2",
-      course: "JavaScript Essentials",
-      module: "Advanced Concepts",
-      date: new Date(2025, 4, 7), // May 7, 2025 (today)
-      time: "2:00 PM - 4:00 PM",
-    },
-    {
-      id: "3",
-      course: "CSS Mastery",
-      module: "Responsive Design",
-      date: new Date(2025, 4, 5), // May 5, 2025 (past)
-      time: "9:00 AM - 11:00 AM",
-    },
-    {
-      id: "4",
-      course: "Backend Fundamentals",
-      module: "Node.js Basics",
-      date: new Date(2025, 4, 3), // May 3, 2025 (past)
-      time: "1:00 PM - 3:00 PM",
-    },
-  ];
-
-  const sortedMeetings = [...dummyMeetings].sort(
-    (a, b) => b.date.getTime() - a.date.getTime()
+  const sortedMeetings = [...meetings].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  const hasMeetings = dummyMeetings.length > 0;
-
+  const hasMeetings = meetings.length > 0;
+  const handleDelete = async (meetingId: string) => {
+    try {
+      const res = await deleteSession(meetingId);
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success(res.success);
+        fetchMeetings();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
   return (
     <Card className="border shadow-md">
       <CardHeader className="pb-3 bg-gray-50 border-b">
@@ -88,22 +94,56 @@ const BatchMeetings = ({ batch, courseId, mode, modules }: BatchMeetings) => {
               <div className="space-y-3">
                 {sortedMeetings.map((meeting, i) => (
                   <div
-                    key={meeting.id || i}
+                    key={meeting._id || i}
                     className={cn(
-                      "bg-white p-3 rounded shadow-sm border border-gray-100 hover:border-violet-300 transition-colors duration-200",
+                      "bg-white group p-3 rounded shadow-sm border border-gray-100 hover:border-violet-300 transition-colors duration-200",
                       !isToday(meeting.date) && "bg-violet-50"
                     )}
                   >
-                    <div className="flex items-center mb-2">
-                      <div className="w-1 h-8 bg-violet-500 rounded-full mr-2"></div>
-                      <h3 className="font-bold text-gray-800">
-                        {meeting.course}
-                      </h3>
-                      {isToday(meeting.date) && (
-                        <span className="ml-2 text-xs bg-violet-100 text-violet-600 px-2 py-1 rounded-full">
-                          Today
-                        </span>
-                      )}
+                    <div className="flex justify-between items-center mb-2 w-full">
+                      <div className="flex  items-center mb-2 ">
+                        <div className="w-1 h-8 bg-violet-500 rounded-full mr-2"></div>
+                        <h3 className="font-bold text-gray-800">
+                          {meeting.meetingName}
+                        </h3>
+                        {isToday(meeting.date) && (
+                          <span className="ml-2 text-xs bg-violet-100 text-violet-600 px-2 py-1 rounded-full">
+                            Today
+                          </span>
+                        )}
+                      </div>
+
+                      <Dialog>
+                        <DialogTrigger>
+                          <Button className="rounded-full bg-destructive opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                            <Trash2 className="size-5" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <AlertTriangle className="size-5 text-destructive" />
+                              Confirm Deletion
+                            </DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete this meeting This
+                              action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter className="gap-2 sm:gap-0">
+                            <DialogClose>Cancel</DialogClose>
+                            <DialogClose>
+                              <Button
+                              asChild
+                                variant="destructive"
+                                onClick={() => handleDelete(meeting._id)}
+                              >
+                                Delete
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-sm">
@@ -114,7 +154,7 @@ const BatchMeetings = ({ batch, courseId, mode, modules }: BatchMeetings) => {
                       <div>
                         <p className="text-gray-500 text-xs">Date</p>
                         <p className="font-medium">
-                          {formatShortDate(meeting.date)}
+                          {formatShortDate(new Date(meeting.date))}
                         </p>
                       </div>
                       <div className="col-span-2">

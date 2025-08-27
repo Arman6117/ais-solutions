@@ -20,16 +20,16 @@ type ModuleTableData = {
 };
 
 type Topic = {
-  title:string,
-  description:string,
-  id:number
-}
+  title: string;
+  description: string;
+  id: number;
+};
 type Chapter = {
-  name:string,
-  id:number,
-  description:string,
-  topics: Topic[]
-}
+  name: string;
+  id: number;
+  description: string;
+  topics: Topic[];
+};
 export const getAllModulesTable = async () => {
   try {
     await connectToDB();
@@ -124,30 +124,22 @@ export const getModuleById = async (id: string) => {
   }
 };
 
-export const getAllModulesNames = async () => {
+export const getAllModulesNames = async (): Promise<{
+  success: boolean;
+  data: Modules[];
+}> => {
   try {
     await connectToDB();
 
     const modules = await Module.find({})
       .select("_id name")
-      .sort({ createdAt: -1 })
-      .lean();
+      .sort({ createdAt: -1 }).exec() as Modules[]
 
-    if (!modules) {
-      return { success: false, data: [] };
-    }
+    
 
-    const cleanedModule = modules.map((module) => {
-      return {
-        _id: `${module._id}`,
-        name: module.name as string,
-      };
-    });
-
-    return { success: true, data: cleanedModule };
+    return { success: true, data: JSON.parse(JSON.stringify(modules)) };
   } catch (error) {
     console.log("Something went wrong");
     return { success: false, data: [] };
   }
 };
-

@@ -114,7 +114,7 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                       </div>
 
                       <Dialog>
-                        <DialogTrigger>
+                        <DialogTrigger asChild>
                           <Button className="rounded-full bg-destructive opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                             <Trash2 className="size-5" />
                           </Button>

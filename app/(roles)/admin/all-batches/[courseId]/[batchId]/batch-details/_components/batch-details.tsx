@@ -95,7 +95,7 @@ const BatchDetails = ({
     batch.modules.map((mod) => {
       return {
         _id: mod.id,
-        // name:mod.name
+        name:mod.name
       };
     })
   );

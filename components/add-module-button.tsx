@@ -23,9 +23,10 @@ type AddModuleButtonProps = {
   modules:Modules[]
   setModules?: (modules: Modules[]) => void;
   className?:string
+  onAddModules?: (moduleIds:string[])=> void;
 };
 
-const AddModuleButton = ({className, setModules,modules }: AddModuleButtonProps) => {
+const AddModuleButton = ({className, setModules,modules ,onAddModules}: AddModuleButtonProps) => {
   const [search, setSearch] = useState("");
   const [selectedModules, setSelectedModules] = useState<Modules[]>([]);
   
@@ -49,6 +50,10 @@ const AddModuleButton = ({className, setModules,modules }: AddModuleButtonProps)
   const handleAddModules = () => {
     if (setModules) {
       setModules(selectedModules);
+    }
+    if(onAddModules) {
+      const ids =selectedModules.map((m)=>m._id)
+      onAddModules(ids)
     }
   };
 

@@ -22,6 +22,8 @@ import { Input } from "./ui/input";
 import AddInstructorButton from "@/app/(roles)/admin/courses/_components/add-instructor-button";
 import AddModuleButton from "./add-module-button";
 import { getAllModulesNames } from "@/actions/admin/modules/get-modules";
+import { addModules } from "@/actions/admin/batches/add-module";
+import { toast } from "sonner";
 
 type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
 
@@ -37,9 +39,9 @@ interface ModulesCardProps {
   name?: string;
   batchId: string;
   mode: "view" | "edit";
-  setModuleIds: (ids:Modules[])=> void
+  setModuleIds: (ids: Modules[]) => void;
   onModuleDelete?: (moduleId: string) => void;
-  
+
   onAddInstructor?: () => void;
 }
 
@@ -87,15 +89,30 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
   );
   const [isEditing, setIsEditing] = useState(false);
   const [instructor, setIsInstructor] = useState("");
+
+  const addNewModules = async (ids: string[]) => {
+    try {
+      const res = await addModules(ids, batchId);
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
   const fetchAvailableModule = async () => {
     try {
       const res = await getAllModulesNames();
-      if (res.success && res.data) {
-        const filteredModules = res.data.filter((mod)=> {
-          !modules.some((m:{id:string})=> m.id === mod._id)
-        })
 
-        setAvailableModules(filteredModules)
+      if (res.success && res.data) {
+        const filteredModules = res.data.filter(
+          (mod) => !modules.map((m) => String(m.id)).includes(String(mod._id))
+        );
+
+        setAvailableModules(filteredModules);
       } else {
         setAvailableModules([]);
       }
@@ -117,7 +134,6 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
 
   const handleDelete = (moduleId: string) => {
     setModules((prev) => prev.filter((m) => m.id !== moduleId));
-  
   };
 
   const handleEdit = (module: BatchModules) => {
@@ -177,6 +193,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                 className="bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 font-medium"
                 modules={availableModules}
                 setModules={setModuleIds}
+                onAddModules={addNewModules}
               />
             )}
           </div>
@@ -202,11 +219,11 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
       <CardContent className="p-6">
         <div className="space-y-4 max-h-[500px] overflow-y-auto">
           {filteredModules.length > 0 ? (
-            filteredModules.map((module) => {
+            filteredModules.map((module, index) => {
               const StatusIcon = statusConfig[module.status].icon;
               return (
                 <div
-                  key={module.id}
+                  key={index}
                   className="group bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg transition-all duration-300 hover:border-indigo-200"
                 >
                   <div className="flex justify-between items-start mb-4">

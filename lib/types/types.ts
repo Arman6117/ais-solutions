@@ -274,7 +274,7 @@ export type prCourse = {
 
 export type Modules = {
   _id: string;
-  name?: string;
+  name: string;
 };
 
 export type CourseLevel = "beginner" | "intermediate" | "advanced";

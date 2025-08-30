@@ -5,13 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BatchModules, Modules } from "@/lib/types/types";
 import { toast } from "sonner";
 
-
 import { getAllModulesNames } from "@/actions/admin/modules/get-modules";
 import { addModules } from "@/actions/admin/batches/add-module";
 import AddModuleButton from "./add-module-button";
 import ModuleCard from "./module-card";
 import FilterTabs from "./filter-tab";
 import EmptyState from "./empaty-state";
+import { updateModuleForBatch } from "@/actions/admin/batches/update-module";
 
 export type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
 
@@ -84,7 +84,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
   const handleStatusChange = (moduleId: string, newStatus: ModuleStatus) => {
     if (editingModuleId === moduleId) {
       // Update edit data
-      setModuleEditData(prev => ({ ...prev, status: newStatus }));
+      setModuleEditData((prev) => ({ ...prev, status: newStatus }));
     } else {
       // Update modules directly if not in edit mode
       setModules((prev) =>
@@ -112,32 +112,40 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
     setModuleEditData({});
   };
 
-  const handleSave = (moduleId: string) => {
-    console.log("Saving module data:", moduleEditData);
-    
-    // Update the module with the edit data
-    setModules(prev =>
-      prev.map(m =>
-        m.id === moduleId
-          ? {
-              ...m,
-              ...moduleEditData,
-              startDate: moduleEditData.startDate || m.startDate,
-              endDate: moduleEditData.endDate || m.endDate,
-              instructor: moduleEditData.instructor || m.instructor,
-              status: moduleEditData.status || m.status,
-            }
-          : m
-      )
-    );
+  const handleSave = async (moduleId: string) => {
+    try {
+      const res = await updateModuleForBatch(batchId, moduleId, moduleEditData);
 
-    setEditingModuleId(null);
-    setModuleEditData({});
-    toast.success("Module updated successfully!");
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      setModules((prev) =>
+        prev.map((m) =>
+          m.id === moduleId
+            ? {
+                ...m,
+                ...moduleEditData,
+                startDate: moduleEditData.startDate || m.startDate,
+                endDate: moduleEditData.endDate || m.endDate,
+                instructor: moduleEditData.instructor || m.instructor,
+                status: moduleEditData.status || m.status,
+              }
+            : m
+        )
+      );
+
+      setEditingModuleId(null);
+      setModuleEditData({});
+      toast.success("Module updated successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
   };
 
   const updateModuleEditData = (updates: Partial<ModuleEditData>) => {
-    setModuleEditData(prev => ({ ...prev, ...updates }));
+    setModuleEditData((prev) => ({ ...prev, ...updates }));
   };
 
   const statusCounts = {
@@ -202,7 +210,9 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
                 onDelete={() => handleDelete(module.id)}
                 onSave={() => handleSave(module.id)}
                 onCancel={handleCancelEdit}
-                onStatusChange={(status) => handleStatusChange(module.id, status)}
+                onStatusChange={(status) =>
+                  handleStatusChange(module.id, status)
+                }
                 onEditDataChange={updateModuleEditData}
                 onAddInstructor={onAddInstructor}
               />

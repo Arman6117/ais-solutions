@@ -11,21 +11,14 @@ import NotesTablePagination from "./notes-table/notes-table-pagination";
 import SearchAndControls from "./notes-table/search-and-controls";
 import DesktopTable from "./notes-table/desktop-tables";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Note } from "@/app/(roles)/admin/courses/batch-details/_components/batch-notes-table";
+import { NoteTableType } from "@/lib/types/note.type";
 
-// type Note = {
-//   id: number; label: string; link: string; 
-//   module: string;
-//   chapter: string;
-//   files?: string[];
-//   videoLinks?: string[];
-//   dateCreated: string;
-// };
+
 
 type NotesTableProps = {
   mode: "view" | "edit" | "create";
   role: "admin" | "student";
-  notes: Note[];
+  notes: NoteTableType[];
   batchId?: string;
   isCreating: boolean;
   setIsCreating: (state: boolean) => void;
@@ -41,8 +34,8 @@ const NotesTable = ({
   isCreating,
   setIsCreating,
 }: NotesTableProps) => {
-  const [noteList, setNoteList] = useState<Note[]>(notes);
-  const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
+  const [noteList, setNoteList] = useState<NoteTableType[]>(notes);
+  const [filteredNotes, setFilteredNotes] = useState<NoteTableType[]>(notes);
   const [searchTerm, setSearchTerm] = useState("");
   const [moduleFilter, setModuleFilter] = useState("all");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -77,7 +70,7 @@ const NotesTable = ({
           note.chapter.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (note.files &&
             note.files.some((file) =>
-              file.toLowerCase().includes(searchTerm.toLowerCase())
+              file.label.toLowerCase().includes(searchTerm.toLowerCase())
             ))
       );
     }
@@ -87,8 +80,8 @@ const NotesTable = ({
     }
 
     result = result.sort((a, b) => {
-      const dateA = new Date(a.dateCreated).getTime();
-      const dateB = new Date(b.dateCreated).getTime();
+      const dateA = new Date(a.createdAt ?? new Date()).getTime();
+      const dateB = new Date(b.createdAt ?? new Date()).getTime();
       return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
     });
 
@@ -96,7 +89,7 @@ const NotesTable = ({
     setCurrentPage(1);
   }, [noteList, searchTerm, sortDirection, moduleFilter]);
 
-  const createNewNote = (newNote: Note) => {
+  const createNewNote = (newNote: NoteTableType) => {
     setNoteList([newNote, ...noteList]);
   };
 
@@ -157,7 +150,7 @@ const NotesTable = ({
     return pages;
   };
 
-  const renderMobileCard = (note: Note, index: number) => (
+  const renderMobileCard = (note: NoteTableType, index: number) => (
     <MobileCardView
       handleDelete={handleDelete}
       handleRowCheckboxChange={handleRowCheckboxChange}

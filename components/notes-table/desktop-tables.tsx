@@ -16,20 +16,21 @@ import AddLinkButton from "../batch-components/add-link-button";
 import { IconType } from "react-icons/lib";
 import { getIcon } from "@/lib/utils";
 import NewNoteForm from "../batch-components/new-note-form";
+import { FilesType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
 
 type DesktopTableProps = {
-  paginatedNotes: any[];
+  paginatedNotes: NoteTableType[];
   selectedRows: Set<number>;
   handleSelectAllChange: () => void;
   isMobile: boolean;
   isCreating: boolean;
   setIsCreating: (state: boolean) => void;
-  createNewNote: (newNote: any) => void;
+  createNewNote: (newNote: NoteTableType) => void;
   searchTerm: string;
   startIndex: number;
   handleRowCheckboxChange: (index: number) => void;
   mode: "edit" | "view" | "create";
-  updateNoteLinks: (noteIndex: number, newLinks: any[]) => void;
+  updateNoteLinks: (noteIndex: number, newLinks: VideoLinksType[]) => void;
   handleDelete: (index: number) => void;
 };
 
@@ -106,12 +107,12 @@ const DesktopTable = ({
               </TableCell>
               <TableCell>{note.module}</TableCell>
               <TableCell>{note.chapter}</TableCell>
-              <TableCell>{note.session || "—"}</TableCell>
-              <TableCell>{note.dateCreated}</TableCell>
+              <TableCell>{note.session?.name || "—"}</TableCell>
+              <TableCell>{note.createdAt}</TableCell>
 
               <TableCell className="text-center truncate max-w-44">
                 <div className="flex flex-col items-center gap-4">
-                  {(note.videoLinks || []).map((v: any, index: number) => (
+                  {(note.videoLinks || []).map((v: VideoLinksType, index: number) => (
                     <div
                       key={index}
                       className="flex items-center justify-between w-full gap-2 border-b pb-2"
@@ -157,8 +158,8 @@ const DesktopTable = ({
 
               <TableCell>
                 <div className="flex flex-col items-center gap-4">
-                  {(note.files || []).map((f: any, index: number) => {
-                    const ext = f.split(".").pop()?.toLowerCase() || "";
+                  {(note.files || []).map((f: FilesType, index: number) => {
+                    const ext = f.label?.split(".").pop()?.toLowerCase() || "";
                     const FileIcon: IconType = getIcon(ext);
                     return (
                       <div
@@ -167,7 +168,7 @@ const DesktopTable = ({
                       >
                         <div className="flex items-center gap-2">
                           <FileIcon className="text-purple-600" />
-                          <span className="truncate max-w-40">{f}</span>
+                          <span className="truncate max-w-40">{f.label}</span>
                         </div>
                         {mode === "edit" && (
                           <div className="flex gap-1">

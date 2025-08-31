@@ -16,6 +16,7 @@ import { dummyNoteSessions } from "@/lib/static";
 import ModuleSelector from "./module-selector";
 import ChapterSelector from "./chapter-selector";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { FilesType, NoteTableSessionType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
 
 const moduleData: Record<string, string[]> = {
   "Module 1": ["Intro", "Basics"],
@@ -29,7 +30,7 @@ const NewNoteForm = ({
   isMobile,
 }: {
   setIsCreating: (state: boolean) => void;
-  createNewNote: (newNote: any) => void;
+  createNewNote: (newNote: NoteTableType) => void;
   isMobile: boolean;
 }) => {
   const [moduleName, setModuleName] = useState("");
@@ -37,20 +38,21 @@ const NewNoteForm = ({
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [linkLabel, setLinkLabel] = useState("");
   const [link, setLink] = useState("");
-  const [videoLinks, setVideoLinks] = useState<Array<{ label: string; link: string }>>([]);
-  const [files, setFiles] = useState<Array<string>>([]);
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [videoLinks, setVideoLinks] = useState<VideoLinksType[]>([]);
+  const [files, setFiles] = useState<FilesType[]>([]);
+  const [selectedSession, setSelectedSession] = useState<NoteTableSessionType | null>(null);
 
   const handleSave = () => {
     if (!moduleName || !chapterName || !date) return;
     const formattedDate = format(date, "yyyy-MM-dd");
 
     const newNote = {
-      module: moduleName,
+      module:moduleName,
       chapter: chapterName,
-      dateCreated: formattedDate,
+      createdAt: formattedDate,
       videoLinks,
       files,
+      session:selectedSession
     };
 
     createNewNote(newNote);
@@ -108,7 +110,7 @@ const NewNoteForm = ({
           ) : (
             <p className="text-xs text-muted-foreground">No session selected</p>
           )}
-          <SelectSessionDialog sessions={dummyNoteSessions} onSelect={setSelectedSession} />
+          <SelectSessionDialog sessions={[]} onSelect={setSelectedSession} />
         </div>
       </TableCell>
 
@@ -175,10 +177,10 @@ const NewNoteForm = ({
         <div className="flex flex-col gap-2">
           {files.map((file, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
-              <span className="truncate max-w-32">{file}</span>
+              <span className="truncate max-w-32">{file.label}</span>
             </div>
           ))}
-          <AddFileDialog onAddFile={(file: string) => setFiles([...files, file])} />
+          <AddFileDialog onAddFile={(file: FilesType) => setFiles([...files, file])} />
         </div>
       </TableCell>
 

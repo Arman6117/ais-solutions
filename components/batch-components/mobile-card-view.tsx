@@ -10,6 +10,7 @@ import { getIcon } from "@/lib/utils";
 
 import { Pencil, Trash2 } from "lucide-react";
 import { FaYoutube } from "react-icons/fa";
+import { FilesType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
 
 type MobileCardViewProps = {
   startIndex: number;
@@ -17,9 +18,9 @@ type MobileCardViewProps = {
   selectedRows: Set<number>;
   handleRowCheckboxChange: (index: number) => void;
   handleDelete: (index: number) => void;
-  note: any;
+  note: NoteTableType
   mode:'edit'|'view'|'create'
-  updateNoteLinks:(index:number,newLinks:any[]) =>void
+  updateNoteLinks:(index:number,newLinks:VideoLinksType[]) =>void
 };
 
 const MobileCardView = ({
@@ -62,13 +63,13 @@ const MobileCardView = ({
           <div>{note.chapter}</div>
 
           <div className="font-medium">Created:</div>
-          <div>{note.dateCreated}</div>
+          <div>{note.createdAt}</div>
 
           {note.videoLinks && note.videoLinks.length > 0 && (
             <>
               <div className="font-medium col-span-2 mt-2">Video Links:</div>
               <div className="col-span-2">
-                {note.videoLinks.map((v: any, vIndex: number) => (
+                {note.videoLinks.map((v: VideoLinksType, vIndex: number) => (
                   <div key={vIndex} className="flex items-center gap-2 mb-1">
                     <FaYoutube className="text-purple-600 flex-shrink-0" />
                     <span className="truncate">{v.label}</span>
@@ -92,13 +93,13 @@ const MobileCardView = ({
             <>
               <div className="font-medium col-span-2 mt-2">Files:</div>
               <div className="col-span-2">
-                {note.files.map((f: any, fIndex: number) => {
-                  const ext = f.split(".").pop()?.toLowerCase() || "";
+                {note.files.map((f: FilesType, fIndex: number) => {
+                  const ext = f.label.split(".").pop()?.toLowerCase() || "";
                   const FileIcon: IconType = getIcon(ext);
                   return (
                     <div key={fIndex} className="flex items-center gap-2 mb-1">
                       <FileIcon className="text-purple-600 flex-shrink-0" />
-                      <span className="truncate">{f}</span>
+                      <span className="truncate">{f.label}</span>
                     </div>
                   );
                 })}

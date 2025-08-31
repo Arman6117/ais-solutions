@@ -10,12 +10,12 @@ import {
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { useState } from "react";
-import { Input } from "../ui/input";
-import { Session } from "@/lib/types/types";
+
+import { NoteTableSessionType } from "@/lib/types/note.type";
 
 type Props = {
-  sessions: Session[];
-  onSelect: (session: Session) => void;
+  sessions: NoteTableSessionType[];
+  onSelect: (session: NoteTableSessionType) => void;
   triggerLabel?: string;
 };
 
@@ -42,7 +42,7 @@ export default function SelectSessionDialog({ sessions, onSelect, triggerLabel =
         {!showOlder && (
           <div className="space-y-2">
             {filteredSessions.map((s) => (
-              <div key={s.id} className="border p-3 rounded-md space-y-1">
+              <div key={s._id} className="border p-3 rounded-md space-y-1">
                 <p className="text-sm font-medium">{s.name}</p>
                 <p className="text-xs text-muted-foreground">{format(s.date, "MMM dd, yyyy")}</p>
                 <p className="text-xs text-muted-foreground">Module: {s.module}</p>
@@ -72,7 +72,7 @@ export default function SelectSessionDialog({ sessions, onSelect, triggerLabel =
             )}
 
             {filterDate && filteredSessions.map((s) => (
-              <div key={s.id} className="border p-3 rounded-md space-y-1 mt-2">
+              <div key={s._id} className="border p-3 rounded-md space-y-1 mt-2">
                 <p className="text-sm font-medium">{s.name}</p>
                 <p className="text-xs text-muted-foreground">{format(s.date, "MMM dd, yyyy")}</p>
                 <p className="text-xs text-muted-foreground">Module: {s.module}</p>

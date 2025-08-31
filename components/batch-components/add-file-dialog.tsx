@@ -17,17 +17,17 @@ import { toast } from "sonner";
 import { FilesType } from "@/lib/types/note.type";
 
 type AddFileDialogProps = {
-  label?: string;
-  fileLink?: string;
-  setFileLabel?: (label: string) => void;
-  setFileLink?: (link: string) => void;
+  label: string;
+  fileLink: string;
+  setFileLabel: (label: string) => void;
+  setFileLink: (link: string) => void;
   onAddFile?: (file: FilesType) => void;
   createFile?: () => void;
 };
 
 const AddFileDialog = ({
-  label = "",
-  fileLink = "",
+  label,
+  fileLink,
   setFileLabel,
   setFileLink,
   onAddFile,

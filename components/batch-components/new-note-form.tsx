@@ -39,6 +39,8 @@ const NewNoteForm = ({
   const [linkLabel, setLinkLabel] = useState("");
   const [link, setLink] = useState("");
   const [videoLinks, setVideoLinks] = useState<VideoLinksType[]>([]);
+  const [fileLabel, setFileLabel] = useState("");
+  const [fileLink, setFileLink] = useState("");
   const [files, setFiles] = useState<FilesType[]>([]);
   const [selectedSession, setSelectedSession] = useState<NoteTableSessionType | null>(null);
 
@@ -68,6 +70,13 @@ const NewNoteForm = ({
       setVideoLinks([...videoLinks, { label, link: url }]);
       setLinkLabel("");
       setLink("");
+    }
+  };
+  const onAddFile = (label: string, url: string) => {
+    if (label && url) {
+      setFiles([...videoLinks, { label, link: url }]);
+      setFileLabel("");
+      setFileLink("");
     }
   };
 
@@ -180,7 +189,7 @@ const NewNoteForm = ({
               <span className="truncate max-w-32">{file.label}</span>
             </div>
           ))}
-          <AddFileDialog onAddFile={(file: FilesType) => setFiles([...files, file])} />
+          <AddFileDialog label={fileLabel} fileLink={fileLink} setFileLabel={setFileLabel} setFileLink={setFileLink}  onAddFile={(file: FilesType) => setFiles([...files, file])} />
         </div>
       </TableCell>
 

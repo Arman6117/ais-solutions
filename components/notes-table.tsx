@@ -12,6 +12,8 @@ import SearchAndControls from "./notes-table/search-and-controls";
 import DesktopTable from "./notes-table/desktop-tables";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NoteTableType } from "@/lib/types/note.type";
+import { createNote } from "@/actions/admin/notes/create-note";
+import { toast } from "sonner";
 
 
 
@@ -89,8 +91,19 @@ const NotesTable = ({
     setCurrentPage(1);
   }, [noteList, searchTerm, sortDirection, moduleFilter]);
 
-  const createNewNote = (newNote: NoteTableType) => {
-    setNoteList([newNote, ...noteList]);
+  const createNewNote =async (newNote: NoteTableType) => {
+    try {
+      const res =await createNote(batchId!, newNote)
+      if(!res.success){
+        toast.error(res.message)
+        return
+      }
+      setNoteList([newNote, ...noteList]);
+      toast.success(res.message)
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to create note")
+    }
   };
 
   const handleDelete = (index: number) => {

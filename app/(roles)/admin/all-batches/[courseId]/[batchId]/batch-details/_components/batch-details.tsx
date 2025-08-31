@@ -137,6 +137,7 @@ const BatchDetails = ({
       if (res.success) {
         toast.success(res.message);
         setMode("view");
+        router.refresh();
       } else {
         toast.error(res.message);
       }

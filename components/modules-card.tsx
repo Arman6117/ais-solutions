@@ -12,6 +12,7 @@ import ModuleCard from "./module-card";
 import FilterTabs from "./filter-tab";
 import EmptyState from "./empaty-state";
 import { updateModuleForBatch } from "@/actions/admin/batches/update-module";
+import { deleteBatchModule } from "@/actions/admin/batches/delete-batch-module";
 
 export type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
 
@@ -93,8 +94,19 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
     }
   };
 
-  const handleDelete = (moduleId: string) => {
-    setModules((prev) => prev.filter((m) => m.id !== moduleId));
+  const handleDelete = async (moduleId: string) => {
+    try {
+      const res = await deleteBatchModule(batchId, moduleId);
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      setModules((prev) => prev.filter((m) => m.id !== moduleId));
+      toast.success("Module deleted successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
   };
 
   const handleEdit = (module: BatchModules) => {

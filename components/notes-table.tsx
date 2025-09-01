@@ -10,12 +10,16 @@ import DeleteConfirmationDialog from "./batch-components/delete-confirmation-dia
 import NotesTablePagination from "./notes-table/notes-table-pagination";
 import SearchAndControls from "./notes-table/search-and-controls";
 import DesktopTable from "./notes-table/desktop-tables";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { NoteTableType } from "@/lib/types/note.type";
 import { createNote } from "@/actions/admin/notes/create-note";
 import { toast } from "sonner";
-
-
 
 type NotesTableProps = {
   mode: "view" | "edit" | "create";
@@ -37,6 +41,10 @@ const NotesTable = ({
   setIsCreating,
 }: NotesTableProps) => {
   const [noteList, setNoteList] = useState<NoteTableType[]>(notes);
+  useEffect(() => {
+    setNoteList(notes);
+  }, [notes]);
+
   const [filteredNotes, setFilteredNotes] = useState<NoteTableType[]>(notes);
   const [searchTerm, setSearchTerm] = useState("");
   const [moduleFilter, setModuleFilter] = useState("all");
@@ -60,7 +68,10 @@ const NotesTable = ({
 
   const totalPages = Math.ceil(filteredNotes.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedNotes = filteredNotes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedNotes = filteredNotes.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     let result = [...noteList];
@@ -89,20 +100,20 @@ const NotesTable = ({
 
     setFilteredNotes(result);
     setCurrentPage(1);
-  }, [noteList, searchTerm, sortDirection, moduleFilter]);
+  }, [noteList, notes, searchTerm, sortDirection, moduleFilter]);
 
-  const createNewNote =async (newNote: NoteTableType) => {
+  const createNewNote = async (newNote: NoteTableType) => {
     try {
-      const res =await createNote(batchId!, newNote)
-      if(!res.success){
-        toast.error(res.message)
-        return
+      const res = await createNote(batchId!, newNote);
+      if (!res.success) {
+        toast.error(res.message);
+        return;
       }
       setNoteList([newNote, ...noteList]);
-      toast.success(res.message)
+      toast.success(res.message);
     } catch (error) {
-      console.log(error)
-      toast.error("Failed to create note")
+      console.log(error);
+      toast.error("Failed to create note");
     }
   };
 
@@ -119,7 +130,9 @@ const NotesTable = ({
   };
 
   const confirmDelete = () => {
-    const newNotes = noteList.filter((_, index) => !itemsToDelete.includes(index));
+    const newNotes = noteList.filter(
+      (_, index) => !itemsToDelete.includes(index)
+    );
     setNoteList(newNotes);
     setSelectedRows(new Set());
     setDeleteDialogOpen(false);
@@ -243,7 +256,9 @@ const NotesTable = ({
           )}
           {paginatedNotes.length === 0 ? (
             <Card className="p-8 text-center">
-              <p>No notes found. {searchTerm && "Try adjusting your search."}</p>
+              <p>
+                No notes found. {searchTerm && "Try adjusting your search."}
+              </p>
             </Card>
           ) : (
             paginatedNotes.map((note, i) => renderMobileCard(note, i))

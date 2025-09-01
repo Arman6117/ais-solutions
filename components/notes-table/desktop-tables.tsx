@@ -17,6 +17,7 @@ import { IconType } from "react-icons/lib";
 import { getIcon } from "@/lib/utils";
 import NewNoteForm from "../batch-components/new-note-form";
 import { FilesType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
+import { format } from "date-fns";
 
 type DesktopTableProps = {
   paginatedNotes: NoteTableType[];
@@ -108,7 +109,7 @@ const DesktopTable = ({
               <TableCell>{note.module}</TableCell>
               <TableCell>{note.chapter}</TableCell>
               <TableCell>{note.session?.name || "—"}</TableCell>
-              <TableCell>{note.createdAt}</TableCell>
+              <TableCell>{format(new Date(note.createdAt!), "PP")}</TableCell>
 
               <TableCell className="text-center truncate max-w-44">
                 <div className="flex flex-col items-center gap-4">

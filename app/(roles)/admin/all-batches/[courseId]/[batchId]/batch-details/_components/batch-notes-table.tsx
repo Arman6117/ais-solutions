@@ -1,151 +1,19 @@
 "use client";
+import { getNotesTable } from "@/actions/admin/notes/get-notes";
 import NotesTable from "@/components/notes-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { NoteTableType } from "@/lib/types/note.type";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type BatchNotesTable = {
   mode: "view" | "edit" | "create";
   batchId: string;
 };
 
-export interface Attachment {
-  id: string;
-  type: "link" | "file";
-  url: string;
-  name: string;
-}
 
-export interface Note {
-  id: string;
-  module: string;
-  chapter: string;
-  files?: string[];
-  videoLinks?: {
-    id: number;
-    label: string;
-    link: string;
-  }[];
-  dateCreated: string;
-}
-
-const notesData = [
-  {
-    id: "note-1",
-    module: "Module 1",
-    chapter: "Introduction",
-    dateCreated: "2025-04-01",
-    videoLinks: [
-      {
-        id: 1,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-      {
-        id: 2,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-    ],
-    files: ["intro.pdf", "welcome.zip"],
-  },
-  {
-    id: "note-2",
-    module: "Module 2",
-    chapter: "Getting Started",
-    dateCreated: "2025-04-03",
-    videoLinks: [
-      {
-        id: 1,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-      {
-        id: 2,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-    ],
-    files: ["start-guide.docx"],
-  },
-  {
-    id: "note-3",
-    module: "Module 2",
-    chapter: "Variables & Types",
-    dateCreated: "2025-04-05",
-    videoLinks: [
-      {
-        id: 1,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-      {
-        id: 2,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-    ],
-    files: ["types.pptx", "examples.zip"],
-  },
-  {
-    id: "note-4",
-    module: "Module 3",
-    chapter: "Functions",
-    dateCreated: "2025-04-10",
-    videoLinks: [
-      {
-        id: 1,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-      {
-        id: 2,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-    ],
-    files: ["functions.pdf"],
-  },
-  {
-    id: "note-5",
-    module: "Module 4",
-    chapter: "Arrays & Loops",
-    dateCreated: "2025-04-14",
-    videoLinks: [
-      {
-        id: 1,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-      {
-        id: 2,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-    ],
-    files: ["arrays-loops.docx"],
-  },
-  {
-    id: "note-6",
-    module: "Module 5",
-    chapter: "Final Project Setup",
-    dateCreated: "2025-04-20",
-    videoLinks: [
-      {
-        id: 1,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-      {
-        id: 2,
-        label: "Lecture note",
-        link: "https://youtu.be/xvFZjo5PgG0?si=OHvO2GhgCeqSRdDn",
-      },
-    ],
-    files: ["project-setup.zip"],
-  },
-];
 type BatchNotesTableProps = {
   mode: "view" | "edit" | "create";
   batchId: string;
@@ -153,8 +21,25 @@ type BatchNotesTableProps = {
 const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [notes, setNotes] = useState<NoteTableType[]>([]);
 
+  const fetchNotes = async () => {
+    try {
+      const res = await getNotesTable(batchId);
+      console.log(res)
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      setNotes(res.data);
+      toast.success(res.message);
+    } catch (error) {
+      toast.error("Failed to fetch notes");
+      console.log("Error fetching notes:", error);
+    }
+  };
   useEffect(() => {
+    fetchNotes();
     setMounted(true);
   }, []);
 
@@ -170,7 +55,9 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
             : "bg-gray-50 border-b"
         )}
       >
-        <CardTitle className="text-2xl md:text-3xl font-bold mb-2">Notes</CardTitle>
+        <CardTitle className="text-2xl md:text-3xl font-bold mb-2">
+          Notes
+        </CardTitle>
 
         <div>
           <Button
@@ -184,7 +71,7 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
 
       <CardContent>
         <NotesTable
-          notes={mode === "create" ? [] : notesData}
+          notes={notes}
           role="admin"
           mode={mode}
           batchId={batchId}

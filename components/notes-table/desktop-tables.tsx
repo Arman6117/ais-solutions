@@ -33,6 +33,7 @@ type DesktopTableProps = {
   mode: "edit" | "view" | "create";
   updateNoteLinks: (noteIndex: number, newLinks: VideoLinksType[]) => void;
   handleDelete: (index: number) => void;
+  batchId: string;
 };
 
 const DesktopTable = ({
@@ -43,6 +44,7 @@ const DesktopTable = ({
   isMobile,
   createNewNote,
   setIsCreating,
+  batchId,
   searchTerm,
   startIndex,
   handleRowCheckboxChange,
@@ -83,6 +85,7 @@ const DesktopTable = ({
             setIsCreating={setIsCreating}
             createNewNote={createNewNote}
             isMobile={false}
+            batchId={batchId}
           />
         )}
 

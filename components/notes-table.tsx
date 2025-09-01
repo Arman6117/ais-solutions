@@ -25,7 +25,7 @@ type NotesTableProps = {
   mode: "view" | "edit" | "create";
   role: "admin" | "student";
   notes: NoteTableType[];
-  batchId?: string;
+  batchId: string;
   isCreating: boolean;
   setIsCreating: (state: boolean) => void;
 };
@@ -55,6 +55,7 @@ const NotesTable = ({
   const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
 
   const router = useRouter();
+  
   const [isMobile, setIsMobile] = useState(false);
 
   const uniqueModules = Array.from(new Set(noteList.map((n) => n.module)));
@@ -224,6 +225,7 @@ const NotesTable = ({
       {/* Desktop Table */}
       <div className="hidden md:block">
         <DesktopTable
+        batchId={batchId}
           createNewNote={createNewNote}
           handleDelete={handleDelete}
           handleRowCheckboxChange={handleRowCheckboxChange}
@@ -250,6 +252,7 @@ const NotesTable = ({
                   setIsCreating={setIsCreating}
                   createNewNote={createNewNote}
                   isMobile={true}
+                  batchId={batchId}
                 />
               </CardContent>
             </Card>

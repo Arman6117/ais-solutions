@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TableCell, TableRow } from "../ui/table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
@@ -11,12 +11,25 @@ import { cn } from "@/lib/utils";
 import AddLinkDialog from "./add-link-dialog";
 import AddFileDialog from "./add-file-dialog";
 import SelectSessionDialog from "./select-sessioin-dialog";
-import { Session } from "@/lib/types/types";
-import { dummyNoteSessions } from "@/lib/static";
 import ModuleSelector from "./module-selector";
 import ChapterSelector from "./chapter-selector";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { FilesType, NoteTableSessionType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import {
+  FilesType,
+  NoteTableSessionType,
+  NoteTableType,
+  VideoLinksType,
+} from "@/lib/types/note.type";
+import { ModulesForSession } from "@/lib/types/sessions.type";
+import { getModulesWithSubtopics } from "@/actions/shared/get-modules-with-subtopics";
+import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 const moduleData: Record<string, string[]> = {
   "Module 1": ["Intro", "Basics"],
@@ -28,11 +41,14 @@ const NewNoteForm = ({
   setIsCreating,
   createNewNote,
   isMobile,
+  batchId,
 }: {
   setIsCreating: (state: boolean) => void;
   createNewNote: (newNote: NoteTableType) => void;
   isMobile: boolean;
+  batchId: string;
 }) => {
+  const [batchModule, setBatchModule] = useState<ModulesForSession[]>([]);
   const [moduleName, setModuleName] = useState("");
   const [chapterName, setChapterName] = useState("");
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -42,19 +58,39 @@ const NewNoteForm = ({
   const [fileLabel, setFileLabel] = useState("");
   const [fileLink, setFileLink] = useState("");
   const [files, setFiles] = useState<FilesType[]>([]);
-  const [selectedSession, setSelectedSession] = useState<NoteTableSessionType | null>(null);
+  const [selectedSession, setSelectedSession] =
+    useState<NoteTableSessionType | null>(null);
+  
 
+  const fetchModules = async () => {
+    try {
+      const res = await getModulesWithSubtopics(batchId);
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      setBatchModule(res.data);
+      toast.success("Modules fetched successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch modules");
+    }
+  };
+  useEffect(() => {
+    fetchModules();
+  }, []);
+  console.log(batchModule);   
   const handleSave = () => {
     if (!moduleName || !chapterName || !date) return;
     const formattedDate = format(date, "yyyy-MM-dd");
 
     const newNote = {
-      module:moduleName,
+      module: moduleName,
       chapter: chapterName,
       createdAt: formattedDate,
       videoLinks,
       files,
-      session:selectedSession
+      session: selectedSession,
     };
 
     createNewNote(newNote);
@@ -72,13 +108,6 @@ const NewNoteForm = ({
       setLink("");
     }
   };
-  const onAddFile = (label: string, url: string) => {
-    if (label && url) {
-      setFiles([...videoLinks, { label, link: url }]);
-      setFileLabel("");
-      setFileLink("");
-    }
-  };
 
   const availableChapters = moduleName ? moduleData[moduleName] || [] : [];
 
@@ -90,11 +119,11 @@ const NewNoteForm = ({
 
       <TableCell>
         <ModuleSelector
-          modules={Object.keys(moduleData)}
+        modules={batchModule.map(module => module.name)}
           selectedModule={moduleName}
           onChange={(val) => {
             setModuleName(val);
-            setChapterName(""); // reset chapter when module changes
+            setChapterName("");
           }}
         />
       </TableCell>
@@ -112,9 +141,15 @@ const NewNoteForm = ({
           {selectedSession ? (
             <div className="text-sm space-y-1">
               <p className="font-medium">{selectedSession.name}</p>
-              <p className="text-xs text-muted-foreground">{format(selectedSession.date, "MMM dd, yyyy")}</p>
-              <p className="text-xs text-muted-foreground">Module: {selectedSession.module}</p>
-              <p className="text-xs text-muted-foreground">Instructor: {selectedSession.instructor}</p>
+              <p className="text-xs text-muted-foreground">
+                {format(selectedSession.date, "MMM dd, yyyy")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Module: {selectedSession.module}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Instructor: {selectedSession.instructor}
+              </p>
             </div>
           ) : (
             <p className="text-xs text-muted-foreground">No session selected</p>
@@ -128,14 +163,22 @@ const NewNoteForm = ({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className={cn("w-full justify-start text-left font-normal max-w-40", !date && "text-muted-foreground")}
+              className={cn(
+                "w-full justify-start text-left font-normal max-w-40",
+                !date && "text-muted-foreground"
+              )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {date ? format(date, "MMM dd, yyyy") : "Select date"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              initialFocus
+            />
           </PopoverContent>
         </Popover>
       </TableCell>
@@ -189,7 +232,13 @@ const NewNoteForm = ({
               <span className="truncate max-w-32">{file.label}</span>
             </div>
           ))}
-          <AddFileDialog label={fileLabel} fileLink={fileLink} setFileLabel={setFileLabel} setFileLink={setFileLink}  onAddFile={(file: FilesType) => setFiles([...files, file])} />
+          <AddFileDialog
+            label={fileLabel}
+            fileLink={fileLink}
+            setFileLabel={setFileLabel}
+            setFileLink={setFileLink}
+            onAddFile={(file: FilesType) => setFiles([...files, file])}
+          />
         </div>
       </TableCell>
 

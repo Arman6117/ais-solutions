@@ -5,7 +5,7 @@ import { ModulesForSession } from "@/lib/types/sessions.type";
 import { Module } from "@/models/module.model";
 import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
-import { ModuleFormat } from "module";
+
 export const getModulesWithSubtopics = async (
   batchId: string
 ): Promise<{

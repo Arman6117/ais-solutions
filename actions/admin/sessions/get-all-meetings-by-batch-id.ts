@@ -17,7 +17,7 @@ export const getAllMeetingsByBatchId = async (
   try {
     await connectToDB();
     const meetings = (await Sessions.find({ batchId: new ObjectId(batchId) })
-      .select("_id meetingName module time date")
+      .select("_id meetingName module time date chapters")
       .exec()) as BatchMeetings[];
     return {
       data: JSON.parse(JSON.stringify(meetings)),

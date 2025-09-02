@@ -5,7 +5,7 @@ export interface NoteTableSessionType {
     time:string,
     instructor?:string
     module:string
-    chapter:string
+    chapter:string[]
 }
 export interface VideoLinksType {
     label:string,

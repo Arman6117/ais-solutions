@@ -48,5 +48,6 @@ export interface BatchMeetings {
   meetingName:string,
   module:string
   time:string
+  chapters:string[]
   date:string
 }

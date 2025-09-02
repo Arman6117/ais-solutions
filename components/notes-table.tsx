@@ -17,7 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FilesType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
+import {
+  FilesType,
+  NoteTableType,
+  VideoLinksType,
+} from "@/lib/types/note.type";
 import { createNote } from "@/actions/admin/notes/create-note";
 import { toast } from "sonner";
 
@@ -55,7 +59,7 @@ const NotesTable = ({
   const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
 
   const router = useRouter();
-  
+
   const [isMobile, setIsMobile] = useState(false);
 
   const uniqueModules = Array.from(new Set(noteList.map((n) => n.module)));
@@ -119,27 +123,27 @@ const NotesTable = ({
   };
 
   const updateNote = (noteIndex: number, updatedNote: NoteTableType) => {
-    setNoteList(prev => prev.map((note, index) => 
-      index === noteIndex ? updatedNote : note
-    ));
+    setNoteList((prev) =>
+      prev.map((note, index) => (index === noteIndex ? updatedNote : note))
+    );
     toast.success("Note updated successfully");
-  }
+  };
 
   const updateNoteLinks = (noteIndex: number, newLinks: VideoLinksType[]) => {
-    setNoteList(prev => prev.map((note, index) => 
-      index === noteIndex 
-        ? { ...note, videoLinks: newLinks }
-        : note
-    ));
+    setNoteList((prev) =>
+      prev.map((note, index) =>
+        index === noteIndex ? { ...note, videoLinks: newLinks } : note
+      )
+    );
   };
 
   // NEW: Update note files function (same pattern as updateNoteLinks)
   const updateNoteFiles = (noteIndex: number, newFiles: FilesType[]) => {
-    setNoteList(prev => prev.map((note, index) => 
-      index === noteIndex 
-        ? { ...note, files: newFiles }
-        : note
-    ));
+    setNoteList((prev) =>
+      prev.map((note, index) =>
+        index === noteIndex ? { ...note, files: newFiles } : note
+      )
+    );
   };
   const handleDelete = (index: number) => {
     setItemsToDelete([index]);
@@ -202,6 +206,8 @@ const NotesTable = ({
 
   const renderMobileCard = (note: NoteTableType, index: number) => (
     <MobileCardView
+      createNewNote={createNewNote}
+      setIsCreating={setIsCreating}
       handleDelete={handleDelete}
       handleRowCheckboxChange={handleRowCheckboxChange}
       index={index}
@@ -209,7 +215,10 @@ const NotesTable = ({
       note={note}
       selectedRows={selectedRows}
       startIndex={startIndex}
-      updateNoteLinks={() => {}}
+      updateNoteLinks={updateNoteLinks}
+      updateNoteFiles={updateNoteFiles}
+      batchId={batchId}
+      updateNote={updateNote}
       key={index}
     />
   );
@@ -248,22 +257,22 @@ const NotesTable = ({
       {/* Desktop Table */}
       <div className="hidden md:block">
         <DesktopTable
-        paginatedNotes={paginatedNotes}
-        selectedRows={selectedRows}
-        handleSelectAllChange={handleSelectAllChange}
-        isMobile={false}
-        isCreating={isCreating}
-        setIsCreating={setIsCreating}
-        createNewNote={createNewNote}
-        searchTerm=""
-        startIndex={startIndex}
-        handleRowCheckboxChange={handleRowCheckboxChange}
-        mode={mode}
-        updateNoteLinks={updateNoteLinks}
-        updateNoteFiles={updateNoteFiles}
-        handleDelete={handleDelete}
-        batchId={batchId}
-        updateNote={updateNote} 
+          paginatedNotes={paginatedNotes}
+          selectedRows={selectedRows}
+          handleSelectAllChange={handleSelectAllChange}
+          isMobile={false}
+          isCreating={isCreating}
+          setIsCreating={setIsCreating}
+          createNewNote={createNewNote}
+          searchTerm=""
+          startIndex={startIndex}
+          handleRowCheckboxChange={handleRowCheckboxChange}
+          mode={mode}
+          updateNoteLinks={updateNoteLinks}
+          updateNoteFiles={updateNoteFiles}
+          handleDelete={handleDelete}
+          batchId={batchId}
+          updateNote={updateNote}
         />
       </div>
 

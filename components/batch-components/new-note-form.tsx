@@ -29,6 +29,7 @@ import {
 import { ModulesForSession } from "@/lib/types/sessions.type";
 import { getModulesWithSubtopics } from "@/actions/shared/get-modules-with-subtopics";
 import { toast } from "sonner";
+import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
 
 const NewNoteForm = ({
   setIsCreating,
@@ -52,6 +53,7 @@ const NewNoteForm = ({
   updateNote?: (updatedNote: NoteTableType) => void;
 }) => {
   const [batchModule, setBatchModule] = useState<ModulesForSession[]>([]);
+  const [batchSession, setBatchSession] = useState<NoteTableSessionType[]>([]);
   const [moduleName, setModuleName] = useState(
     isEditing && editNote ? editNote.module || "" : ""
   );
@@ -59,8 +61,8 @@ const NewNoteForm = ({
     isEditing && editNote ? editNote.chapter || "" : ""
   );
   const [date, setDate] = useState<Date | undefined>(
-    isEditing && editNote && editNote.createdAt 
-      ? new Date(editNote.createdAt) 
+    isEditing && editNote && editNote.createdAt
+      ? new Date(editNote.createdAt)
       : new Date()
   );
   const [linkLabel, setLinkLabel] = useState("");
@@ -73,9 +75,10 @@ const NewNoteForm = ({
   const [files, setFiles] = useState<FilesType[]>(
     isEditing && editNote ? editNote.files || [] : []
   );
-  const [selectedSession, setSelectedSession] = useState<NoteTableSessionType | null>(
-    isEditing && editNote ? editNote.session || null : null
-  );
+  const [selectedSession, setSelectedSession] =
+    useState<NoteTableSessionType | null>(
+      isEditing && editNote ? editNote.session || null : null
+    );
 
   const fetchModules = async () => {
     try {
@@ -94,8 +97,34 @@ const NewNoteForm = ({
     }
   };
 
+  const fetchSessions = async () => {
+    try {
+      const res = await getAllMeetingsByBatchId(batchId);
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      const sessions = res.data.map((session) => ({
+        _id: session._id,
+        name: session.meetingName,
+        date: session.date,
+        time: session.time,
+        chapter: session.chapters,
+        module: session.module,
+      }));
+
+      console.log(sessions)
+      setBatchSession(sessions);
+      
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch sessions");
+    }
+  };
+
   useEffect(() => {
     fetchModules();
+    fetchSessions();
   }, []);
 
   const handleSave = () => {
@@ -179,10 +208,9 @@ const NewNoteForm = ({
     : [];
 
   return (
-    <TableRow className={cn(
-      "h-20",
-      isEditing ? "bg-blue-50/50" : "bg-muted/50"
-    )}>
+    <TableRow
+      className={cn("h-20", isEditing ? "bg-blue-50/50" : "bg-muted/50")}
+    >
       <TableCell className="text-center">
         <Checkbox disabled />
       </TableCell>
@@ -232,8 +260,8 @@ const NewNoteForm = ({
           ) : (
             <p className="text-xs text-muted-foreground">No session selected</p>
           )}
-          <SelectSessionDialog 
-            sessions={[]} 
+          <SelectSessionDialog
+            sessions={batchSession}
             onSelect={setSelectedSession}
             triggerLabel={isEditing ? "Change Session" : "Select Session"}
           />

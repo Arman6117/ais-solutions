@@ -3,6 +3,7 @@ export interface AllPendingRequests {
   studentName: string;
   email: string;
   courseName: string;
+  courseId:string
 }
 
 export interface CreatePendingRequest {

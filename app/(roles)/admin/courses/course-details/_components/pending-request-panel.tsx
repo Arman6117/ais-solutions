@@ -8,12 +8,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
+import { AllPendingRequests } from "@/lib/types/pending-request";
+import { getAllPendingRequests } from "@/actions/admin/pending-request/get-pending-request";
+import { toast } from "sonner";
 
 type Module = {
   name: string;
-  price:number
+  price: number;
 };
 
 type PendingRequest = {
@@ -56,6 +59,27 @@ const mockPendingRequests: PendingRequest[] = [
 ];
 
 const PendingRequestDropdown = () => {
+  const [allPendingRequests, setAllPendingRequests] = useState<
+    AllPendingRequests[]
+  >([]);
+
+  const fetchPendingRequests = async () => {
+    try {
+      const res = await getAllPendingRequests();
+      if (!res.success) {
+        toast.error("Failed to fetch pending requests");
+        return;
+      }
+      setAllPendingRequests(res.data);
+      toast.success("Pending requests fetched successfully");
+    } catch (error) {
+      toast.error("An error occurred while fetching pending requests");
+      console.error("Error fetching pending requests:", error);
+    }
+  };
+  useEffect(() => {
+    fetchPendingRequests();
+  }, []);
   const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(
     null
   );
@@ -65,7 +89,7 @@ const PendingRequestDropdown = () => {
     setSelectedRequest(req);
     setIsDialogOpen(true);
   };
-
+ console.log(allPendingRequests)
   return (
     <>
       <DropdownMenu>
@@ -77,18 +101,18 @@ const PendingRequestDropdown = () => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-[320px]">
-          {mockPendingRequests.length > 0 ? (
-            mockPendingRequests.map((req) => (
+          {allPendingRequests.length > 0 ? (
+            allPendingRequests.map((req) => (
               <DropdownMenuItem
-                key={req.id}
+                key={req._id}
                 className="flex flex-col items-start p-3 gap-2"
               >
                 <div className="w-full">
-                  <p className="text-sm font-medium">{req.name}</p>
+                  <p className="text-sm font-medium">{req.studentName}</p>
                   <p className="text-xs text-muted-foreground">{req.email}</p>
-                  <p className="text-sm">{req.course}</p>
+                  <p className="text-sm">{req.courseName}</p>
                 </div>
-                <Button onClick={() => handleApproveClick(req)}>Approve</Button>
+                <Button onClick={() => {}}>Approve</Button>
               </DropdownMenuItem>
             ))
           ) : (

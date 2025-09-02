@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NoteTableType } from "@/lib/types/note.type";
+import { FilesType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
 import { createNote } from "@/actions/admin/notes/create-note";
 import { toast } from "sonner";
 
@@ -118,6 +118,29 @@ const NotesTable = ({
     }
   };
 
+  const updateNote = (noteIndex: number, updatedNote: NoteTableType) => {
+    setNoteList(prev => prev.map((note, index) => 
+      index === noteIndex ? updatedNote : note
+    ));
+    toast.success("Note updated successfully");
+  }
+
+  const updateNoteLinks = (noteIndex: number, newLinks: VideoLinksType[]) => {
+    setNoteList(prev => prev.map((note, index) => 
+      index === noteIndex 
+        ? { ...note, videoLinks: newLinks }
+        : note
+    ));
+  };
+
+  // NEW: Update note files function (same pattern as updateNoteLinks)
+  const updateNoteFiles = (noteIndex: number, newFiles: FilesType[]) => {
+    setNoteList(prev => prev.map((note, index) => 
+      index === noteIndex 
+        ? { ...note, files: newFiles }
+        : note
+    ));
+  };
   const handleDelete = (index: number) => {
     setItemsToDelete([index]);
     setDeleteDialogOpen(true);
@@ -225,20 +248,22 @@ const NotesTable = ({
       {/* Desktop Table */}
       <div className="hidden md:block">
         <DesktopTable
+        paginatedNotes={paginatedNotes}
+        selectedRows={selectedRows}
+        handleSelectAllChange={handleSelectAllChange}
+        isMobile={false}
+        isCreating={isCreating}
+        setIsCreating={setIsCreating}
+        createNewNote={createNewNote}
+        searchTerm=""
+        startIndex={startIndex}
+        handleRowCheckboxChange={handleRowCheckboxChange}
+        mode={mode}
+        updateNoteLinks={updateNoteLinks}
+        updateNoteFiles={updateNoteFiles}
+        handleDelete={handleDelete}
         batchId={batchId}
-          createNewNote={createNewNote}
-          handleDelete={handleDelete}
-          handleRowCheckboxChange={handleRowCheckboxChange}
-          handleSelectAllChange={handleSelectAllChange}
-          isCreating={isCreating}
-          isMobile={isMobile}
-          mode={mode}
-          paginatedNotes={paginatedNotes}
-          searchTerm={searchTerm}
-          selectedRows={selectedRows}
-          setIsCreating={setIsCreating}
-          startIndex={startIndex}
-          updateNoteLinks={() => {}}
+        updateNote={updateNote} 
         />
       </div>
 

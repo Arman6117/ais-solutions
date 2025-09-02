@@ -9,10 +9,11 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import AddLinkDialog from "./add-link-dialog";
+import { VideoLinksType } from "@/lib/types/note.type";
 
 type AddLinkButtonProps = {
-  notesLinks: any[];
-  setNotesLinks: (links: any[]) => void;
+  notesLinks: VideoLinksType[];
+  setNotesLinks: (links: VideoLinksType[]) => void;
 };
 
 const AddLinkButton = ({ notesLinks, setNotesLinks }: AddLinkButtonProps) => {

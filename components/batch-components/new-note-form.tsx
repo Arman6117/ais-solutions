@@ -29,38 +29,53 @@ import {
 import { ModulesForSession } from "@/lib/types/sessions.type";
 import { getModulesWithSubtopics } from "@/actions/shared/get-modules-with-subtopics";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
-
-const moduleData: Record<string, string[]> = {
-  "Module 1": ["Intro", "Basics"],
-  "Module 2": ["Setup", "Types"],
-  "Module 3": ["Functions", "Scope"],
-};
 
 const NewNoteForm = ({
   setIsCreating,
   createNewNote,
   isMobile,
   batchId,
+  // New props for edit functionality
+  isEditing = false,
+  setIsEditing,
+  editNote,
+  updateNote,
 }: {
   setIsCreating: (state: boolean) => void;
   createNewNote: (newNote: NoteTableType) => void;
   isMobile: boolean;
   batchId: string;
+  // Edit mode props (optional)
+  isEditing?: boolean;
+  setIsEditing?: (state: boolean) => void;
+  editNote?: NoteTableType;
+  updateNote?: (updatedNote: NoteTableType) => void;
 }) => {
   const [batchModule, setBatchModule] = useState<ModulesForSession[]>([]);
-  const [moduleName, setModuleName] = useState("");
-  const [chapterName, setChapterName] = useState("");
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [moduleName, setModuleName] = useState(
+    isEditing && editNote ? editNote.module || "" : ""
+  );
+  const [chapterName, setChapterName] = useState(
+    isEditing && editNote ? editNote.chapter || "" : ""
+  );
+  const [date, setDate] = useState<Date | undefined>(
+    isEditing && editNote && editNote.createdAt 
+      ? new Date(editNote.createdAt) 
+      : new Date()
+  );
   const [linkLabel, setLinkLabel] = useState("");
   const [link, setLink] = useState("");
-  const [videoLinks, setVideoLinks] = useState<VideoLinksType[]>([]);
+  const [videoLinks, setVideoLinks] = useState<VideoLinksType[]>(
+    isEditing && editNote ? editNote.videoLinks || [] : []
+  );
   const [fileLabel, setFileLabel] = useState("");
   const [fileLink, setFileLink] = useState("");
-  const [files, setFiles] = useState<FilesType[]>([]);
-  const [selectedSession, setSelectedSession] =
-    useState<NoteTableSessionType | null>(null);
-  
+  const [files, setFiles] = useState<FilesType[]>(
+    isEditing && editNote ? editNote.files || [] : []
+  );
+  const [selectedSession, setSelectedSession] = useState<NoteTableSessionType | null>(
+    isEditing && editNote ? editNote.session || null : null
+  );
 
   const fetchModules = async () => {
     try {
@@ -70,35 +85,65 @@ const NewNoteForm = ({
         return;
       }
       setBatchModule(res.data);
-      toast.success("Modules fetched successfully");
+      if (!isEditing) {
+        toast.success("Modules fetched successfully");
+      }
     } catch (error) {
       console.log(error);
       toast.error("Failed to fetch modules");
     }
   };
+
   useEffect(() => {
     fetchModules();
   }, []);
-  console.log(batchModule);   
+
   const handleSave = () => {
-    if (!moduleName || !chapterName || !date) return;
+    if (!moduleName || !chapterName || !date) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     const formattedDate = format(date, "yyyy-MM-dd");
 
-    const newNote = {
-      module: moduleName,
-      chapter: chapterName,
-      createdAt: formattedDate,
-      videoLinks,
-      files,
-      session: selectedSession,
-    };
+    if (isEditing && editNote && updateNote) {
+      // Update existing note
+      const updatedNote = {
+        ...editNote,
+        module: moduleName,
+        chapter: chapterName,
+        createdAt: formattedDate,
+        videoLinks,
+        files,
+        session: selectedSession,
+      };
 
-    createNewNote(newNote);
-    setIsCreating(false);
+      updateNote(updatedNote);
+      setIsEditing && setIsEditing(false);
+      toast.success("Note updated successfully");
+    } else {
+      // Create new note
+      const newNote = {
+        module: moduleName,
+        chapter: chapterName,
+        createdAt: formattedDate,
+        videoLinks,
+        files,
+        session: selectedSession,
+      };
+
+      createNewNote(newNote);
+      setIsCreating(false);
+      toast.success("Note created successfully");
+    }
   };
 
   const handleCancel = () => {
-    setIsCreating(false);
+    if (isEditing && setIsEditing) {
+      setIsEditing(false);
+    } else {
+      setIsCreating(false);
+    }
   };
 
   const onAddLink = (label: string, url: string) => {
@@ -109,21 +154,54 @@ const NewNoteForm = ({
     }
   };
 
-  const availableChapters = moduleName ? moduleData[moduleName] || [] : [];
+  const removeVideoLink = (index: number) => {
+    const newLinks = [...videoLinks];
+    newLinks.splice(index, 1);
+    setVideoLinks(newLinks);
+  };
+
+  const removeFile = (index: number) => {
+    const newFiles = [...files];
+    newFiles.splice(index, 1);
+    setFiles(newFiles);
+  };
+
+  const moduleChapterMap = batchModule.reduce(
+    (acc, module) => {
+      acc[module.name] = module.chapters.map((chapter) => chapter.name);
+      return acc;
+    },
+    {} as Record<string, string[]>
+  );
+
+  const availableChapters = moduleName
+    ? moduleChapterMap[moduleName] || []
+    : [];
 
   return (
-    <TableRow className="h-20 bg-muted/50">
+    <TableRow className={cn(
+      "h-20",
+      isEditing ? "bg-blue-50/50" : "bg-muted/50"
+    )}>
       <TableCell className="text-center">
         <Checkbox disabled />
       </TableCell>
 
       <TableCell>
         <ModuleSelector
-        modules={batchModule.map(module => module.name)}
+          modules={batchModule.map((module) => module.name)}
           selectedModule={moduleName}
           onChange={(val) => {
             setModuleName(val);
-            setChapterName("");
+            // Reset chapter when module changes, unless we're editing and the chapter exists in the new module
+            if (isEditing && editNote) {
+              const newModuleChapters = moduleChapterMap[val] || [];
+              if (!newModuleChapters.includes(chapterName)) {
+                setChapterName("");
+              }
+            } else {
+              setChapterName("");
+            }
           }}
         />
       </TableCell>
@@ -154,7 +232,11 @@ const NewNoteForm = ({
           ) : (
             <p className="text-xs text-muted-foreground">No session selected</p>
           )}
-          <SelectSessionDialog sessions={[]} onSelect={setSelectedSession} />
+          <SelectSessionDialog 
+            sessions={[]} 
+            onSelect={setSelectedSession}
+            triggerLabel={isEditing ? "Change Session" : "Select Session"}
+          />
         </div>
       </TableCell>
 
@@ -192,11 +274,7 @@ const NewNoteForm = ({
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6"
-                onClick={() => {
-                  const newLinks = [...videoLinks];
-                  newLinks.splice(index, 1);
-                  setVideoLinks(newLinks);
-                }}
+                onClick={() => removeVideoLink(index)}
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -230,6 +308,14 @@ const NewNoteForm = ({
           {files.map((file, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <span className="truncate max-w-32">{file.label}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => removeFile(index)}
+              >
+                <X className="h-3 w-3" />
+              </Button>
             </div>
           ))}
           <AddFileDialog

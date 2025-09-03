@@ -2,7 +2,7 @@
 
 import { connectToDB } from "@/lib/db";
 import { parseZodError } from "@/lib/helpers/parse-zod-errors";
-import { CreatePendingRequest } from "@/lib/types/pending-request";
+import { CreatePendingRequest } from "@/lib/types/pending-request.type";
 import { pendingRequestSchema } from "@/lib/validations/pending-request.schema";
 import { PendingRequest } from "@/models/pending-request.model";
 import { Student } from "@/models/student.model";

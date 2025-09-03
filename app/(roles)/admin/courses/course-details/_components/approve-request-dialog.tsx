@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { RequestToApprove } from "@/lib/types/pending-request.type";
+import { getPendingRequestById } from "@/actions/admin/pending-request/get-pending-request";
+import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
 const paymentModes = ["Cash", "UPI", "Card"];
@@ -65,24 +69,21 @@ const courseList: CourseData[] = [
 ];
 
 type ApproveRequestDialogProps = {
-  request: {
-    name: string;
-    email: string;
-    course: string;
-    availableBatches: string[];
-    modules: Module[];
-  };
+  requestId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
 export const ApproveRequestDialog = ({
-  request,
+  requestId,
   onOpenChange,
   open,
 }: ApproveRequestDialogProps) => {
-  const [selectedCourse, setSelectedCourse] = useState(request.course);
-  const [selectedModules, setSelectedModules] = useState<Module[]>(request.modules);
+  const [request, setRequest] = useState<RequestToApprove | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedModules, setSelectedModules] = useState<Module[]>([]);
   const [selectedBatch, setSelectedBatch] = useState("");
   const [batchMode, setBatchMode] = useState("");
   const [selectedSalesPerson, setSelectedSalesPerson] = useState("");
@@ -90,6 +91,50 @@ export const ApproveRequestDialog = ({
   const [paymentStatus, setPaymentStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [customTotalPrice, setCustomTotalPrice] = useState("");
+
+  const fetchPendingRequestToApprove = async () => {
+    if (!requestId) return;
+
+    setLoading(true);
+    try {
+      const res = await getPendingRequestById(requestId);
+      if (!res.success || !res.data) {
+        toast.error(res.message);
+        return;
+      }
+      setRequest(res.data);
+
+      setSelectedCourse(res.data.courseId?.courseName || "");
+      setSelectedModules(res.data.modules || []);
+      setCustomTotalPrice("");
+
+      toast.success(res.message);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open && requestId) {
+      fetchPendingRequestToApprove();
+    }
+
+    if (!open) {
+      setRequest(null);
+      setSelectedCourse("");
+      setSelectedModules([]);
+      setSelectedBatch("");
+      setBatchMode("");
+      setSelectedSalesPerson("");
+      setPaymentMode("");
+      setPaymentStatus("");
+      setDueDate("");
+      setCustomTotalPrice("");
+    }
+  }, [requestId, open]);
 
   const currentCourse = useMemo(
     () => courseList.find((c) => c.name === selectedCourse),
@@ -106,13 +151,26 @@ export const ApproveRequestDialog = ({
   const handleModulePriceChange = (name: string, price: string) => {
     setSelectedModules((prev) =>
       prev.map((mod) =>
-        mod.name === name ? { ...mod, price: parseInt(price || "0") } : mod
+        mod.name === name ? { ...mod, price: parseInt(price || "0") || 0 } : mod
       )
     );
   };
 
-  const autoPrice = selectedModules.reduce((acc, m) => acc + m.price, 0);
-  const totalPrice = customTotalPrice !== "" ? parseInt(customTotalPrice || "0") : autoPrice;
+  const autoPrice = selectedModules.reduce((acc, m) => {
+    const modulePrice = typeof m.price === 'number' ? m.price : parseInt(String(m.price)) || 0;
+    return acc + modulePrice;
+  }, 0);
+
+  const totalPrice = useMemo(() => {
+    if (customTotalPrice !== "") {
+      const customPrice = parseInt(customTotalPrice) || 0;
+      return customPrice;
+    }
+    if (request?.finalPrice) {
+      return request.finalPrice;
+    }
+    return autoPrice;
+  }, [customTotalPrice, request?.finalPrice, autoPrice]);
 
   const isFormValid =
     selectedBatch &&
@@ -122,6 +180,20 @@ export const ApproveRequestDialog = ({
     paymentMode &&
     paymentStatus &&
     (paymentStatus === "Paid" || dueDate);
+
+  // Show loading state
+  if (loading || !request) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-lg">
+          <DialogTitle>Approve Course Request</DialogTitle>
+          <div className="flex items-center justify-center h-32">
+            <Loader className="h-8 w-8 animate-spin" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -136,11 +208,11 @@ export const ApproveRequestDialog = ({
         <div className="space-y-4 text-sm">
           <div>
             <p className="font-medium text-gray-700">👤 Student Name</p>
-            <p className="text-gray-900">{request.name}</p>
+            <p className="text-gray-900">{request.studentId?.name || "Unknown"}</p>
           </div>
           <div>
             <p className="font-medium text-gray-700">📧 Email</p>
-            <p className="text-gray-900">{request.email}</p>
+            <p className="text-gray-900">{request.studentId?.email || "Unknown"}</p>
           </div>
 
           {/* Course Selector */}
@@ -170,24 +242,36 @@ export const ApproveRequestDialog = ({
 
           {/* Selected Modules */}
           <div>
-            <p className="font-medium text-gray-700 mb-1">✅ Selected Modules</p>
+            <p className="font-medium text-gray-700 mb-1">
+              ✅ Selected Modules
+            </p>
             {selectedModules.length === 0 && (
-              <p className="text-muted-foreground text-sm">No modules selected</p>
+              <p className="text-muted-foreground text-sm">
+                No modules selected
+              </p>
             )}
             <div className="flex flex-col gap-2">
-              {selectedModules.map((mod) => (
+              {selectedModules.map((mod, index) => (
                 <div
-                  key={mod.name}
+                  key={index}
                   className="flex justify-between items-center bg-violet-100 px-3 py-1 rounded text-violet-800"
                 >
                   <span className="font-medium">{mod.name}</span>
                   <div className="flex items-center gap-2">
-                    ₹
-                    <span className="font-medium">{mod.price}</span>
+                    <Input
+                      type="number"
+                      value={mod.price || 0}
+                      onChange={(e) =>
+                        handleModulePriceChange(mod.name, e.target.value)
+                      }
+                      className="w-20 h-6 text-xs"
+                      min="0"
+                    />
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleModuleToggle(mod)}
+                      className="h-6 w-6 p-0"
                     >
                       ❌
                     </Button>
@@ -199,14 +283,18 @@ export const ApproveRequestDialog = ({
 
           {/* Available Modules */}
           <div>
-            <p className="font-medium text-gray-700 mb-1 mt-4">📦 Available Modules</p>
+            <p className="font-medium text-gray-700 mb-1 mt-4">
+              📦 Available Modules
+            </p>
             <div className="flex flex-wrap gap-2">
               {currentCourse?.modules
-                ?.filter((mod) => !selectedModules.some((m) => m.name === mod.name))
+                ?.filter(
+                  (mod) => !selectedModules.some((m) => m.name === mod.name)
+                )
                 .map((mod) => (
                   <Badge
                     key={mod.name}
-                    className="bg-gray-100 text-gray-700 cursor-pointer"
+                    className="bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200"
                     onClick={() => handleModuleToggle(mod)}
                   >
                     {mod.name} – ₹{mod.price} ➕
@@ -217,29 +305,41 @@ export const ApproveRequestDialog = ({
 
           {/* Custom Final Price */}
           <div className="mt-2">
-            <p className="font-medium text-gray-700 mb-1">💸 Final Total Price</p>
+            <p className="font-medium text-gray-700 mb-1">
+              💸 Final Total Price
+            </p>
             <Input
               type="number"
               value={customTotalPrice}
-              placeholder={`Auto: ₹${autoPrice}`}
+              placeholder={`Database: ₹${request?.finalPrice || 0} | Auto-calc: ₹${autoPrice}`}
               onChange={(e) => setCustomTotalPrice(e.target.value)}
+              min="0"
             />
-            <p className="text-green-600 text-sm mt-1">Final Price: ₹{totalPrice}</p>
+            <p className="text-green-600 text-sm mt-1">
+              Final Price: ₹{totalPrice || 0}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {customTotalPrice
+                ? "Using custom price"
+                : (request?.finalPrice 
+                    ? "Using database price" 
+                    : "Using auto-calculated price")
+              }
+            </p>
           </div>
 
           {/* Batch selection */}
           <div>
             <p className="font-medium text-gray-700 mb-1">📅 Assign to Batch</p>
-            <Select onValueChange={setSelectedBatch}>
+            <Select value={selectedBatch} onValueChange={setSelectedBatch}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select batch" />
               </SelectTrigger>
               <SelectContent>
-                {request.availableBatches.map((batch) => (
-                  <SelectItem key={batch} value={batch}>
-                    {batch}
-                  </SelectItem>
-                ))}
+                {/* Add your available batches here */}
+                <SelectItem value="batch-1">Batch 1</SelectItem>
+                <SelectItem value="batch-2">Batch 2</SelectItem>
+                <SelectItem value="batch-3">Batch 3</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -247,7 +347,7 @@ export const ApproveRequestDialog = ({
           {/* Batch Mode */}
           <div>
             <p className="font-medium text-gray-700 mb-1">🧭 Batch Mode</p>
-            <Select onValueChange={setBatchMode}>
+            <Select value={batchMode} onValueChange={setBatchMode}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select batch mode" />
               </SelectTrigger>
@@ -264,7 +364,10 @@ export const ApproveRequestDialog = ({
           {/* Sales Person */}
           <div>
             <p className="font-medium text-gray-700 mb-1">🧑‍💼 Sales Person</p>
-            <Select onValueChange={setSelectedSalesPerson}>
+            <Select
+              value={selectedSalesPerson}
+              onValueChange={setSelectedSalesPerson}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select sales person" />
               </SelectTrigger>
@@ -281,7 +384,7 @@ export const ApproveRequestDialog = ({
           {/* Payment Mode */}
           <div>
             <p className="font-medium text-gray-700 mb-1">💳 Payment Mode</p>
-            <Select onValueChange={setPaymentMode}>
+            <Select value={paymentMode} onValueChange={setPaymentMode}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select payment mode" />
               </SelectTrigger>
@@ -298,7 +401,7 @@ export const ApproveRequestDialog = ({
           {/* Payment Status */}
           <div>
             <p className="font-medium text-gray-700 mb-1">💰 Payment Status</p>
-            <Select onValueChange={setPaymentStatus}>
+            <Select value={paymentStatus} onValueChange={setPaymentStatus}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select payment status" />
               </SelectTrigger>
@@ -327,28 +430,30 @@ export const ApproveRequestDialog = ({
 
         <DialogFooter className="mt-4">
           <DialogClose asChild>
-            <Button
-              disabled={!isFormValid}
-              onClick={() => {
-                const approvedData = {
-                  student: request.name,
-                  email: request.email,
-                  course: selectedCourse,
-                  selectedModules,
-                  totalPrice,
-                  batch: selectedBatch,
-                  batchMode,
-                  salesPerson: selectedSalesPerson,
-                  paymentMode,
-                  paymentStatus,
-                  dueDate: paymentStatus !== "Paid" ? dueDate : null,
-                };
-                console.log("✅ Approved Request:", approvedData);
-              }}
-            >
-              Confirm & Assign Batch
-            </Button>
+            <Button variant="outline">Cancel</Button>
           </DialogClose>
+          <Button
+            disabled={!isFormValid}
+            onClick={() => {
+              const approvedData = {
+                student: request.studentId?.name || "Unknown",
+                email: request.studentId?.email || "Unknown",
+                course: selectedCourse,
+                selectedModules,
+                totalPrice,
+                batch: selectedBatch,
+                batchMode,
+                salesPerson: selectedSalesPerson,
+                paymentMode,
+                paymentStatus,
+                dueDate: paymentStatus !== "Paid" ? dueDate : null,
+              };
+              console.log("✅ Approved Request:", approvedData);
+              onOpenChange(false);
+            }}
+          >
+            Confirm & Assign Batch
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

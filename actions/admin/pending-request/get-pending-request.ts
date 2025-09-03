@@ -1,10 +1,16 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { AllPendingRequests } from "@/lib/types/pending-request";
+import {
+  AllPendingRequests,
+  RequestToApprove,
+} from "@/lib/types/pending-request.type";
 import { PendingRequest } from "@/models/pending-request.model";
-import "@/models/student.model";
+import { isValidObjectId } from "mongoose";
+import { ObjectId } from "mongodb";
 import "@/models/course.model";
+import "@/models/student.model";
+import "@/models/module.model"
 
 export const getAllPendingRequests = async (): Promise<{
   data: AllPendingRequests[];
@@ -25,7 +31,7 @@ export const getAllPendingRequests = async (): Promise<{
           select: "courseName",
         },
       ]);
-  
+
     const formattedPendingRequest: AllPendingRequests[] = pendingRequest.map(
       (req) => ({
         _id: req._id as string,
@@ -45,5 +51,50 @@ export const getAllPendingRequests = async (): Promise<{
       success: false,
       data: [],
     };
+  }
+};
+
+export const getPendingRequestById = async (
+  requestId: string
+): Promise<{
+  success: boolean;
+  message: string;
+  data: RequestToApprove | null;
+}> => {
+  if (!requestId) {
+    return { success: false, message: "Invalid Request ID", data: null };
+  }
+  if (!isValidObjectId(requestId)) {
+    return { success: false, message: "Invalid Request ID", data: null };
+  }
+
+  try {
+    await connectToDB();
+    const request = (await PendingRequest.findById(new ObjectId(requestId))
+      .select("_id studentId courseId finalPrice modules")
+      .populate([
+        {
+          path: "studentId",
+          select: "name email",
+        },
+        {
+          path: "courseId",
+          select: "courseName",
+        },
+        {
+          path: "modules",
+          select: "name price",
+        },
+      ])
+      .exec()) as RequestToApprove;
+
+    return {
+      data: JSON.parse(JSON.stringify(request)),
+      message: "Request to approve fetched",
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+    return { data: null, message: "Failed to fetch", success: false };
   }
 };

@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
-import { AllPendingRequests } from "@/lib/types/pending-request";
+import { AllPendingRequests } from "@/lib/types/pending-request.type";
 import { getAllPendingRequests } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
 
@@ -54,13 +54,11 @@ const PendingRequestDropdown = () => {
     fetchPendingRequests();
   }, []);
 
-  const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(
-    null
-  );
+  const [selectedRequestId, setSelectedRequestId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleApproveClick = (req: PendingRequest) => {
-    setSelectedRequest(req);
+  const handleApproveClick = (req: string) => {
+    setSelectedRequestId(req);
     setIsDialogOpen(true);
   };
 
@@ -100,7 +98,7 @@ const PendingRequestDropdown = () => {
                     <p className="text-xs text-muted-foreground">{req.email}</p>
                     <p className="text-sm">{req.courseName}</p>
                   </div>
-                  <Button onClick={() => {}}>Approve</Button>
+                  <Button onClick={() => handleApproveClick(req._id)}>Approve</Button>
                 </DropdownMenuItem>
               ))}
             </>
@@ -115,11 +113,11 @@ const PendingRequestDropdown = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {selectedRequest && (
+      {selectedRequestId && (
         <ApproveRequestDialog
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
-          request={selectedRequest}
+          requestId={selectedRequestId}
         />
       )}
     </>

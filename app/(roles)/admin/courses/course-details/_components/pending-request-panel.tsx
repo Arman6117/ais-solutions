@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
@@ -29,35 +30,6 @@ type PendingRequest = {
   availableBatches: string[];
 };
 
-const mockPendingRequests: PendingRequest[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    course: "Web Development",
-    price: 12000,
-    availableBatches: ["Batch A", "Batch B", "Batch C"],
-    modules: [
-      { name: "HTML", price: 3000 },
-      { name: "CSS", price: 4000 },
-      { name: "JavaScript", price: 5000 },
-    ],
-  },
-  {
-    id: "2",
-    name: "Sara Ali",
-    email: "sara@example.com",
-    course: "Data Science",
-    price: 15000,
-    availableBatches: ["DS Batch 1", "DS Batch 2"],
-    modules: [
-      { name: "Python", price: 5000 },
-      { name: "Pandas", price: 4000 },
-      { name: "ML", price: 6000 },
-    ],
-  },
-];
-
 const PendingRequestDropdown = () => {
   const [allPendingRequests, setAllPendingRequests] = useState<
     AllPendingRequests[]
@@ -77,9 +49,11 @@ const PendingRequestDropdown = () => {
       console.error("Error fetching pending requests:", error);
     }
   };
+
   useEffect(() => {
     fetchPendingRequests();
   }, []);
+
   const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(
     null
   );
@@ -89,32 +63,47 @@ const PendingRequestDropdown = () => {
     setSelectedRequest(req);
     setIsDialogOpen(true);
   };
- console.log(allPendingRequests)
+
+  const pendingCount = allPendingRequests.length;
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="justify-between">
-            Pending Requests
-            <ChevronDown className="ml-2 h-4 w-4" />
+          <Button variant="outline" className="justify-between relative">
+            <span>Pending Requests</span>
+            <div className="flex items-center gap-2">
+              {pendingCount > 0 && (
+                <Badge className="text-xs p-2 bg-primary-bg  size-5">
+                  {pendingCount}
+                </Badge>
+              )}
+              <ChevronDown className="h-4 w-4" />
+            </div>
           </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-[320px]">
           {allPendingRequests.length > 0 ? (
-            allPendingRequests.map((req) => (
-              <DropdownMenuItem
-                key={req._id}
-                className="flex flex-col items-start p-3 gap-2"
-              >
-                <div className="w-full">
-                  <p className="text-sm font-medium">{req.studentName}</p>
-                  <p className="text-xs text-muted-foreground">{req.email}</p>
-                  <p className="text-sm">{req.courseName}</p>
-                </div>
-                <Button onClick={() => {}}>Approve</Button>
-              </DropdownMenuItem>
-            ))
+            <>
+              {/* Optional: Show count at the top of dropdown */}
+              <div className="px-3 py-2 text-xs text-muted-foreground border-b">
+                {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}
+              </div>
+              {allPendingRequests.map((req) => (
+                <DropdownMenuItem
+                  key={req._id}
+                  className="flex flex-col items-start p-3 gap-2"
+                >
+                  <div className="w-full">
+                    <p className="text-sm font-medium">{req.studentName}</p>
+                    <p className="text-xs text-muted-foreground">{req.email}</p>
+                    <p className="text-sm">{req.courseName}</p>
+                  </div>
+                  <Button onClick={() => {}}>Approve</Button>
+                </DropdownMenuItem>
+              ))}
+            </>
           ) : (
             <DropdownMenuItem
               disabled

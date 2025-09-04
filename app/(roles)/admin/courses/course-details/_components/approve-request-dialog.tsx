@@ -21,53 +21,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { RequestToApprove } from "@/lib/types/pending-request.type";
+import { CourseData, RequestToApprove } from "@/lib/types/pending-request.type";
 import { getPendingRequestById } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { getCourseList } from "@/actions/admin/pending-request/get-data-to-approve-request";
 
 const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
 const paymentModes = ["Cash", "UPI", "Card"];
 const paymentStatuses = ["Paid", "Partially Paid", "Due"];
 
+
 type Module = {
-  name: string;
-  price: number;
-};
-
-type CourseData = {
-  name: string;
-  modules: Module[];
-};
-
-const courseList: CourseData[] = [
-  {
-    name: "Web Development",
-    modules: [
-      { name: "HTML", price: 2000 },
-      { name: "CSS", price: 2000 },
-      { name: "JavaScript", price: 4000 },
-      { name: "React", price: 5000 },
-    ],
-  },
-  {
-    name: "Data Science",
-    modules: [
-      { name: "Python", price: 3000 },
-      { name: "Pandas", price: 4000 },
-      { name: "Machine Learning", price: 5000 },
-    ],
-  },
-  {
-    name: "App Development",
-    modules: [
-      { name: "Flutter", price: 6000 },
-      { name: "Firebase", price: 3000 },
-      { name: "Dart", price: 4000 },
-    ],
-  },
-];
-
+  name:string,
+  price:number
+}
 type ApproveRequestDialogProps = {
   requestId: string;
   open: boolean;
@@ -91,7 +59,7 @@ export const ApproveRequestDialog = ({
   const [paymentStatus, setPaymentStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [customTotalPrice, setCustomTotalPrice] = useState("");
-
+  const [courseList,setCourseList] = useState<CourseData[]>([]);
   const fetchPendingRequestToApprove = async () => {
     if (!requestId) return;
 
@@ -102,11 +70,16 @@ export const ApproveRequestDialog = ({
         toast.error(res.message);
         return;
       }
+      const courseRes = await getCourseList();
+      if(!courseRes.success) {
+        toast.error(courseRes.message)
+      } 
       setRequest(res.data);
-
+      
       setSelectedCourse(res.data.courseId?.courseName || "");
       setSelectedModules(res.data.modules || []);
       setCustomTotalPrice("");
+      setCourseList(courseRes.data)
 
       toast.success(res.message);
     } catch (error) {
@@ -137,7 +110,7 @@ export const ApproveRequestDialog = ({
   }, [requestId, open]);
 
   const currentCourse = useMemo(
-    () => courseList.find((c) => c.name === selectedCourse),
+    () => courseList.find((c) => c.courseName === selectedCourse),
     [selectedCourse]
   );
 
@@ -222,7 +195,7 @@ export const ApproveRequestDialog = ({
               value={selectedCourse}
               onValueChange={(val) => {
                 setSelectedCourse(val);
-                const found = courseList.find((c) => c.name === val);
+                const found = courseList.find((c) => c.courseName === val);
                 setSelectedModules(found?.modules ?? []);
                 setCustomTotalPrice(""); // reset custom price
               }}
@@ -232,8 +205,8 @@ export const ApproveRequestDialog = ({
               </SelectTrigger>
               <SelectContent>
                 {courseList.map((course) => (
-                  <SelectItem key={course.name} value={course.name}>
-                    {course.name}
+                  <SelectItem key={course.courseName} value={course.courseName}>
+                    {course.courseName}
                   </SelectItem>
                 ))}
               </SelectContent>

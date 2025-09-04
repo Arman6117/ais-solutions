@@ -5,6 +5,7 @@ import { parseZodError } from "@/lib/helpers/parse-zod-errors";
 import { BatchType, Mode, Modules, prBatch } from "@/lib/types/types";
 import { batchSchema } from "@/lib/validations/batch.schema";
 import { Batch } from "@/models/batch.model";
+import { Course } from "@/models/course.model";
 import { Module } from "@/models/module.model";
 import { ObjectId } from "mongodb";
 import { ZodError } from "zod";
@@ -50,11 +51,16 @@ export const createBatch = async (data: CreateBatchProps) => {
       validatedData.modules.map(async (mod) => {
         await Module.findByIdAndUpdate(
           mod._id,
-          { $addToSet: { batchId: createdBatch._id } }, 
+          { $addToSet: { batchId: createdBatch._id } },
           { new: true }
         );
-      }))
-
+      })
+    );
+    await Course.findByIdAndUpdate(
+      new ObjectId(validatedData.courseId),
+      { $addToSet: { batches: createdBatch._id } }, // Prevents duplicates
+      { new: true, runValidators: true }
+    );
     return { success: true, message: "Batch created successfully" };
   } catch (error) {
     if (error instanceof ZodError) {

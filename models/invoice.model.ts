@@ -10,7 +10,7 @@ const courseDetailsSchema = new Schema(
     dueDate: { type: String },
     status: {
       type: String,
-      enum: ["Due", "Paid", "Overdue"],
+      enum: ["Due", "Paid", "Overdue", "Partially Paid"],
       required: true,
     },
 
@@ -44,7 +44,7 @@ const invoiceSchema = new Schema({
   paymentHistory: [paymentHistorySchema],
   status: {
     type: String,
-    enum: ["Due", "Paid", "Overdue"],
+    enum: ["Due", "Paid", "Overdue", "Partially Paid"],
     required: true,
   },
 });

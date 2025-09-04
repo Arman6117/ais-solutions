@@ -31,11 +31,10 @@ const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
 const paymentModes = ["Cash", "UPI", "Card"];
 const paymentStatuses = ["Paid", "Partially Paid", "Due"];
 
-
 type Module = {
-  name:string,
-  price:number
-}
+  name: string;
+  price: number;
+};
 type ApproveRequestDialogProps = {
   requestId: string;
   open: boolean;
@@ -59,7 +58,8 @@ export const ApproveRequestDialog = ({
   const [paymentStatus, setPaymentStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [customTotalPrice, setCustomTotalPrice] = useState("");
-  const [courseList,setCourseList] = useState<CourseData[]>([]);
+  const [amountPaid, setAmountPaid] = useState(0);
+  const [courseList, setCourseList] = useState<CourseData[]>([]);
   const fetchPendingRequestToApprove = async () => {
     if (!requestId) return;
 
@@ -71,15 +71,15 @@ export const ApproveRequestDialog = ({
         return;
       }
       const courseRes = await getCourseList();
-      if(!courseRes.success) {
-        toast.error(courseRes.message)
-      } 
+      if (!courseRes.success) {
+        toast.error(courseRes.message);
+      }
       setRequest(res.data);
-      
+
       setSelectedCourse(res.data.courseId?.courseName || "");
       setSelectedModules(res.data.modules || []);
       setCustomTotalPrice("");
-      setCourseList(courseRes.data)
+      setCourseList(courseRes.data);
 
       toast.success(res.message);
     } catch (error) {
@@ -130,7 +130,8 @@ export const ApproveRequestDialog = ({
   };
 
   const autoPrice = selectedModules.reduce((acc, m) => {
-    const modulePrice = typeof m.price === 'number' ? m.price : parseInt(String(m.price)) || 0;
+    const modulePrice =
+      typeof m.price === "number" ? m.price : parseInt(String(m.price)) || 0;
     return acc + modulePrice;
   }, 0);
 
@@ -181,11 +182,15 @@ export const ApproveRequestDialog = ({
         <div className="space-y-4 text-sm">
           <div>
             <p className="font-medium text-gray-700">👤 Student Name</p>
-            <p className="text-gray-900">{request.studentId?.name || "Unknown"}</p>
+            <p className="text-gray-900">
+              {request.studentId?.name || "Unknown"}
+            </p>
           </div>
           <div>
             <p className="font-medium text-gray-700">📧 Email</p>
-            <p className="text-gray-900">{request.studentId?.email || "Unknown"}</p>
+            <p className="text-gray-900">
+              {request.studentId?.email || "Unknown"}
+            </p>
           </div>
 
           {/* Course Selector */}
@@ -294,10 +299,9 @@ export const ApproveRequestDialog = ({
             <p className="text-xs text-muted-foreground">
               {customTotalPrice
                 ? "Using custom price"
-                : (request?.finalPrice 
-                    ? "Using database price" 
-                    : "Using auto-calculated price")
-              }
+                : request?.finalPrice
+                  ? "Using database price"
+                  : "Using auto-calculated price"}
             </p>
           </div>
 
@@ -309,10 +313,13 @@ export const ApproveRequestDialog = ({
                 <SelectValue placeholder="Select batch" />
               </SelectTrigger>
               <SelectContent>
-                {/* Add your available batches here */}
-                <SelectItem value="batch-1">Batch 1</SelectItem>
-                <SelectItem value="batch-2">Batch 2</SelectItem>
-                <SelectItem value="batch-3">Batch 3</SelectItem>
+                {courseList.flatMap((c) =>
+                  c.batches.map((batch) => (
+                    <SelectItem key={batch._id} value={batch._id}>
+                      {batch.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -387,7 +394,19 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
-
+          {paymentStatus === "Partially Paid" && (
+            <div>
+              <p className="font-medium text-gray-700 mb-1">💵 Amount Paid</p>
+              <Input
+                value={amountPaid}
+                onChange={(e) => setAmountPaid(Number(e.target.value))}
+                placeholder="Enter amount paid"
+                className="w-full"
+                min="0"
+                max={totalPrice}
+              />
+            </div>
+          )}
           {/* Due Date */}
           {paymentStatus !== "Paid" && (
             <div>

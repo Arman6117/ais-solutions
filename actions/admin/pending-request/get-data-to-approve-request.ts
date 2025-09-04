@@ -19,7 +19,7 @@ export const getCourseList = async (): Promise<{
         { path: "batches", select: "_id name" },
       ])
       .exec()) as CourseData[];
-console.log(JSON.parse(JSON.stringify(courseList)))
+
     return {
       data: JSON.parse(JSON.stringify(courseList)),
       success: true,

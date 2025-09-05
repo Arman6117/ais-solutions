@@ -1,11 +1,17 @@
+type Batch = {
+    batchId: {
+      _id: '68baf7bb40a3011866ab85e7',
+      name: 'Batch-001'
+    },
+  }
 export interface StudentTable {
     _id:string,
     name:string,
     email:string,
     phone:string,
     gender:"male" | "female" | "other",
-    batches:string[],
-    feesStatus:"paid" | "partial" | "unpaid", 
+    batches:Batch[],
+    feeStatus:"paid" | "partially" | "unpaid", 
     createdAt: string,
 }
 

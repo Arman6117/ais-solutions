@@ -2,16 +2,19 @@
 
 import { Student } from "@/models/student.model";
 import "@/models/module.model";
+import "@/models/course.model";
 
 import {
   CourseDetails,
-  CourseSelector,
+  // CourseSelector,
   StudentCourse,
 } from "@/lib/types/course.type";
 import { isValidObjectId } from "mongoose";
 import { connectToDB } from "@/lib/db";
 import { Course } from "@/models/course.model";
 import { ObjectId } from "mongodb";
+
+
 
 export const getStudentCourses = async (
   studentEmail: string
@@ -22,24 +25,28 @@ export const getStudentCourses = async (
       return { data: [] };
     }
 
-    const student = (await Student.findOne({ email: studentEmail })
-      .select("courses")
-      .populate({ path: "courses.courseId", select: "_id courseName" })
-      .exec()) as unknown as CourseSelector;
+    const student = await Student.findOne({ email: studentEmail })
+      .select("courses.courseId courses.isApproved")
+      .populate({ path: "courses.courseId", select: "_id courseName" });
+
     if (!student) {
       return { data: [] };
     }
+
+    console.log(JSON.parse(JSON.stringify(student)));
+
     if (!student.courses || !Array.isArray(student.courses)) {
       return { data: [] };
     }
 
-    const approvedCourses = student.courses
-      .filter((c) => c.isApproved && c._id)
-      .map((c) => ({
-        _id: c._id,
-        courseName: c.courseName,
+    const approvedCourses: StudentCourse[] = student.courses
+      .filter((c: any) => c.isApproved && c.courseId) // ✅ check courseId
+      .map((c: any) => ({
+        _id: c.courseId._id, // ✅ use nested courseId
+        courseName: c.courseId.courseName,
       }));
-    return { data: approvedCourses || [] };
+
+    return { data: JSON.parse(JSON.stringify(approvedCourses)) };
   } catch (error) {
     console.log("Error fetching student courses:", error);
     return { data: [] };

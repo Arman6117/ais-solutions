@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-// import { coursesData } from "@/lib/static";
 import {
   Select,
   SelectContent,
@@ -10,23 +9,21 @@ import {
 } from "@/components/ui/select";
 import { BookOpen, Loader } from "lucide-react";
 import { useCourseStore } from "@/store/use-course-store";
-import {  StudentCourse,  } from "@/lib/types/course.type";
-
+import { StudentCourse } from "@/lib/types/course.type";
 
 type StudentCourseSelectorProps = {
-  courses: StudentCourse[]
-}
-const StudentCourseSelector = ({courses}:StudentCourseSelectorProps) => {
+  courses: StudentCourse[];
+};
+
+const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
   const { selectedCourse, setSelectedCourse } = useCourseStore();
-  const [coursesData,setCoursesData]= useState<StudentCourse[]>(courses);
+  const [coursesData, setCoursesData] = useState<StudentCourse[]>(courses);
   const [loading, setLoading] = useState(true);
 
   const fetchCourses = async () => {
     try {
       setLoading(true);
- 
-      setCoursesData(courses );
-    
+      setCoursesData(courses);
     } catch (err) {
       console.error("Failed to fetch courses:", err);
     } finally {
@@ -40,28 +37,30 @@ const StudentCourseSelector = ({courses}:StudentCourseSelectorProps) => {
 
   const handleCourseChange = (courseName: string) => {
     const course = coursesData.find((c) => c.courseName === courseName);
-    
     if (course) {
-      
       setSelectedCourse(course);
     }
   };
+
+  // ✅ Fix: select the first course as default when data is ready
   useEffect(() => {
-    if (selectedCourse) return;
-    const defaultCourse = coursesData[0];
-    setSelectedCourse(defaultCourse);
-  }, [selectedCourse, setSelectedCourse]);
-  if(loading) {
-    return (
-      <Loader className="animate-spin"/>
-    )
+    if (!selectedCourse && coursesData.length > 0) {
+      setSelectedCourse(coursesData[0]);
+    }
+  }, [selectedCourse, coursesData, setSelectedCourse]);
+
+  if (loading) {
+    return <Loader className="animate-spin" />;
   }
 
   return (
-    <Select value={selectedCourse?.courseName} onValueChange={handleCourseChange}>
+    <Select
+      value={selectedCourse?.courseName}
+      onValueChange={handleCourseChange}
+    >
       <SelectTrigger className="flex gap-2 w-64 text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
         <BookOpen className="size-4 text-primary-bg" />
-        <SelectValue placeholder="Select a course"  />
+        <SelectValue placeholder="Select a course" />
       </SelectTrigger>
       <SelectContent>
         {coursesData.map((course) => (

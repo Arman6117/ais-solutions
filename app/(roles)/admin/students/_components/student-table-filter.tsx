@@ -6,14 +6,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+type Batch = {
+  batchId: {
+    _id: '68baf7bb40a3011866ab85e7',
+    name: 'Batch-001'
+  },
+}
 interface StudentTableFiltersProps {
   feeStatusFilter: string;
   genderFilter: string;
   batchFilter: string;
   uniqueFeeStatuses: string[];
   uniqueGenders: string[];
-  uniqueBatches: string[];
+  uniqueBatches: Batch[];
   setFeeStatusFilter: (value: string) => void;
   setGenderFilter: (value: string) => void;
   setBatchFilter: (value: string) => void;
@@ -67,8 +72,10 @@ const StudentTableFilters = ({
         <SelectContent>
           <SelectItem value="all">All Batches</SelectItem>
           {uniqueBatches.map((batch) => (
-            <SelectItem key={batch} value={batch}>
-              {batch}
+            <SelectItem key={batch.batchId._id} value={batch.batchId
+              .name
+            }>
+              {batch.batchId.name}
             </SelectItem>
           ))}
         </SelectContent>

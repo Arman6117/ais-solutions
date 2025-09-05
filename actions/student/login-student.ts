@@ -21,7 +21,7 @@ export const loginStudent = async (data: FormData) => {
       email: email,
       password: password,
     });
-    console.log(auth);
+
     if (auth.error) {
       return { success: false, message: auth.error.message };
     }

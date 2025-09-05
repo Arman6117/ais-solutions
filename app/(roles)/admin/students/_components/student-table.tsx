@@ -7,7 +7,14 @@ import StudentTableFilters from "./student-table-filter";
 import { Badge } from "@/components/ui/badge";
 import { getStudentTable } from "@/actions/admin/student/get-student";
 import { StudentData, StudentTable as StudentTableType } from "@/lib/types/student";
+import { format } from "date-fns";
 
+type Batch = {
+  batchId: {
+    _id: '68baf7bb40a3011866ab85e7',
+    name: 'Batch-001'
+  },
+}
 const StudentTable = () => {
   const [feeStatusFilter, setFeeStatusFilter] = useState("all");
   const [genderFilter, setGenderFilter] = useState("all");
@@ -28,17 +35,17 @@ const StudentTable = () => {
   },[])
   const filteredStudents = useMemo(() => {
     return student.filter((student) => {
-      if (feeStatusFilter !== "all" && student.feesStatus !== feeStatusFilter) return false;
+      if (feeStatusFilter !== "all" && student.feeStatus !== feeStatusFilter) return false;
       if (genderFilter !== "all" && student.gender !== genderFilter) return false;
       if (
         batchFilter !== "all" &&
-        !student.batches?.some((batch: string) => batch === batchFilter)
+        !student.batches?.some((batch:Batch ) => batch.batchId.name === batchFilter)
       )
         return false;
       return true;
     });
-  }, [feeStatusFilter, genderFilter, batchFilter]);
-
+  }, [feeStatusFilter, genderFilter, batchFilter,student]);
+console.log(filteredStudents)
   const studentTableCol = [
     {
       id: "name",
@@ -63,21 +70,21 @@ const StudentTable = () => {
     {
       id: "joinedAt",
       header: "Joined At",
-      accessor: (row: StudentTableType) => row.createdAt,
+      accessor: (row: StudentTableType) => format(new Date(row.createdAt), "PP"),
     },
     {
       id: "feesStatus",
       header: "Fees Status",
-      accessor: (row: StudentTableType) => row.feesStatus,
+      accessor: (row: StudentTableType) => row.feeStatus,
     },
     {
       id: "batches",
       header: "Batches",
       accessor: (row: StudentTableType) => (
         <div className="flex flex-wrap gap-1">
-          {row.batches?.map((batch: string, i: number) => (
+          {row.batches?.map((batch: Batch, i: number) => (
             <Badge key={i} variant="secondary" className="text-xs">
-              {batch}
+              {batch.batchId.name}
             </Badge>
           ))}
         </div>
@@ -93,7 +100,7 @@ const StudentTable = () => {
   ];
 
   const uniqueFeeStatuses = useMemo(() => {
-    return Array.from(new Set(student.map((s) => s.feesStatus)));
+    return Array.from(new Set(student.map((s) => s.feeStatus)));
   }, []);
 
   const uniqueGenders = useMemo(() => {

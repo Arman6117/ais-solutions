@@ -3,7 +3,7 @@ import { Schema, model, models } from "mongoose";
 const courseDetailsSchema = new Schema(
   {
     courseId: { type: Schema.Types.ObjectId, ref: "Course", required: true },
-    modules: [{ type: String, required: true }],
+    modules: [{ type: Schema.Types.ObjectId, required: true, ref:"Module" }],
     totalFees: { type: Number, required: true },
     remainingFees: { type: Number, required: true },
     amountPaid: { type: Number, required: true },
@@ -26,7 +26,8 @@ const courseDetailsSchema = new Schema(
 const paymentHistorySchema = new Schema({
   amount: { type: Number, required: true },
   courseName: { type: String, required: true },
-  // modules: [{ type: String, required: true }],
+  modules: [{ type: Schema.Types.ObjectId, required: true, ref:"Module" }],
+  totalFees: { type: Number, required: true },
   dueDate: { type: String },
   notes: { type: String },
   mode: {

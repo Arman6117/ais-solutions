@@ -52,7 +52,7 @@ export const updateCourse = async (data: UpdateCoursePayload) => {
 
     await course.save();
 
-    return { success: true, message: "Course updated successfully", course };
+    return { success: true, message: "Course updated successfully" };
   } catch (error) {
     console.error("updateCourse error:", error);
     return { success: false, message: "Something went wrong" };

@@ -21,17 +21,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { CourseData, RequestToApprove } from "@/lib/types/pending-request.type";
+import { ApprovePendingRequestPayload, CourseData, RequestToApprove } from "@/lib/types/pending-request.type";
 import { getPendingRequestById } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { getCourseList } from "@/actions/admin/pending-request/get-data-to-approve-request";
+import { approvePendingRequest } from "@/actions/admin/pending-request/approve-pending-request";
+import { Mode } from "@/lib/types/types";
 
 const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
 const paymentModes = ["Cash", "UPI", "Card"];
 const paymentStatuses = ["Paid", "Partially Paid", "Due"];
 
 type Module = {
+  _id?: string; // Added optional _id for modules
   name: string;
   price: number;
 };
@@ -52,7 +55,7 @@ export const ApproveRequestDialog = ({
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedModules, setSelectedModules] = useState<Module[]>([]);
   const [selectedBatch, setSelectedBatch] = useState("");
-  const [batchMode, setBatchMode] = useState("");
+  const [batchMode, setBatchMode] = useState<Mode>('online');
   const [selectedSalesPerson, setSelectedSalesPerson] = useState("");
   const [paymentMode, setPaymentMode] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
@@ -60,6 +63,7 @@ export const ApproveRequestDialog = ({
   const [customTotalPrice, setCustomTotalPrice] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
   const [courseList, setCourseList] = useState<CourseData[]>([]);
+
   const fetchPendingRequestToApprove = async () => {
     if (!requestId) return;
 
@@ -76,7 +80,8 @@ export const ApproveRequestDialog = ({
       }
       setRequest(res.data);
 
-      setSelectedCourse(res.data.courseId?.courseName || "");
+      // Correctly set the selected course and modules using IDs
+      setSelectedCourse(res.data.courseId._id || "");
       setSelectedModules(res.data.modules || []);
       setCustomTotalPrice("");
       setCourseList(courseRes.data);
@@ -100,7 +105,7 @@ export const ApproveRequestDialog = ({
       setSelectedCourse("");
       setSelectedModules([]);
       setSelectedBatch("");
-      setBatchMode("");
+      setBatchMode('online');
       setSelectedSalesPerson("");
       setPaymentMode("");
       setPaymentStatus("");
@@ -110,8 +115,8 @@ export const ApproveRequestDialog = ({
   }, [requestId, open]);
 
   const currentCourse = useMemo(
-    () => courseList.find((c) => c.courseName === selectedCourse),
-    [selectedCourse]
+    () => courseList.find((c) => c._id === selectedCourse),
+    [selectedCourse, courseList]
   );
 
   const handleModuleToggle = (mod: Module) => {
@@ -150,7 +155,7 @@ export const ApproveRequestDialog = ({
     selectedBatch &&
     batchMode &&
     selectedModules.length > 0 &&
-    selectedSalesPerson &&
+    // selectedSalesPerson &&
     paymentMode &&
     paymentStatus &&
     (paymentStatus === "Paid" || dueDate);
@@ -167,6 +172,50 @@ export const ApproveRequestDialog = ({
         </DialogContent>
       </Dialog>
     );
+  }
+
+  const approveRequest = async () => {
+    if (!request || !currentCourse) {
+      toast.error("Required data is missing.");
+      return;
+    }
+
+    try {
+      const moduleIds = selectedModules.map((mod) => {
+        const moduleInCourse = currentCourse.modules.find(m => m.name === mod.name);
+        return moduleInCourse?._id;
+      }).filter(Boolean) as string[];
+
+      if (moduleIds.length === 0) {
+        toast.error("No modules selected or module IDs not found.");
+        return;
+      }
+
+      const payload: ApprovePendingRequestPayload = {
+        email: request.studentId?.email || "",
+        courseName: currentCourse.courseName,
+        courseId: selectedCourse,
+        batch: selectedBatch,
+        modules: moduleIds,
+        amountPaid: amountPaid,
+        totalFees: totalPrice,
+        dueDate: paymentStatus !== "Paid" ? dueDate : undefined,
+        status: paymentStatus as "Due" | "Paid" | "Partially Paid",
+        mode: paymentMode as "UPI" | "Cash" | "Card" | "Other",
+        batchMode: batchMode,
+      };
+
+      const res = await approvePendingRequest(requestId,payload);
+      if (res.success) {
+        toast.success(res.message);
+        onOpenChange(false);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   }
 
   return (
@@ -200,7 +249,7 @@ export const ApproveRequestDialog = ({
               value={selectedCourse}
               onValueChange={(val) => {
                 setSelectedCourse(val);
-                const found = courseList.find((c) => c.courseName === val);
+                const found = courseList.find((c) => c._id === val);
                 setSelectedModules(found?.modules ?? []);
                 setCustomTotalPrice(""); // reset custom price
               }}
@@ -210,7 +259,7 @@ export const ApproveRequestDialog = ({
               </SelectTrigger>
               <SelectContent>
                 {courseList.map((course) => (
-                  <SelectItem key={course.courseName} value={course.courseName}>
+                  <SelectItem key={course._id} value={course._id}>
                     {course.courseName}
                   </SelectItem>
                 ))}
@@ -313,13 +362,11 @@ export const ApproveRequestDialog = ({
                 <SelectValue placeholder="Select batch" />
               </SelectTrigger>
               <SelectContent>
-                {courseList.flatMap((c) =>
-                  c.batches.map((batch) => (
-                    <SelectItem key={batch._id} value={batch._id}>
-                      {batch.name}
-                    </SelectItem>
-                  ))
-                )}
+                {currentCourse?.batches.map((batch) => (
+                  <SelectItem key={batch._id} value={batch._id}>
+                    {batch.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -327,13 +374,13 @@ export const ApproveRequestDialog = ({
           {/* Batch Mode */}
           <div>
             <p className="font-medium text-gray-700 mb-1">🧭 Batch Mode</p>
-            <Select value={batchMode} onValueChange={setBatchMode}>
+            <Select value={batchMode} onValueChange={(value) => setBatchMode(value as Mode)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select batch mode" />
               </SelectTrigger>
               <SelectContent>
                 {["Offline", "Online", "Hybrid"].map((mode) => (
-                  <SelectItem key={mode} value={mode}>
+                  <SelectItem key={mode} value={mode.toUpperCase()}>
                     {mode}
                   </SelectItem>
                 ))}
@@ -342,7 +389,7 @@ export const ApproveRequestDialog = ({
           </div>
 
           {/* Sales Person */}
-          <div>
+          {/* <div>
             <p className="font-medium text-gray-700 mb-1">🧑‍💼 Sales Person</p>
             <Select
               value={selectedSalesPerson}
@@ -359,7 +406,7 @@ export const ApproveRequestDialog = ({
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
 
           {/* Payment Mode */}
           <div>
@@ -426,23 +473,7 @@ export const ApproveRequestDialog = ({
           </DialogClose>
           <Button
             disabled={!isFormValid}
-            onClick={() => {
-              const approvedData = {
-                student: request.studentId?.name || "Unknown",
-                email: request.studentId?.email || "Unknown",
-                course: selectedCourse,
-                selectedModules,
-                totalPrice,
-                batch: selectedBatch,
-                batchMode,
-                salesPerson: selectedSalesPerson,
-                paymentMode,
-                paymentStatus,
-                dueDate: paymentStatus !== "Paid" ? dueDate : null,
-              };
-              console.log("✅ Approved Request:", approvedData);
-              onOpenChange(false);
-            }}
+            onClick={approveRequest}
           >
             Confirm & Assign Batch
           </Button>

@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
+import { FormattedCourse } from "@/lib/types/course.type";
 import { Mode } from "@/lib/types/types";
 import { Course } from "@/models/course.model";
 import { format } from "date-fns";
@@ -45,47 +46,35 @@ export const getAllCoursesTable = async () => {
   }
 };
 
-export const getCourseById = async (id: string) => {
+export const getCourseById = async (id: string):Promise<{data:FormattedCourse | undefined, success:boolean, message:string}> => {
   if (!id) {
     return {
+      data:undefined,
       success: false,
       message: "Course ID is required",
     };
   }
   try {
     await connectToDB();
-    const course = await Course.findById(new ObjectId(id));
+    const course = await Course.findById(new ObjectId(id)).exec() as FormattedCourse;
 
     if (!course) {
       return {
+        data:undefined,
         success: false,
         message: "Course not found",
       };
     }
-    const formattedCourse = {
-      _id: `${course._id}`,
-      courseName: course.courseName as string,
-      courseDescription: course.courseDescription as string,
-      syllabusLink: course.syllabusLink as string,
-      createdAt: format(new Date(course.createdAt), "PP"),
-      coursePrice: Number(course.coursePrice),
-      courseDiscount: Number(course.courseDiscount),
-      courseOfferPrice: Number(course.courseOfferPrice),
-      numberOfStudents: Number(course.numberOfStudents ?? 0),
-      courseThumbnail: course.courseThumbnail as string,
-      courseStartDate: format(new Date(course.courseStartDate), "PP"),
-      courseEndDate: format(new Date(course.courseEndDate), "PP"),
-      courseMode: course.courseMode as Mode,
-      modules: course.modules as string[],
-    };
+   
     return {
       success: true,
-      data: formattedCourse,
+      data: JSON.parse(JSON.stringify(course)),
       message: "Course fetched successfully",
     };
   } catch (error) {
     console.error("Error fetching course by ID:", error);
     return {
+      data:undefined,
       success: false,
       message: "Something went wrong while fetching course",
     };

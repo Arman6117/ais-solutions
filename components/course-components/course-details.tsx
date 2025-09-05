@@ -29,16 +29,25 @@ import {
   ViewCourseThumbnail,
 } from "./view-course-components";
 
-import { Course, DummyBatches, DummyInstructors, Mode, prCourse } from "@/lib/types/types";
+import {
+  Course,
+  DummyBatches,
+  DummyInstructors,
+  Mode,
+  prCourse,
+} from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 import CourseSyllabusCard from "@/app/(roles)/admin/courses/course-details/_components/course-syllabus-card";
 import { formatDistance } from "date-fns";
 import { updateCourse } from "@/actions/admin/course/update-course";
+import CourseModules from "./course-modules";
+import { getCourseModules } from "@/actions/admin/course/get-course-modules";
+import { CourseModule, FormattedCourse } from "@/lib/types/course.type";
 
 type CourseDetailsProps = {
-  course: prCourse | undefined;
+  course: FormattedCourse | undefined;
   dummyBatches: DummyBatches[];
   dummyInstructors: DummyInstructors[];
 };
@@ -50,7 +59,7 @@ const CourseDetails = ({
 }: CourseDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
@@ -70,15 +79,15 @@ const CourseDetails = ({
     );
   }
   const [name, setName] = useState(course.courseName || "");
-  const [courseMode, setCourseMode] = useState<Mode>(
-    course.courseMode
-  );
+  const [courseMode, setCourseMode] = useState<Mode>(course.courseMode);
   const [startDate, setStartDate] = useState<string>(course.courseStartDate);
-  const [endDate, setEndDate] = useState<string>(course.courseEndDate );
+  const [endDate, setEndDate] = useState<string>(course.courseEndDate);
   const [courseDuration, setCourseDuration] = useState(
     formatDistance(startDate ?? new Date(), endDate ?? new Date())
   );
-  const [description, setDescription] = useState(course.courseDescription || "");
+  const [description, setDescription] = useState(
+    course.courseDescription || ""
+  );
   const [syllabusLink, setSyllabusLink] = useState(course.syllabusLink || "");
   const [price, setPrice] = useState(course.coursePrice || 0);
   const [discount, setDiscount] = useState(course.courseDiscount || 0);
@@ -87,10 +96,27 @@ const CourseDetails = ({
   );
   const [instructors, setInstructors] = useState(dummyInstructors || []);
   const [batches, setBatches] = useState(dummyBatches || []);
-  const [modules, setModules] = useState( []);
+  const [modules, setModules] = useState<CourseModule[]>([]);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchModules = async () => {
+    try {
+      const res = await getCourseModules(course._id);
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      setModules(res.data);
+      toast.success("Modules fetched successfully");
+    } catch (error) {
+      console.error("Error fetching modules:", error);
+      toast.error("Something went wrong while fetching modules");
+    }
+  };
+  useEffect(() => {
+    fetchModules();
+  }, [course]);
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);
@@ -110,38 +136,34 @@ const CourseDetails = ({
       formatDistance(startDate ?? new Date(), endDate ?? new Date())
     );
   }, [startDate, endDate]);
-  const handleSave = async() => {
+  const handleSave = async () => {
     setIsLoading(true);
     try {
-      const res  = await updateCourse({
-        courseId:course._id,
-        courseDescription:description,
-        courseDiscount:discount,
-        courseEndDate:endDate,
+      const res = await updateCourse({
+        courseId: course._id,
+        courseDescription: description,
+        courseDiscount: discount,
+        courseEndDate: endDate,
         courseMode,
-        courseName:name,
-        courseOfferPrice:offerPrice,
-        coursePrice:price,
-        courseStartDate:startDate,
+        courseName: name,
+        courseOfferPrice: offerPrice,
+        coursePrice: price,
+        courseStartDate: startDate,
         // courseThumbnail,
         //modules
-         syllabusLink
-      })
-      if(!res.success) {
-        toast.error(res.message)
+        syllabusLink,
+      });
+      if (!res.success) {
+        toast.error(res.message);
       } else {
-        toast.success(res.message)
-        setMode("view")
+        toast.success(res.message);
+        setMode("view");
       }
-
     } catch (error) {
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
     } finally {
-
       setIsLoading(false);
     }
-  
-
   };
 
   return (
@@ -278,11 +300,15 @@ const CourseDetails = ({
                 </div>
               </>
             )}
-            <CourseSyllabusCard setSyllabusLink={setSyllabusLink} syllabusLink={syllabusLink} mode={mode} />
-            <CourseModulesCard
-              name="Course"
+            <CourseSyllabusCard
+              setSyllabusLink={setSyllabusLink}
+              syllabusLink={syllabusLink}
               mode={mode}
-              modules={course.modules as string[]}
+            />
+            <CourseModules
+              courseId={course._id}
+              initialModules={modules}
+              mode={mode}
             />
             <div className="w-full  space-y-6">
               {mode === "edit" ? (
@@ -291,7 +317,9 @@ const CourseDetails = ({
                   thumbnail={course.courseThumbnail as string}
                 />
               ) : (
-                <ViewCourseThumbnail thumbnail={course.courseThumbnail as string}/>
+                <ViewCourseThumbnail
+                  thumbnail={course.courseThumbnail as string}
+                />
               )}
 
               <CourseStatusCard

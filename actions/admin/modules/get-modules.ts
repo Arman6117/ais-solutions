@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
 import { Course } from "@/models/course.model";
+import { CourseModule } from "@/lib/types/course.type";
 
 type ModuleTableData = {
   id: string;
@@ -126,14 +127,14 @@ export const getModuleById = async (id: string) => {
 
 export const getAllModulesNames = async (): Promise<{
   success: boolean;
-  data: Modules[];
+  data: CourseModule[];
 }> => {
   try {
     await connectToDB();
 
     const modules = await Module.find({})
-      .select("_id name")
-      .sort({ createdAt: -1 }).exec() as Modules[]
+      .select("_id name description syllabusLink price chapters")
+      .sort({ createdAt: -1 }).exec() as CourseModule[]
 
     
 

@@ -10,27 +10,51 @@ const StudentSchema = new Schema(
     gender: { type: String, enum: ["male", "female", "other"], required: true },
     profilePic: { type: String, required: true },
     role: { type: String, required: true },
-    feeStatus: { type: String, enum: ["paid", "partial", "unpaid"], default: "unpaid", required: true },
+    feeStatus: {
+      type: String,
+      enum: ["paid", "partially paid", "due"],
+      default: "due",
+      required: true,
+    },
     courses: [
       {
-        courseId: { type: Schema.Types.ObjectId, ref: "Course", required: true, index: true },
-        moduleId: [{ type: Schema.Types.ObjectId, ref: "Module", required: true }],
+        courseId: {
+          type: Schema.Types.ObjectId,
+          ref: "Course",
+          required: true,
+          index: true,
+        },
+        moduleId: [
+          { type: Schema.Types.ObjectId, ref: "Module", required: true },
+        ],
         approvedAt: { type: Date, default: null },
         isApproved: { type: Boolean, default: false },
       },
     ],
     batches: [
       {
-        batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true, index: true },
-        mode: { 
-          type: String, 
-          enum: ["offline", "online", "hybrid"], 
-          required: true 
+        batchId: {
+          type: Schema.Types.ObjectId,
+          ref: "Batch",
+          required: true,
+          index: true,
         },
-        enrolledAt: { type: Date, default: Date.now }
-      }
+        mode: {
+          type: String,
+          enum: ["offline", "online", "hybrid"],
+          required: true,
+        },
+        enrolledAt: { type: Date, default: Date.now },
+      },
     ],
-    invoices: [{ type: Schema.Types.ObjectId, ref: "Invoice", required: true, index: true }],
+    invoices: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Invoice",
+        required: true,
+        index: true,
+      },
+    ],
   },
   {
     timestamps: true,

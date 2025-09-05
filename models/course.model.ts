@@ -26,7 +26,7 @@ const CourseSchema = new Schema(
     batches: [{ type: Schema.Types.ObjectId, ref: "Batch", default: [] }],
     rating: { type: Number, default: 0, min: 0, max: 5 },
     studentsEnrolled: [
-      { type: Schema.Types.ObjectId, ref: "Student", default: [] },
+      { type: String, ref: "Student", default: [] },
     ],
     // comments:[{}]
     //TODO:Add course status

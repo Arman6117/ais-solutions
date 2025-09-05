@@ -63,3 +63,25 @@ export interface CourseDetails {
   createdAt: Date;
   numberOfStudents:number
 }
+
+
+// Assuming 'Mode' is defined elsewhere, for example:
+// import type { Mode } from "./path-to-your-types";
+
+export interface FormattedCourse  {
+  _id: string;
+  courseName: string;
+  courseDescription: string;
+  syllabusLink: string;
+  createdAt: string; // The `format` function returns a string
+  coursePrice: number;
+  courseDiscount: number;
+  courseOfferPrice: number;
+  numberOfStudents: number;
+  courseThumbnail: string;
+  courseStartDate: string; // The `format` function returns a string
+  courseEndDate: string; // The `format` function returns a string
+  courseMode: Mode;
+  courseLevel: "beginner" | "intermediate" | "advanced";
+  modules: string[];
+};

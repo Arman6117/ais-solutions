@@ -10,7 +10,7 @@ const CourseDetailsPage = async ({
 }) => {
   const id = (await params).id;
   const data = await getCourseById(id)
-  console.log(data)
+
   return (
     <main className="flex w-full">
       {/* <EditCourse course={data} /> */}

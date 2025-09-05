@@ -16,9 +16,8 @@ export interface CreatePendingRequest {
 }
 
 export interface RequestToApprove {
-  _id: string;
   studentId: { name: string; email: string };
-  courseId: { courseName: string };
+  courseId: { _id:string,courseName: string };
   modules: [{ name: string; price: number }];
   finalPrice: number;
 }

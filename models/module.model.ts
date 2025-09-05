@@ -21,7 +21,7 @@ const moduleSchema = new Schema(
     price: { type: Number, required: true },
     discount: { type: Number },
     chapters: [chapterSchema],
-    students: [{type:Schema.Types.ObjectId, default:[],ref:"Student"}],
+    students: [{ type: String, default: [], ref: "Student" }],
     courseId: [{ type: Schema.Types.ObjectId, ref: "Course", required: true }],
     batchId: [{ type: Schema.Types.ObjectId, ref: "Batch", required: true }],
     rating: { type: Number, default: 0, min: 0, max: 5 },

@@ -79,7 +79,7 @@ export const getPendingRequestById = async (
         },
         {
           path: "courseId",
-          select: "courseName",
+          select: "courseName _id",
         },
         {
           path: "modules",

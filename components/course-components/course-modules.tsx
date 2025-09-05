@@ -31,9 +31,13 @@ const CourseModules = ({
   mode,
   className,
 }: CourseModulesProps) => {
-  const [modules, setModules] = useState<CourseModule[]>(initialModules);
-  // NOTE: We assume `getAllModulesNames` can return the full CourseModule object
-  // for this optimistic update to work seamlessly.
+  const [modules, setModules] = useState<CourseModule[]>([]);
+  useEffect(() => {
+    setModules(initialModules);
+  
+  }, [initialModules]);
+ 
+
   const [availableModules, setAvailableModules] = useState<CourseModule[]>([]);
 
   const fetchAvailableModules = async () => {
@@ -90,16 +94,14 @@ const CourseModules = ({
     <div className={cn("flex flex-col gap-5 mt-5 ", className)}>
       <div className="flex items-center p-4 rounded-md bg-primary-bg justify-between">
         <div className="flex flex-col  text-white">
-          <h1 className="text-3xl font-medium ">
-            What you will learn
-          </h1>
+          <h1 className="text-3xl font-medium ">What you will learn</h1>
           <p className=" text-sm">
             Explore foundational and advanced concepts across multiple modules
           </p>
         </div>
 
         <AddModuleButton
-        className="bg-white hover:bg-black hover:text-white text-black"
+          className="bg-white hover:bg-black hover:text-white text-black"
           modules={availableModules}
           onAddModules={handleAddModules}
         />

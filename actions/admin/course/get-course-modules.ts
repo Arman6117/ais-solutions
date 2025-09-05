@@ -16,12 +16,14 @@ export const getCourseModules = async (
   if (!isValidObjectId(courseId)) {
     return { data: [], success: false, message: "Invalid Course ID." };
   }
-
+  
   try {
     await connectToDB();
     const modules = (await Module.find({
       courseId: new ObjectId(courseId),
     }).exec()) as CourseModule[];
+
+    console.log(modules)
     return {
       data: JSON.parse(JSON.stringify(modules)),
       success: true,

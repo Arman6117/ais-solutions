@@ -108,6 +108,7 @@ const CourseDetails = ({
         return;
       }
       setModules(res.data);
+      console.log(res.data);
       toast.success("Modules fetched successfully");
     } catch (error) {
       console.error("Error fetching modules:", error);
@@ -116,7 +117,7 @@ const CourseDetails = ({
   };
   useEffect(() => {
     fetchModules();
-  }, [course]);
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);

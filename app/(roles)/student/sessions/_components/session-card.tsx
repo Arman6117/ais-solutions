@@ -22,6 +22,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   const sessionDate = new Date(session.date);
   const formattedDate = format(sessionDate, "dd MMM yyyy");
   const formattedTime = format(sessionDate, "hh:mm a");
+  console.log(session)
   const handleClick = async () => {
     setIsLoading(true);
     try {
@@ -76,13 +77,13 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
 
       <div className="text-sm text-gray-700 flex items-center gap-2">
         <BookOpenCheck className="h-4 w-4" />
-        <span className="font-medium">Course:</span> {session.courseName}
+        <span className="font-medium">Module:</span> {session.module}
       </div>
 
       <div className="text-sm text-gray-700 sm:flex-row flex-col  flex sm:items-center gap-2">
         <Layers className="h-4 w-4" />
-        <span className="font-medium">Module:</span> {session.modules}
-        <span className="font-medium sm:ml-4">Chapter:</span> {session.chapters}
+        {/* <span className="font-medium">Module:</span> {session.modules} */}
+        <span className="font-medium ">Chapter:</span> {session.chapters}
       </div>
     </div>
   );

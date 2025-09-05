@@ -317,3 +317,12 @@ export type Batch = {
   notes:string[],
   students:string[]
 }
+
+export type NoteData = {
+  _id: string;
+  title: string;
+  description?: string;
+  videoLinks: { url: string; title: string; _id: string }[];
+  fileLinks: { url: string; title: string; _id: string }[];
+  // Add other note properties as needed (e.g., associated course/session IDs)
+};

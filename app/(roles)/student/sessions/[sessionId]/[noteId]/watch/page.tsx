@@ -1,5 +1,6 @@
 import React from "react";
 import WatchVideo from "./_components/watch-video";
+import WatchPageForTesting from "./_components/watch-page";
 
 type watchPageProps = {
   params: Promise<{ sessionId: string; noteId: string }>;
@@ -9,8 +10,7 @@ const WatchPage = async ({ params }: watchPageProps) => {
   const noteId = (await params).noteId;
   return (
     <>
-    <h1>Watch</h1>
-      {/* <WatchVideo noteId={noteId} /> */}
+    <WatchPageForTesting/>
     </>
   );
 };

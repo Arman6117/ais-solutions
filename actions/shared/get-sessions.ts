@@ -11,7 +11,7 @@ export const getAllSessions = async (): Promise<{data:Session[] , message:string
     const sessions = (await Sessions.find({})
       .sort({ date: -1 })
       .exec()) as Session[];
-
+console.log(JSON.parse(JSON.stringify(sessions)))
       if(!sessions || sessions.length === 0) {
         return {data:[] , message:"No sessions available"}
       }

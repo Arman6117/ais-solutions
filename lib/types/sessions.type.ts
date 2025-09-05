@@ -2,7 +2,7 @@ export interface Session {
   _id: string;
   studentId: string[];
   courseName: string;
-  modules: string[];
+  module: string;
   chapters: string[];
   instructor?: string;
   title: string;

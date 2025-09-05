@@ -29,6 +29,7 @@ import TypeSelector from "./type-selector";
 import ModeSelector from "./mode-selector";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { getCourseModulesByCourse } from "@/actions/admin/batches/get-modules-by-course";
 
 type CreateBatchProps = {
   courses: {
@@ -60,10 +61,10 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
     const fetchModules = async () => {
       if (!courseId) return;
       try {
-        const res = await fetch(`/api/modules?courseId=${courseId}`);
-        const result = await res.json();
-        if (result.success) {
-          setAvailableModules(result.data);
+        const res = await getCourseModulesByCourse(courseId);
+;
+        if (res.success) {
+          setAvailableModules(res.data);
         } else {
           setAvailableModules([]);
         }

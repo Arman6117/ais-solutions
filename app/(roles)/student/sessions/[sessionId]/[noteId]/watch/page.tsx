@@ -1,5 +1,4 @@
 import React from "react";
-import WatchVideo from "./_components/watch-video";
 import WatchPageForTesting from "./_components/watch-page";
 
 type watchPageProps = {

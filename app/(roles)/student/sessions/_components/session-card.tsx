@@ -22,7 +22,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   const sessionDate = new Date(session.date);
   const formattedDate = format(sessionDate, "dd MMM yyyy");
   const formattedTime = format(sessionDate, "hh:mm a");
-  console.log(session)
+
   const handleClick = async () => {
     setIsLoading(true);
     try {

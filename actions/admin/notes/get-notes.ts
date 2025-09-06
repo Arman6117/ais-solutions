@@ -6,6 +6,7 @@ import { Notes } from "@/models/notes.model";
 import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
 import "@/models/sessions.model";
+import "@/models/batch.model";
 export const getNotesTable = async (
   batchId: string
 ): Promise<{ data: NoteTableType[]; message: string; success: boolean }> => {

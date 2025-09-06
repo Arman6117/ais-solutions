@@ -13,7 +13,7 @@ export const createSession = async (data: CreateSessionPayload) => {
     const sessionDoc = {
       ...validatedData,
       studentId: data.studentId || [],
-      notes: "",
+      notes: [],
       videoLink: "",
     };
     await Sessions.create(sessionDoc);

@@ -11,7 +11,7 @@ const noteSchema = new Schema(
   {
     module: { type: String, required: true },
     chapter: { type: String, required: true },
-    session: { type: Schema.Types.ObjectId, ref: "Session" },
+    session: { type: Schema.Types.ObjectId, ref: "Sessions" },
     videoLinks: { type: [videoLinkAndFileSchema], required: true, default: [] },
     files: { type: [videoLinkAndFileSchema], required: true, default: [] },
     batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true },

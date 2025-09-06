@@ -64,7 +64,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
         </div>
         <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
-          <SessionCardViewNotesButton sessionId={session._id} />
+          <SessionCardViewNotesButton  sessionId={session._id} />
         </div>
       </div>
 

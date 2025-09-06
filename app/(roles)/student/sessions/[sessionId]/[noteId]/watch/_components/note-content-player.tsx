@@ -21,11 +21,11 @@ const getYouTubeVideoId = (url: string): string | null => {
 
 const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-
+  console.log(note)
   // Memoize the current video ID
   const currentVideoId = useMemo(() => {
     if (note.videoLinks && note.videoLinks.length > 0) {
-      return getYouTubeVideoId(note.videoLinks[currentVideoIndex].url);
+      return getYouTubeVideoId(note.videoLinks[currentVideoIndex].link);
     }
     return null;
   }, [note.videoLinks, currentVideoIndex]);
@@ -49,18 +49,19 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
   };
 
   const hasMultipleVideos = note.videoLinks && note.videoLinks.length > 1;
-  const hasFiles = note.fileLinks && note.fileLinks.length > 0;
+  const hasFiles = note.files && note.files.length > 0;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Left Section: Video Player */}
       <div className="flex-1 min-w-0">
-        <h1 className="text-3xl font-bold mb-4 text-neutral-800">{note.title}</h1>
-        <p className="text-muted-foreground mb-6">{note.description}</p>
+        <h1 className="text-3xl font-bold mb-4 text-neutral-800">{note.session.meetingName}</h1>
+        {/* <p className="text-muted-foreground mb-6">{note.description}</p> */}
 
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl aspect-video w-full">
           {currentVideoId ? (
             <YouTube
+              
               videoId={currentVideoId}
               opts={{ ...opts, width: "100%", height: "100%" }}
               className="w-full h-full"
@@ -83,7 +84,7 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
               <ChevronLeft size={18} /> Previous Video
             </Button>
             <span className="text-sm text-muted-foreground">
-              {note.videoLinks[currentVideoIndex]?.title || `Video ${currentVideoIndex + 1}`}
+              {note.videoLinks[currentVideoIndex]?.label || `Video ${currentVideoIndex + 1}`}
             </span>
             <Button
               onClick={handleNextVideo}
@@ -105,7 +106,7 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
               <PlayCircle size={18} /> Videos ({note.videoLinks?.length || 0})
             </TabsTrigger>
             <TabsTrigger value="files" disabled={!hasFiles} className="gap-2">
-              <FileText size={18} /> Files ({note.fileLinks?.length || 0})
+              <FileText size={18} /> Files ({note.files?.length || 0})
             </TabsTrigger>
           </TabsList>
 
@@ -124,9 +125,9 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
                     onClick={() => setCurrentVideoIndex(index)}
                   >
                     <p className="font-medium">
-                      {index + 1}. {video.title}
+                      {index + 1}. {video.label}
                     </p>
-                    <p className="text-sm text-muted-foreground truncate">{video.url}</p>
+                    <p className="text-sm text-muted-foreground truncate">{video.link}</p>
                   </div>
                 ))}
               </div>
@@ -139,18 +140,18 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
             <h3 className="text-xl font-semibold mb-3">Associated Files</h3>
             {hasFiles ? (
               <div className="space-y-3">
-                {note.fileLinks.map((file, index) => (
+                {note.files.map((file, index) => (
                   <a
                     key={file._id || index}
-                    href={file.url}
+                    href={file.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors"
                   >
                     <FileText size={20} className="text-primary" />
                     <div className="flex-1">
-                      <p className="font-medium">{file.title}</p>
-                      <p className="text-sm text-muted-foreground truncate">{file.url}</p>
+                      <p className="font-medium">{file.label}</p>
+                      <p className="text-sm text-muted-foreground truncate">{file.link}</p>
                     </div>
                     {/* Optionally add a download icon */}
                     <ChevronRight size={18} className="text-muted-foreground" />

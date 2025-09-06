@@ -1,6 +1,5 @@
 import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { User, CheckCircle } from "lucide-react";
+import { User } from "lucide-react";
 import StatsCard from "../_components/stats-card";
 import UpcomingSessions from "../_components/upcoming-sessions";
 import InstructorInfoCard from "../_components/instructor-info-card";

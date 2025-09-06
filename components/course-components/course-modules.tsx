@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CourseModule } from "@/lib/types/course.type";
 import { cn } from "@/lib/utils";
-import { BookOpen, Download, Trash2 } from "lucide-react";
+import { BookOpen, Download } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ type CourseModulesProps = {
 const CourseModules = ({
   initialModules,
   courseId,
-  mode,
+  
   className,
 }: CourseModulesProps) => {
   const [modules, setModules] = useState<CourseModule[]>([]);

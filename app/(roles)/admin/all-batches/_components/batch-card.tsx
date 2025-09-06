@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { getStatusColor } from "@/lib/utils";
 
-import { Calendar, CalendarDays, ChevronRight, Clock, Users } from "lucide-react";
+import { Calendar, CalendarDays, ChevronRight, Clock } from "lucide-react";
 import { CourseBatch } from "@/lib/types/types";
 
 type BatchCardProps = {

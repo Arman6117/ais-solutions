@@ -1,10 +1,9 @@
 "use client";
 import { DummyModules } from "@/lib/types/types";
 import { cn, getStatusColor } from "@/lib/utils";
-import { BookOpen, Calendar, CalendarCheckIcon, Clock } from "lucide-react";
+import { BookOpen, Calendar, CalendarCheckIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
+import React, {  useMemo } from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import StudentModulesMeetingDialog from "./student-modules-meeting-dialog";
 import { dummySessions } from "@/lib/static";
@@ -16,7 +15,7 @@ type StudentModulesCardProps = {
 const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
   const bgStyle = useMemo(() => {
     return getStatusColor(module.status);
-  }, [module.id]);
+  }, [module.id,module.status]);
 
   //  console.log(bgStyle)
   return (

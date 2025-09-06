@@ -16,9 +16,8 @@ type Props = {
 };
 
 const SelectedModulesAccordion = ({ data }: Props) => {
-  if (data.length === 0) return null;
   const [modules, setModules] = useState<prModule[]>([]);
-
+  
   useEffect(() => {
     const fetchModule = async () => {
       try {
@@ -33,11 +32,12 @@ const SelectedModulesAccordion = ({ data }: Props) => {
         console.log("Failed to fetch modules: ", error);
       }
     };
-
+    
     if (data.length > 0) {
       fetchModule();
     }
   }, [data]);
+  if (data.length === 0) return null;
   return (
     <Accordion type="multiple" className="w-full">
       {modules.map((module) => (

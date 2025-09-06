@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CourseModule } from "@/lib/types/course.type";
 import { cn } from "@/lib/utils";
-import { BookOpen, Download, PlayCircle } from "lucide-react";
+import { BookOpen, Download } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 

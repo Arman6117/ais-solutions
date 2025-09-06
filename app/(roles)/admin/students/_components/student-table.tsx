@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import StudentTableFilters from "./student-table-filter";
 import { Badge } from "@/components/ui/badge";
 import { getStudentTable } from "@/actions/admin/student/get-student";
-import { StudentData, StudentTable as StudentTableType } from "@/lib/types/student";
+import { StudentTable as BaseStudentTableType } from "@/lib/types/student";
+type StudentTableType = BaseStudentTableType & { [key: string]: unknown };
 import { format } from "date-fns";
 
 type Batch = {
@@ -24,7 +25,7 @@ const StudentTable = () => {
      const res = await getStudentTable()
      if(res.success) {
       console.log(res)
-         setStudent(res.data!)
+         setStudent(res.data as StudentTableType[])
      } else {
       setStudent([])
      }
@@ -101,21 +102,21 @@ console.log(filteredStudents)
 
   const uniqueFeeStatuses = useMemo(() => {
     return Array.from(new Set(student.map((s) => s.feeStatus)));
-  }, []);
+  }, [student]);
 
   const uniqueGenders = useMemo(() => {
     return Array.from(new Set(student.map((s) => s.gender)));
-  }, []);
+  }, [student]);
 
   const uniqueBatches = useMemo(() => {
     const allBatches = student.flatMap((s) => s.batches || []);
     return Array.from(new Set(allBatches));
-  }, []);
+  }, [student]);
 
   return (
     <>
 
-      <DataTable
+      <DataTable<StudentTableType>
         columns={studentTableCol}
         data={filteredStudents}
         getRowId={(row: StudentTableType) => row._id}

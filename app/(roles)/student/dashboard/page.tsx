@@ -4,7 +4,6 @@ import StudentDashboard from './_components/student-dashboard'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { getStudentCourses } from '@/actions/student/courses/get-student-courses'
 
 const StudentDashboardPage =async () => {
   try{

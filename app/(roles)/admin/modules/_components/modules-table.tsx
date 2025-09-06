@@ -2,11 +2,9 @@
 import { deleteModules } from "@/actions/admin/modules/delete-module";
 import { getAllModulesTable } from "@/actions/admin/modules/get-modules";
 import { DataTable } from "@/components/data-table";
-import { dummyModules } from "@/lib/static";
 import { Column, FilterOption } from "@/lib/types/types";
 import { format } from "date-fns";
-import { BookOpen, Star } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PiStarFill } from "react-icons/pi";
 import { toast } from "sonner";

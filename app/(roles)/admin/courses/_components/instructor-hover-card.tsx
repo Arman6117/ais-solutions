@@ -3,7 +3,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../../../../components/ui/avatar";
 import { Badge } from "../../../../../components/ui/badge";
 
-const InstructorHoverCard = ({ instructor }: { instructor: any }) => {
+const InstructorHoverCard = ({ instructor }: { instructor:{avatar:string,name:string,email:string} }) => {
   return (
     <div className="flex flex-col">
       <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-5">

@@ -12,12 +12,12 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CourseStatusCard from "../../../../../components/status-card";
-import CourseModulesCard from "../../../../../components/modules-card";
-import CourseBatchesCards from "./course-batches-cards";
-import CourseInstructorsCards from "../../../../../components/instructors-cards";
+// import CourseStatusCard from "../../../../../components/status-card";
+// import CourseModulesCard from "../../../../../components/modules-card";
+// import CourseBatchesCards from "./course-batches-cards";
+// import CourseInstructorsCards from "../../../../../components/instructors-cards";
 
-import { dummyBatches, dummyInstructors } from "@/lib/static";
+// import { dummyBatches, dummyInstructors } from "@/lib/static";
 
 import { RefreshCcw, Save, X, Upload } from "lucide-react";
 type EditCourseProps = {
@@ -27,6 +27,34 @@ type EditCourseProps = {
 const EditCourse = ({ course }: EditCourseProps) => {
   const router = useRouter();
 
+  
+
+  const [name, setName] = useState(course?.name || "");
+  const [description, setDescription] = useState(course?.description || "");
+  const [price, setPrice] = useState(course?.price || 0);
+  const [discount, setDiscount] = useState(course?.discount || 0);
+  const [offerPrice, setOfferPrice] = useState(
+    price - (price * Number(course?.discount)) / 100 || 0
+  );
+  // const [instructors, setInstructors] = useState(dummyInstructors);
+  // const [batches, setBatches] = useState(dummyBatches);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+console.log(isSmallScreen)
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 1024);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [course, price, discount]);
+
+  //! Calculate offer price whenever price or discount changes
+  useEffect(() => {
+    setOfferPrice(price - (price * discount) / 100);
+  }, [price, discount]);
   if (!course) {
     return (
       <div className="p-8 flex items-center justify-center h-full">
@@ -42,39 +70,11 @@ const EditCourse = ({ course }: EditCourseProps) => {
       </div>
     );
   }
-
-  const [name, setName] = useState(course.name || "");
-  const [description, setDescription] = useState(course.description || "");
-  const [price, setPrice] = useState(course.price || 0);
-  const [discount, setDiscount] = useState(course.discount || 0);
-  const [offerPrice, setOfferPrice] = useState(
-    price - (price * Number(course.discount)) / 100 || 0
-  );
-  const [instructors, setInstructors] = useState(dummyInstructors);
-  const [batches, setBatches] = useState(dummyBatches);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 1024);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [course, price, discount]);
-
-  //! Calculate offer price whenever price or discount changes
-  useEffect(() => {
-    setOfferPrice(price - (price * discount) / 100);
-  }, [price, discount]);
-
   const handleSave = () => {
     //TODO: Handle saving logic here
     setIsLoading(true);
     setTimeout(() => {
-      console.log({ name, description, price, instructors, batches });
+      // console.log({ name, description, price, instructors, batches });
       setIsLoading(false);
       toast.success("Changes saved successfully!");
     }, 800);
@@ -209,11 +209,11 @@ const EditCourse = ({ course }: EditCourseProps) => {
 
             <Separator className="my-6" />
 
-            <CourseInstructorsCards mode={'edit'} label="Course" instructors={instructors} />
+            {/* <CourseInstructorsCards mode={'edit'} label="Course" instructors={instructors} /> */}
             <Separator className="my-6" />
 
             <div>
-              <CourseBatchesCards  mode="edit" courseId="" batches={batches} />
+              {/* <CourseBatchesCards  mode="edit" courseId="" batches={batches} /> */}
             </div>
           </CardContent>
         </Card>
@@ -239,9 +239,9 @@ const EditCourse = ({ course }: EditCourseProps) => {
           </CardContent>
         </Card>
 
-        <CourseModulesCard mode="edit" name="Course" modules={course.modules} />
+        {/* <CourseModulesCard mode="edit" name="Course" modules={course.modules} /> */}
 
-        <CourseStatusCard name="Course" batches={batches} course={course} />
+        {/* <CourseStatusCard name="Course" batches={batches} course={course} /> */}
       </div>
     </div>
   );

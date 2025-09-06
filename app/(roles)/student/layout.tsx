@@ -19,7 +19,7 @@ const StudentDashboardLayout = async ({
       redirect("/auth/login/student");
     }
   } catch (err) {
-  
+    console.log(err)
     redirect("/auth/login/student");
   }
 

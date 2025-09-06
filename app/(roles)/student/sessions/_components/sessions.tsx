@@ -65,7 +65,8 @@ const Sessions = () => {
     const fetchStudentId = async () => {
       try {
         const session = await authClient.getSession();
-        const studentId = await getStudentId(session.data?.user.email!);
+        if(!session.data) return
+        const studentId = await getStudentId(session.data.user.email!);
         if(!studentId) {
           throw new Error("Login")
         }
@@ -105,6 +106,7 @@ const Sessions = () => {
       setStudentSessions(pastSessions);
       setStudentModules(modules.data);
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong");
       setStudentSessions([]);
     } finally {

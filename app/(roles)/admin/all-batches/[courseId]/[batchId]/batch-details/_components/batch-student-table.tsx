@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/data-table";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DummyStudent } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
@@ -34,21 +33,12 @@ const studentTableCol = [
     accessor: (row: DummyStudent) => row.feesStatus,
   },
 ];
-const studentTableFilter = [
-  {
-    label: "Student:High to Low",
-    value: "student-asc",
-  },
-  {
-    label: "Student:Low to High",
-    value: "student-desc",
-  }
-];
+
 const BatchStudentTable = ({
   mode,
   dummyStudents,
-  courseId,
-  batchId,
+  // courseId,
+  // batchId,
 }: {
   mode: "view" | "edit" |'create';
   dummyStudents: DummyStudent[];

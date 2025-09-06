@@ -1,28 +1,27 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Mail, Pencil, Plus, Trash2, Users } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import { toast } from "sonner";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
-import InstructorHoverCard from "../app/(roles)/admin/courses/_components/instructor-hover-card";
-import EditInstructorDialog from "../app/(roles)/admin/courses/_components/edit-instructor-dialog";
-import AddInstructorButton from "../app/(roles)/admin/courses/_components/add-instructor-button";
-
-const InstructorsCards = ({
-  instructors,
-  mode,
-  label,
-}: {
-  instructors: any[];
-  mode: "edit" | "view" | "create";
-  label: string;
-}) => {
-  const [open, setOpen] = useState(false);
-  const [instructor, setInstructor] = useState(null);
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent } from "@/components/ui/card";
+// import { cn } from "@/lib/utils";
+// import { Mail, Pencil, Trash2, Users } from "lucide-react";
+// import React, { useState } from "react";
+// import { toast } from "sonner";
+// import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+// import InstructorHoverCard from "../app/(roles)/admin/courses/_components/instructor-hover-card";
+// import EditInstructorDialog from "../app/(roles)/admin/courses/_components/edit-instructor-dialog";
+// import AddInstructorButton from "../app/(roles)/admin/courses/_components/add-instructor-button";
+ const InstructorsCards = (
+//   instructors,
+//   mode,
+//   label,
+// }: {
+//   instructors: any[];
+//   mode: "edit" | "view" | "create";
+//   label: string;
+// }
+) => {
+  // const [open, setOpen] = useState(false);
+  // const [instructor, setInstructor] = useState(null);
   // Remove this state initialization to use the props directly
   // const [initialInstructors, setInstructors] = useState(instructors);
   
@@ -30,7 +29,7 @@ const InstructorsCards = ({
 
   return (
     <>
-      <div className="space-y-6">
+      {/* <div className="space-y-6">
         <div className="flex items-center justify-between">
           {mode !== "create" && (
             <div>
@@ -145,7 +144,7 @@ const InstructorsCards = ({
           onClose={() => setOpen(false)}
           instructor={instructor}
         />
-      )}
+      )} */}
     </>
   );
 };

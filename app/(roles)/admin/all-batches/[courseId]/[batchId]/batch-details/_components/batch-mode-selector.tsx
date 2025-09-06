@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { Mode } from "@/lib/types/types";
 
-import { CheckCircle } from "lucide-react";
 import React from "react";
 import { MdBookOnline } from "react-icons/md";
 

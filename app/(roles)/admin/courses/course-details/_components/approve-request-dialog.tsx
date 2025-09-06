@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { ApprovePendingRequestPayload, CourseData, RequestToApprove } from "@/lib/types/pending-request.type";
 import { getPendingRequestById } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
@@ -29,7 +28,7 @@ import { getCourseList } from "@/actions/admin/pending-request/get-data-to-appro
 import { approvePendingRequest } from "@/actions/admin/pending-request/approve-pending-request";
 import { Mode } from "@/lib/types/types";
 
-const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
+// const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
 const paymentModes = ["Cash", "UPI", "Card"];
 const paymentStatuses = ["Paid", "Partially Paid", "Due"];
 
@@ -63,7 +62,7 @@ export const ApproveRequestDialog = ({
   const [customTotalPrice, setCustomTotalPrice] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
   const [courseList, setCourseList] = useState<CourseData[]>([]);
-
+console.log(selectedSalesPerson)
   const fetchPendingRequestToApprove = async () => {
     if (!requestId) return;
 

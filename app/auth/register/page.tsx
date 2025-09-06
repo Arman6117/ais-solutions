@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
-import { GraduationCap, UserCheck, BookOpen, Users } from "lucide-react";
+import { GraduationCap, UserCheck, BookOpen } from "lucide-react";
 
 const RegisterPage = () => {
   return (

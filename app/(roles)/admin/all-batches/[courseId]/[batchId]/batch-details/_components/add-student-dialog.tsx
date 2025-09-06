@@ -61,7 +61,11 @@ export function AddStudentsDialog({
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
       const updated = new Set(prev);
-      updated.has(id) ? updated.delete(id) : updated.add(id);
+      if (updated.has(id)) {
+        updated.delete(id);
+      } else {
+        updated.add(id);
+      }
       return updated;
     });
   };

@@ -27,12 +27,32 @@ import { Column, FilterOption } from "@/lib/types/types";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
-import { ArrowRight, Menu, PencilIcon, Search, Trash2, X } from "lucide-react";
+import { ArrowRight, PencilIcon, Search, X } from "lucide-react";
 import { toast } from "sonner";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import DeleteSelectedDialog from "./delete-selected-dialog";
 import DeleteDialog from "./delete-selected-dialog";
+
+// Type for sortable values
+type SortableValue = string | number | boolean | Date;
+
+// Type guard to check if a value is sortable
+const isSortableValue = (value: unknown): value is SortableValue => {
+  return (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    value instanceof Date
+  );
+};
+
+// Type guard to check if an object has a specific key with sortable value
+const hasKey = <T extends Record<string, unknown>>(
+  obj: T,
+  key: string
+): obj is T & Record<string, SortableValue> => {
+  return key in obj && isSortableValue(obj[key]);
+};
 
 type DataTableProps<T> = {
   data: T[];
@@ -46,7 +66,7 @@ type DataTableProps<T> = {
   additionalFilter?: React.ReactNode;
 };
 
-export function DataTable<T>({
+export function DataTable<T extends Record<string, unknown>>({
   columns,
   data,
   filterOptions,
@@ -54,20 +74,18 @@ export function DataTable<T>({
   href,
   onDeleteSelected,
   searchPlaceholder = "Search...",
-  openDialog,
   additionalFilter,
 }: DataTableProps<T>) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortType, setSortType] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sortType, setSortType] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState<boolean>(false);
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
-    const checkScreenSize = () => {
+    const checkScreenSize = (): void => {
       setIsMobile(window.innerWidth < 768);
     };
 
@@ -78,22 +96,43 @@ export function DataTable<T>({
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const pageSize = isMobile ? 5 : 10;
+  const pageSize: number = isMobile ? 5 : 10;
 
   const filteredData = useMemo(() => {
-    let sorted = [...data];
+    const sorted = [...data];
 
     if ((filterOptions?.length ?? 0) > 0 && sortType) {
       const [key, order] = sortType.split("-");
-      if (key && order) {
-        sorted.sort((a, b) => {
-          const aVal = (a as any)[key];
-          const bVal = (b as any)[key];
+      if (key && order && (order === "asc" || order === "desc")) {
+        sorted.sort((a: T, b: T) => {
+          // Type-safe property access
+          if (!hasKey(a, key) || !hasKey(b, key)) {
+            return 0; // If property doesn't exist or isn't sortable, maintain order
+          }
 
+          const aVal = a[key];
+          const bVal = b[key];
+
+          // Handle number sorting
           if (typeof aVal === "number" && typeof bVal === "number") {
             return order === "asc" ? aVal - bVal : bVal - aVal;
           }
 
+          // Handle date sorting
+          if (aVal instanceof Date && bVal instanceof Date) {
+            const aTime = aVal.getTime();
+            const bTime = bVal.getTime();
+            return order === "asc" ? aTime - bTime : bTime - aTime;
+          }
+
+          // Handle boolean sorting
+          if (typeof aVal === "boolean" && typeof bVal === "boolean") {
+            const aNum = aVal ? 1 : 0;
+            const bNum = bVal ? 1 : 0;
+            return order === "asc" ? aNum - bNum : bNum - aNum;
+          }
+
+          // Handle string sorting (fallback for all other types)
           const aStr = String(aVal).toLowerCase();
           const bStr = String(bVal).toLowerCase();
 
@@ -103,24 +142,33 @@ export function DataTable<T>({
         });
       }
     }
-    return sorted.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, sortType, data]);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-  const paginatedData = filteredData.slice(
+    // Filter data based on search term
+    return sorted.filter((item: T) => {
+      const searchableContent = Object.values(item)
+        .filter((value): value is string | number => 
+          typeof value === "string" || typeof value === "number"
+        )
+        .map(value => String(value).toLowerCase())
+        .join(" ");
+      
+      return searchableContent.includes(searchTerm.toLowerCase());
+    });
+  }, [searchTerm, sortType, data, filterOptions]);
+
+  const totalPages: number = Math.ceil(filteredData.length / pageSize);
+  const paginatedData: T[] = filteredData.slice(
     currentPage * pageSize,
     (currentPage + 1) * pageSize
   );
 
-  const handleToggleSelect = (id: string) => {
+  const handleToggleSelect = (id: string): void => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
-  const handleSelectAll = () => {
+  const handleSelectAll = (): void => {
     const allIds = filteredData.map((item) => getRowId(item));
     const allSelected = allIds.every((id) => selectedIds.includes(id));
 
@@ -135,22 +183,37 @@ export function DataTable<T>({
     toast.success(`${allIds.length} items selected`);
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setSearchTerm("");
     setSortType("");
     setCurrentPage(0);
   };
 
-  const isAllSelected =
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
+  };
+
+  const handleSortChange = (val: string): void => {
+    setSortType(val);
+    setCurrentPage(0);
+  };
+
+  const handleSearchClick = (): void => {
+    // Search is already happening via onChange, but keeping for consistency
+    setSearchTerm(searchTerm);
+  };
+
+  const isAllSelected: boolean =
     paginatedData.length > 0 &&
     paginatedData.every((item) => selectedIds.includes(getRowId(item)));
 
   //! Card view for mobile
-  const renderCardView = () => {
+  const renderCardView = (): React.ReactNode => {
     return (
       <div className="grid grid-cols-1 gap-4">
         {paginatedData.length > 0 ? (
-          paginatedData.map((item, i) => (
+          paginatedData.map((item: T, i: number) => (
             <div key={i} className="bg-white rounded-lg shadow p-4 border">
               <div className="flex justify-between items-center mb-2">
                 <Checkbox
@@ -178,7 +241,7 @@ export function DataTable<T>({
                 href={`${href}/${getRowId(item)}?mode=view`}
                 className="block"
               >
-                {columns.map((col, index) => (
+                {columns.map((col: Column<T>) => (
                   <div key={col.id} className="py-1 border-b last:border-b-0">
                     <div className="font-medium text-sm text-gray-500">
                       {col.header}
@@ -199,7 +262,7 @@ export function DataTable<T>({
   };
 
   //! Table view for desktop
-  const renderTableView = () => {
+  const renderTableView = (): React.ReactNode => {
     return (
       <div className="overflow-x-auto">
         <Table>
@@ -211,7 +274,7 @@ export function DataTable<T>({
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-              {columns.map((column) => (
+              {columns.map((column: Column<T>) => (
                 <TableHead className="text-center" key={column.id}>
                   {column.header}
                 </TableHead>
@@ -221,7 +284,7 @@ export function DataTable<T>({
           </TableHeader>
           <TableBody>
             {paginatedData.length > 0 ? (
-              paginatedData.map((item, i) => (
+              paginatedData.map((item: T, i: number) => (
                 <TableRow key={i}>
                   <TableCell className="font-semibold text-center">
                     <Checkbox
@@ -229,7 +292,7 @@ export function DataTable<T>({
                       onCheckedChange={() => handleToggleSelect(getRowId(item))}
                     />
                   </TableCell>
-                  {columns.map((col) => (
+                  {columns.map((col: Column<T>) => (
                     <TableCell className="text-center" key={col.id}>
                       <Link href={`${href}/${getRowId(item)}?mode=view`}>
                         {col.accessor(item)}
@@ -270,7 +333,7 @@ export function DataTable<T>({
   };
 
   //! Render mobile search
-  const renderMobileSearch = () => {
+  const renderMobileSearch = (): React.ReactNode => {
     if (isSearchExpanded) {
       return (
         <div className="flex items-center gap-2 w-full mb-4">
@@ -278,10 +341,7 @@ export function DataTable<T>({
             value={searchTerm}
             placeholder={searchPlaceholder}
             className="text-base font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(0);
-            }}
+            onChange={handleSearchChange}
             autoFocus
           />
           <Button
@@ -318,22 +378,17 @@ export function DataTable<T>({
     <div className="flex flex-col gap-4 w-full">
       {/* Desktop controls */}
       {!isMobile && (
-        <div className="flex flex-col  gap-3 md:gap-6 md:s-center">
+        <div className="flex flex-col gap-3 md:gap-6 md:s-center">
           <div className="flex gap-2 w-full md:w-auto md:flex-1">
             <Input
               value={searchTerm}
               placeholder={searchPlaceholder}
               className="text-base font-medium focus-visible:ring-1 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200"
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(0);
-              }}
+              onChange={handleSearchChange}
             />
             <Button
               className="bg-primary-bg cursor-pointer hover:bg-primary-bg/80"
-              onClick={() => {
-                setSearchTerm(searchTerm);
-              }}
+              onClick={handleSearchClick}
             >
               <ArrowRight />
             </Button>
@@ -341,18 +396,12 @@ export function DataTable<T>({
 
           {(filterOptions ?? []).length > 0 && (
             <div className="flex gap-2 items-center flex-wrap">
-              <Select
-                value={sortType}
-                onValueChange={(val) => {
-                  setSortType(val);
-                  setCurrentPage(0);
-                }}
-              >
+              <Select value={sortType} onValueChange={handleSortChange}>
                 <SelectTrigger className="w-full md:w-48 focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200 focus-visible:ring-2 font-semibold">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent className="text-sm font-semibold p-2">
-                  {filterOptions?.map((option) => (
+                  {filterOptions?.map((option: FilterOption) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -369,10 +418,7 @@ export function DataTable<T>({
             </div>
           )}
           {selectedIds.length > 0 && (
-            <DeleteDialog
-            onDelete={onDeleteSelected}
-            selectedIds={selectedIds}
-          />
+            <DeleteDialog onDelete={onDeleteSelected} selectedIds={selectedIds} />
           )}
         </div>
       )}
@@ -383,18 +429,12 @@ export function DataTable<T>({
       {/* Mobile filters */}
       {isMobile && (filterOptions ?? []).length > 0 && (
         <div className="flex gap-2 mb-4">
-          <Select
-            value={sortType}
-            onValueChange={(val) => {
-              setSortType(val);
-              setCurrentPage(0);
-            }}
-          >
+          <Select value={sortType} onValueChange={handleSortChange}>
             <SelectTrigger className="w-full focus-visible:border-none focus-visible:ring-violet-200 hover:border-violet-200 focus-visible:ring-2 text-sm">
               <SelectValue placeholder="Sort" />
             </SelectTrigger>
             <SelectContent className="text-sm p-2">
-              {filterOptions?.map((option) => (
+              {filterOptions?.map((option: FilterOption) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>

@@ -8,11 +8,12 @@ import { toast } from "sonner";
 const LogOutButton = () => {
   const handleLogOut = async () => {
     try {
-      const res = await authClient.signOut();
+      await authClient.signOut();
 
       toast.success("Successfully logged out");
       redirect("/auth/login/student");
     } catch (error) {
+      console.log(error)
       toast.error("Failed to logout");
     }
   };

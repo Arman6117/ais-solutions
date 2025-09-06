@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!;
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!;
 
 export const verifyAdminOtp = async (otpInput: string) => {
-  const cookieStore = cookies();
+  const cookieStore =await cookies();
   const token = cookieStore.get("admin_otp_token")?.value;
 
   if (!token) {

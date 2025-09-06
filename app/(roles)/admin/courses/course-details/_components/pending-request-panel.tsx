@@ -15,20 +15,7 @@ import { AllPendingRequests } from "@/lib/types/pending-request.type";
 import { getAllPendingRequests } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
 
-type Module = {
-  name: string;
-  price: number;
-};
 
-type PendingRequest = {
-  id: string;
-  name: string;
-  email: string;
-  course: string;
-  modules: Module[];
-  price: number;
-  availableBatches: string[];
-};
 
 const PendingRequestDropdown = () => {
   const [allPendingRequests, setAllPendingRequests] = useState<

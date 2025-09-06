@@ -1,17 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
   
-  Download,
+  
 
 
 } from "lucide-react";
-import {
-  Accordion,
 
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -20,9 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import ModuleAccordion from "./module-accordion";
-import { dummyEnrolledCourseData as courseData, dummyInstructors, dummyModules } from "@/lib/static";
-import ModulesDescription from "../../../../../../components/student-course-component/modules-description";
+import { dummyEnrolledCourseData as courseData, dummyInstructors } from "@/lib/static";
+// import ModulesDescription from "../../../../../../components/student-course-component/modules-description";
 import StudentCourseInstructorCard from "../../../../../../components/student-course-component/student-course-instructor-card";
 import StudentCourseReviews from "../../../../../../components/student-course-component/student-course-reviews";
 import { Separator } from "@/components/ui/separator";
@@ -103,7 +99,7 @@ const EnrolledCourse = () => {
 
       <div className="p-6 md:p-10">
         <div className="flex flex-col  justify-between mb-8">
-          <ModulesDescription modules={courseData.modules} className="w-full max-w-full" />
+          {/* <ModulesDescription modules={courseData.modules} className="w-full max-w-full" /> */}
           <StudentCourseInstructorCard instructors={dummyInstructors} />
           <Separator className="mt-5"/>
           <StudentCourseReviews isEnrolled={true} />

@@ -11,7 +11,7 @@ const StudentBatchName = () => {
 
     const batchName = useMemo(() => {
       if (!selectedCourse) return null;
-      return coursesData.find((course) => course.id === selectedCourse.id)
+      return coursesData.find((course) => course.id === selectedCourse._id)
         ?.batchesName[0] || null;
     }, [selectedCourse]);
   

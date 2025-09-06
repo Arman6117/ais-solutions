@@ -35,7 +35,6 @@ import {
   Globe,
 } from "lucide-react";
 import { useSupportDepartmentStore } from "@/store/use-support-deparment-store";
-import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
 const ICONS = [
   { label: "Building", value: "Building2", icon: <Building2 className="size-4" /> },

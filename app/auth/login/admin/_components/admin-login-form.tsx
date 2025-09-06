@@ -46,6 +46,7 @@ const AdminLoginForm = () => {
         setShowOtpForm(true);
       }
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong");
     } finally {
       setSendingEmail(false); // Always reset
@@ -62,6 +63,7 @@ const AdminLoginForm = () => {
         setError(res.message);
       }
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong");
     } finally {
       setVerifyingOTP(false);

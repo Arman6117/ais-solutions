@@ -2,7 +2,6 @@ import React from "react";
 
 import Image from "next/image";
 
-import StudentCourseInstructorCard from "./student-course-instructor-card";
 import CourseBasicInfoCard from "../../app/(roles)/student/courses/course-details/[id]/_components/course-basic-info-card";
 import ModuleSelect from "../../app/(roles)/student/courses/course-details/[id]/_components/module-select";
 import ModulesDescription from "./modules-description";
@@ -19,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 
-import { AlertTriangle, Calendar, Pyramid, Star } from "lucide-react";
+import { AlertTriangle, Calendar, Pyramid } from "lucide-react";
 import StudentCourseReviews from "./student-course-reviews";
 import { CourseDetails } from "@/lib/types/course.type";
 import { format } from "date-fns";

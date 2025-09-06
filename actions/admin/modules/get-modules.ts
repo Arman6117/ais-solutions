@@ -96,8 +96,8 @@ export const getModuleById = async (id: string) => {
             id: topicIndex,
             title: topic.title,
             description: topic.description,
-          })) || [],
-      })) || [];
+          })) ,
+      })) ;
 
     const cleanedModule: prModule =
       {
@@ -113,7 +113,7 @@ export const getModuleById = async (id: string) => {
         rating: Number(module.rating),
         createdAt: format(module.createdAt, "PP"),
         chapters: sanitizedChapters,
-      } || [];
+      } ;
 
     return { success: true, data: cleanedModule };
   } catch (error) {

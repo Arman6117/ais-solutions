@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { Course } from "@/lib/types/student-profile.type";
 import {
   Calendar,
@@ -21,7 +21,7 @@ type EnrolledCourseCardProps = {
 
 const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
   const isApproved = course.isApproved;
-  const progressPercentage = ((course.paid || 0) / (course.total || 1)) * 100;
+  // const progressPercentage = ((course.paid || 0) / (course.total || 1)) * 100;
   console.log(course)
   return (
     <Link
@@ -50,7 +50,7 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
               </Avatar>
               <div>
                 <CardTitle className="text-lg font-semibold text-slate-800 group-hover:text-purple-600 transition-colors duration-300">
-                  {course.name}
+                  {/* {course.name} */}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -82,7 +82,7 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
           <div className="flex flex-wrap  gap-6 ">
             <Card className="text-center  p-4 bg-slate-50 border border-slate-100">
               <div className="text-lg font-bold text-slate-800">
-                ₹{course.total}
+                {/* ₹{course.total} */}
               </div>
               <div className="text-xs text-muted-foreground font-medium">
                 Total
@@ -90,13 +90,13 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
             </Card>
             <Card className="text-center p-4 bg-emerald-50 border border-emerald-100">
               <div className="text-lg font-bold text-emerald-700">
-                ₹{course.paid}
+                {/* ₹{course.paid} */}
               </div>
               <div className="text-xs text-emerald-700 font-medium">Paid</div>
             </Card>
             <Card className="text-center p-4 bg-orange-50 border border-orange-100">
               <div className="text-lg font-bold text-orange-700">
-                ₹{(course.total || 0) - (course.paid || 0)}
+                {/* ₹{(course.total || 0) - (course.paid || 0)} */}
               </div>
               <div className="text-xs text-orange-700 font-medium">Due</div>
             </Card>
@@ -109,10 +109,10 @@ const EnrolledCourseCard = ({ course }: EnrolledCourseCardProps) => {
                 Payment Progress
               </span>
               <span className="text-sm font-semibold text-slate-700">
-                {Math.round(progressPercentage)}%
+                {/* {Math.round(progressPercentage)}% */}
               </span>
             </div>
-            <Progress value={progressPercentage} className="h-3 rounded-full" />
+            {/* <Progress value={progressPercentage} className="h-3 rounded-full" /> */}
           </div>
         </CardContent>
       </Card>

@@ -1,14 +1,13 @@
 'use client'
-import React, { useMemo } from "react";
+import React from "react";
 
 import {  BookOpen} from "lucide-react";
 
 import { PiStudent } from "react-icons/pi";
-import { useCourseStore } from "@/store/use-course-store";
 import CourseDataSkeleton from "@/components/skeletons/course-data";
 
 const StudentCourseDataCard = () => {
-  const {selectedCourse} = useCourseStore()
+  // const {selectedCourse} = useCourseStore()
   // const completedModules = useMemo(()=> {
   //   return selectedCourse?.modules.length || 0;
   // },[selectedCourse]);

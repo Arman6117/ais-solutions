@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, Phone, Clock, Pencil, Trash } from "lucide-react";
+import { Mail, Phone, Clock, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddSupportMemberDialog from "./add-support-member-dialog";
 

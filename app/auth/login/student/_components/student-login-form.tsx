@@ -49,6 +49,7 @@ const StudentLoginForm = () => {
         if (res.error) setErrors(res.error);
       }
     } catch (err) {
+      console.log(err)
       toast.error("Something went wrong.");
     } finally {
       setIsSubmitting(false);

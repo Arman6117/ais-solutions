@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Calendar,
   Clock,
   Pencil,
   Tag,
   Trash,
-  UploadCloud,
-  Image as ImageIcon,
+
+
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Course } from "@/lib/types/types";
 import CourseCard from "./course-card";
 
@@ -130,7 +129,7 @@ type CoursesCardsProps = {
   label: string | undefined;
 };
 
-const CoursesCards = ({ courses, mode, label }: CoursesCardsProps) => {
+const CoursesCards = ({  label }: CoursesCardsProps) => {
   const [search, setSearch] = useState("");
   const chunkSize = useChunkSize();
 

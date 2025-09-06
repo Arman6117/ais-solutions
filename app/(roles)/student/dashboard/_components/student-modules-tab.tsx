@@ -8,11 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
 import { DummyModules } from "@/lib/types/types";
-import { useCourseStore } from "@/store/use-course-store";
+// import { useCourseStore } from "@/store/use-course-store";
 import ModuleCardSkeleton from "@/components/skeletons/module-card";
 
 const StudentModulesTab = () => {
-  const { selectedCourse } = useCourseStore(); //TODO:Fetch modules using selected course
+  // const { selectedCourse } = useCourseStore(); //TODO:Fetch modules using selected course
   const [filteredModules, setFilteredModules] =
     useState<DummyModules[]>(dummyModules);
   const [search, setSearch] = useState("");

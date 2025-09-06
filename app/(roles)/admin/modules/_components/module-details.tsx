@@ -46,6 +46,28 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
+  
+
+  const [name, setName] = useState(module?.name || "");
+  const [description, setDescription] = useState(module?.description || "");
+  const [price, setPrice] = useState(module?.price || 0);
+  const [discount, setDiscount] = useState(module?.discount || 0);
+  const [offerPrice, setOfferPrice] = useState(
+    price - (price * discount) / 100
+  );
+  const [chapter, setChapter] = useState(module?.chapters || []);
+  const [syllabusLabel, setSyllabusLabel] = useState(
+    module?.syllabusLabel || ""
+  );
+  const [syllabusLink, setSyllabusLink] = useState(module?.syllabusLink || "");
+ 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+console.log(isDeleting)
+  useEffect(() => {
+    setOfferPrice(price - (price * discount) / 100);
+  }, [price, discount]);
+
   if (!module) {
     return (
       <div className="p-8 flex w-full items-center justify-center h-full">
@@ -59,27 +81,6 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
       </div>
     );
   }
-
-  const [name, setName] = useState(module.name || "");
-  const [description, setDescription] = useState(module.description || "");
-  const [price, setPrice] = useState(module.price || 0);
-  const [discount, setDiscount] = useState(module.discount || 0);
-  const [offerPrice, setOfferPrice] = useState(
-    price - (price * discount) / 100
-  );
-  const [chapter, setChapter] = useState(module.chapters || []);
-  const [syllabusLabel, setSyllabusLabel] = useState(
-    module.syllabusLabel || ""
-  );
-  const [syllabusLink, setSyllabusLink] = useState(module.syllabusLink || "");
- 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    setOfferPrice(price - (price * discount) / 100);
-  }, [price, discount]);
-
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -118,6 +119,7 @@ const ModuleDetails = ({ module }: ModuleDetailsProps) => {
         toast.error(res.message);
       }
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong while deleting module");
     } finally {
       setIsDeleting(false);

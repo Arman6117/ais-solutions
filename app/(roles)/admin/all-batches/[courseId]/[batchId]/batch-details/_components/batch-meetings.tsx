@@ -1,7 +1,6 @@
 "use client";
 import { deleteSession } from "@/actions/admin/sessions/delete-session";
 import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
-import DeleteConfirmationDialog from "@/components/batch-components/delete-confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

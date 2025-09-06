@@ -6,6 +6,7 @@ type InvoiceDetailsPageProps = {
 };
 const InvoiceDetailsPage =async ({params}:InvoiceDetailsPageProps) => {
 const id = (await params).id
+console.log(id)
   return <>
   <InvoiceDetails/>
   </>;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BookOpen, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BatchModules, Modules } from "@/lib/types/types";
 import { toast } from "sonner";
@@ -212,7 +211,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
       <CardContent className="p-6">
         <div className="space-y-4 max-h-[500px] overflow-y-auto">
           {filteredModules.length > 0 ? (
-            filteredModules.map((module, index) => (
+            filteredModules.map((module) => (
               <ModuleCard
                 key={module.id}
                 module={module}

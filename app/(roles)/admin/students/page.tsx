@@ -1,7 +1,6 @@
 
 import React from "react";
 import StudentTable from "./_components/student-table";
-import PendingRequestPanel from "../courses/course-details/_components/pending-request-panel";
 import PendingRequestDropdown from "../courses/course-details/_components/pending-request-panel";
 
 const StudentsPage = () => {

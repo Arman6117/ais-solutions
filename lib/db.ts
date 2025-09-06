@@ -11,7 +11,7 @@ interface MongooseCache {
 }
 
 declare global {
-  var mongooseCache: MongooseCache | undefined;
+  const mongooseCache: MongooseCache | undefined;
 }
 
 const globalForMongoose = globalThis as typeof globalThis & {

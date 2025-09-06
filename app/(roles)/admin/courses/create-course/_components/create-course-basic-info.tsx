@@ -22,9 +22,7 @@ import {
   Text,
 } from "lucide-react";
 
-import { Mode } from "@/lib/types/types";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
-import { FaLevelUpAlt } from "react-icons/fa";
 import CourseLevelSelector from "./course-level-selector";
 import CourseModeSelector from "./course-mode-selector";
 
@@ -39,7 +37,7 @@ const CreateCourseBasicInfo = () => {
     courseOfferPrice,
     courseStartDate,
     courseEndDate,
-    courseThumbnail,
+    // courseThumbnail,
     courseSyllabusLink,
     
     setBasicInfo,

@@ -12,8 +12,8 @@ import {
 import { studentSidebarLinks } from "@/lib/static";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { IoExit } from "react-icons/io5";
+// import { Button } from "@/components/ui/button";
+// import { IoExit } from "react-icons/io5";
 import LogOutButton from "./logout-button";
 const StudentSidebar = () => {
   // const [active, setActive] = useState(false);

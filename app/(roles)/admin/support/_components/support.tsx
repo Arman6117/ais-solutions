@@ -1,5 +1,4 @@
 import React from "react";
-import SupportBackOfficeCard from "./support-cards";
 import SupportCards from "./support-cards";
 
 const Support = () => {

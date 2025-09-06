@@ -137,7 +137,7 @@ export function EditCourseDescription({
 }
 export function EditCourseThumbnail({
   thumbnail,
-  setThumbnail,
+  // setThumbnail,
 }: {
   thumbnail: string;
   setThumbnail: (src: string) => void;

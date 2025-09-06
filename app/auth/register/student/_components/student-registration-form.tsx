@@ -123,6 +123,7 @@ const StudentRegistrationForm = () => {
         setErrors(res.error || {});
       }
     } catch (error) {
+      console.log(error)
       setErrors({ submit: "Something went wrong!" });
     } finally {
       setIsSubmitting(false);
@@ -237,7 +238,7 @@ const StudentRegistrationForm = () => {
                   <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id={id}
-                    value={(formData as any)[id]}
+                    value={formData[id as keyof typeof formData]}
                     onChange={(e) => handleInputChange(id, e.target.value)}
                     className="pl-10"
                     type={
@@ -297,7 +298,7 @@ const StudentRegistrationForm = () => {
                   <Input
                     id={id}
                     type={show ? "text" : "password"}
-                    value={(formData as any)[id]}
+                    value={formData[id as keyof typeof formData]}
                     onChange={(e) => handleInputChange(id, e.target.value)}
                     className="pl-10 pr-10"
                   />

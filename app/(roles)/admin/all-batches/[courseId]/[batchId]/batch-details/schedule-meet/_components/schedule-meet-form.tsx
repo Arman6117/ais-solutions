@@ -24,7 +24,7 @@ import ModuleSelectionSection from "./module-selection-section";
 import SubtopicsSelectionSection from "./subtopic-selection-section";
 import InstructorSelectionSection from "./instructor-selection-section";
 import ScheduleSection from "./schedule-section";
-import { instructors, modulesWithSubtopics } from "./data/mockdata";
+import { instructors } from "./data/mockdata";
 import { validateForm } from "./validation";
 import { ModulesForSession } from "@/lib/types/sessions.type";
 import { getModulesWithSubtopics } from "@/actions/shared/get-modules-with-subtopics";

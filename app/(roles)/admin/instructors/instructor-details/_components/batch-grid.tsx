@@ -1,8 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card,CardHeader,CardTitle,CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Mode } from "@/lib/types/types";
-import { Activity, Calendar, GraduationCap, MapPin, Monitor, Users, Video } from "lucide-react";
+import { Activity, Calendar, GraduationCap, Users } from "lucide-react";
 type BatchGridProps = {
     batches: {
         id: number;
@@ -15,32 +14,9 @@ type BatchGridProps = {
     }[]
 }
 const BatchGrid = ({ batches }:BatchGridProps) => {
-    const getModeIcon = (mode:Mode) => {
-      switch (mode) {
-        case 'online':
-          return <Monitor className="w-4 h-4" />;
-        case 'offline':
-          return <MapPin className="w-4 h-4" />;
-        case 'hybrid':
-          return <Video className="w-4 h-4" />;
-        default:
-          return <Monitor className="w-4 h-4" />;
-      }
-    };
+    
   
-    const getModeColor = (mode :Mode) => {
-      switch (mode) {
-        case 'online':
-          return 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md';
-        case 'offline':
-          return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md';
-        case 'hybrid':
-          return 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md';
-        default:
-          return 'bg-gradient-to-r from-gray-500 to-slate-500 text-white shadow-md';
-      }
-    };
-  
+   
     return (
       <Card className="col-span-1 lg:col-span-2 shadow-lg border-0">
         <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b">

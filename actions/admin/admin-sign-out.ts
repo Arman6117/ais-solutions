@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 
 export const adminSignOut = async () => {
-  const cookieStore = cookies();
+  const cookieStore =await cookies();
 
   // Clear the session cookie
   cookieStore.set("admin_session", "", {

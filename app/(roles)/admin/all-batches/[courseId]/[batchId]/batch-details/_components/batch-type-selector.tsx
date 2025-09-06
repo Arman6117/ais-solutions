@@ -8,9 +8,8 @@ import {
 } from "@/components/ui/select";
 import { BatchType } from "@/lib/types/types";
 
-import { CheckCircle, University } from "lucide-react";
+import {  University } from "lucide-react";
 import React from "react";
-import { MdBookOnline } from "react-icons/md";
 
 const BatchTypeSelector = ({
   batchType,

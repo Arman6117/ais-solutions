@@ -17,8 +17,8 @@ const DAYS_PER_PAGE = 10;
 
 const ScheduleCalender = () => {
   const today = new Date();
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear] = useState(today.getFullYear());
+  const [currentMonth] = useState(today.getMonth());
   const allDates = getDaysInMonth(currentYear, currentMonth);
 
   const todayIndex = allDates.findIndex((date) => isSameDay(date, today));
@@ -81,7 +81,7 @@ const ScheduleCalender = () => {
 
           const hasMeetings = daysMeetings.length > 0;
           const isToday = isSameDay(date, today);
-          const isFuture = isAfter(date, today);
+          // const isFuture = isAfter(date, today);
 
           return (
             <HoverCard key={date.toISOString()}>

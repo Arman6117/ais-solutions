@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import NewNoteForm from "./batch-components/new-note-form";
 import { Card, CardContent } from "./ui/card";
@@ -40,7 +39,7 @@ const NotesTable = ({
   batchId,
   mode,
   notes,
-  role,
+  
   isCreating,
   setIsCreating,
 }: NotesTableProps) => {
@@ -58,7 +57,7 @@ const NotesTable = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
 
-  const router = useRouter();
+  
 
   const [isMobile, setIsMobile] = useState(false);
 

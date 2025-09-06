@@ -45,7 +45,6 @@ import Link from "next/link";
 import { MdBookOnline } from "react-icons/md";
 import BatchModeSelector from "./batch-mode-selector";
 import BatchTypeSelector from "./batch-type-selector";
-import InstructorsCards from "@/components/instructors-cards";
 import ModulesCard from "@/components/modules-card";
 import StatusCard from "@/components/status-card";
 import { updateBatchById } from "@/actions/admin/batches/update-batch";
@@ -59,7 +58,7 @@ type BatchDetailsProps = {
 
 const BatchDetails = ({
   batch,
-  dummyInstructors,
+  
   dummyModules,
   dummyStudents,
   courseId,
@@ -70,6 +69,42 @@ const BatchDetails = ({
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
+  
+  const [name, setName] = useState(batch.name || "");
+  const [description, setDescription] = useState(batch.description || "");
+  const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed">(
+    batch.status || "Upcoming"
+  );
+  const [whatsappLink, setWhatsappLink] = useState(batch.groupLink || "");
+  const [batchModuleIds, setBatchModuleIds] = useState<Modules[]>(
+    batch.modules.map((mod) => {
+      return {
+        _id: mod.id,
+        name:mod.name
+      };
+    })
+  );
+ console.log(batchModuleIds)
+  const [startDate, setStartDate] = useState(batch.startDate || "");
+  const [endDate, setEndDate] = useState(batch.endDate || "");
+  const [batchMode, setBatchMode] = useState<Mode>(batch.mode);
+  const [batchType, setBatchType] = useState<BatchType>(batch.type);
+
+  const [isSmallScreen,setIsSmallScreen] = useState(false);
+  console.log(isSmallScreen)
+  const [isLoading, setIsLoading] = useState(false);
+
+  const formatDate = (date: string) => format(date, "PP");
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 1024);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   if (!batch) {
     return (
       <div className="p-8 flex w-full items-center justify-center h-full">
@@ -85,41 +120,6 @@ const BatchDetails = ({
       </div>
     );
   }
-  const [name, setName] = useState(batch.name || "");
-  const [description, setDescription] = useState(batch.description || "");
-  const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed">(
-    batch.status || "Upcoming"
-  );
-  const [whatsappLink, setWhatsappLink] = useState(batch.groupLink || "");
-  const [batchModuleIds, setBatchModuleIds] = useState<Modules[]>(
-    batch.modules.map((mod) => {
-      return {
-        _id: mod.id,
-        name:mod.name
-      };
-    })
-  );
-
-  const [startDate, setStartDate] = useState(batch.startDate || "");
-  const [endDate, setEndDate] = useState(batch.endDate || "");
-  const [batchMode, setBatchMode] = useState<Mode>(batch.mode);
-  const [batchType, setBatchType] = useState<BatchType>(batch.type);
-
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const formatDate = (date: string) => format(date, "PP");
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 1024);
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -404,11 +404,11 @@ const BatchDetails = ({
                     />
                     Instructors
                   </h1>
-                  <InstructorsCards
+                  {/* <InstructorsCards
                     label={` are assigned to this batch`}
                     instructors={dummyInstructors}
                     mode={mode}
-                  />
+                  /> */}
                 </div>
               </div>
               <BatchMeetings

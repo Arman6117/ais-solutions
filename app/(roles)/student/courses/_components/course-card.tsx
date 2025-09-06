@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { differenceInMonths, differenceInDays, formatDistance } from "date-fns";
+import {   formatDistance } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

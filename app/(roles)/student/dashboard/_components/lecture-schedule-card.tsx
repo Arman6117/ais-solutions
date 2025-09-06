@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 
 import { BookOpen, Calendar, Clock, Users, Video } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
-type LectureScheduleCardProps = {
-  day: "today" | "tomorrow";
-};
-const LectureScheduleCard = ({ day }: LectureScheduleCardProps) => {
+
+const LectureScheduleCard = () => {
   return (
     <div
       className={`relative w-64 group sm:w-72  max-w-full bg-soft-white rounded-xl shadow-primary-bg/10 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer group overflow-hidden`}

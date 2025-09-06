@@ -16,8 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
-import InstructorsCards from "@/components/instructors-cards";
-import AddInstructorButton from "../../../courses/_components/add-instructor-button";
+// import InstructorsCards from "@/components/instructors-cards";
+// import AddInstructorButton from "../../../courses/_components/add-instructor-button";
 
 import AddModuleButton from "@/components/add-module-button";
 import { BatchType, Mode, Modules } from "@/lib/types/types";
@@ -39,7 +39,7 @@ type CreateBatchProps = {
 };
 
 export default function CreateBatch({ courses }: CreateBatchProps) {
-  const [instructors, setInstructors] = useState<any[]>([]);
+  // const [instructors, setInstructors] = useState<any[]>([]);
   const [modules, setModules] = useState<Modules[]>([]);
   const [availableModules, setAvailableModules] = useState<Modules[]>([]);
   const [courseId, setCourseId] = useState<string>("");
@@ -235,7 +235,7 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="min-h-40">
-                  {instructors.length === 0 ? (
+                  {/* {instructors.length === 0 ? (
                     <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-md py-8">
                       <div className="text-center text-gray-500">
                         <p>No instructors added yet</p>
@@ -248,10 +248,10 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                       label="Batch"
                       mode="create"
                     />
-                  )}
+                  )} */}
                 </CardContent>
                 <CardFooter>
-                  <AddInstructorButton
+                  {/* <AddInstructorButton
                   showLabel
                     setInstructor={(newInstructor) => {
                       if (typeof newInstructor === "function") {
@@ -260,7 +260,7 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                         setInstructors((prev) => [...prev, newInstructor]);
                       }
                     }}
-                  />
+                  /> */}
                 </CardFooter>
               </Card>
             </CardContent>

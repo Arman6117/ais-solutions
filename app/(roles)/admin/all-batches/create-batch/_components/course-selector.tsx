@@ -9,7 +9,7 @@ type CourseSelectorProps = {
     setCourseList: React.Dispatch<React.SetStateAction<{ id: string; name: string }[]>>;
 
 }
-const CourseSelector = ({courseList,handleInputChange,setCourseId,setCourseList}:CourseSelectorProps) => {
+const CourseSelector = ({courseList,handleInputChange,setCourseId}:CourseSelectorProps) => {
  
   return (
     <div className="space-y-2">

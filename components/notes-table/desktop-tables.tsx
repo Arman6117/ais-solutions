@@ -3,7 +3,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
+
   TableHeader,
   TableHead,
   TableRow,
@@ -23,7 +23,6 @@ import {
 } from "@/lib/types/note.type";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import AddFileDialog from "../batch-components/add-file-dialog";
 import AddFileButton from "../batch-components/add-file-button";
 
 type DesktopTableProps = {

@@ -4,16 +4,16 @@ export const uploadToCloudinary = async (file: File, folder = "students") => {
 
   const formData = new FormData();
   formData.append("file", file);
-  {
-    folder !== "students"
-      ? formData.append(
-          "upload_preset",
-          process.env.CLOUDINARY_UPLOAD_PRESET_COURSE!
-        )
-      : formData.append(
-          "upload_preset",
-          process.env.CLOUDINARY_UPLOAD_PRESET_STUDENT!
-        );
+  if (folder !== "students") {
+    formData.append(
+      "upload_preset",
+      process.env.CLOUDINARY_UPLOAD_PRESET_COURSE!
+    );
+  } else {
+    formData.append(
+      "upload_preset",
+      process.env.CLOUDINARY_UPLOAD_PRESET_STUDENT!
+    );
   }
   formData.append("folder", folder);
   formData.append("api_key", process.env.CLOUDINARY_API_KEY!);

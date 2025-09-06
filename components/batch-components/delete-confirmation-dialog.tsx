@@ -13,7 +13,7 @@ import { Button } from "../ui/button";
 type DeleteConfirmationDialogProps = {
   deleteDialogOpen: boolean;
   setDeleteDialogOpen: (state: boolean) => void;
-  itemsToDelete: any[];
+  itemsToDelete: number[];
   confirmDelete: () => void;
 };
 const DeleteConfirmationDialog = ({

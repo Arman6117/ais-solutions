@@ -17,22 +17,22 @@ type SupportCardAccordionProps = {
   children?: React.ReactNode;
 };
 
-const getGradient = (color: string) => {
-  switch (color) {
-    case "blue":
-      return "from-gray-800 to-gray-900";
-    case "green":
-      return "from-green-600 to-green-900";
-    case "purple":
-      return "from-purple-600 to-purple-900";
-    case "orange":
-      return "from-orange-500 to-orange-800";
-    case "red":
-      return "from-rose-600 to-rose-900";
-    default:
-      return "from-primary-bg to-gray-900";
-  }
-};
+// const getGradient = (color: string) => {
+//   switch (color) {
+//     case "blue":
+//       return "from-gray-800 to-gray-900";
+//     case "green":
+//       return "from-green-600 to-green-900";
+//     case "purple":
+//       return "from-purple-600 to-purple-900";
+//     case "orange":
+//       return "from-orange-500 to-orange-800";
+//     case "red":
+//       return "from-rose-600 to-rose-900";
+//     default:
+//       return "from-primary-bg to-gray-900";
+//   }
+// };
 
 const SupportCardAccordion = ({
   departmentId,

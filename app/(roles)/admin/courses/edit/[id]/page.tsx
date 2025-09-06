@@ -1,17 +1,17 @@
-import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
+// import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
 import React from "react";
-import CourseDetails from "@/components/course-components/course-details";
+// import CourseDetails from "@/components/course-components/course-details";
 
-const EditCoursePage = async ({ params }: { params: { id: string } }) => {
-  const id = params.id;
-  const data = coursesData.find((course) => course.id === id);
+const EditCoursePage = async () => {
+  // const id = await (params).id;
+  // const data = coursesData.find((course) => course.id === id);
   return (
     <main className="flex w-full">
-      <CourseDetails
+      {/* <CourseDetails
         course={data}
         dummyBatches={dummyBatches}
         dummyInstructors={dummyInstructors}
-      />
+      /> */}
     </main>
   );
 };

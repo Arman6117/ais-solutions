@@ -36,6 +36,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
       toast.success(res.message);
       router.refresh();
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);

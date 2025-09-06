@@ -1,13 +1,9 @@
 "use client";
-import React, { useMemo } from "react";
+import React from "react";
 import LectureScheduleCard from "./lecture-schedule-card";
-import { useCourseStore } from "@/store/use-course-store";
 
-type LectureCardSuspenseProps = {
-  day: "today" | "tomorrow";
-};
-const LectureCardSuspense = ({ day }: LectureCardSuspenseProps) => {
-  const { selectedCourse } = useCourseStore();
+const LectureCardSuspense = () => {
+  // const { selectedCourse } = useCourseStore();
   // const todayMeetingSchedule = useMemo(()=>{
   //     return selectedCourse?.meetingSchedule.filter((schedule) => {
   //         const scheduleDate = new Date(schedule.date);
@@ -25,9 +21,9 @@ const LectureCardSuspense = ({ day }: LectureCardSuspenseProps) => {
   // },[selectedCourse]);
   return (
     <React.Suspense>
-      <LectureScheduleCard day={day} />
-      <LectureScheduleCard day={day} />
-      <LectureScheduleCard day={day} />
+      <LectureScheduleCard  />
+      <LectureScheduleCard  />
+      <LectureScheduleCard  />
     </React.Suspense>
   );
 };

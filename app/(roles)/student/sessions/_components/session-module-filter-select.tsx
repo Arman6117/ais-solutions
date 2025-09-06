@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BookCopyIcon, Filter } from "lucide-react";
+import { BookCopyIcon } from "lucide-react";
 import React from "react";
 
 type SessionModuleFilterSelectProps = {
@@ -14,7 +14,7 @@ type SessionModuleFilterSelectProps = {
 };
 const SessionModuleFilterSelect = ({
   moduleFilter,
-  setModuleFilter,
+  
 }: SessionModuleFilterSelectProps) => {
   return (
     <Select

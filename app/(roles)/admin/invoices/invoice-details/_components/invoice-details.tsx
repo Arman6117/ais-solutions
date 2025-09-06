@@ -1,8 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { 
-  Calendar, 
-  Download, 
+ 
   Mail, 
 
   CreditCard, 
@@ -13,22 +12,18 @@ import {
   Users,
   Monitor,
   Wifi,
-  MapPin,
-  CheckCircle,
-  AlertCircle,
-  X,
+
   User,
   Phone,
   IndianRupee,
   CalendarDays,
   Receipt,
-  FileText,
+  
   Building
 } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
@@ -314,13 +309,13 @@ const InvoiceDetails = () => {
     }));
   };
 
-  const handleSendEmail = (): void => {
-    alert('Invoice email sent successfully!');
-  };
+  // const handleSendEmail = (): void => {
+  //   alert('Invoice email sent successfully!');
+  // };
 
-  const handleDownloadPDF = (): void => {
-    alert('Invoice PDF downloaded!');
-  };
+  // const handleDownloadPDF = (): void => {
+  //   alert('Invoice PDF downloaded!');
+  // };
 
   return (
     <div className="min-h-screen flex justify-center max-w-full  bg-background p-6">

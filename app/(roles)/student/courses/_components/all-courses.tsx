@@ -11,77 +11,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Separator } from "@/components/ui/separator";
 import { CourseCards } from "@/lib/types/course.type";
 import { getAllCourses } from "@/actions/student/courses/get-all-courses";
 import { AlertTriangle, Loader2 } from "lucide-react";
 
 const COURSES_PER_PAGE = 5; //TODO:Change it later
-const dummyCourses = [
-  {
-    id: 1,
-    title: "Intro to React",
-    level: "Beginner",
-    price: 199,
-    createdAt: new Date("2024-12-01"),
-  },
-  {
-    id: 2,
-    title: "Advanced Next.js",
-    level: "Advanced",
-    price: 499,
-    createdAt: new Date("2025-01-15"),
-  },
-  {
-    id: 3,
-    title: "Intermediate Node",
-    level: "Intermediate",
-    price: 299,
-    createdAt: new Date("2025-02-10"),
-  },
-  {
-    id: 4,
-    title: "Fullstack Basics",
-    level: "Beginner",
-    price: 149,
-    createdAt: new Date("2025-03-01"),
-  },
-  {
-    id: 5,
-    title: "CSS Mastery",
-    level: "Intermediate",
-    price: 99,
-    createdAt: new Date("2025-04-01"),
-  },
-  {
-    id: 6,
-    title: "TS & Zod",
-    level: "Advanced",
-    price: 399,
-    createdAt: new Date("2025-05-15"),
-  },
-  {
-    id: 7,
-    title: "API Security",
-    level: "Advanced",
-    price: 349,
-    createdAt: new Date("2025-05-29"),
-  },
-  {
-    id: 8,
-    title: "Beginner Git",
-    level: "Beginner",
-    price: 49,
-    createdAt: new Date("2025-06-01"),
-  },
-  {
-    id: 9,
-    title: "Node + Express",
-    level: "Intermediate",
-    price: 299,
-    createdAt: new Date("2025-06-02"),
-  },
-];
+
 
 const AllCourses = () => {
   const [search, setSearchTerm] = useState("");

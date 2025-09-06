@@ -1,6 +1,5 @@
-import { CourseSelector, StudentCourse } from "@/lib/types/course.type";
+import {  StudentCourse } from "@/lib/types/course.type";
 
-import { Course } from "@/lib/types/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit3, Save, X, Phone, Camera, Mail } from "lucide-react";
-import { EditableData, StudentProfile } from "@/lib/types/student-profile.type";
+import { EditableData } from "@/lib/types/student-profile.type";
 import ProfileDetail from "./profile-detail";
 import { StudentData } from "@/lib/types/student";
 

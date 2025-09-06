@@ -1,4 +1,3 @@
-import { School2Icon } from 'lucide-react'
 import React from 'react'
 import StudentModulesTab from './student-modules-tab'
 

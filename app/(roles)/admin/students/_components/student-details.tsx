@@ -2,17 +2,17 @@
 import { useEffect, useState } from "react";
 import {
   User, Phone, Mail, Calendar, CheckCircle, XCircle,
-  CreditCard, BookOpen, Tag, School, CircleDollarSign,
-  Monitor, Layers
+   BookOpen, Tag, School, CircleDollarSign,
+   Layers
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Course, DummyModules, DummyStudent,  } from "@/lib/types/types";
+import { DummyStudent,  } from "@/lib/types/types";
 import { format } from "date-fns";
 import CoursesCards from "@/components/courses-cards";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,24 +24,22 @@ type StudentDetailsProps = {
 
 const StudentDetails = ({ student }: StudentDetailsProps) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
-  const [mode, setMode] = useState<"edit" | "view">(defaultMode);
+  // const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
   const [feesStatus, setFeesStatus] = useState(student?.feesStatus || "pending");
   const [totalFeePaid, setTotalFeePaid] = useState(student?.totalFeePaid || 0);
-  const [totalFees, setTotalFees] = useState(0);
-  const [feesRemaining, setFeesRemaining] = useState(0);
-
+  const [totalFees] = useState(0);
+  const [feesRemaining] = useState(0);
+ console.log(totalFees)
   useEffect(() => {
     if (student) {
-      const moduleTotal = (student.modulesDetails || []).reduce((sum, mod: DummyModules) => sum + (mod.price || 0), 0);
-      const courseTotal = (student.courses || []).reduce((sum, course: Course) => sum + (course.price || 0), 0);
-      const total = moduleTotal + courseTotal;
-      setTotalFees(total);
-      const remaining = Math.max(0, total - totalFeePaid);
-      setFeesRemaining(remaining);
-      setFeesStatus(remaining <= 0 ? "paid" : "pending");
+      // const moduleTotal = (student.modulesDetails || []).reduce((sum, mod: DummyModules) => sum + (mod.price || 0), 0);
+      // const courseTotal = (student.courses || []).reduce((sum, course: Course) => sum + (course.price || 0), 0);
+      // const total = moduleTotal + courseTotal;
+      // setTotalFees(total);
+      // const remaining = Math.max(0, total - totalFeePaid);
+      // setFeesRemaining(remaining);
+      // setFeesStatus(remaining <= 0 ? "paid" : "pending");
     }
   }, [student, totalFeePaid]);
 
@@ -167,12 +165,12 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 Modules
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {student.modulesDetails?.map((mod, i) => (
-                  <div key={i} className="p-3 rounded-lg border bg-indigo-50">
+                {/* {student.modulesDetails?.map((mod, i) => ( */}
+                  {/* <div key={i} className="p-3 rounded-lg border bg-indigo-50">
                     <div className="text-indigo-800 font-medium">{mod.name}</div>
                     <div className="text-sm text-muted-foreground">₹{mod.price}</div>
-                  </div>
-                ))}
+                  </div> */}
+                {/* ))} */}
               </div>
             </div>
 

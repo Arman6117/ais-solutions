@@ -4,6 +4,7 @@ import DisplayRating from "@/components/display-rating";
 import React from "react";
 import { cn } from "@/lib/utils";
 import AddComment from "./add-comment";
+import { prCourse } from "@/lib/types/types";
 
 
 export const dummyReviews = [
@@ -80,11 +81,11 @@ export const dummyReviews = [
   ];
   
 type StudentCourseReviewsProps = {
-  course?: any;
+  course?: prCourse;
   className?:string
   isEnrolled:boolean
 };
-const StudentCourseReviews = ({className,course,isEnrolled}:StudentCourseReviewsProps) => {
+const StudentCourseReviews = ({className,isEnrolled}:StudentCourseReviewsProps) => {
   return (
     <div className={cn("flex flex-col mt-5", className)}>
       <div className="flex gap-2 items-center">

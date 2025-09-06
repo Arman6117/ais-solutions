@@ -1,6 +1,5 @@
 import React from "react";
 import Support from "./_components/support";
-import { Button } from "@/components/ui/button";
 import CreateSupportDepartmentModal from "./_components/create-support-department-modal";
 
 const SupportPage = () => {

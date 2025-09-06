@@ -20,9 +20,9 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, token }) => {
-      const verificationUrl = `${process.env.BETTER_AUTH_UR}/api/auth/verify?token=${token}&callbackUrl=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
-    },
+    // sendVerificationEmail: async ({ user, token }) => {
+    //   const verificationUrl = `${process.env.BETTER_AUTH_UR}/api/auth/verify?token=${token}&callbackUrl=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
+    // },
   },
 
   plugins: [nextCookies()],
@@ -42,7 +42,7 @@ export const auth = betterAuth({
           }
         }
         if (ctx.path === "/sign-up/email") {
-          const { email, password } = ctx.body as {
+          const { email } = ctx.body as {
             email: string;
             password: string;
           };

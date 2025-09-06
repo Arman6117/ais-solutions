@@ -1,4 +1,4 @@
-import { coursesData, dummyBatches, dummyInstructors } from "@/lib/static";
+import {  dummyBatches, dummyInstructors } from "@/lib/static";
 import React from "react";
 import CourseDetails from "@/components/course-components/course-details";
 import { getCourseById } from "@/actions/admin/course/get-courses";

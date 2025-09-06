@@ -33,7 +33,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
 
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [fetchCourses]);
 
   const handleCourseChange = (courseName: string) => {
     const course = coursesData.find((c) => c.courseName === courseName);

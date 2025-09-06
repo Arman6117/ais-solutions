@@ -15,6 +15,7 @@ import {
 } from "../ui/dialog";
 import AddLinkDialog from "./add-link-dialog";
 import { format } from "date-fns";
+import { VideoLinksType } from "@/lib/types/note.type";
 
 type MobileNewNoteFormProps = {
   moduleName: string;
@@ -28,8 +29,8 @@ type MobileNewNoteFormProps = {
   setLinkLabel: (label: string) => void;
   setLink: (url: string) => void;
   onAddLink?: (link: string, label: string) => void;
-  videoLinks: any[];
-  setVideoLinks:(links:any[]) =>void
+  videoLinks: VideoLinksType[];
+  setVideoLinks:(links:VideoLinksType[]) =>void
   files:string[],
   handleCancel:()=> void
   handleSave:()=> void

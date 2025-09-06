@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, CheckCircle, Layers, Target, UserCheck } from "lucide-react";
+import { BookOpen, CheckCircle, Layers, UserCheck } from "lucide-react";
 
 type ModuleCardProps = {
   modules: {

@@ -1,19 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
-import InstructorsCards from "@/components/instructors-cards";
-import AddInstructorButton from "../../_components/add-instructor-button";
+// import InstructorsCards from "@/components/instructors-cards";
+// import AddInstructorButton from "../../_components/add-instructor-button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { DummyInstructors } from "@/lib/types/types";
-import { useCreateCourseStore } from "@/store/use-create-course-store";
+// import { DummyInstructors } from "@/lib/types/types";
+// import { useCreateCourseStore } from "@/store/use-create-course-store";
 
 const CreateCourseInstructors = () => {
-  const { instructors, setInstructors } = useCreateCourseStore();
+  // const { instructors, setInstructors } = useCreateCourseStore();
 
   return (
     <Card className="px-5 mt-7 w-full h-auto py-3">
       <CardContent className="p-2 w-full">
-        {instructors.length === 0 ? (
+        {/* {instructors.length === 0 ? (
           <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-md py-8">
             <div className="text-center text-gray-500">
               <p>No instructors added yet</p>
@@ -27,10 +27,10 @@ const CreateCourseInstructors = () => {
               mode="view"
             />
           </div>
-        )}
+        )} */}
       </CardContent>
       <CardFooter>
-        <AddInstructorButton
+        {/* <AddInstructorButton
           setInstructor={(newInstructor) => {
             // Use object for single instructor, array updater for array
             if (typeof newInstructor === "function") {
@@ -40,7 +40,7 @@ const CreateCourseInstructors = () => {
             }
             console.log("Instructor added:", newInstructor);
           }}
-        />
+        /> */}
       </CardFooter>
     </Card>
   );

@@ -17,9 +17,9 @@ import {
   EditCourseThumbnail,
 } from "./edit-course-components";
 import { Separator } from "../ui/separator";
-import CourseInstructorsCards from "@/components/instructors-cards";
-import CourseBatchesCards from "@/app/(roles)/admin/courses/_components/course-batches-cards";
-import CourseModulesCard from "@/components/modules-card";
+// import CourseInstructorsCards from "@/components/instructors-cards";
+// import CourseBatchesCards from "@/app/(roles)/admin/courses/_components/course-batches-cards";
+// import CourseModulesCard from "@/components/modules-card";
 import CourseStatusCard from "@/components/status-card";
 import {
   ViewCourseDescription,
@@ -30,11 +30,10 @@ import {
 } from "./view-course-components";
 
 import {
-  Course,
+  
   DummyBatches,
   DummyInstructors,
   Mode,
-  prCourse,
 } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 
@@ -55,7 +54,6 @@ type CourseDetailsProps = {
 const CourseDetails = ({
   dummyBatches,
   course,
-  dummyInstructors,
 }: CourseDetailsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -63,46 +61,32 @@ const CourseDetails = ({
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
-  if (!course) {
-    return (
-      <div className="p-8 flex w-full items-center justify-center h-full">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">No Course Selected</h2>
-          <p className="text-muted-foreground">
-            Please select a course to edit
-          </p>
-          <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
-            Go Back
-          </Button>
-        </div>
-      </div>
-    );
-  }
-  const [name, setName] = useState(course.courseName || "");
-  const [courseMode, setCourseMode] = useState<Mode>(course.courseMode);
-  const [startDate, setStartDate] = useState<string>(course.courseStartDate);
-  const [endDate, setEndDate] = useState<string>(course.courseEndDate);
+ 
+  const [name, setName] = useState(course?.courseName || "");
+  const [courseMode, setCourseMode] = useState<Mode | undefined>(course?.courseMode);
+  const [startDate, setStartDate] = useState<string>(course?.courseStartDate || "");
+  const [endDate, setEndDate] = useState<string>(course?.courseEndDate || "");
   const [courseDuration, setCourseDuration] = useState(
     formatDistance(startDate ?? new Date(), endDate ?? new Date())
   );
   const [description, setDescription] = useState(
-    course.courseDescription || ""
+    course?.courseDescription || ""
   );
-  const [syllabusLink, setSyllabusLink] = useState(course.syllabusLink || "");
-  const [price, setPrice] = useState(course.coursePrice || 0);
-  const [discount, setDiscount] = useState(course.courseDiscount || 0);
+  const [syllabusLink, setSyllabusLink] = useState(course?.syllabusLink || "");
+  const [price, setPrice] = useState(course?.coursePrice || 0);
+  const [discount, setDiscount] = useState(course?.courseDiscount || 0);
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100 || 0
   );
-  const [instructors, setInstructors] = useState(dummyInstructors || []);
-  const [batches, setBatches] = useState(dummyBatches || []);
+  // const [instructors, setInstructors] = useState(dummyInstructors || []);
+  const [batches] = useState(dummyBatches || []);
   const [modules, setModules] = useState<CourseModule[]>([]);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(isSmallScreen)
   const fetchModules = async () => {
     try {
-      const res = await getCourseModules(course._id);
+      const res = await getCourseModules(course!._id!);
       if (!res.success) {
         toast.error(res.message);
         return;
@@ -137,6 +121,22 @@ const CourseDetails = ({
       formatDistance(startDate ?? new Date(), endDate ?? new Date())
     );
   }, [startDate, endDate]);
+
+  if (!course) {
+    return (
+      <div className="p-8 flex w-full items-center justify-center h-full">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">No Course Selected</h2>
+          <p className="text-muted-foreground">
+            Please select a course to edit
+          </p>
+          <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -161,6 +161,7 @@ const CourseDetails = ({
         setMode("view");
       }
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -274,7 +275,7 @@ const CourseDetails = ({
                   description={description}
                   setDescription={setDescription}
                 />
-                <EditCourseMode mode={courseMode} setMode={setCourseMode} />
+                <EditCourseMode mode={courseMode!} setMode={setCourseMode} />
               </>
             ) : (
               <>

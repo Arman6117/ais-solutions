@@ -10,10 +10,10 @@ import { getNotesById } from "@/actions/admin/notes/get-notes";
 
 // This is a temporary component for testing the UI
 const WatchPageComponent = ({
-  noteId,
+  // noteId,
   sessionId,
 }: {
-  noteId: string;
+  // noteId: string;
   sessionId: string;
 }) => {
   const [notesData, setNotesData] = useState<NoteData[]>([]);

@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BookOpen, CheckCircle, GraduationCap, PlayCircle, Star, TrendingUp, Users } from "lucide-react";
+import { BookOpen, PlayCircle, Star, TrendingUp, Users } from "lucide-react";
 import React from "react";
 
 type StatsCardProps = {

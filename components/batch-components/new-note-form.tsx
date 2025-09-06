@@ -34,7 +34,7 @@ import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetin
 const NewNoteForm = ({
   setIsCreating,
   createNewNote,
-  isMobile,
+  // isMobile,
   batchId,
   // New props for edit functionality
   isEditing = false,
@@ -148,7 +148,9 @@ const NewNoteForm = ({
       };
 
       updateNote(updatedNote);
-      setIsEditing && setIsEditing(false);
+      if (setIsEditing) {
+        setIsEditing(false);
+      }
       toast.success("Note updated successfully");
     } else {
       // Create new note

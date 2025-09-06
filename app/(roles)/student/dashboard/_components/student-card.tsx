@@ -1,10 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { BellIcon, CoinsIcon } from "lucide-react";
+import { CoinsIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { MdAlternateEmail, MdOutlineEmail } from "react-icons/md";
+import { MdAlternateEmail } from "react-icons/md";
 import StudentNotification from "./student-notification";
-import { FaSchool } from "react-icons/fa";
 import StudentBatchName from "./student-batch-name";
 import StudentGroupJoinButton from "./student-group-join-button";
 

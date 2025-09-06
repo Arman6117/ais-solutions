@@ -1,7 +1,6 @@
 "use client";
 import { createCourse } from "@/actions/admin/course/create-course";
 import { Button } from "@/components/ui/button";
-import { uploadToCloudinary } from "@/lib/helpers/upload-to-cloudinary";
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useState } from "react";
@@ -21,7 +20,7 @@ const CreateCourseButton = () => {
     courseMode,
     courseLevel,
     courseSyllabusLink: syllabusLink,
-    instructors,
+    // instructors,
     modules,
     courseThumbnail,
   } = useCreateCourseStore();

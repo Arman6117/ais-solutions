@@ -13,14 +13,14 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({
-  mode = "single",
+ 
   selected,
   onSelect,
   disabled,
   className = "",
-  classNames = {},
+  
 }) => {
-  const [currentDate] = useState<Date>(new Date());
+  // const [currentDate] = useState<Date>(new Date());
   const [viewDate, setViewDate] = useState<Date>(new Date());
 
   const monthNames = [

@@ -10,18 +10,10 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { parseISO, format } from "date-fns";
-import { CalendarRange } from "lucide-react";
+
 import GraphFilters from "./graph-filters";
 
 

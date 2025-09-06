@@ -1,6 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
-import { Calendar, Clock, PlayCircle, Zap } from "lucide-react";
+import { Calendar, Clock, PlayCircle } from "lucide-react";
 
 type UpcomingSessionsProps = {
   sessions: {

@@ -1,16 +1,8 @@
-import {  dummyInstructors, dummyStudents } from "@/lib/static";
+import {  batchModules, dummyInstructors, dummyStudents } from "@/lib/static";
 import React from "react";
 import BatchDetails from "./_components/batch-details";
 import { getBatchById } from "@/actions/admin/batches/get-batch-by-id";
 
-export const batchModules = [
-  "HTML & CSS Basics",
-  "JavaScript Fundamentals",
-  "React Core Concepts",
-  "Node.js & Express",
-  "MongoDB Integration",
-  "Authentication & Deployment",
-];
 
 const BatchDetailsPage = async ({
   params,

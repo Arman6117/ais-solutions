@@ -5,9 +5,7 @@ import {
   GraduationCap,
   UserCheck,
   BookOpen,
-  Shield,
-  Users,
-  Settings,
+  Shield
 } from "lucide-react";
 
 const LoginPage = () => {
@@ -187,7 +185,7 @@ const LoginPage = () => {
         {/* Footer */}
         <div className="mt-12 text-center space-y-2">
           <p className="text-gray-500 text-sm">
-            Don't have an account?{" "}
+            {`Don't have an account?`}
             <Link
               href="/auth/register"
               className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors duration-200"

@@ -8,7 +8,6 @@ import { Grid } from "react-loader-spinner";
 import { getAllCoursesTable } from "@/actions/admin/course/get-courses";
 import { CourseTable } from "@/lib/types/types";
 
-import { useRouter } from "next/navigation";
 import { deleteCourses } from "@/actions/admin/course/delete-course";
 
 const CoursesTable = () => {
@@ -16,7 +15,6 @@ const CoursesTable = () => {
   const [deleting, setDeleting] = useState(false);
   const [course, setCourse] = useState<CourseTable[]>([]);
   const [tableKey, setTableKey] = useState(0);
-  const router = useRouter();
   const fetchCourses = async () => {
     setLoading(true);
     const res = await getAllCoursesTable();
@@ -32,24 +30,23 @@ const CoursesTable = () => {
     fetchCourses();
   }, []);
   
-  
+  console.log(deleting)
 
-  {
-    loading && course.length === 0 && (
-      <div className="flex items-center justify-center h-fit mt-[30%] w-full">
-        <Grid
-          visible={true}
-          height="80"
-          width="80"
-          color="#5840ba"
-          ariaLabel="grid-loading"
-          radius="12.5"
-          wrapperStyle={{}}
-          wrapperClass="grid-wrapper"
-        />
-      </div>
-    );
-  }
+  
+  return loading && course.length === 0 && (
+    <div className="flex items-center justify-center h-fit mt-[30%] w-full">
+      <Grid
+        visible={true}
+        height="80"
+        width="80"
+        color="#5840ba"
+        ariaLabel="grid-loading"
+        radius="12.5"
+        wrapperStyle={{}}
+        wrapperClass="grid-wrapper"
+      />
+    </div>
+  );
 
   const handleDelete = async (ids: string[]) => {
     setDeleting(true);

@@ -1,6 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardTitle, CardHeader, CardContent, CardDescription } from "@/components/ui/card";
-import { Award, Calendar, Mail, Phone, User } from "lucide-react";
+import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
+import { Calendar, Mail, Phone, User } from "lucide-react";
 
 type InstructorStats = {
   totalStudents: number;

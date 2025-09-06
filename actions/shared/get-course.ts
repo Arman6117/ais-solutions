@@ -1,15 +1,21 @@
-"use server";
 import { connectToDB } from "@/lib/db";
 import { Courses } from "@/lib/types/course.type";
-
 import { Course } from "@/models/course.model";
 
-export const getCourses = async ():Promise<Courses[]> => {
+export const getCourses = async () => {
   try {
     await connectToDB();
-    const courses= (await Course.find({})
+    const coursesData = await Course.find({})
       .select("_id courseName")
-      .exec())  as Courses[];
+      .exec();
+    
+    // Wrap in nested structure to match interface
+    const courses = coursesData.map(course => ({
+      courses: [{
+        _id: `${course._id}`,
+        courseName: course.courseName as string,
+      }]
+    }));
     
     return JSON.parse(JSON.stringify(courses)) || [];
   } catch (err) {

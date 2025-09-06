@@ -6,7 +6,7 @@ import { getCourses } from "@/actions/shared/get-course";
 const CreateBatchPage = async () => {
   const courses = await getCourses();
 
-  const plainCourses = courses.map((course) => ({
+  const plainCourses = courses.map((course:{_id:string,courseName:string}) => ({
     id: String(course._id),        // convert ObjectId to string
     name: course.courseName,       // use a plain field
   }));

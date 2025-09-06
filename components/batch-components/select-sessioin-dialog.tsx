@@ -31,7 +31,7 @@ export default function SelectSessionDialog({
   useEffect(() => {
     setAvailableSessions(sessions);
   }, [sessions]);
-  const today = new Date();
+
 
   const filteredSessions = showOlder
     ? availableSessions.filter(

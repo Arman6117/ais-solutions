@@ -1,4 +1,3 @@
-import { PaymentMode } from "./types";
 
 export interface CourseInfo {
     _id:string

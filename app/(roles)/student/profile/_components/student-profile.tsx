@@ -17,7 +17,8 @@ const StudentProfile = () => {
   const fetchStudentInfo = async() => {
     try {
       const session = await authClient.getSession()
-      const studentId = await getStudentId(session.data?.user.email!)
+      if(!session.data) return
+      const studentId = await getStudentId(session.data.user.email!)
       if(!studentId) {
         return
       }

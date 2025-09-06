@@ -1,8 +1,6 @@
 import React from "react";
 import CreateCourseBasicInfo from "./create-course-basic-info";
-import CreateCourseInstructors from "./create-course-intstrcutors";
 import CreateCourseModules from "./create-course-modules";
-import { Button } from "@/components/ui/button";
 import CreateCourseButton from "./create-course-button";
 
 const CreateCourse = () => {

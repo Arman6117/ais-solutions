@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { BatchModules } from "@/lib/types/types";
-import AddInstructorButton from "@/app/(roles)/admin/courses/_components/add-instructor-button";
+// import AddInstructorButton from "@/app/(roles)/admin/courses/_components/add-instructor-button";
 import { ModuleEditData, ModuleStatus } from "./modules-card";
 
 interface StatusConfig {
@@ -58,7 +58,7 @@ export default function ModuleCard({
   onCancel,
   onStatusChange,
   onEditDataChange,
-  onAddInstructor,
+  // onAddInstructor,
 }: ModuleCardProps) {
   const StatusIcon = statusConfig[module.status].icon;
 
@@ -90,7 +90,7 @@ export default function ModuleCard({
             <div className="flex items-center gap-1">
               <User size={14} />
               <span className="font-medium">Instructor name</span>
-              {isEditing && (
+              {/* {isEditing && (
                 <AddInstructorButton
                   className="size-7 ml-10"
                   showLabel={false}
@@ -100,7 +100,7 @@ export default function ModuleCard({
                     })
                   }
                 />
-              )}
+              )} */}
             </div>
             <div className="flex items-center gap-1">
               <Users size={14} />

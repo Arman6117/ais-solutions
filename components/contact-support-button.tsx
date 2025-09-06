@@ -11,15 +11,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { MdContactSupport, MdSend, MdCheck } from "react-icons/md";
-import { Alert, AlertDescription } from "./ui/alert";
 
 interface FormData {
   name: string;
@@ -116,7 +108,7 @@ const ContactSupportButton: React.FC = () => {
               Message Sent Successfully!
             </DialogTitle>
             <p className="text-gray-600">
-              Thank you for contacting us. We'll get back to you.
+             {` Thank you for contacting us. We'll get back to you.`}
             </p>
           </div>
         </DialogContent>

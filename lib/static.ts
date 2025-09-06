@@ -4,14 +4,21 @@ import { MdOutlineLocalOffer, MdSupportAgent } from "react-icons/md";
 import {
   PiChalkboardTeacher,
   PiChalkboardTeacherDuotone,
-  PiFolderSimpleUser,
+  
   PiInvoice,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Invoice, InvoiceTable, Offer, Student } from "./types/types";
-import { UserCircleIcon } from "lucide-react";
-import { FaMoneyBill, FaUser } from "react-icons/fa";
-import {Course as CourseType} from "../lib/types/student-profile.type"
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, InvoiceTable, Offer, Student } from "./types/types";
+import { FaUser } from "react-icons/fa";
+
+export const batchModules = [
+  "HTML & CSS Basics",
+  "JavaScript Fundamentals",
+  "React Core Concepts",
+  "Node.js & Express",
+  "MongoDB Integration",
+  "Authentication & Deployment",
+];
 
 export const adminSidebarLinks = [
   {
@@ -728,44 +735,6 @@ export const dummySessions = [
 ];
 
 
-export const dummyStudentProfile ={
-  id:"1",
-  name: "Rohan Sharma",
-  email: "rohan@example.com",
-  number: "+91 9876543210",
-  image: "https://placehold.co/120x120",
-  totalFees: 15000,
-  paidFees: 10000,
-  courses: [
-    {
-      id:"1",
-      name: "Full Stack Web Development",
-      total: 8000,
-      paid: 8000,
-      status: "Completed",
-      batch: "Batch A",
-      approved: true,
-    },
-    {
-      id:"2",
-      name: "Data Structures & Algorithms",
-      total: 7000,
-      paid: 2000,
-      status: "Ongoing",
-      batch: "Batch B",
-      approved: true,
-    },
-    {
-      id:"3",
-      name: "DevOps Fundamentals",
-      total: 5000,
-      paid: 0,
-      status: "Ongoing",
-      batch: "Batch C",
-      approved: false,
-    },
-  ] as CourseType[],
-}
 
 
 export const dummyEnrolledCourseData = {

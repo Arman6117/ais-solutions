@@ -9,18 +9,17 @@ import { useEffect, useState } from "react";
 import { PiStarFill } from "react-icons/pi";
 import { toast } from "sonner";
 
-// Sample data
-
 type ModuleTableData = {
   _id: string;
   name: string;
-  course: string[];
+  courseId: {_id: string, courseName: string}[];
   price: number;
   discount: number;
   offerPrice?: number;
   createdAt: string;
   rating: number;
 };
+
 const columns: Column<ModuleTableData>[] = [
   {
     id: "name",
@@ -31,28 +30,38 @@ const columns: Column<ModuleTableData>[] = [
     id: "course",
     header: "Courses",
     accessor: (row) => {
-      if (Array.isArray(row.course)) {
-        if (row.course.length <= 2) {
+      // Check if courseId exists and is an array
+      if (Array.isArray(row.courseId) && row.courseId.length > 0) {
+        // Extract course names from the courseId array
+        const courseNames = row.courseId.map(course => course.courseName);
+        
+        if (courseNames.length <= 2) {
           return (
             <div className="flex items-center justify-center gap-2">
               <BookOpen className="size-3 text-primary-bg" />
-              <span>{row.course.join(", ")}</span>
+              <span>{courseNames.join(", ")}</span>
             </div>
           );
         } else {
-          const remaining = row.course.length - 2;
-
+          const remaining = courseNames.length - 2;
           return (
             <div className="flex items-center justify-center gap-2">
               <BookOpen className="size-3 text-primary-bg" />
               <span>
-                {row.course.slice(0, 2).join(", ")} +{remaining} more
+                {courseNames.slice(0, 2).join(", ")} +{remaining} more
               </span>
             </div>
           );
         }
       }
-      return row.course || "-";
+      
+      // Return fallback if no courses are assigned
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <BookOpen className="size-3 text-gray-400" />
+          <span className="text-gray-500">No courses assigned</span>
+        </div>
+      );
     },
   },
   {
@@ -118,6 +127,7 @@ export default function ModulesDataTable() {
       console.error("Error deleting modules:", error);
     }
   };
+
   const fetchModules = async () => {
     try {
       const res = await getAllModulesTable();
@@ -135,10 +145,11 @@ export default function ModulesDataTable() {
   useEffect(() => {
     fetchModules();
   }, []);
+
   return (
     <>
       <DataTable
-      key={tableKey}
+        key={tableKey}
         data={modules}
         columns={columns}
         searchPlaceholder="Search modules..."

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import {   formatDistance } from "date-fns";
+import { formatDistance } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,6 @@ const CourseCard = ({ course }: CourseCardProps) => {
     new Date(course.courseEndDate),
     { addSuffix: false } // removes "in" or "ago"
   );
-
 
   return (
     <Link href={`/student/courses/course-details/${course._id}`}>
@@ -66,12 +65,18 @@ const CourseCard = ({ course }: CourseCardProps) => {
 
           <div className="flex justify-between">
             <div className="flex gap-2 items-center mt-2">
-              <span className="text-xl font-bold">
-                ₹{course.courseOfferPrice}
-              </span>
-              <span className="line-through text-muted-foreground">
-                ₹{course.coursePrice}
-              </span>
+              {course.courseOfferPrice !== course.coursePrice ? (
+                <>
+                  <span className="text-xl font-bold">
+                    ₹{course.courseOfferPrice}
+                  </span>
+                  <span className="line-through text-muted-foreground">
+                    ₹{course.coursePrice}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xl font-bold">₹{course.coursePrice}</span>
+              )}
             </div>
             <Button
               className="border-primary-bg cursor-pointer text-primary-bg hover:bg-primary-bg/10 hover:text-primary-bg"

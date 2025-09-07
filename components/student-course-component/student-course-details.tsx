@@ -23,7 +23,6 @@ import StudentCourseReviews from "./student-course-reviews";
 import { CourseDetails } from "@/lib/types/course.type";
 import { format } from "date-fns";
 
-
 type StudentCourseDetailsProps = {
   course: CourseDetails | undefined;
   message?: string;
@@ -41,14 +40,11 @@ const StudentCourseDetails = ({
       </div>
     );
   }
-  const totalPrice = course.modules.reduce(
-    (acc, module) => acc + module.price,
-    0
-  );
+
   return (
-    <div className="flex flex-col w-full relative  ">
+    <div className="flex flex-col w-full relative">
       <div className="h-auto bg-gradient-to-r gap-4 rounded-md from-[#16161d] to-indigo-950 p-10 flex flex-col">
-        <h1 className="sm:text-[45px] text-4xl max-w-[550px] text-white font-bold ">
+        <h1 className="sm:text-[45px] text-4xl max-w-[550px] text-white font-bold">
           {course.courseName}
         </h1>
         <p className="text-white text-sm max-w-[550px]">
@@ -58,12 +54,6 @@ const StudentCourseDetails = ({
           <Pyramid className="text-white" />
           {course.courseLevel}
         </Badge>
-        {/* <span className="text-white text-sm flex gap-2">
-          Instructors:
-          <Link href={""} className="hover:underline hover:text-blue-500">
-            John Doe
-          </Link>
-        </span> */}
         <div className="flex gap-2 items-center">
           <Calendar className="text-white size-4" />
           <span className="text-white text-sm">
@@ -71,7 +61,7 @@ const StudentCourseDetails = ({
           </span>
         </div>
       </div>
-      <div className="flex md:flex-row flex-col sm:p-0 p-10  justify-between">
+      <div className="flex md:flex-row flex-col sm:p-0 p-10 justify-between">
         <div className="flex flex-col">
           <CourseBasicInfoCard
             learners={course.numberOfStudents}
@@ -79,12 +69,10 @@ const StudentCourseDetails = ({
             rating={course.rating}
           />
           <ModulesDescription modules={course.modules} />
-          {/* <StudentCourseInstructorCard instructors={dummyInstructors} /> */}
           <Separator className="mt-5" />
-          {/* <StudentCourseReviews className="md:flex hidden" isEnrolled={false} /> */}
         </div>
-        <Card className="p-0  md:fixed md:right-12 md:top-20 mt-4 max-h-[550px]">
-          <CardContent className="p-3   flex flex-col">
+        <Card className="p-0 md:fixed md:right-12 md:top-20 mt-4 max-h-[550px]">
+          <CardContent className="p-3 flex flex-col">
             <Image
               src={course.courseThumbnail}
               width={350}
@@ -93,16 +81,13 @@ const StudentCourseDetails = ({
               className="rounded-md"
             />
             <div className="flex flex-col mt-5">
-              <h1 className="text-xl font-semibold">Modules Pricing</h1>
+              <h1 className="text-xl font-semibold">Modules Included</h1>
               <div className="flex-flex-col mt-4">
                 {course.modules.map((module, index) => (
                   <div key={index}>
-                    <div
-                      className="flex justify-between mb-2 items-center"
-                      key={index}
-                    >
-                      <h1 className="text-xl font-medium">{module.name}</h1>
-                      <span className="text-lg font-medium">
+                    <div className="flex justify-between mb-2 items-center">
+                      <h1 className="text-lg font-medium">{module.name}</h1>
+                      <span className="text-sm text-muted-foreground">
                         ₹{module.price}
                       </span>
                     </div>
@@ -110,21 +95,27 @@ const StudentCourseDetails = ({
                 ))}
                 <Separator />
                 <div className="flex justify-between mb-2 items-center">
-                  <span className="text-xl font-medium">Total</span>
+                  <span className="text-xl font-medium">Course Price</span>
                   <div className="flex gap-3 flex-col items-center justify-center">
-                    <div className="flex gap-4">
-                      <span className="text-lg line-through text-muted-foreground">
-                        ₹{totalPrice}
-                      </span>
+                    {course.courseDiscount > 0 ? (
+                      <>
+                        <div className="flex gap-4">
+                          <span className="text-lg line-through text-muted-foreground">
+                            ₹{course.coursePrice}
+                          </span>
+                          <span className="text-xl font-medium">
+                            ₹{course.courseOfferPrice}
+                          </span>
+                        </div>
+                        <span className="text-sm text-center text-green-600 font-light">
+                          {course.courseDiscount}% Discount
+                        </span>
+                      </>
+                    ) : (
                       <span className="text-xl font-medium">
-                        ₹
-                        {totalPrice -
-                          (totalPrice * course.courseDiscount) / 100}
+                        ₹{course.coursePrice}
                       </span>
-                    </div>
-                    <span className="text-sm text-center text-green-600 font-light">
-                      {course.courseDiscount}% Discount
-                    </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -145,7 +136,13 @@ const StudentCourseDetails = ({
                     Only modules you want to purchase
                   </DialogDescription>
                 </DialogHeader>
-                <ModuleSelect modules={course.modules} courseId={course._id} discount={course.courseDiscount}/>
+                <ModuleSelect
+                  modules={course.modules}
+                  courseId={course._id}
+                  discount={course.courseDiscount}
+                  coursePrice={course.coursePrice}
+                  courseOfferPrice={course.courseOfferPrice}
+                />
               </DialogContent>
             </Dialog>
           </CardContent>

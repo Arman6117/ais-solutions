@@ -1,25 +1,22 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { ChapterInput, Modules, prModule } from "@/lib/types/types";
+import {  prModule } from "@/lib/types/types";
 import { Module } from "@/models/module.model";
 import { format } from "date-fns";
-import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
-import { Course } from "@/models/course.model";
 import { CourseModule } from "@/lib/types/course.type";
-
+import "@/models/course.model"
 type ModuleTableData = {
-  id: string;
+  _id: string;
   name: string;
-  course: string[];
+  courseId: {_id:string, courseName:string}[];
   price: number;
   discount: number;
   offerPrice?: number;
-  createdAt: Date;
+  createdAt: string;
   rating: number;
 };
-
 type Topic = {
   title: string;
   description: string;
@@ -38,30 +35,23 @@ export const getAllModulesTable = async () => {
     const modules = await Module.find({})
       .select("_id name createdAt price discount description courseId rating")
       .sort({ createdAt: -1 })
-      .lean();
+      .populate({
+        path:"courseId",
+        select:"courseName"
+      })
+      .exec() as ModuleTableData[]
 
-    const formattedModules = modules.map((module) => {
-      return {
-        _id: `${module._id}`,
-        name: module.name as string,
-        createdAt: format(new Date(module.createdAt), "PP"),
-        price: Number(module.price),
-        discount: Number(module.discount),
-        description: module.description as string,
-        course: module.courseId as string[],
-        rating: Number(module.rating) || 0,
-      };
-    });
-
+   
+// console.log(JSON.parse(JSON.stringify(modules)))
     return {
       success: true,
-      data: formattedModules || [],
+      data: JSON.parse(JSON.stringify(modules)),
       message: modules.length
         ? "Modules fetched successfully"
         : "No modules found",
     };
   } catch (error) {
-    console.error("Error fetching modules:", error);
+    console.log("Error fetching modules:", error);
     return {
       success: false,
       message: "Something went wrong while fetching modules",

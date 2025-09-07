@@ -17,7 +17,6 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 
 const COURSES_PER_PAGE = 5; //TODO:Change it later
 
-
 const AllCourses = () => {
   const [search, setSearchTerm] = useState("");
   const [levelFilter, setLevelFilter] = useState("All");
@@ -42,47 +41,47 @@ const AllCourses = () => {
     fetchCourses();
   }, []);
   const filteredCourses = useMemo(() => {
-    if (!allCourses) return []
+    if (!allCourses) return [];
     let courses = allCourses;
     if (levelFilter !== "All") {
       courses = courses.filter((course) => course.courseLevel === levelFilter);
     }
-    
+
     if (search.trim()) {
       courses = courses.filter((course) =>
         course.courseName.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    courses = [...courses].sort((a, b) => {
+      const aVal =
+        sortBy === "price" ? a.coursePrice : new Date(a.createdAt).getTime();
+      const bVal = sortBy === "price" ? b.coursePrice : new Date(b.createdAt).getTime();
+      return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+    });
+
+    return courses;
+  }, [search, levelFilter, sortOrder, sortBy, allCourses]);
+  if (loading) {
+    return (
+      <div className="flex w-screen h-screen items-center justify-center">
+        <Loader2 className="text-primary-bg animate-spin" />
+      </div>
     );
   }
-  
-  courses = [...courses].sort((a, b) => {
-    const aVal = sortBy === "price" ? a.coursePrice : a.createdAt.getTime();
-    const bVal = sortBy === "price" ? b.coursePrice : b.createdAt.getTime();
-    return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
-  });
-  
-  return courses;
-}, [search, levelFilter, sortOrder, sortBy, allCourses]);
-if(loading) {
-  return (
-    <div className="flex w-screen h-screen items-center justify-center">
-      <Loader2 className="text-primary-bg animate-spin"/>
-    </div>
-  )
-}
-if (!allCourses) {
-  return (
-    <div className="flex w-screen h-screen items-center justify-center">
-      <AlertTriangle className="text-destructive" />
-      <h1 className="text-destructive">No Courses Available Yet!!</h1>
-    </div>
-  );
-}
+  if (!allCourses) {
+    return (
+      <div className="flex w-screen h-screen items-center justify-center">
+        <AlertTriangle className="text-destructive" />
+        <h1 className="text-destructive">No Courses Available Yet!!</h1>
+      </div>
+    );
+  }
   const totalPages = Math.ceil(filteredCourses.length / COURSES_PER_PAGE);
   const paginatedCourses = filteredCourses.slice(
     (currentPage - 1) * COURSES_PER_PAGE,
     currentPage * COURSES_PER_PAGE
   );
-
 
   return (
     <div className="flex flex-col w-full">

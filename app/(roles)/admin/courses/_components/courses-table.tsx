@@ -25,28 +25,29 @@ const CoursesTable = () => {
     }
     setLoading(false);
   };
-  
+
   useEffect(() => {
     fetchCourses();
   }, []);
-  
-  console.log(deleting)
 
-  
-  return loading && course.length === 0 && (
-    <div className="flex items-center justify-center h-fit mt-[30%] w-full">
-      <Grid
-        visible={true}
-        height="80"
-        width="80"
-        color="#5840ba"
-        ariaLabel="grid-loading"
-        radius="12.5"
-        wrapperStyle={{}}
-        wrapperClass="grid-wrapper"
-      />
-    </div>
-  );
+  console.log(deleting);
+
+  if (loading && course.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-fit mt-[30%] w-full">
+        <Grid
+          visible={true}
+          height="80"
+          width="80"
+          color="#5840ba"
+          ariaLabel="grid-loading"
+          radius="12.5"
+          wrapperStyle={{}}
+          wrapperClass="grid-wrapper"
+        />
+      </div>
+    );
+  }
 
   const handleDelete = async (ids: string[]) => {
     setDeleting(true);
@@ -55,8 +56,8 @@ const CoursesTable = () => {
 
       if (res.success) {
         toast.success(res.message || "Courses deleted successfully");
-        await fetchCourses()
-        setTableKey(prev => prev + 1)
+        await fetchCourses();
+        setTableKey((prev) => prev + 1);
       } else {
         toast.error(res.message || "Failed to delete courses");
       }
@@ -76,7 +77,7 @@ const CoursesTable = () => {
         </div>
       ) : (
         <DataTable
-        key={tableKey}
+          key={tableKey}
           href={`/admin/courses/course-details/`}
           data={course}
           columns={[

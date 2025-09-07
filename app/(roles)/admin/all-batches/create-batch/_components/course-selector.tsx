@@ -5,8 +5,8 @@ import React from 'react'
 type CourseSelectorProps = {
     setCourseId:(value:string)=> void;
     handleInputChange:(field:string,value:string) => void;
-    courseList:{id:string,name:string}[]
-    setCourseList: React.Dispatch<React.SetStateAction<{ id: string; name: string }[]>>;
+    courseList:{_id:string,courseName:string}[]
+    setCourseList: React.Dispatch<React.SetStateAction<{ _id: string; courseName: string }[]>>;
 
 }
 const CourseSelector = ({courseList,handleInputChange,setCourseId}:CourseSelectorProps) => {
@@ -24,9 +24,9 @@ const CourseSelector = ({courseList,handleInputChange,setCourseId}:CourseSelecto
         <SelectValue placeholder="Select a course" />
       </SelectTrigger>
       <SelectContent>
-        {courseList.map((course) => (
-          <SelectItem key={course.id} value={course.id}>
-            {course.name}
+        {courseList.map((course, index) => (
+          <SelectItem key={index} value={course._id}>
+            {course.courseName}
           </SelectItem>
         ))}
       </SelectContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,14 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-
-// import InstructorsCards from "@/components/instructors-cards";
-// import AddInstructorButton from "../../../courses/_components/add-instructor-button";
-
 import AddModuleButton from "@/components/add-module-button";
 import { BatchType, Mode, Modules } from "@/lib/types/types";
 import SelectedModulesAccordion from "../../../courses/create-course/_components/selected-modules-accoridian";
-
 import CourseSelector from "./course-selector";
 import { createBatch } from "@/actions/admin/batches/create-batch";
 import TypeSelector from "./type-selector";
@@ -31,15 +26,18 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getCourseModulesByCourse } from "@/actions/admin/batches/get-modules-by-course";
 
+type CourseProp = {
+  _id: string;
+  courseName: string;
+};
+
 type CreateBatchProps = {
   courses: {
-    id: string;
-    name: string;
+    courses: CourseProp[];
   }[];
 };
 
 export default function CreateBatch({ courses }: CreateBatchProps) {
-  // const [instructors, setInstructors] = useState<any[]>([]);
   const [modules, setModules] = useState<Modules[]>([]);
   const [availableModules, setAvailableModules] = useState<Modules[]>([]);
   const [courseId, setCourseId] = useState<string>("");
@@ -57,12 +55,17 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
     groupLink: "",
   });
 
+  // This formats the nested 'courses' prop into a flat array for the dropdown
+  const formattedCourses = useMemo(() => {
+    if (!courses) return [];
+    return courses.flatMap((item) => item.courses);
+  }, [courses]);
+
   useEffect(() => {
     const fetchModules = async () => {
       if (!courseId) return;
       try {
         const res = await getCourseModulesByCourse(courseId);
-;
         if (res.success) {
           setAvailableModules(res.data);
         } else {
@@ -102,10 +105,9 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
         toast.error(res.message);
       }
       if (res.errors) {
-        console.log(res.errors)
         toast.custom(() => (
           <div className="bg-destructive text-white font-semibold p-2">
-            {Object.values(res.errors).join(",")}
+            {Object.values(res.errors).join(", ")}
           </div>
         ));
       }
@@ -137,9 +139,8 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              {/* Course Selector */}
               <CourseSelector
-                courseList={courses}
+                courseList={formattedCourses}
                 handleInputChange={handleInputChange}
                 setCourseId={(id) => {
                   setCourseId(id);
@@ -216,7 +217,6 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
               </div>
 
               <TypeSelector handleInputChange={handleInputChange} />
-
               <ModeSelector handleInputChange={handleInputChange} />
 
               <div className="space-y-2">
@@ -226,48 +226,25 @@ export default function CreateBatch({ courses }: CreateBatchProps) {
                 </Badge>
               </div>
 
-              {/* Instructors */}
               <Card>
                 <CardHeader>
                   <CardTitle>Instructors</CardTitle>
                   <CardDescription>
-                    Add instructors to this batch
+                    Add instructors to this batch (feature coming soon)
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="min-h-40">
-                  {/* {instructors.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-md py-8">
-                      <div className="text-center text-gray-500">
-                        <p>No instructors added yet</p>
-                      </div>
+                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-md py-8">
+                    <div className="text-center text-gray-500">
+                      <p>No instructors added yet</p>
                     </div>
-                  ) : (
-                    <InstructorsCards
-                      key={instructors.length}
-                      instructors={instructors}
-                      label="Batch"
-                      mode="create"
-                    />
-                  )} */}
+                  </div>
                 </CardContent>
-                <CardFooter>
-                  {/* <AddInstructorButton
-                  showLabel
-                    setInstructor={(newInstructor) => {
-                      if (typeof newInstructor === "function") {
-                        setInstructors(newInstructor);
-                      } else {
-                        setInstructors((prev) => [...prev, newInstructor]);
-                      }
-                    }}
-                  /> */}
-                </CardFooter>
               </Card>
             </CardContent>
           </Card>
         </div>
 
-        {/* Modules Sidebar */}
         <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardHeader>

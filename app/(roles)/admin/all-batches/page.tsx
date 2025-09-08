@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { getAllBatches } from "@/actions/admin/batches/get-all-batches";
 import AllBatches from "./_components/all-batches";
 
+export const revalidate = 60;
 const AllBatchesPage = async() => {
   const res = await getAllBatches()
   

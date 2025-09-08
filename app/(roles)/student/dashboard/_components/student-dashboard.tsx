@@ -10,7 +10,7 @@ import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { getStudentCourses } from "@/actions/student/courses/get-student-courses";
 import Link from "next/link";
-
+export const revalidate = 60;
 const StudentDashboard = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const courses = await getStudentCourses(session?.user.email as string);

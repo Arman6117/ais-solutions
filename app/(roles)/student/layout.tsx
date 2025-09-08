@@ -5,6 +5,7 @@ import ContactSupportButton from "@/components/contact-support-button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import StudentBottomNav from "./dashboard/_components/student-bottom-nav";
 
 const StudentDashboardLayout = async ({
   children,
@@ -32,6 +33,7 @@ const StudentDashboardLayout = async ({
           <ContactSupportButton />
         </PageContainer>
       </section>
+      <StudentBottomNav/>
     </main>
   );
 };

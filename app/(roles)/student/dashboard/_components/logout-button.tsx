@@ -19,11 +19,11 @@ const LogOutButton = () => {
   };
   return (
     <Button
-      className="size-10 cursor-pointer hover:bg-muted-foreground"
+      className="sm:size-10 cursor-pointer group hover:bg-destructive sm:hover:bg-muted-foreground"
       variant={"ghost"}
       onClick={handleLogOut}
     >
-      <LogOut className="text-white size-9" />
+      <LogOut className="sm:text-white group-hover:text-white   sm:size-9" />
     </Button>
   );
 };

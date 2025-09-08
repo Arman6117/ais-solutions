@@ -2,14 +2,11 @@ import React from "react";
 import CreateBatch from "./_components/create-batch";
 import { getCourses } from "@/actions/shared/get-course";
 
-
+export const revalidate = 60;
 const CreateBatchPage = async () => {
   const courses = await getCourses();
 
-  // const plainCourses = courses.map((course:{_id:string,courseName:string}) => ({
-  //   id: String(course._id),        // convert ObjectId to string
-  //   name: course.courseName,       // use a plain field
-  // }));
+ 
 console.log(courses)
   return <CreateBatch courses={courses} />;
 };

@@ -37,14 +37,14 @@ const AddModuleChapterButton = ({
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = () => {
+    // e.preventDefault();
     const newChap = { id: Date.now(), name, description, topics: [] };
     setChapter([...(chapter || []), { ...newChap }]);
   };
   return (
     <Dialog open={open}>
-      <DialogTrigger asChild onClick={()=> setOpen(true)}>
+      <DialogTrigger asChild onClick={() => setOpen(true)}>
         <Button className="bg-white  text-black hover:text-white cursor-pointer">
           Add Chapter
         </Button>
@@ -53,7 +53,7 @@ const AddModuleChapterButton = ({
         <DialogHeader className="bg-primary-bg rounded-lg p-5 text-white">
           <DialogTitle>Add a new chapter to the module</DialogTitle>
         </DialogHeader>
-        <form className="p-5 flex flex-col gap-7" onSubmit={onSubmit}>
+        <form className="p-5 flex flex-col gap-7">
           <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">
               <div className="h-6 w-2 rounded-full bg-primary-bg"></div>
@@ -84,7 +84,10 @@ const AddModuleChapterButton = ({
             <Button
               className="bg-primary-bg cursor-pointer"
               type="submit"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                onSubmit();
+              }}
             >
               Submit
             </Button>

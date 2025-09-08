@@ -1,22 +1,32 @@
-import React from "react";
+"use client"; // This layout now needs state, so it must be a client component
+
+import React, { useState } from "react";
 
 import PageContainer from "@/components/page-container";
 import AdminSidebar from "./dashboard/_components/admin-sidebar";
-import AdminMobileNav from "./dashboard/_components/admin-sidebar-mobile";
+import AdminHeader from "./dashboard/_components/admin-header";
+
 
 const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <main className="h-screen bg-primary-bg">
-      {/* --- Desktop Sidebar (Visible on medium screens and up) --- */}
-      <AdminSidebar />
-      
-      {/* --- Mobile Bottom Navigation (Visible on small screens) --- */}
-      <AdminMobileNav />
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-     
-      <section className="h-full  px-2 py-2 md:py-3">
-        <PageContainer>{children}</PageContainer>
-      </section>
+  return (
+    <main className="h-screen sm:bg-primary-bg ">
+      {/* The sidebar is now controlled by state on mobile */}
+      <AdminSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+
+      {/* The main content area */}
+      <div className="h-full transition-all duration-300 ">
+        {/* The header contains the burger button for mobile */}
+        <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
+
+        <section className="px-2 py-3">
+          <PageContainer>{children}</PageContainer>
+        </section>
+      </div>
     </main>
   );
 };

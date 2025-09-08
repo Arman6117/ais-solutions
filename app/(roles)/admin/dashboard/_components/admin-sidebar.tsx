@@ -1,58 +1,81 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import { adminSidebarLinks } from "@/lib/static";
 import { usePathname } from "next/navigation";
+import { adminSidebarLinks } from "@/lib/static";
 import { cn } from "@/lib/utils";
-// import AdminSignOutButton from "./admin-sign-out";
+import { LogOut, X } from "lucide-react";
 
-const AdminSidebar = () => {
-  // const [active, setActive] = useState(false);
+type AdminSidebarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-  const url = usePathname();
-
-
+const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
+  const pathname = usePathname();
 
   return (
-    <div className="h-full  w-12 hidden md:block md:w-24 md:fixed bg-primary-bg ">
-      <div className="flex flex-col gap-17 items-center justify-center px-0 py-10 md:p-10 ">
-        <div className="text-white ">Logo</div>
-        <div className="flex flex-col justify-between">
+    <>
+      {/* --- Overlay (for mobile) --- */}
+      <div
+        className={cn(
+          "md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity",
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        onClick={onClose}
+      />
 
-        <div className="flex flex-col gap-10 ">
-          {adminSidebarLinks.map(({ label, link, icon: Icon }) => {
-           const isActive = url.includes(link)
-            
-           return (
-              <div key={label} className="flex justify-center">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Link href={link}>
-                        <Icon className={cn( "transition-all" ,!isActive ? "size-5 lg:size-6 text-white/40 " : "size-6 lg:size-8 text-white")}/>
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <span className="">{label}</span>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            );
-          })}
-        </div>
-          {/* <AdminSignOutButton/> */}
+      {/* --- Sidebar --- */}
+      <aside
+        className={cn(
+          "fixed top-0 left-0 h-full bg-primary-bg z-50 transition-transform duration-300 ease-in-out",
+          "w-64 md:w-24", // Width for mobile drawer and desktop sidebar
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        )}
+      >
+        <div className="flex flex-col h-full items-center py-8">
+          {/* Header with Logo and Close button (mobile) */}
+          <div className="flex items-center justify-between w-full px-6 md:justify-center md:px-0 mb-16">
+            <div className="text-white font-bold text-2xl">
+              <Link href="/admin/dashboard">Logo</Link>
+            </div>
+            <button className="md:hidden text-white/80" onClick={onClose}>
+              <X className="h-6 w-6" />
+            </button>
           </div>
-      </div>
-    </div>
+
+          {/* Navigation Links */}
+          <nav className="flex flex-col items-stretch md:items-center w-full gap-4">
+            {adminSidebarLinks.map(({ label, link, icon: Icon }) => {
+              const isActive = pathname.includes(link);
+              return (
+                <Link
+                  href={link}
+                  key={label}
+                  onClick={onClose} // Close sidebar on link click for mobile
+                  className={cn(
+                    "flex items-center gap-4 text-white/60 hover:text-white hover:bg-white/10 p-3 rounded-md transition-colors",
+                    "md:justify-center md:p-2", // Desktop-specific styles
+                    isActive && "text-white bg-white/10"
+                  )}
+                >
+                  <Icon className="size-6 flex-shrink-0" />
+                  <span className="md:hidden">{label}</span> {/* Hide label on desktop */}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Sign Out Button (at the bottom) */}
+          <div className="mt-auto w-full px-3 md:px-0">
+            <button className="flex items-center w-full gap-4 text-white/60 hover:text-white hover:bg-white/10 p-3 rounded-md transition-colors md:justify-center md:p-2">
+              <LogOut className="size-6 flex-shrink-0" />
+              <span className="md:hidden">Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };
 

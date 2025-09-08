@@ -10,7 +10,7 @@ type AdminHeaderProps = {
 const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
   return (
     // <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b">
-      <div className="container mx-auto h-14 flex items-center">
+      <div className="container sm:hidden mx-auto h-14 flex items-center">
         {/* Burger menu button, only visible on mobile */}
         <Button
           variant="ghost"

@@ -11,7 +11,7 @@ const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <main className="h-screen sm:bg-primary-bg ">
+    <main className=" sm:bg-primary-bg ">
       {/* The sidebar is now controlled by state on mobile */}
       <AdminSidebar
         isOpen={isSidebarOpen}

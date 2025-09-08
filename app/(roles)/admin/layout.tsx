@@ -19,11 +19,11 @@ const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {
       />
 
       {/* The main content area */}
-      <div className="h-full transition-all duration-300 ">
+      <div className=" transition-all duration-300 ">
         {/* The header contains the burger button for mobile */}
         <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
-        <section className="px-2 py-3">
+        <section className="px-2 h-screen py-3">
           <PageContainer>{children}</PageContainer>
         </section>
       </div>

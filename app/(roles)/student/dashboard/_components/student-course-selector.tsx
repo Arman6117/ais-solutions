@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BookOpen, Loader2 } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { useCourseStore } from "@/store/use-course-store";
 import { StudentCourse } from "@/lib/types/course.type";
 import { RiLoader2Line } from "react-icons/ri";

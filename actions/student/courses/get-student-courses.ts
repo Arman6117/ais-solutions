@@ -24,7 +24,7 @@ export const getStudentCourses = async (
       console.log("Invalid");
       return { data: [] };
     }
-
+    await connectToDB();
     const student = await Student.findOne({ email: studentEmail })
       .select("courses.courseId courses.isApproved")
       .populate({ path: "courses.courseId", select: "_id courseName" });
@@ -33,7 +33,7 @@ export const getStudentCourses = async (
       return { data: [] };
     }
 
-    console.log(JSON.parse(JSON.stringify(student)));
+    // console.log(JSON.parse(JSON.stringify(student)));
 
     if (!student.courses || !Array.isArray(student.courses)) {
       return { data: [] };

@@ -7,7 +7,7 @@ import LectureCardSuspense from "./lecture-card-suspense";
 const LectureScheduleTab = () => {
   return (
     <Tabs defaultValue="today" orientation="horizontal">
-      <TabsList className="inline-flex items-center justify-center rounded-full bg-muted p-1 shadow-inner">
+      <TabsList className="inline-flex items-center w-full justify-center rounded-full bg-muted p-1 shadow-inner">
         <TabsTrigger
           value="today"
           className="text-sm sm:text-base px-6 py-2 sm:px-8 sm:py-3 font-medium transition-all duration-200 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-primary"

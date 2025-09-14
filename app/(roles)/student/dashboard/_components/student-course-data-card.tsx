@@ -15,6 +15,8 @@ const StudentCourseDataCard = () => {
   //   return selectedCourse?.modules.length || 0;
   // },[selectedCourse]);
   return (
+    <div className="w-[250px] sm:w-[400px] md:w-fit sm:mx-auto">
+
     <div className="flex flex-col  w-full items-center justify-between rounded-lg shadow-md  bg-white p-3 ">
      
      <React.Suspense fallback={<CourseDataSkeleton/>}>
@@ -31,7 +33,7 @@ const StudentCourseDataCard = () => {
       
      </React.Suspense>
      <React.Suspense fallback={<CourseDataSkeleton/>}>
-      <div className="flex flex-col p-4 w-full  bg-soft-white">
+      <div className="flex flex-col h-auto p-4 w-full  bg-soft-white">
         <div className="bg-white p-1 size-7 h-auto flex items-center  rounded-md ">
             <PiStudent className="text-primary-bg size-7"/>
         </div>
@@ -41,6 +43,7 @@ const StudentCourseDataCard = () => {
         </div>
       </div>
      </React.Suspense>
+    </div>
     </div>
   );
 };

@@ -9,8 +9,8 @@ const StudentDashboardPage =async () => {
   try{
     
     const session = await auth.api.getSession({headers:await headers()})
-    // await getStudentCourses(session?.user.id as string);
-    console.log(session)
+
+
     if(!session) {
       redirect('/auth/login/student')
     }

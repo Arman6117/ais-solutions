@@ -51,11 +51,11 @@ const StudentModulesTab = () => {
             placeholder="Search modules"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full"
+            className="sm:w-72 w-56"
           />
         </div>
 
-        <TabsList className="flex-shrink-0 bg-transparent space-x-7 text-lg mb-3">
+        <TabsList className="flex-shrink-0 sm:flex-nowrap flex-wrap bg-transparent text-sm md:space-x-7 md:text-lg mb-10 sm:mb-3">
           <TabsTrigger
             value="all"
             className="cursor-pointer bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-primary-bg shadow-white text-primary data-[state=active]:font-semibold"
@@ -85,7 +85,7 @@ const StudentModulesTab = () => {
         <div className="flex-1 min-h-0">
           <TabsContent value="all" className="h-full mt-0">
             <ScrollArea className="h-full pr-2">
-              <div className="space-y-3 p-3">
+            <div className="space-y-2 sm:space-y-3 pb-24 sm:pb-4">
                 {filteredModules.map((module) => (
                   <React.Suspense
                     fallback={<ModuleCardSkeleton />}

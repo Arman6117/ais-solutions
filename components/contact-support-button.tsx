@@ -118,7 +118,7 @@ const ContactSupportButton: React.FC = () => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild className="fixed z-30 bottom-10 right-16">
+      <DialogTrigger asChild className="fixed z-30 sm:bottom-10 bottom-20 right-5 sm:right-16">
         <Button className="size-10 rounded-full cursor-pointer">
           <MdContactSupport className="size-8" />
         </Button>

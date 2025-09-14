@@ -7,9 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BookOpen, Loader } from "lucide-react";
+import { BookOpen, Loader2 } from "lucide-react";
 import { useCourseStore } from "@/store/use-course-store";
 import { StudentCourse } from "@/lib/types/course.type";
+import { RiLoader2Line } from "react-icons/ri";
 
 type StudentCourseSelectorProps = {
   courses: StudentCourse[];
@@ -50,7 +51,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
   }, [selectedCourse, coursesData, setSelectedCourse]);
 
   if (loading) {
-    return <Loader className="animate-spin" />;
+    return <RiLoader2Line className="animate-spin text-primary-bg " />;
   }
 
   return (
@@ -58,7 +59,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
       value={selectedCourse?.courseName}
       onValueChange={handleCourseChange}
     >
-      <SelectTrigger className="flex gap-2 w-64 text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
+      <SelectTrigger className="flex  gap-2 sm:w-64 w-64 text-xs sm:text-sm border-primary-bg font-medium text-violet-950">
         <BookOpen className="size-4 text-primary-bg" />
         <SelectValue placeholder="Select a course" />
       </SelectTrigger>

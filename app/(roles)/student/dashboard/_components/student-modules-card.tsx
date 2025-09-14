@@ -22,7 +22,7 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
     <StudentModulesMeetingDialog session={dummySessions} status={module.status} >
       <div
         className={cn(
-          "flex rounded  cursor-pointer border-2 transition-all p-4 gap-6",
+          "flex sm:flex-row flex-col rounded  cursor-pointer border-2 transition-all p-2 items-center sm:items-start sm:p-4 sm:gap-6",
           `hover:shadow-lg hover:shadow-primary-bg/10 hover:border-2 hover:border-primary-bg`,
 
           bgStyle.bg,
@@ -33,13 +33,15 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
         <div className="bg-white rounded-lg size-20 p-1">
           <Image
             alt="course thumbnail"
-            className="rounded-lg"
+            className="rounded-lg object-cover"
             src={"https://placehold.co/80x80"}
-            width={80}
-            height={80}
+          //  fill
+          width={80}
+          height={0}
+          //  sizes="10px"
           />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col sm:gap-2">
           <h1 className="text-lg font-medium ">{module.name}</h1>
 
           <div className="flex gap-6 mt-2">

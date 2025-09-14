@@ -24,7 +24,7 @@ const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
         <section className="px-2 h-screen py-3">
-          <PageContainer>{children}</PageContainer>
+          <PageContainer >{children}</PageContainer>
         </section>
       </div>
     </main>

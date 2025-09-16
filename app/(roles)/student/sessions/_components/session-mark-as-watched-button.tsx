@@ -17,6 +17,7 @@ const SessionMarkAsWatchedButton = ({
       variant={"outline"}
       onClick={onClick}
       disabled={loading}
+      size={'sm'}
     >
       <CheckCircle className="text-primary-bg" />
       <span className="text-primary-bg">Mark As Watched</span>

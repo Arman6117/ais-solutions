@@ -43,9 +43,9 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
     }
   };
   return (
-    <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 bg-white space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex gap-4">
+    <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5  bg-white space-y-3">
+      <div className="flex sm:flex-row flex-col items-center justify-between">
+        <div className="flex sm:flex-row flex-col sm:mb-0 mb-4 items-center gap-4">
           <Badge
             variant={attended ? "default" : "outline"}
             className={`text-xs px-3 py-1 ${
@@ -60,6 +60,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
             <SessionMarkAsWatchedButton
               loading={isLoading}
               onClick={handleClick}
+
             />
           )}
         </div>

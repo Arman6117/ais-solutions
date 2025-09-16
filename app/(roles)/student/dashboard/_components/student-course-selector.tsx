@@ -11,6 +11,7 @@ import { BookOpen } from "lucide-react";
 import { useCourseStore } from "@/store/use-course-store";
 import { StudentCourse } from "@/lib/types/course.type";
 import { RiLoader2Line } from "react-icons/ri";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type StudentCourseSelectorProps = {
   courses: StudentCourse[];
@@ -20,7 +21,9 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
   const { selectedCourse, setSelectedCourse } = useCourseStore();
   const [coursesData, setCoursesData] = useState<StudentCourse[]>(courses);
   const [loading, setLoading] = useState(true);
-
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const fetchCourses = async () => {
     try {
       setLoading(true);
@@ -40,15 +43,40 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
     const course = coursesData.find((c) => c.courseName === courseName);
     if (course) {
       setSelectedCourse(course);
+      const currentParams = new URLSearchParams(searchParams.toString());
+      currentParams.set("courseId", course?._id!);
+      router.push(`${pathname}?${currentParams.toString()}`, { scroll: false });
     }
   };
 
-  // ✅ Fix: select the first course as default when data is ready
   useEffect(() => {
-    if (!selectedCourse && coursesData.length > 0) {
-      setSelectedCourse(coursesData[0]);
+    // 1. Check if the courseId is already in the URL
+    const courseIdFromParams = searchParams.get("courseId");
+
+    // 2. If the URL is missing the param, but we have a default ID from the server...
+    if (!courseIdFromParams && selectedCourse?._id) {
+      // 3. Update the URL to include the default course ID.
+      // We use router.replace() so the back button works correctly.
+      const currentParams = new URLSearchParams(searchParams.toString());
+      currentParams.set("courseId", selectedCourse._id);
+      router.replace(`${pathname}?${currentParams.toString()}`, {
+        scroll: false,
+      });
     }
-  }, [selectedCourse, coursesData, setSelectedCourse]);
+
+    // 4. Also, sync your Zustand store with the definitive ID from the server/URL
+    const currentCourse = courses.find((c) => c._id === selectedCourse?._id);
+    if (currentCourse) {
+      setSelectedCourse(currentCourse);
+    }
+  }, [
+    selectedCourse,
+    courses,
+    searchParams,
+    pathname,
+    router,
+    setSelectedCourse,
+  ]);
 
   if (loading) {
     return <RiLoader2Line className="animate-spin text-primary-bg " />;

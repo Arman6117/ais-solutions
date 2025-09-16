@@ -1,24 +1,24 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { dummyModules } from "@/lib/static";
+
 
 import StudentModulesCard from "./student-modules-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-import { DummyModules } from "@/lib/types/types";
-// import { useCourseStore } from "@/store/use-course-store";
 import ModuleCardSkeleton from "@/components/skeletons/module-card";
+import { ModuleProp } from "./student-batches";
+import { ModuleInfo } from "@/lib/types/student-dashboard.type";
 
-const StudentModulesTab = () => {
-  // const { selectedCourse } = useCourseStore(); //TODO:Fetch modules using selected course
+const StudentModulesTab = ({module}:ModuleProp) => {
+ //TODO:Fetch modules using selected course
   const [filteredModules, setFilteredModules] =
-    useState<DummyModules[]>(dummyModules);
+    useState<ModuleInfo[]>(module);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const filtered = dummyModules.filter((module) => {
+    const filtered = module.filter((module) => {
       const searchTerm = search.toLowerCase();
       const moduleName = module.name.toLowerCase();
       return moduleName.includes(searchTerm);

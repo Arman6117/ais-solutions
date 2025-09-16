@@ -63,8 +63,8 @@ const CourseCard = ({ course }: CourseCardProps) => {
             </Badge>
           </div>
 
-          <div className="flex justify-between">
-            <div className="flex gap-2 items-center mt-2">
+          <div className="flex flex-wrap justify-between">
+            <div className="flex gap-2  items-center mt-2">
               {course.courseOfferPrice !== course.coursePrice ? (
                 <>
                   <span className="text-xl font-bold">

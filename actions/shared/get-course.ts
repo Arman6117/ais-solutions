@@ -1,5 +1,5 @@
 import { connectToDB } from "@/lib/db";
-import { Courses } from "@/lib/types/course.type";
+
 import { Course } from "@/models/course.model";
 
 export const getCourses = async () => {

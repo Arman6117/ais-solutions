@@ -44,7 +44,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
     if (course) {
       setSelectedCourse(course);
       const currentParams = new URLSearchParams(searchParams.toString());
-      currentParams.set("courseId", course?._id!);
+      currentParams.set("courseId", course._id!);
       router.push(`${pathname}?${currentParams.toString()}`, { scroll: false });
     }
   };

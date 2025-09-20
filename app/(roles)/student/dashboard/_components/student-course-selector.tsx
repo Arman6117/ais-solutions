@@ -50,15 +50,14 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
   };
 
   useEffect(() => {
-    // 1. Check if the courseId is already in the URL
+    
     const courseIdFromParams = searchParams.get("courseId");
+    console.log(courseIdFromParams)
 
-    // 2. If the URL is missing the param, but we have a default ID from the server...
-    if (!courseIdFromParams && selectedCourse?._id) {
-      // 3. Update the URL to include the default course ID.
-      // We use router.replace() so the back button works correctly.
+    if (!courseIdFromParams && !selectedCourse?._id) {
+     
       const currentParams = new URLSearchParams(searchParams.toString());
-      currentParams.set("courseId", selectedCourse._id);
+      currentParams.set("courseId", coursesData[0]._id);
       router.replace(`${pathname}?${currentParams.toString()}`, {
         scroll: false,
       });

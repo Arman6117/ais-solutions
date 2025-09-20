@@ -4,16 +4,14 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 type StudentDashboardPageProps = {
-  searchParams: {
-    courseId: string;
-  };
+  searchParams: Promise<{ courseId: string }>;
 };
 export const revalidate = 60;
 const StudentDashboardPage = async ({
   searchParams,
 }: StudentDashboardPageProps) => {
   const courseId = (await searchParams).courseId;
-  // console.log(courseId)
+  console.log(courseId)
   try {
     const session = await auth.api.getSession({ headers: await headers() });
 

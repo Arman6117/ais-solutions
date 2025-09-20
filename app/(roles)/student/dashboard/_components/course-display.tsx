@@ -20,33 +20,6 @@ export const revalidate = 60;
 const CoursesDisplay = async ({ userEmail, courseId }: CoursesDisplayProps) => {
   const courses = await getStudentCourses(userEmail);
   const studentId = await getStudentId(userEmail);
-  const res = await getStudentDashboard(studentId!, courseId);
-
-  if (!res.success && !res.data) {
-    return (
-      <div className="flex w-full h-full items-center justify-center pb-20 sm:pb-0">
-        <div className="text-center items-center flex flex-col px-4">
-          <AlertTriangle className="text-primary-bg w-12 h-12 opacity-60 mb-4" />
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4">
-            No Courses Found
-          </h2>
-          <p className="text-muted-foreground text-sm sm:text-base">
-            {res.message}
-          </p>
-          <p className="text-muted-foreground mb-6 text-sm sm:text-base">
-            Your request will be accepted within 24 hours.
-          </p>
-          <Button
-            asChild
-            className="bg-primary-bg hover:bg-primary-bg/90 text-white"
-          >
-            <Link href="/student/courses">Browse Courses</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-  const { batch, lectureCompleted, meetings, modules, student } = res.data!;
   if (!courses.data || courses.data.length === 0) {
     return (
       <div className="flex w-full h-full items-center justify-center pb-20 sm:pb-0">
@@ -64,13 +37,45 @@ const CoursesDisplay = async ({ userEmail, courseId }: CoursesDisplayProps) => {
           <Button
             asChild
             className="bg-primary-bg hover:bg-primary-bg/90 text-white"
-          >
+            >
             <Link href="/student/courses">Browse Courses</Link>
           </Button>
         </div>
       </div>
     );
   }
+
+  const effectiveCourseId = courseId && 
+    courses.data.some(course => course._id === courseId) 
+    ? courseId 
+    : courses.data[0]._id;
+  const res = await getStudentDashboard(studentId!, effectiveCourseId);
+  
+  if (!res.success && !res.data) {
+    return (
+      <div className="flex w-full h-full items-center justify-center pb-20 sm:pb-0">
+        <div className="text-center items-center flex flex-col px-4">
+          <AlertTriangle className="text-primary-bg w-12 h-12 opacity-60 mb-4" />
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+            No Courses Found
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            {res.message}
+          </p>
+          <p className="text-muted-foreground mb-6 text-sm sm:text-base">
+            Your request will be accepted within 24 hours.
+          </p>
+          <Button
+            asChild
+            className="bg-primary-bg hover:bg-primary-bg/90 text-white"
+            >
+            <Link href="/student/courses">Browse Courses</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  const { batch, lectureCompleted, meetings, modules, student } = res.data!;
 
   return (
     <div className="flex h-full pr-2 sm:pr-5 py-1 pb-20 sm:pb-1">

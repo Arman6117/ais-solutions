@@ -1,7 +1,7 @@
 type Batch = {
   batchId: {
-    _id: string,
-    name: string
+    _id: '68baf7bb40a3011866ab85e7',
+    name: 'Batch-001'
   },
 }
 export interface StudentTable {

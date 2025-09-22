@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 import { GraduationCap, UserCheck, BookOpen } from "lucide-react";
+import Image from "next/image";
 
 const RegisterPage = () => {
   return (
@@ -14,13 +15,17 @@ const RegisterPage = () => {
         {/* Header */}
         <div className="mb-12">
           <div className="inline-flex items-center gap-3 mb-6">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg">
-              <BookOpen className="h-8 w-8 text-white" />
+          <div className="flex flex-col items-center">
+              <Image src={"/AISLogo.png"} alt="Logo" width={200} height={200} />
+              <div className="flex gap-3 items-center">
+                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg">
+                  <BookOpen className="size-8 text-white" />
+                </div>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Join AIS Solutions
+                </h1>
+              </div>
             </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Join AIS Solutions
-            </h1>
-          </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Choose your role to get started with our comprehensive learning management system
           </p>
@@ -143,6 +148,7 @@ const RegisterPage = () => {
           </p>
         </div>
       </div>
+    </div>
     </div>
   );
 };

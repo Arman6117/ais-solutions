@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { StudentData } from "@/lib/types/student-profile.type";
+import { StudentData } from "@/lib/types/student";
 import { Invoice } from "@/models/invoice.model";
 import { Student } from "@/models/student.model";
 import "@/models/batch.model";

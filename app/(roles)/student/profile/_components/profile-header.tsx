@@ -5,12 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit3, Save, X, Phone, Camera, Mail } from "lucide-react";
-import { EditableData } from "@/lib/types/student-profile.type";
+import { EditableData, StudentProfile } from "@/lib/types/student-profile.type";
 import ProfileDetail from "./profile-detail";
-import { StudentData } from "@/lib/types/student-profile.type";
+import { StudentData } from "@/lib/types/student";
 
 type ProfileHeaderProps = {
-  studentData: StudentData 
+  studentData: StudentData | null;
   isEditing: boolean;
   editData: EditableData;
   onEditToggle: () => void;
@@ -34,8 +34,10 @@ const ProfileHeader = ({
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
- 
-  
+  if(!studentData) {
+    return <h1>No</h1>
+  }
+
   return (
     <Card className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 border-0 shadow-2xl">
       <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
@@ -126,9 +128,9 @@ const ProfileHeader = ({
               <ProfileDetail
                 icon={<Phone />}
                 label="Phone Number"
-                value={editData.phone}
+                value={editData.number}
                 editable={isEditing}
-                onChange={(e) => onEditDataChange("phone", e.target.value)}
+                onChange={(e) => onEditDataChange("number", e.target.value)}
               />
             </div>
           </div>

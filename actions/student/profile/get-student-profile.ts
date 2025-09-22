@@ -25,11 +25,11 @@ export const getStudentProfile = async (
       .populate([
         {
           path: "courses.courseId",
-          select: "courseName courseStartDate courseEndDate courseThumbnail ",
+          select: "courseName courseStartDate courseEndDate courseThumbnail",
         },
         {
-          path: "batches",
-          select: "name",
+          path: "batches.batchId",
+          select: "name status",
         },
         {
           path: "invoices",
@@ -37,6 +37,7 @@ export const getStudentProfile = async (
         },
       ])
       .exec()) as StudentData;
+      console.log(JSON.parse(JSON.stringify(student)))
     if (!student) {
       return { data: null, message: "No student found" };
     }
@@ -44,22 +45,6 @@ export const getStudentProfile = async (
       .select("totalFees remainingFees amountPaid")
       .exec()) as FeeInfo;
     console.log(studentInvoice);
-    if (studentInvoice) {
-      student.amountPaid = studentInvoice.amountPaid
-        ? studentInvoice.amountPaid
-        : 0;
-      student.totalFees = studentInvoice.totalFees
-        ? studentInvoice.totalFees
-        : 0;
-      student.remainingFee = studentInvoice.remainingFees
-        ? studentInvoice.remainingFees
-        : 0;
-    } else {
-      student.amountPaid = 0;
-      student.totalFees = 0;
-      student.remainingFee = 0;
-    }
-  
     return {
       data: JSON.parse(JSON.stringify(student)),
       message: "Student profile fetched successfully",

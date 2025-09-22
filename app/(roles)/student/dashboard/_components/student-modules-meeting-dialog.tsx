@@ -10,7 +10,7 @@ import { dummySessions } from "@/lib/static";
 import React from "react";
 //import SessionCard from "../../sessions/_components/session-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import SessionCard from "../../sessions/_components/session-card";
+// import SessionCard from "../../sessions/_components/session-card";
 
 type StudentModulesMeetingDialogProps = {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ const StudentModulesMeetingDialog = ({
         <ScrollArea className="flex max-h-[500px] flex-col gap-3">
           {session.map((s) => (
             <div key={s.id} className="mb-3">
-              <SessionCard session={s} />
+              {/* <SessionCard session={s} /> */}
             </div>
           ))}
         </ScrollArea>

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Edit3, Save, X, Phone, Camera, Mail } from "lucide-react";
 import { EditableData } from "@/lib/types/student-profile.type";
 import ProfileDetail from "./profile-detail";
-import { StudentData } from "@/lib/types/student";
+import { StudentData } from "@/lib/types/student-profile.type";
 
 type ProfileHeaderProps = {
   studentData: StudentData 
@@ -126,9 +126,9 @@ const ProfileHeader = ({
               <ProfileDetail
                 icon={<Phone />}
                 label="Phone Number"
-                value={editData.number}
+                value={editData.phone}
                 editable={isEditing}
-                onChange={(e) => onEditDataChange("number", e.target.value)}
+                onChange={(e) => onEditDataChange("phone", e.target.value)}
               />
             </div>
           </div>

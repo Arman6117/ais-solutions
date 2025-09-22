@@ -1,33 +1,43 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { studentSidebarLinks } from "@/lib/static";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import LogOutButton from "./logout-button";
 
-import { useCourseStore } from "@/store/use-course-store"; 
+import { useCourseStore } from "@/store/use-course-store";
+import Image from "next/image";
 
 const StudentSidebar = () => {
   const pathname = usePathname();
-  
+
   const { selectedCourse } = useCourseStore();
 
   return (
     <div className="h-full w-12 hidden md:block md:w-24 md:fixed bg-primary-bg ">
       <div className="flex flex-col h-full gap-17 items-center justify-center px-0 py-10 md:p-10 ">
-        <div className="text-white ">Logo</div>
+        <Image
+          src={"/AISLogoWhite.png"}
+          alt="logo"
+          className="scale-[5] mb-10"
+          width={150}
+          height={200}
+        />
+
         <div className="flex h-full justify-between flex-col">
           <div className="flex flex-col gap-10">
             {studentSidebarLinks.map(({ label, link, icon: Icon }) => {
-              
-              
               let href = link;
               if (label === "Dashboard") {
-                
-                href = selectedCourse?._id 
-                  ? `${link}?courseId=${selectedCourse._id}` 
+                href = selectedCourse?._id
+                  ? `${link}?courseId=${selectedCourse._id}`
                   : link;
               }
 

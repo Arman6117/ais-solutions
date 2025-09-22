@@ -37,7 +37,7 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
           {/* Header with Logo and Close button (mobile) */}
           <div className="flex items-center justify-between w-full px-6 md:justify-center md:px-0 mb-16">
             <div className="text-white font-bold text-2xl">
-              <Link href="/admin/dashboard">Logo</Link>
+            <Link href="/admin/dashboard">Logo</Link>
             </div>
             <button className="md:hidden text-white/80" onClick={onClose}>
               <X className="h-6 w-6" />

@@ -8,7 +8,7 @@ const StudentSchema = new Schema(
     phone: { type: String, required: true, index: true },
     referralCode: { type: String },
     gender: { type: String, enum: ["male", "female", "other"], required: true },
-    profilePic: { type: String, required: true },
+    profilePic: { type: String },
     role: { type: String, required: true },
     feeStatus: {
       type: String,

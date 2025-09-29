@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import NoteContentPlayer from "./note-content-player";
 import { toast } from "sonner";
 import { getNotesById } from "@/actions/admin/notes/get-notes";
+import { AlertTriangle } from "lucide-react";
 
 // ----------------------------------------------------
 
@@ -38,7 +39,14 @@ const WatchPageComponent = ({
   // console.log(notesData)
   return (
     <div className="container mx-auto py-8">
-      {/* Pass the dummy data directly into your component's props */}
+      {notesData.length === 0 && (
+        <div className="h-full items-center justify-center flex flex-col">
+          <AlertTriangle className="text-primary-bg w-12 h-12 opacity-60 mb-4" />
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+            No Notes Found
+          </h2>
+        </div>
+      )}
       {notesData.map((note) => (
         <NoteContentPlayer key={note._id} note={note} sessionId={sessionId} />
       ))}

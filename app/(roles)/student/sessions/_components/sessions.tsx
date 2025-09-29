@@ -14,7 +14,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import SessionModuleFilterSelect from "./session-module-filter-select";
-import { getAllSessions } from "@/actions/shared/get-sessions";
+import { getStudentSessions } from "@/actions/shared/get-sessions";
 
 import { toast } from "sonner";
 import { Session } from "@/lib/types/sessions.type";
@@ -82,7 +82,7 @@ const Sessions = () => {
   const fetchAllSessionsAndModules = async () => {
     setIsLoading(true);
     try {
-      const res = await getAllSessions();
+      const res = await getStudentSessions(currentStudentId);
       const modules = await getStudentModules(currentStudentId);
     
       toast.message(res.message);

@@ -19,9 +19,9 @@ type SessionCardProps = {
 const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const sessionDate = new Date(session.date);
-  const formattedDate = format(sessionDate, "dd MMM yyyy");
-  const formattedTime = format(sessionDate, "hh:mm a");
+  const sessionDateTime = new Date(`${session.date}T${session.time}:00`);
+  const formattedDate = format(sessionDateTime, "dd MMM yyyy");
+  const formattedTime = format(sessionDateTime, "hh:mm a");
 
   const handleClick = async () => {
     setIsLoading(true);

@@ -31,7 +31,7 @@ export const sendAdminOTPEmail = async (email: string) => {
     subject: "Your Admin OTP",
     react: AdminOTPEmail({ otp }),
   });
-  console.log(mail)
+  // console.log(mail)
   if (mail.error) {
     return { success: false, message: "Failed to send OTP" };
   }

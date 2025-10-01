@@ -24,7 +24,7 @@ export const getModulesWithSubtopics = async (
     const modules = (await Module.find({ batchId: new ObjectId(batchId) })
       .select("_id name chapters.name")
       .exec()) as ModulesForSession[];
-    console.log(JSON.parse(JSON.stringify(modules)))
+    // console.log(JSON.parse(JSON.stringify(modules)))
     return {
       data: JSON.parse(JSON.stringify(modules)),
       message: "Modules fetched successfully",

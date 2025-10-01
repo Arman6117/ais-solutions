@@ -16,7 +16,7 @@ export const getCourses = async () => {
         courseName: course.courseName as string,
       }]
     }));
-    console.log(JSON.parse(JSON.stringify(courses)));
+    // console.log(JSON.parse(JSON.stringify(courses)));
     return JSON.parse(JSON.stringify(courses)) || [];
   } catch (err) {
     console.error("Failed to fetch courses", err);

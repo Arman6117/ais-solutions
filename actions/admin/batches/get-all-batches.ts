@@ -16,7 +16,7 @@ export const getAllBatches = async () => {
       };
     });
 
-    console.log(formattedCourse);
+    // console.log(formattedCourse);
     const batches = await Batch.find({});
     //TODO:Fetch instructors and return them in data
     const coursesWithBatches = formattedCourse.map((course) => {

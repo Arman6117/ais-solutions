@@ -51,7 +51,7 @@ export const createCourse = async (data: createCourseProps) => {
     
     // Create the course first
     const createdCourse = await Course.create(courseDoc);
-    console.log("Course created with modules:", validated.modules);
+    // console.log("Course created with modules:", validated.modules);
     
     // Handle multiple modules if provided
     if (validated.modules && validated.modules.length > 0) {
@@ -95,7 +95,7 @@ export const createCourse = async (data: createCourseProps) => {
             }
           );
           
-          console.log(`Updated ${updateResult.modifiedCount} modules with course ID`);
+          // console.log(`Updated ${updateResult.modifiedCount} modules with course ID`);
         }
       }
     }

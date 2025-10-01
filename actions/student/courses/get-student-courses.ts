@@ -21,7 +21,7 @@ export const getStudentCourses = async (
 ): Promise<{ data: StudentCourse[] }> => {
   try {
     if (!studentEmail) {
-      console.log("Invalid");
+      // console.log("Invalid");
       return { data: [] };
     }
     await connectToDB();

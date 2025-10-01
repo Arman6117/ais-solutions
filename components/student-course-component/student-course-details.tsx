@@ -147,6 +147,7 @@ const StudentCourseDetails = ({
             </Dialog>
           </CardContent>
         </Card>
+       
         {/* <StudentCourseReviews className="flex md:hidden" isEnrolled={false} /> */}
       </div>
     </div>

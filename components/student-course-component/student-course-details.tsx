@@ -19,7 +19,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { AlertTriangle, Calendar, Pyramid } from "lucide-react";
-import StudentCourseReviews from "./student-course-reviews";
+// import StudentCourseReviews from "./student-course-reviews";
 import { CourseDetails } from "@/lib/types/course.type";
 import { format } from "date-fns";
 

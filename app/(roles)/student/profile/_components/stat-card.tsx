@@ -26,15 +26,15 @@ const StatCard = ({ icon, value, label, color }:StatCardProps) => {
   };
 
   return (
-    <Card className="shadow-sm border-slate-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-      <CardContent className="p-6">
-        <div className="flex items-center gap-4">
+    <Card className="shadow-sm w-auto border-slate-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <CardContent className="p-6 w-auto">
+        <div className="flex flex-col justify-center items-center gap-4">
           <Avatar className={`${colorClasses[color]} p-4 w-16 h-16`}>
             <AvatarFallback className={`${colorClasses[color]} ${iconColorClasses[color]}`}>
               {icon}
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className='flex flex-col items-center justify-center'> 
             <div className="text-2xl font-bold text-slate-800">{value}</div>
             <div className="text-muted-foreground text-sm font-medium">
               {label}

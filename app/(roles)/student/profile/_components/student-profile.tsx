@@ -8,31 +8,31 @@ import CoursesSection from "./course-section";
 import { authClient } from "@/lib/auth-client";
 import { getStudentId } from "@/actions/shared/get-student-id";
 import { getStudentProfile } from "@/actions/student/profile/get-student-profile";
-import {  StudentData } from "@/lib/types/student";
+import { StudentData } from "@/lib/types/student";
 import { toast } from "sonner";
 
 const StudentProfile = () => {
   const [data, setData] = useState<StudentData | null>(null);
-  
+  // const [loading, setLoading] = useState(false);
   const fetchStudentInfo = async () => {
     try {
       const session = await authClient.getSession();
       if (!session) {
         return;
       }
-      
+
       const userEmail = session.data?.user?.email;
       if (!userEmail) {
         toast.error("User email not found");
         return;
       }
-      
+
       const studentId = await getStudentId(userEmail);
       if (!studentId) {
         toast.error("Student ID not found");
         return;
       }
-      
+
       const res = await getStudentProfile(studentId);
       setData(res.data);
       toast.message(res.message);
@@ -41,11 +41,11 @@ const StudentProfile = () => {
       toast.error("Something went wrong");
     }
   };
-  
+
   useEffect(() => {
     fetchStudentInfo();
   }, []);
-  
+
   const {
     studentData,
     editData,
@@ -56,7 +56,27 @@ const StudentProfile = () => {
     handleEditDataChange,
     handleImageUpload,
   } = useStudentProfile(data);
-  
+
+  if (!studentData) {
+    return;
+  }
+  const totalFees = studentData.invoices
+    .map((invoice) => {
+      return invoice.courseDetails.reduce(
+        (total, course) => total + (course.totalFees || 0),
+        0
+      );
+    })
+    .reduce((sum, current) => sum + current, 0);
+
+  const amountPaid = studentData.invoices
+    .map((invoice) => {
+      return invoice.courseDetails.reduce(
+        (paid, course) => paid + (course.amountPaid || 0),
+        0
+      );
+    })
+    .reduce((sum, current) => sum + current, 0);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-8">
@@ -72,10 +92,13 @@ const StudentProfile = () => {
         />
         <StatsSection studentData={studentData} />
         <PaymentProgress
-          totalFees={studentData?.totalFees || 0}
-          paidFees={studentData?.amountPaid || 0}
+          totalFees={totalFees || 0}
+          paidFees={amountPaid || 0}
         />
-        <CoursesSection courses={studentData?.courses || []} />
+        <CoursesSection
+          invoices={studentData.invoices}
+          courses={studentData?.courses || []}
+        />
       </div>
     </div>
   );

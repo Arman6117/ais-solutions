@@ -1,15 +1,17 @@
 // types/student.ts
 export interface Course {
-  _id: string;
+  courseId: {_id: string;
   courseName: string;
   courseStatus?: 'Completed' | 'Ongoing' | 'Upcoming';
   progress?: number;
   duration?: string;
   courseStartDate:string,
-  courseEndDate:string,
+  courseEndDate:string
+  courseThumbnail:string 
+
+}
   totalFees:number,
   dueDate:string,
-  courseThumbnail:string
   amountPaid:number,
   remainingFee:number
   instructor?: string;

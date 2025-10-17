@@ -23,7 +23,7 @@ export const getCourseModules = async (
       courseId: new ObjectId(courseId),
     }).exec()) as CourseModule[];
 
-    console.log(modules)
+    // console.log(modules)
     return {
       data: JSON.parse(JSON.stringify(modules)),
       success: true,

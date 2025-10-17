@@ -1,47 +1,69 @@
-// components/profile/StatsSection.tsx
-import React from 'react';
+
+import React from "react";
 import { DollarSign, CheckCircle, Clock, Award } from "lucide-react";
 
-
-import StatCard from './stat-card';
-import { StudentData } from '@/lib/types/student';
-
+import StatCard from "./stat-card";
+import { StudentData } from "@/lib/types/student";
 
 interface StatsSectionProps {
-  studentData: StudentData | null;
+  studentData: StudentData;
 }
 
 const StatsSection: React.FC<StatsSectionProps> = ({ studentData }) => {
-  if(!studentData) return
-  const remainingFees = (studentData.totalFees || 0) - (studentData.amountPaid || 0);
-  // const completedCourses = studentData.courses.filter(
-  //   (course) => course.status === "Completed"
-  // ).length;
+  const completedCourses = studentData.batches.filter(
+    (batch) => batch.batchId.status === "Completed"
+  ).length;
 
+  const totalFees = studentData.invoices
+    .map((invoice) => {
+      return invoice.courseDetails.reduce(
+        (total, course) => total + (course.totalFees || 0),
+        0
+      );
+    })
+    .reduce((sum, current) => sum + current, 0);
+
+  const remainingFees = studentData.invoices
+    .map((invoice) => {
+      return invoice.courseDetails.reduce(
+        (remaining, course) => remaining + (course.remainingFees || 0),
+        0
+      );
+    })
+    .reduce((sum, current) => sum + current, 0);
+    
+  const amountPaid = studentData.invoices
+    .map((invoice) => {
+      return invoice.courseDetails.reduce(
+        (paid, course) => paid + (course.amountPaid || 0),
+        0
+      );
+    })
+    .reduce((sum, current) => sum + current, 0);
   const stats = [
     {
       icon: <DollarSign />,
-      value: `₹${studentData.totalFees ?studentData.totalFees.toLocaleString() :0 }`,
+      value: `₹${totalFees ? totalFees : 0}`,
       label: "Total Fees",
-      color: 'blue' as const,
+      color: "blue" as const,
     },
     {
       icon: <CheckCircle />,
-      value: `₹${studentData.amountPaid ?studentData.amountPaid.toLocaleString():0}`,
+      value: `₹${amountPaid ? amountPaid.toLocaleString() : 0}`,
       label: "Paid Amount",
-      color: 'emerald' as const,
+      color: "emerald" as const,
     },
     {
       icon: <Clock />,
       value: `₹${remainingFees.toLocaleString()}`,
       label: "Remaining",
-      color: 'orange' as const,
+      color: "orange" as const,
     },
     {
       icon: <Award />,
-      value: "1",
+      value: completedCourses,
       label: "Completed",
-      color: 'purple' as const,
+      color: "purple" as const,
     },
   ];
 

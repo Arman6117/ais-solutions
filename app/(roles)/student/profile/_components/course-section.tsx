@@ -1,17 +1,17 @@
 // components/profile/CoursesSection.tsx
-import React from 'react';
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap } from "lucide-react";
 import EnrolledCourseCard from "./enrolled-course-card";
-import { Course } from '@/lib/types/student-profile.type';
-
+import { Course } from "@/lib/types/student-profile.type";
+import { Invoices } from "@/lib/types/student";
 
 interface CoursesSectionProps {
   courses: Course[];
+  invoices: Invoices[];
 }
 
-const CoursesSection: React.FC<CoursesSectionProps> = ({ courses }) => {
-  console.log(courses)
+const CoursesSection = ({ courses, invoices }: CoursesSectionProps) => {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center gap-4">
@@ -32,9 +32,23 @@ const CoursesSection: React.FC<CoursesSectionProps> = ({ courses }) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-        {courses.map((course, idx) => (
-          <EnrolledCourseCard course={course} key={course._id || idx} />
-        ))}
+        {courses.map((course, idx) => {
+          const relatedCourse = invoices.filter(
+            (invoice) =>
+              invoice.courseDetails[0].courseId == course.courseId._id
+          );
+
+          const amountPaid = relatedCourse[0].courseDetails[0].amountPaid || 0;
+          const totalFee = relatedCourse[0].courseDetails[0].totalFees || 0;
+          return (
+            <EnrolledCourseCard
+              amountPaid={amountPaid}
+              totalFee={totalFee}
+              course={course}
+              key={course.courseId._id || idx}
+            />
+          );
+        })}
       </div>
     </div>
   );

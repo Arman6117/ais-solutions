@@ -3,7 +3,7 @@
 import * as bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!;
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH!;
 
 export const verifyAdminPassword = async (email: string, password: string) => {

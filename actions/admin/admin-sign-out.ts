@@ -11,5 +11,5 @@ export const adminSignOut = async () => {
     path: "/",
   });
 
-  return { success: true, message: "Logged out successfully" };
+  return { success: true, message: "Logged out " };
 };

@@ -10,11 +10,12 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
   },
   experimental: {
-    serverComponentsExternalPackages: ['bcryptjs'],
+    
     serverActions: {
       bodySizeLimit: "10mb",
     },
   },
+  serverExternalPackages: ["bcryptjs", "jsonwebtoken"],
 };
 
 export default nextConfig;

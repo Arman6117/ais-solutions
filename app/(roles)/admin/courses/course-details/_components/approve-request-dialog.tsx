@@ -27,6 +27,7 @@ import { Loader } from "lucide-react";
 import { getCourseList } from "@/actions/admin/pending-request/get-data-to-approve-request";
 import { approvePendingRequest } from "@/actions/admin/pending-request/approve-pending-request";
 import { Mode } from "@/lib/types/types";
+import { useRouter } from "next/navigation";
 
 // const salesPeople = ["Prajyot", "Shruti", "Rohan", "Komal"];
 const paymentModes = ["Cash", "UPI", "Card"];
@@ -62,7 +63,8 @@ export const ApproveRequestDialog = ({
   const [customTotalPrice, setCustomTotalPrice] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
   const [courseList, setCourseList] = useState<CourseData[]>([]);
-console.log(selectedSalesPerson)
+ const router = useRouter()
+ console.log(selectedSalesPerson)
   const fetchPendingRequestToApprove = async () => {
     if (!requestId) return;
 
@@ -79,7 +81,7 @@ console.log(selectedSalesPerson)
       }
       setRequest(res.data);
 
-      // Correctly set the selected course and modules using IDs
+     
       setSelectedCourse(res.data.courseId._id || "");
       setSelectedModules(res.data.modules || []);
       setCustomTotalPrice("");
@@ -207,6 +209,7 @@ console.log(selectedSalesPerson)
       const res = await approvePendingRequest(requestId,payload);
       if (res.success) {
         toast.success(res.message);
+        router.refresh();
         onOpenChange(false);
       } else {
         toast.error(res.message);

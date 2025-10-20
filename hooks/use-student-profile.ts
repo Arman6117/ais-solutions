@@ -1,17 +1,21 @@
 // hooks/useStudentProfile.ts
 import { useState, useCallback, useEffect } from "react";
-import { EditableData, StudentProfile } from "@/lib/types/student-profile.type";
+import { EditableData } from "@/lib/types/student-profile.type";
 import { uploadToCloudinary } from "@/lib/helpers/upload-to-cloudinary";
 import { StudentData } from "@/lib/types/student";
+
+import { toast } from "sonner"; // or your toast library
+import { updateStudent } from "@/actions/student/profile/update-student";
 
 interface UseStudentProfileReturn {
   studentData: StudentData | null;
   editData: EditableData;
   isEditing: boolean;
   uploading: boolean;
+  saving: boolean;
   setStudentData: React.Dispatch<React.SetStateAction<StudentData | null>>;
   handleEditToggle: () => void;
-  handleSave: () => void;
+  handleSave: () => Promise<void>;
   handleCancel: () => void;
   handleEditDataChange: (field: keyof EditableData, value: string) => void;
   handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
@@ -25,6 +29,7 @@ export const useStudentProfile = (
   );
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   const [editData, setEditData] = useState<EditableData>({
     name: initialData?.name || "",
@@ -46,18 +51,43 @@ export const useStudentProfile = (
     setIsEditing(true);
   }, []);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (!studentData) return;
 
-    setStudentData((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
+    try {
+      setSaving(true);
+
+      // Call server action to update student
+      const result = await updateStudent({
+        studentId: studentData._id,
         name: editData.name,
-        number: editData.number,
-      };
-    });
-    setIsEditing(false);
+        phone: editData.number,
+        profilePic: studentData.profilePic,
+      });
+
+      if (!result.success) {
+        toast.error("Failed to update profile");
+        return;
+      }
+
+      setStudentData((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          name: editData.name,
+          phone: editData.number,
+        };
+      });
+
+
+      setIsEditing(false);
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Failed to save student data:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setSaving(false);
+    }
   }, [editData, studentData]);
 
   const handleCancel = useCallback(() => {
@@ -87,7 +117,7 @@ export const useStudentProfile = (
 
       try {
         setUploading(true);
-
+        
         // Upload to Cloudinary
         const { url } = await uploadToCloudinary(file, "students");
 
@@ -96,9 +126,11 @@ export const useStudentProfile = (
           if (!prev) return null;
           return { ...prev, profilePic: url };
         });
+
+        toast.success("Profile picture updated");
       } catch (error) {
         console.error("Image upload failed:", error);
-        // You might want to add error handling here, like showing a toast notification
+        toast.error("Failed to upload image");
       } finally {
         setUploading(false);
       }
@@ -111,6 +143,7 @@ export const useStudentProfile = (
     editData,
     isEditing,
     uploading,
+    saving,
     setStudentData,
     handleEditToggle,
     handleSave,

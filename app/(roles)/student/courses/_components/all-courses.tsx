@@ -23,8 +23,8 @@ const AllCourses = () => {
   const [sortBy, setSortBy] = useState<"date" | "price">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [allCourses, setAllCourse] = useState<CourseCards[]>();
-  const [loading, setLoading] = useState(false);
+  const [allCourses, setAllCourse] = useState<CourseCards[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchCourses = async () => {
     setLoading(true);

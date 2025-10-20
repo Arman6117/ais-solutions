@@ -71,8 +71,8 @@ const StudentTableFilters = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Batches</SelectItem>
-          {uniqueBatches.map((batch) => (
-            <SelectItem key={batch.batchId._id} value={batch.batchId
+          {uniqueBatches.map((batch,index) => (
+            <SelectItem key={index} value={batch.batchId
               .name
             }>
               {batch.batchId.name}

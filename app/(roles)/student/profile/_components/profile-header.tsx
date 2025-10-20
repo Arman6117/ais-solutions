@@ -10,7 +10,7 @@ import ProfileDetail from "./profile-detail";
 import { StudentData } from "@/lib/types/student";
 
 type ProfileHeaderProps = {
-  studentData: StudentData | null;
+  studentData: StudentData ;
   isEditing: boolean;
   editData: EditableData;
   onEditToggle: () => void;
@@ -34,9 +34,7 @@ const ProfileHeader = ({
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
-  if(!studentData) {
-    return <h1>No</h1>
-  }
+
 
   return (
     <Card className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 border-0 shadow-2xl">

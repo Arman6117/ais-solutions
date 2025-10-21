@@ -1,4 +1,4 @@
-import { dummyStudents } from "@/lib/static";
+
 import React from "react";
 import StudentDetails from "../../_components/student-details";
 import { getStudentProfile } from "@/actions/student/profile/get-student-profile";

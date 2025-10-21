@@ -26,6 +26,9 @@ courseId: {
   courseStartDate:string,
   courseEndDate:string,
   courseThumbnail:string
+  courseMode:"online" | "offline" | "hybrid"
+  studentsEnrolled:string[]
+  courseLevel:"beginner"| "intermediate"| "advanced"
 }
   totalFees:number,
   dueDate:string,
@@ -63,6 +66,7 @@ export interface Batches{
     _id:string,
     name:string,
     status:"Upcoming"| "Completed"|"Ongoing"
+    modules:{name:string}[]
   },
   mode:"offline" | "online" |"hybrid",
   enrolledAt:string,

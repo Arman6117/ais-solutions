@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { Course } from "@/lib/types/student";
 import { getLevelColor, getModeColor } from "@/lib/utils";
+import { format, formatDistance } from "date-fns";
 import {
   Calendar,
   Clock,
@@ -13,18 +15,7 @@ import Link from "next/link";
 import React from "react";
 
 type CourseCardProps = {
-  course: {
-    id: string;
-    title: string;
-    duration: string;
-    students: number;
-    mode: "Online" | "Offline" | "Hybrid";
-    location?: string;
-    startDate: string;
-    rating: number;
-    level: "Beginner" | "Intermediate" | "Advanced";
-    instructor: string;
-  };
+  course:Course
 };
 
 const CourseCard = ({ course }: CourseCardProps) => {
@@ -33,14 +24,14 @@ const CourseCard = ({ course }: CourseCardProps) => {
       {/* Card Header with Course Title - Full width on all screens */}
       <div className="flex w-full justify-between p-3 sm:p-4 rounded-t-lg bg-primary-bg">
         <h1 className="text-lg sm:text-xl text-white font-medium line-clamp-1 mr-2">
-          {course.title}
+          {course.courseId.courseName}
         </h1>
         <Button
           size="sm"
           asChild
           className="bg-white text-primary-bg hover:bg-gray-100 hover:text-primary-bg text-xs sm:text-sm px-2 sm:px-3"
         >
-          <Link href={`/admin/courses/course-details/${course.id}?mode=view`}>View</Link>
+          <Link href={`/admin/courses/course-details/${course.courseId._id}?mode=view`}>View</Link>
         </Button>
       </div>
 
@@ -48,15 +39,15 @@ const CourseCard = ({ course }: CourseCardProps) => {
       <div className="px-3 sm:px-4 pt-2 sm:pt-3">
         <div className="flex flex-wrap items-center gap-2">
           <span
-            className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getModeColor(course.mode)}`}
+            className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getModeColor(course.courseId.courseMode)}`}
           >
             <MonitorSmartphone className="mr-1 size-3" />
-            {course.mode}
+            {course.courseId.courseMode}
           </span>
           <span
-            className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(course.level)}`}
+            className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(course.courseId.courseLevel)}`}
           >
-            {course.level}
+            {course.courseId.courseLevel}
           </span>
         </div>
       </div>
@@ -65,28 +56,28 @@ const CourseCard = ({ course }: CourseCardProps) => {
       <div className="px-3 sm:px-4 py-2 sm:py-3 grid grid-cols-2 xs:grid-cols-2 gap-y-2">
         <div className="flex items-center text-xs sm:text-sm text-gray-600">
           <Clock className="text-primary-bg size-3 sm:size-4 mr-1 sm:mr-2 flex-shrink-0" />
-          <span className="font-medium">{course.duration}</span>
+          <span className="font-medium">{formatDistance(course.courseId.courseStartDate, course.courseId.courseEndDate)}</span>
         </div>
 
         <div className="flex items-center text-xs sm:text-sm text-gray-600">
           <User className="text-primary-bg size-3 sm:size-4 mr-1 sm:mr-2 flex-shrink-0" />
-          <span className="font-medium">{course.students} Students</span>
+          <span className="font-medium">{course.courseId.studentsEnrolled.length} Students</span>
         </div>
 
         <div className="flex items-center text-xs sm:text-sm text-gray-600">
           <Calendar className="text-primary-bg size-3 sm:size-4 mr-1 sm:mr-2 flex-shrink-0" />
-          <span className="font-medium line-clamp-1">{course.startDate}</span>
+          <span className="font-medium line-clamp-1">{format (course.courseId.courseStartDate, "PP")}</span>
         </div>
 
         <div className="flex items-center text-xs sm:text-sm text-gray-600">
           <div className="flex items-center">
             <StarIcon className="text-yellow-500 size-3 sm:size-4 mr-1 flex-shrink-0" />
-            <span className="font-medium">{course.rating.toFixed(1)}</span>
+            <span className="font-medium">1</span>
           </div>
         </div>
       </div>
 
-      {/* Location (if available) - Responsive font size */}
+      {/* Location (if available) - Responsive font size
       {course.location && (
         <div className="px-3 sm:px-4 pb-1 sm:pb-2">
           <div className="flex items-center text-xs sm:text-sm text-gray-600">
@@ -94,16 +85,16 @@ const CourseCard = ({ course }: CourseCardProps) => {
             <span className="font-medium line-clamp-1">{course.location}</span>
           </div>
         </div>
-      )}
+      )} */}
 
-      {/* Instructor - Adjusted padding and font sizes */}
+      {/* Instructor - Adjusted padding and font sizes
       <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-100">
         <div className="flex items-center text-xs sm:text-sm flex-wrap">
           <GraduationCap className="text-primary-bg size-3 sm:size-4 mr-1 sm:mr-2 flex-shrink-0" />
           <span className="font-medium">Instructor: </span>
           <span className="ml-1 text-gray-700 line-clamp-1">{course.instructor}</span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -9,82 +9,11 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { BookOpen } from "lucide-react";
-import { Course } from "@/lib/types/types";
+
 import CourseCard from "./course-card";
+import { Course } from "@/lib/types/student";
 
-type CourseType = {
-  id: string;
-  title: string;
-  duration: string;
-  students: number;
-  mode: "Online" | "Offline" | "Hybrid";
-  location?: string;
-  startDate: string;
-  rating: number;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  instructor: string;
-};
 
-const dummyCourses: CourseType[] = [
-  {
-    id: "course-1",
-    title: "Web Development Fundamentals",
-    duration: "3 Months",
-    students: 26,
-    mode: "Online",
-    startDate: "June 1, 2025",
-    rating: 4.7,
-    level: "Beginner",
-    instructor: "Dr. Sarah Johnson",
-  },
-  {
-    id: "course-2",
-    title: "Advanced Data Science",
-    duration: "4 Months",
-    students: 18,
-    mode: "Hybrid",
-    location: "Tech Campus, Building B",
-    startDate: "July 15, 2025",
-    rating: 4.9,
-    level: "Advanced",
-    instructor: "Prof. Michael Chen",
-  },
-  {
-    id: "course-3",
-    title: "UX/UI Design Workshop",
-    duration: "2 Months",
-    students: 32,
-    mode: "Offline",
-    location: "Design Studio, Floor 3",
-    startDate: "May 30, 2025",
-    rating: 4.5,
-    level: "Intermediate",
-    instructor: "Emma Rodriguez",
-  },
-  {
-    id: "course-4",
-    title: "Mobile App Development",
-    duration: "3 Months",
-    students: 24,
-    mode: "Online",
-    startDate: "June 15, 2025",
-    rating: 4.3,
-    level: "Intermediate",
-    instructor: "David Wilson",
-  },
-  {
-    id: "course-5",
-    title: "Cybersecurity Essentials",
-    duration: "2.5 Months",
-    students: 28,
-    mode: "Hybrid",
-    location: "Security Lab, East Building",
-    startDate: "July 5, 2025",
-    rating: 4.8,
-    level: "Beginner",
-    instructor: "Dr. Linda Garcia",
-  },
-];
 
 // Determine chunk size based on screen width
 const useChunkSize = () => {
@@ -124,17 +53,17 @@ const chunkArray = <T,>(arr: T[], size: number): T[][] => {
 };
 
 type CoursesCardsProps = {
-  courses?: Course[];
+  courses: Course[];
   mode: "view" | "edit";
   label: string | undefined;
 };
 
-const CoursesCards = ({  label }: CoursesCardsProps) => {
+const CoursesCards = ({  label,courses }: CoursesCardsProps) => {
   const [search, setSearch] = useState("");
   const chunkSize = useChunkSize();
 
-  const filteredCourses = dummyCourses.filter((course) =>
-    course.title.toLowerCase().includes(search.toLowerCase())
+  const filteredCourses = courses.filter((course) =>
+    course.courseId.courseName.toLowerCase().includes(search.toLowerCase())
   );
   const chunkedCourses = chunkArray(filteredCourses, chunkSize);
 
@@ -201,7 +130,7 @@ const CoursesCards = ({  label }: CoursesCardsProps) => {
         <div className="flex flex-col gap-7 max-h-[450px] overflow-y-auto py-3">
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <div key={course.id} className="w-full">
+              <div key={course.courseId._id} className="w-full">
                 <CourseCard course={course} />
               </div>
             ))

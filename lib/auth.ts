@@ -34,7 +34,7 @@ export const auth = betterAuth({
         if (ctx.path === "/sign-in/email") {
           const { email } = ctx.body as { email: string };
           
-          // FIX: Use Prisma to check if the student exists
+         
           const existingStudent = await prisma.user.findUnique({
             where: { email },
           });
@@ -50,7 +50,7 @@ export const auth = betterAuth({
         if (ctx.path === "/sign-up/email") {
           const { email } = ctx.body as { email: string };
           
-          // FIX: Use Prisma to check if the student already exists
+    
           const existingStudent = await prisma.user.findUnique({
             where: { email },
           });

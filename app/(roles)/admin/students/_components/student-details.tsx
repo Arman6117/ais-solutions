@@ -1,69 +1,80 @@
-"use client";
-import { useEffect, useState } from "react";
+
+
 import {
-  User, Phone, Mail, Calendar, CheckCircle, XCircle,
-   BookOpen, Tag, School, CircleDollarSign,
-   Layers
+  User,
+  Phone,
+  Mail,
+  Calendar,
+ 
+  BookOpen,
+  Tag,
+  School,
+  CircleDollarSign,
+  Layers,
+  Link,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { DummyStudent,  } from "@/lib/types/types";
+
 import { format } from "date-fns";
 import CoursesCards from "@/components/courses-cards";
-import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+import { StudentData } from "@/lib/types/student";
 
 type StudentDetailsProps = {
-  student: DummyStudent | undefined;
+  student: StudentData | null;
 };
 
 const StudentDetails = ({ student }: StudentDetailsProps) => {
-  const router = useRouter();
-  // const [mode, setMode] = useState<"edit" | "view">(defaultMode);
-
-  const [feesStatus, setFeesStatus] = useState(student?.feesStatus || "pending");
-  const [totalFeePaid, setTotalFeePaid] = useState(student?.totalFeePaid || 0);
-  const [totalFees] = useState(0);
-  const [feesRemaining] = useState(0);
- console.log(totalFees)
-  useEffect(() => {
-    if (student) {
-      // const moduleTotal = (student.modulesDetails || []).reduce((sum, mod: DummyModules) => sum + (mod.price || 0), 0);
-      // const courseTotal = (student.courses || []).reduce((sum, course: Course) => sum + (course.price || 0), 0);
-      // const total = moduleTotal + courseTotal;
-      // setTotalFees(total);
-      // const remaining = Math.max(0, total - totalFeePaid);
-      // setFeesRemaining(remaining);
-      // setFeesStatus(remaining <= 0 ? "paid" : "pending");
-    }
-  }, [student, totalFeePaid]);
-
   if (!student) {
     return (
       <div className="p-8 flex w-full items-center justify-center h-full">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">No Student Selected</h2>
           <p className="text-muted-foreground">Please select a Student</p>
-          <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
+          <Link href="/admin/students">
+          <Button className="mt-4 bg-primary-bg" >
             Go Back
           </Button>
+          </Link>
         </div>
       </div>
     );
   }
+
+
+
+  const remainingFees = student.invoices
+    .map((invoice) => {
+      return invoice.courseDetails.reduce(
+        (remaining, course) => remaining + (course.remainingFees || 0),
+        0
+      );
+    })
+    .reduce((sum, current) => sum + current, 0);
+
+  const amountPaid = student.invoices.map((invoice) => {
+    return invoice.courseDetails.reduce(
+      (paid, course) => paid + (course.amountPaid || 0),
+      0
+    );
+  });
+ 
+
 
   return (
     <Card className="w-full h-full flex flex-col p-0">
       <CardHeader className="bg-indigo-600 text-white rounded-t-lg space-y-0 p-4">
         <div className="flex items-center">
           <Avatar className="h-20 w-20 mr-4 border-2 border-white bg-white">
-            {student.avatar ? (
-              <AvatarImage src={student.avatar} alt={student.name} />
+            {student.profilePic ? (
+              <AvatarImage src={student.profilePic} alt={student.name} />
             ) : (
               <AvatarFallback className="bg-white text-gray-400">
                 <User size={40} />
@@ -75,28 +86,9 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
             <div className="flex items-center mt-1">
               <span className="flex items-center text-sm">
                 <Tag size={14} className="mr-1" />
-                ID: {student.id}
+                ID: {student._id}
               </span>
-              <span className="mx-2">•</span>
-              <Badge
-                className={`flex items-center ${
-                  student.isApproved
-                    ? "bg-green-500 hover:bg-green-600"
-                    : "bg-red-500 hover:bg-red-600"
-                }`}
-              >
-                {student.isApproved ? (
-                  <>
-                    <CheckCircle size={14} className="mr-1" />
-                    Approved
-                  </>
-                ) : (
-                  <>
-                    <XCircle size={14} className="mr-1" />
-                    Not Approved
-                  </>
-                )}
-              </Badge>
+            
             </div>
           </div>
         </div>
@@ -138,7 +130,7 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <Calendar className="w-5 h-5 text-gray-500 mr-3" />
                 <div>
                   <div className="text-sm text-gray-500">Joined On</div>
-                  <div>{format(student.joinedAt, "PP")}</div>
+                  <div>{format(student.createdAt, "PP")}</div>
                 </div>
               </div>
             </div>
@@ -153,8 +145,13 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
               </h3>
               <Card>
                 <CardContent className="p-4">
-                  <div className="text-sm text-gray-500">Batch Name</div>
-                  <div className="font-medium">{student.batchId}</div>
+                  <h1 className="text-sm  text-gray-500">Batch Name</h1>
+                  <div className="flex gap-5">
+
+                  {student.batches.map((batch) => (
+                    <Badge key={batch.batchId._id} className="font-medium">{batch.batchId.name}</Badge>
+                  ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -165,12 +162,22 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 Modules
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {/* {student.modulesDetails?.map((mod, i) => ( */}
-                  {/* <div key={i} className="p-3 rounded-lg border bg-indigo-50">
-                    <div className="text-indigo-800 font-medium">{mod.name}</div>
-                    <div className="text-sm text-muted-foreground">₹{mod.price}</div>
-                  </div> */}
-                {/* ))} */}
+                {student.batches.map((batch) => {
+                  return batch.batchId.modules.map((module) => (
+                    <Card key={module.name} className="hover:shadow-lg p-0">
+                      <CardContent className=" flex flex-col p-0 ">
+                        <div className="w-full bg-primary-bg p-3 rounded-md">
+                          <span className="text-white font-semibold">
+                            {batch.batchId.name}
+                          </span>
+                        </div>
+                        <div className="p-3">
+                          <span className="font-medium">{module.name}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ));
+                })}
               </div>
             </div>
 
@@ -179,7 +186,11 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <BookOpen className="w-5 h-5 mr-2 text-indigo-600" />
                 Courses
               </h3>
-              <CoursesCards courses={student.courses} label={undefined} mode="view" />
+              <CoursesCards
+                courses={student.courses}
+                label={undefined}
+                mode="view"
+              />
             </div>
           </TabsContent>
 
@@ -190,15 +201,7 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <div className="bg-green-500 h-1"></div>
                 <CardContent className="p-4 space-y-2">
                   <Label>Fees Status</Label>
-                  <Select value={feesStatus} onValueChange={setFeesStatus}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <span>{student.feesStatus}</span>
                 </CardContent>
               </Card>
 
@@ -208,8 +211,9 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                   <Label>Total Fee Paid</Label>
                   <Input
                     type="number"
-                    value={totalFeePaid}
-                    onChange={(e) => setTotalFeePaid(Number(e.target.value))}
+                    value={amountPaid[0]}
+                    readOnly
+                    // onChange={(e) => setTotalFeePaid(Number(e.target.value))}
                   />
                 </CardContent>
               </Card>
@@ -218,7 +222,7 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <div className="bg-amber-500 h-1"></div>
                 <CardContent className="p-4 space-y-2">
                   <Label>Fees Remaining</Label>
-                  <Input type="number" value={feesRemaining} readOnly />
+                  <Input type="number" value={remainingFees} readOnly />
                 </CardContent>
               </Card>
             </div>
@@ -229,7 +233,9 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <CircleDollarSign className="w-6 h-6 text-indigo-600" />
                 <div>
                   <div className="text-sm text-gray-500">Referral Coins</div>
-                  <div className="text-lg font-medium">{student.refCoins} coins</div>
+                  <div className="text-lg font-medium">
+                    {/* {student.} coins */}
+                  </div>
                 </div>
               </CardContent>
             </Card>

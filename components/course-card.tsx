@@ -5,8 +5,6 @@ import { format, formatDistance } from "date-fns";
 import {
   Calendar,
   Clock,
-  GraduationCap,
-  MapPin,
   MonitorSmartphone,
   StarIcon,
   User,

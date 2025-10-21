@@ -334,7 +334,7 @@ console.log(isDeleting)
                 mode={mode}
               />
               <Separator />
-              <CoursesCards mode={mode} label="Course Usage" />
+              <CoursesCards courses={[]} mode={mode} label="Course Usage" />
             </div>
           </CardContent>
         </Card>

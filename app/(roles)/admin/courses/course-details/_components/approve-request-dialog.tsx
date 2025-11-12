@@ -101,6 +101,7 @@ export const ApproveRequestDialog = ({
       fetchPendingRequestToApprove();
     }
 
+   
     if (!open) {
       setRequest(null);
       setSelectedCourse("");
@@ -152,6 +153,7 @@ export const ApproveRequestDialog = ({
     return autoPrice;
   }, [customTotalPrice, request?.finalPrice, autoPrice]);
 
+  // console.log(totalPrice)
   const isFormValid =
     selectedBatch &&
     batchMode &&
@@ -198,12 +200,13 @@ export const ApproveRequestDialog = ({
         courseId: selectedCourse,
         batch: selectedBatch,
         modules: moduleIds,
-        amountPaid: amountPaid,
+        amountPaid: paymentStatus === "Paid"?totalPrice: amountPaid,
         totalFees: totalPrice,
         dueDate: paymentStatus !== "Paid" ? dueDate : undefined,
         status: paymentStatus as "Due" | "Paid" | "Partially Paid",
         mode: paymentMode as "UPI" | "Cash" | "Card" | "Other",
         batchMode: batchMode,
+      
       };
 
       const res = await approvePendingRequest(requestId,payload);

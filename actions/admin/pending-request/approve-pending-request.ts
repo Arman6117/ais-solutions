@@ -67,6 +67,7 @@ export const approvePendingRequest = async (
     // (Add your other payment validation logic here)
 
 
+    console.log({"Payload":payload, "Calculated Remaining Fee":remainingFee});  
     // Create the invoice first (no changes here)
     const paymentHistory =
       amountPaid > 0

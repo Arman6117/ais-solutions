@@ -144,7 +144,7 @@ export default function ModulesDataTable() {
 
   useEffect(() => {
     fetchModules();
-  }, []);
+  }, [fetchModules]);
 
   return (
     <>

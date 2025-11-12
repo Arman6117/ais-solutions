@@ -59,8 +59,8 @@ const InvoiceTableFilters: React.FC<InvoiceTableFiltersProps> = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Modes</SelectItem>
-          {uniquePaymentModes.map((mode) => (
-            <SelectItem key={mode} value={mode}>
+          {uniquePaymentModes.map((mode,i) => (
+            <SelectItem key={i} value={mode}>
               {mode}
             </SelectItem>
           ))}

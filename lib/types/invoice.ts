@@ -1,3 +1,4 @@
+import { string } from "zod";
 
 export interface CourseInfo {
     _id:string
@@ -64,4 +65,17 @@ export interface CourseInfo {
     paymentMode:     "UPI" | "Cash" | "Card" | "Other";
     dueDate?:string
     notes?:string
+  }
+
+
+  export interface InvoiceTable {
+    studentName:string,
+    email:string,
+    course:string[],
+    amountPaid:number,
+    totalFees:number,
+    mode:"UPI" | "Cash" | "Card" | "Other",
+    status:"Due" | "Paid" | "Partially Paid" | "Overdue"
+    createdAt:string
+
   }

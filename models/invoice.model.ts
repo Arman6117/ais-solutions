@@ -37,7 +37,7 @@ const paymentHistorySchema = new Schema({
   },
 });
 const invoiceSchema = new Schema({
-  studentId: { type: String, required: true },
+  studentId: { type: String, required: true, ref:"Student" },
   totalFees: { type: Number, required: true },
   remainingFees: { type: Number, required: true },
   amountPaid: { type: Number, required: true },
@@ -48,6 +48,6 @@ const invoiceSchema = new Schema({
     enum: ["Due", "Paid", "Overdue", "Partially Paid"],
     required: true,
   },
-});
+}, {timestamps:true});
 
 export const Invoice = models.Invoice || model("Invoice", invoiceSchema);

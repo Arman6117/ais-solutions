@@ -84,7 +84,7 @@ const BatchDetails = ({
       };
     })
   );
- console.log(batchModuleIds)
+
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
   const [batchMode, setBatchMode] = useState<Mode>(batch.mode);

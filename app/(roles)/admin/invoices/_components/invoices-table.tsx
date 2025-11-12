@@ -1,14 +1,17 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
-import { invoicesData } from "@/lib/static"; // your invoice data + type
+// import { invoicesData } from "@/lib/static"; // your invoice data + type
 import { Badge } from "@/components/ui/badge";
 import { InvoiceTable as InvoiceTableType, InvoiceStatus, PaymentMode } from "@/lib/types/types";
 import InvoiceTableFilters from "../../students/_components/invoice-table-filters";
 import { cn } from "@/lib/utils";
+import { getInvoiceTable } from "@/actions/admin/invoices/get-invoices";
+import { format } from "date-fns";
 
 const InvoiceTable = () => {
+  const [invoicesData, setInvoicesData] = useState<InvoiceTableType[]>([]);
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | "all">(
     "all"
   );
@@ -16,6 +19,22 @@ const InvoiceTable = () => {
     PaymentMode | "all"
   >("all");
 
+  const fetchInvoices = async() => {
+    try {
+      console.log("Function called")
+     const res=  await getInvoiceTable();
+     console.log("Fetched Invoices:")
+     console.log(res)
+     setInvoicesData(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(()=> {
+    fetchInvoices()
+  },[])
+
+  console.log({"Invoices data: ": invoicesData})
   const filteredInvoices = useMemo(() => {
     return invoicesData.filter((invoice) => {
       if (statusFilter !== "all" && invoice.status !== statusFilter)
@@ -27,30 +46,30 @@ const InvoiceTable = () => {
         return false;
       return true;
     });
-  }, [statusFilter, paymentModeFilter]);
+  }, [statusFilter, paymentModeFilter, invoicesData]);
 
   const invoiceTableCols = [
     {
       id: "studentName",
       header: "Student Name",
-      accessor: (row: InvoiceTableType) => row.studentName,
+      accessor: (row: InvoiceTableType) => row.studentId.name,
     },
     {
       id: "email",
       header: "Email",
-      accessor: (row: InvoiceTableType) => row.email,
+      accessor: (row: InvoiceTableType) => row.studentId.email,
     },
     {
       id: "courseName",
       header: "Course",
       accessor: (row: InvoiceTableType) => (
         <div className="flex flex-wrap gap-1">
-          {row.courseNames.map((course, i) => (
+          {row.studentId.courses.map((course, i) => (
             <span
               key={i}
               className="bg-muted text-sm px-2 py-1 rounded-md border border-border text-foreground"
             >
-              {course}
+              {course.courseId.courseName}
             </span>
           ))}
         </div>
@@ -64,13 +83,13 @@ const InvoiceTable = () => {
     {
       id: "totalFee",
       header: "Total Fee",
-      accessor: (row: InvoiceTableType) => `₹${row.totalFee}`,
+      accessor: (row: InvoiceTableType) => `₹${row.totalFees}`,
     },
-    {
-      id: "paymentMode",
-      header: "Mode",
-      accessor: (row: InvoiceTableType) => row.paymentMode,
-    },
+    // {
+    //   id: "paymentMode",
+    //   header: "Mode",
+    //   accessor: (row: InvoiceTableType) => row.pay,
+    // },
     {
       id: "status",
       header: "Status",
@@ -94,11 +113,7 @@ const InvoiceTable = () => {
       id: "createdAt",
       header: "Date",
       accessor: (row: InvoiceTableType) =>
-        new Date(row.createdAt).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
+        format(row.createdAt,"PP")
     },
   ];
 
@@ -121,7 +136,7 @@ const InvoiceTable = () => {
     <DataTable
       columns={invoiceTableCols}
       data={filteredInvoices}
-      getRowId={(row: InvoiceTableType) => row.id}
+      getRowId={(row: InvoiceTableType) => row._id}
       href="/admin/invoices/invoice-details"
       filterOptions={sortOptions}
       searchPlaceholder="Search by student or course"

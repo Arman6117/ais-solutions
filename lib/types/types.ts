@@ -1,4 +1,3 @@
-
 export type Column<T> = {
   id: string;
   header: string;
@@ -104,12 +103,18 @@ export type InvoiceStatus = "Paid" | "Due" | "Overdue";
 export type PaymentMode = "cash" | "upi" | "card";
 
 export type InvoiceTable = {
-  id: string;
+  _id: string;
+  studentId: {
+    _id: string;
+    name: string;
+    email: string;
+    courses: { courseId: { courseName: string } }[];
+  };
   studentName: string;
   email: string;
   courseNames: string[]; // ✅ Updated to array
   amountPaid: number;
-  totalFee: number;
+  totalFees: number;
   paymentMode: "cash" | "upi" | "card";
   createdAt: string;
   status: "Paid" | "Due" | "Overdue";
@@ -288,40 +293,39 @@ export type CourseBatch = {
   instructor: string;
 };
 
-
 export type BatchModules = {
-  id:string,
-  name:string,
-  startDate:string,
-  endDate:string,
-  instructor?:string[],
+  id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  instructor?: string[];
   status: "Ongoing" | "Upcoming" | "Completed";
-  numberOfStudent:number
-}
+  numberOfStudent: number;
+};
 
 export type Batch = {
-  _id:string,
-  name:string,
-  description:string,
-  startDate:string,
-  endDate:string,
-  groupLink:string,
-  status:"Upcoming"| "Ongoing"| "Completed",
-  mode:Mode,
-  type:BatchType,
-  instructors:string[];
-  meetings:string[],
-  modules:BatchModules[],
-  courseId:string,
-  notes:string[],
-  students:string[]
-}
+  _id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  groupLink: string;
+  status: "Upcoming" | "Ongoing" | "Completed";
+  mode: Mode;
+  type: BatchType;
+  instructors: string[];
+  meetings: string[];
+  modules: BatchModules[];
+  courseId: string;
+  notes: string[];
+  students: string[];
+};
 
 export type NoteData = {
   _id: string;
   module: string;
   chapter: string;
-  session: {meetingName:string}
-  videoLinks: {label:string, link: string; _id: string }[];
-  files: {label:string, link: string;  _id: string }[];
+  session: { meetingName: string };
+  videoLinks: { label: string; link: string; _id: string }[];
+  files: { label: string; link: string; _id: string }[];
 };

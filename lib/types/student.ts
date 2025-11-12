@@ -11,7 +11,7 @@ export interface StudentTable {
   phone:string,
   gender:"male" | "female" | "other",
   batches:Batch[],
-  feeStatus:"paid" | "partially" | "unpaid", 
+  feeStatus:"paid" | "partially paid" | "due" | "overdue", 
   createdAt: string,
 }
 
@@ -49,7 +49,7 @@ export interface StudentData {
   profilePic:string
   gender:"male" | "female" | "other";
   role: "student";
-  feesStatus: "paid" | "partial" | "unpaid";
+  feesStatus: "paid" | "partial" | "due" | "overdue";
   createdAt: string;
   batches:Batches[]
   updatedAt: string;
@@ -83,7 +83,7 @@ export interface Invoices {
     remainingFees: number,
     amountPaid: number,
     dueDate: string,
-    status: "paid"| "partially paid"|"due"
+    status: "paid"| "partially paid"|"due" |"overdue"
   }[];
 }
 /*

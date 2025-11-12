@@ -1,47 +1,30 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { InvoiceStatus, PaymentMode } from "@/lib/types/types";
 import { Invoice } from "@/models/invoice.model";
 import { isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
 import { InvoiceDoc, PaymentHistory, Student } from "@/lib/types/invoice";
-
+import "@/models/student.model"
+import "@/models/course.model"
 export const getInvoiceTable = async () => {
   try {
     await connectToDB();
 
+    console.log("Function called")
     const invoices = await Invoice.find({})
-      .select("_id studentId totalFees amountPaid status paymentHistory")
+      .select("_id studentId createdAt totalFees amountPaid status paymentHistory")
       .populate({
         path: "studentId",
-        select: "name email courseIds",
-        populate: [{ path: "courseIds", select: "name" }],
+        select: "name email courses",
+        populate: [{ path: "courses.courseId", select: "courseName" }],
       })
       .sort({ createdAt: -1 });
-
-    const formattedInvoices = invoices.map((invoice) => {
-      const student = invoice.studentId;
-      const lastPayment =
-        invoice.paymentHistory?.[invoice.paymentHistory.length - 1];
-
-      return {
-        _id: `${invoice._id}`,
-        studentName: student?.name || "Unknown",
-        email: student?.email || ("Unknown" as string),
-        courses: (student?.courseIds?.map((c: { name: string }) => c.name) ||
-          []) as string[],
-        totalFee: invoice.totalFees as number,
-        amountPaid: invoice.amountPaid as number,
-        status: invoice.status as InvoiceStatus,
-        lastPaymentMode: (lastPayment?.mode || "N/A") as PaymentMode,
-        lastPaymentDate: (lastPayment?.dueDate || "N/A") as string,
-      };
-    });
-
+console.log(JSON.parse(JSON.stringify(invoices)));
+ 
     return {
       success: true,
-      data: formattedInvoices,
+      data: JSON.parse(JSON.stringify(invoices)),
       message: "Invoices fetched successfully",
     };
   } catch (error) {

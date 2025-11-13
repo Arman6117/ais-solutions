@@ -8,7 +8,7 @@ import {
   PiInvoice,
   PiStudent,
 } from "react-icons/pi";
-import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, InvoiceTable, Offer, Student } from "./types/types";
+import { Course, DummyBatches, DummyInstructors, DummyModules, DummyStudent, Offer, Student } from "./types/types";
 import { FaUser } from "react-icons/fa";
 
 export const batchModules = [

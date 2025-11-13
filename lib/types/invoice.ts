@@ -1,4 +1,4 @@
-import { string } from "zod";
+
 
 export interface CourseInfo {
     _id:string

@@ -134,7 +134,7 @@ const NewNoteForm = ({
       return;
     }
 
-    const formattedDate = format(date, "yyyy-MM-dd");
+    //const formattedDate = format(date, "yyyy-MM-dd");
 
     if (isEditing && editNote && updateNote) {
       const updatedNote = {

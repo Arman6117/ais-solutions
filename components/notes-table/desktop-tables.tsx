@@ -81,6 +81,7 @@ const DesktopTable = ({
     }
   };
 
+  console.log(paginatedNotes)
   return (
     <Table>
       <TableHeader>

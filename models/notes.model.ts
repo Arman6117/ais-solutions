@@ -18,8 +18,8 @@ const noteSchema = new Schema(
     videoLinks: { type: [videoLinkAndFileSchema], required: true, default: [] },
     files: { type: [videoLinkAndFileSchema], required: true, default: [] },
     batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true },
-  },
-  { timestamps: true }
+  }
+ 
 );
 
 noteSchema.index({ session: 1 });

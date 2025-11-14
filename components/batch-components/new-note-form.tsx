@@ -109,7 +109,7 @@ const NewNoteForm = ({
       }
       const sessions = res.data.map((session) => ({
         _id: session._id,
-        name: session.meetingName,
+        meetingName: session.meetingName,
         date: session.date,
         time: session.time,
         chapter: session.chapters,
@@ -257,7 +257,7 @@ const NewNoteForm = ({
         <div className="flex flex-col gap-2 max-w-40">
           {selectedSession ? (
             <div className="text-sm space-y-1">
-              <p className="font-medium">{selectedSession.name}</p>
+              <p className="font-medium">{selectedSession.meetingName}</p>
               <p className="text-xs text-muted-foreground">
                 {format(selectedSession.date, "MMM dd, yyyy")}
               </p>

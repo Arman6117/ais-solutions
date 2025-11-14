@@ -183,7 +183,7 @@ const DesktopTable = ({
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{note.session?.name || "—"}</TableCell>
+                <TableCell>{note.session?.meetingName || "—"}</TableCell>
                 <TableCell>{format(new Date(note.createdAt!), "PP")}</TableCell>
 
                 <TableCell className="text-center truncate max-w-44">

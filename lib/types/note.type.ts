@@ -1,7 +1,7 @@
 // lib/types/note.type.ts
 export interface NoteTableSessionType {
     _id?: string;
-    name: string;
+    meetingName: string;
     date: string;
     time: string;
     instructor?: string;

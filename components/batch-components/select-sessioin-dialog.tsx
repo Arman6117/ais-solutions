@@ -57,7 +57,7 @@ export default function SelectSessionDialog({
           <div className="space-y-2">
             {filteredSessions.map((s) => (
               <div key={s._id} className="border p-3 rounded-md space-y-1">
-                <p className="text-sm font-medium">{s.name}</p>
+                <p className="text-sm font-medium">{s.meetingName}</p>
                 <p className="text-xs text-muted-foreground">
                   {format(s.date, "MMM dd, yyyy")}
                 </p>
@@ -109,7 +109,7 @@ export default function SelectSessionDialog({
                   key={s._id}
                   className="border p-3 rounded-md space-y-1 mt-2"
                 >
-                  <p className="text-sm font-medium">{s.name}</p>
+                  <p className="text-sm font-medium">{s.meetingName}</p>
                   <p className="text-xs text-muted-foreground">
                     {format(s.date, "MMM dd, yyyy")}
                   </p>

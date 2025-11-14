@@ -160,7 +160,7 @@ const MobileCardView = ({
           {note.session && (
             <>
               <div className="font-medium">Session:</div>
-              <div>{note.session.name}</div>
+              <div>{note.session.meetingName}</div>
             </>
           )}
 

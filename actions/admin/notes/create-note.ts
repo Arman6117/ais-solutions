@@ -25,6 +25,7 @@ export const createNote = async (batchId: string, notesData: NoteTableType) => {
       videoLinks: notesData.videoLinks || [],
       files: notesData.files || [],
       batchId: batchId,
+      createdAt:notesData.createdAt
     };
     const createdNote = await Notes.create(newNoteDoc);
     await Batch.findByIdAndUpdate(new ObjectId(batchId), {

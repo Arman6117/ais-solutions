@@ -142,7 +142,7 @@ const NewNoteForm = ({
         module: moduleName,
         chapter: chapterName,
         topics: topics, // NEW: Include topics
-        createdAt: formattedDate,
+        createdAt: date,
         videoLinks,
         files,
         session: selectedSession,
@@ -158,7 +158,7 @@ const NewNoteForm = ({
         module: moduleName,
         chapter: chapterName,
         topics: topics, // NEW: Include topics
-        createdAt: formattedDate,
+        createdAt: date,
         videoLinks,
         files,
         session: selectedSession,

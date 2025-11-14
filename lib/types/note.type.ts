@@ -25,7 +25,7 @@ export interface NoteTableSessionType {
     chapter: string;
     topics: string[]; // NEW: Array of topics
     session: NoteTableSessionType | null;
-    createdAt?: string;
+    createdAt?: Date;
     videoLinks?: VideoLinksType[];
     files?: FilesType[];
   }

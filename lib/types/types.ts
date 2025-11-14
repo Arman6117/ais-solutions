@@ -327,6 +327,7 @@ export type NoteData = {
   _id: string;
   module: string;
   chapter: string;
+  topics:string[]
   session: { meetingName: string };
   videoLinks: { label: string; link: string; _id: string }[];
   files: { label: string; link: string; _id: string }[];

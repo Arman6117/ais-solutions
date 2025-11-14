@@ -47,9 +47,18 @@ const WatchPageComponent = ({
           </h2>
         </div>
       )}
-      {notesData.map((note) => (
-        <NoteContentPlayer key={note._id} note={note} sessionId={sessionId} />
-      ))}
+      <div className="flex flex-col gap-10">
+        {notesData.map((note) => (
+          <div key={note._id} className="w-full flex flex-col gap-7">
+            <NoteContentPlayer
+             
+              note={note}
+              sessionId={sessionId}
+            />
+            <hr className="border-t border-2 border-gray-300" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

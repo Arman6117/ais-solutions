@@ -56,7 +56,17 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
       {/* Left Section: Video Player */}
       <div className="flex-1 min-w-0">
         <h1 className="text-3xl font-bold mb-4 text-neutral-800">{note.session.meetingName}</h1>
-        {/* <p className="text-muted-foreground mb-6">{note.description}</p> */}
+        {note.topics.length > 0 ? (
+          note.topics.map((topic, index) => (
+            <span
+              key={index}
+              className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full mr-2 mb-2"
+            >
+              {topic}
+            </span>
+          ))
+        ) : null}
+
 
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl aspect-video w-full">
           {currentVideoId ? (

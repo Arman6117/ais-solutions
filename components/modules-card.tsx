@@ -12,6 +12,7 @@ import FilterTabs from "./filter-tab";
 import EmptyState from "./empaty-state";
 import { updateModuleForBatch } from "@/actions/admin/batches/update-module";
 import { deleteBatchModule } from "@/actions/admin/batches/delete-batch-module";
+import { useRouter } from "next/navigation";
 
 export type ModuleStatus = "Ongoing" | "Upcoming" | "Completed";
 
@@ -45,6 +46,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
   const [filter, setFilter] = useState<ModuleStatus | "all">("all");
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
   const [moduleEditData, setModuleEditData] = useState<ModuleEditData>({});
+  const router = useRouter();
 
   const addNewModules = async (ids: string[]) => {
     try {
@@ -52,6 +54,8 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
       if (!res.success) {
         toast.error(res.message);
       } else {
+        console.log("Called");
+        router.refresh();
         toast.success(res.message);
       }
     } catch (error) {
@@ -80,13 +84,13 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
   useEffect(() => {
     fetchAvailableModule();
   }, [modules]);
-
+  useEffect(() => {
+    setModules(propModules);
+  }, [propModules]);
   const handleStatusChange = (moduleId: string, newStatus: ModuleStatus) => {
     if (editingModuleId === moduleId) {
-      // Update edit data
       setModuleEditData((prev) => ({ ...prev, status: newStatus }));
     } else {
-      // Update modules directly if not in edit mode
       setModules((prev) =>
         prev.map((m) => (m.id === moduleId ? { ...m, status: newStatus } : m))
       );

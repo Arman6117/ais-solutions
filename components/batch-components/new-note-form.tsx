@@ -1,3 +1,4 @@
+// components/batch-components/new-note-form.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { TableCell, TableRow } from "../ui/table";
@@ -13,6 +14,7 @@ import AddFileDialog from "./add-file-dialog";
 import SelectSessionDialog from "./select-sessioin-dialog";
 import ModuleSelector from "./module-selector";
 import ChapterSelector from "./chapter-selector";
+import TopicsInput from "./topics-input"; // NEW IMPORT
 import {
   Dialog,
   DialogContent,
@@ -34,9 +36,7 @@ import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetin
 const NewNoteForm = ({
   setIsCreating,
   createNewNote,
-  // isMobile,
   batchId,
-  // New props for edit functionality
   isEditing = false,
   setIsEditing,
   editNote,
@@ -46,7 +46,6 @@ const NewNoteForm = ({
   createNewNote: (newNote: NoteTableType) => void;
   isMobile: boolean;
   batchId: string;
-  // Edit mode props (optional)
   isEditing?: boolean;
   setIsEditing?: (state: boolean) => void;
   editNote?: NoteTableType;
@@ -59,6 +58,10 @@ const NewNoteForm = ({
   );
   const [chapterName, setChapterName] = useState(
     isEditing && editNote ? editNote.chapter || "" : ""
+  );
+  // NEW: Topics state
+  const [topics, setTopics] = useState<string[]>(
+    isEditing && editNote ? editNote.topics || [] : []
   );
   const [date, setDate] = useState<Date | undefined>(
     isEditing && editNote && editNote.createdAt
@@ -113,9 +116,7 @@ const NewNoteForm = ({
         module: session.module,
       }));
 
-      console.log(sessions)
       setBatchSession(sessions);
-      
     } catch (error) {
       console.log(error);
       toast.error("Failed to fetch sessions");
@@ -136,11 +137,11 @@ const NewNoteForm = ({
     const formattedDate = format(date, "yyyy-MM-dd");
 
     if (isEditing && editNote && updateNote) {
-      // Update existing note
       const updatedNote = {
         ...editNote,
         module: moduleName,
         chapter: chapterName,
+        topics: topics, // NEW: Include topics
         createdAt: formattedDate,
         videoLinks,
         files,
@@ -153,10 +154,10 @@ const NewNoteForm = ({
       }
       toast.success("Note updated successfully");
     } else {
-      // Create new note
       const newNote = {
         module: moduleName,
         chapter: chapterName,
+        topics: topics, // NEW: Include topics
         createdAt: formattedDate,
         videoLinks,
         files,
@@ -223,7 +224,6 @@ const NewNoteForm = ({
           selectedModule={moduleName}
           onChange={(val) => {
             setModuleName(val);
-            // Reset chapter when module changes, unless we're editing and the chapter exists in the new module
             if (isEditing && editNote) {
               const newModuleChapters = moduleChapterMap[val] || [];
               if (!newModuleChapters.includes(chapterName)) {
@@ -241,6 +241,15 @@ const NewNoteForm = ({
           chapters={availableChapters}
           selectedChapter={chapterName}
           onChange={setChapterName}
+        />
+      </TableCell>
+
+    
+      <TableCell className="max-w-xs">
+        <TopicsInput
+          topics={topics}
+          onChange={setTopics}
+          placeholder="Add topics..."
         />
       </TableCell>
 

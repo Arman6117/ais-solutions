@@ -67,7 +67,7 @@ export default function ModuleCard({
   };
 
   const displayStatus = isEditing && moduleEditData.status ? moduleEditData.status : module.status;
-
+  
   return (
     <div className="group bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg transition-all duration-300 hover:border-indigo-200">
       <div className="flex justify-between items-start mb-4">

@@ -1,3 +1,4 @@
+// models/notes.model.ts
 import { Schema, model, models } from "mongoose";
 
 const videoLinkAndFileSchema = new Schema(
@@ -7,10 +8,12 @@ const videoLinkAndFileSchema = new Schema(
   },
   { _id: false }
 );
+
 const noteSchema = new Schema(
   {
     module: { type: String, required: true },
     chapter: { type: String, required: true },
+    topics: { type: [String], required: true, default: [] }, // NEW: Array of topics
     session: { type: Schema.Types.ObjectId, ref: "Sessions" },
     videoLinks: { type: [videoLinkAndFileSchema], required: true, default: [] },
     files: { type: [videoLinkAndFileSchema], required: true, default: [] },

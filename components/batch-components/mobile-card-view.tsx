@@ -12,9 +12,14 @@ import { getIcon } from "@/lib/utils";
 
 import { Pencil, Trash2 } from "lucide-react";
 import { FaYoutube } from "react-icons/fa";
-import { FilesType, NoteTableType, VideoLinksType } from "@/lib/types/note.type";
+import {
+  FilesType,
+  NoteTableType,
+  VideoLinksType,
+} from "@/lib/types/note.type";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { Badge } from "../ui/badge";
 
 type MobileCardViewProps = {
   startIndex: number;
@@ -22,7 +27,7 @@ type MobileCardViewProps = {
   selectedRows: Set<number>;
   handleRowCheckboxChange: (index: number) => void;
   note: NoteTableType;
-  mode: 'edit' | 'view' | 'create';
+  mode: "edit" | "view" | "create";
   updateNoteLinks: (noteIndex: number, newLinks: VideoLinksType[]) => void;
   updateNoteFiles: (noteIndex: number, newFiles: FilesType[]) => void;
   handleDelete: (index: number) => void;
@@ -108,9 +113,9 @@ const MobileCardView = ({
           <CardTitle className="text-sm font-medium">{note.module}</CardTitle>
         </div>
         <div className="flex gap-1">
-          <Button 
-            size="icon" 
-            variant="outline" 
+          <Button
+            size="icon"
+            variant="outline"
             className="h-8 w-8"
             onClick={startEditing}
             title="Edit note"
@@ -132,9 +137,25 @@ const MobileCardView = ({
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="font-medium">Chapter:</div>
           <div>{note.chapter}</div>
+          {note.topics && note.topics.length > 0 && (
+            <>
+              <div className="font-medium col-span-2 mt-2">Topics:</div>
+              <div className="col-span-2 flex flex-wrap gap-1">
+                {note.topics.map((topic, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-xs">
+                    {topic}
+                  </Badge>
+                ))}
+              </div>
+            </>
+          )}
 
           <div className="font-medium">Created:</div>
-          <div>{note.createdAt ? format(new Date(note.createdAt), "MMM dd, yyyy") : "No date"}</div>
+          <div>
+            {note.createdAt
+              ? format(new Date(note.createdAt), "MMM dd, yyyy")
+              : "No date"}
+          </div>
 
           {note.session && (
             <>
@@ -148,8 +169,11 @@ const MobileCardView = ({
               <div className="font-medium col-span-2 mt-2">Video Links:</div>
               <div className="col-span-2">
                 {note.videoLinks.map((v: VideoLinksType, vIndex: number) => (
-                  <div key={vIndex} className="flex items-center justify-between gap-2 mb-2 p-2 bg-gray-50 rounded">
-                    <div 
+                  <div
+                    key={vIndex}
+                    className="flex items-center justify-between gap-2 mb-2 p-2 bg-gray-50 rounded"
+                  >
+                    <div
                       className="flex items-center gap-2 cursor-pointer flex-1"
                       onClick={() => window.open(v.link)}
                     >
@@ -163,7 +187,9 @@ const MobileCardView = ({
                           size="icon"
                           className="h-6 w-6"
                           onClick={() => {
-                            toast.info("Edit individual link - feature coming soon");
+                            toast.info(
+                              "Edit individual link - feature coming soon"
+                            );
                           }}
                         >
                           <Pencil className="size-3 text-violet-600" />
@@ -173,7 +199,10 @@ const MobileCardView = ({
                           size="icon"
                           className="h-6 w-6"
                           onClick={() => {
-                            const newLinks = note.videoLinks?.filter((_, linkIndex) => linkIndex !== vIndex) || [];
+                            const newLinks =
+                              note.videoLinks?.filter(
+                                (_, linkIndex) => linkIndex !== vIndex
+                              ) || [];
                             updateNoteLinks(currentIndex, newLinks);
                             toast.success("Video link removed successfully");
                           }}
@@ -206,8 +235,11 @@ const MobileCardView = ({
                   const ext = f.label?.split(".").pop()?.toLowerCase() || "";
                   const FileIcon: IconType = getIcon(ext);
                   return (
-                    <div key={fIndex} className="flex items-center justify-between gap-2 mb-2 p-2 bg-gray-50 rounded">
-                      <div 
+                    <div
+                      key={fIndex}
+                      className="flex items-center justify-between gap-2 mb-2 p-2 bg-gray-50 rounded"
+                    >
+                      <div
                         className="flex items-center gap-2 cursor-pointer flex-1"
                         onClick={() => window.open(f.link || f.link)}
                       >
@@ -221,7 +253,9 @@ const MobileCardView = ({
                             size="icon"
                             className="h-6 w-6"
                             onClick={() => {
-                              toast.info("Edit individual file - feature coming soon");
+                              toast.info(
+                                "Edit individual file - feature coming soon"
+                              );
                             }}
                           >
                             <Pencil className="size-3 text-violet-600" />
@@ -231,7 +265,10 @@ const MobileCardView = ({
                             size="icon"
                             className="h-6 w-6"
                             onClick={() => {
-                              const newFiles = note.files?.filter((_, fileIndex) => fileIndex !== fIndex) || [];
+                              const newFiles =
+                                note.files?.filter(
+                                  (_, fileIndex) => fileIndex !== fIndex
+                                ) || [];
                               updateNoteFiles(currentIndex, newFiles);
                               toast.success("File removed successfully");
                             }}
@@ -258,19 +295,20 @@ const MobileCardView = ({
           )}
 
           {/* Show Add buttons when no links/files exist but in edit mode */}
-          {mode === "edit" && (!note.videoLinks || note.videoLinks.length === 0) && (
-            <>
-              <div className="font-medium col-span-2 mt-2">Video Links:</div>
-              <div className="col-span-2">
-                <AddLinkButton
-                  notesLinks={[]}
-                  setNotesLinks={(newLinks) =>
-                    updateNoteLinks(currentIndex, newLinks)
-                  }
-                />
-              </div>
-            </>
-          )}
+          {mode === "edit" &&
+            (!note.videoLinks || note.videoLinks.length === 0) && (
+              <>
+                <div className="font-medium col-span-2 mt-2">Video Links:</div>
+                <div className="col-span-2">
+                  <AddLinkButton
+                    notesLinks={[]}
+                    setNotesLinks={(newLinks) =>
+                      updateNoteLinks(currentIndex, newLinks)
+                    }
+                  />
+                </div>
+              </>
+            )}
 
           {mode === "edit" && (!note.files || note.files.length === 0) && (
             <>

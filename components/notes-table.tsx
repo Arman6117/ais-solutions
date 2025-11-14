@@ -76,32 +76,34 @@ const NotesTable = ({
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
-
   useEffect(() => {
     let result = [...noteList];
-
+  
     if (searchTerm) {
       result = result.filter(
         (note) =>
           note.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
           note.chapter.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          note.topics.some((topic) => 
+            topic.toLowerCase().includes(searchTerm.toLowerCase())
+          ) || // NEW: Search in topics
           (note.files &&
             note.files.some((file) =>
               file.label.toLowerCase().includes(searchTerm.toLowerCase())
             ))
       );
     }
-
+  
     if (moduleFilter !== "all") {
       result = result.filter((note) => note.module === moduleFilter);
     }
-
+  
     result = result.sort((a, b) => {
       const dateA = new Date(a.createdAt ?? new Date()).getTime();
       const dateB = new Date(b.createdAt ?? new Date()).getTime();
       return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
     });
-
+  
     setFilteredNotes(result);
     setCurrentPage(1);
   }, [noteList, notes, searchTerm, sortDirection, moduleFilter]);

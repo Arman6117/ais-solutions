@@ -3,7 +3,6 @@ import {
   Table,
   TableBody,
   TableCell,
-
   TableHeader,
   TableHead,
   TableRow,
@@ -24,6 +23,7 @@ import {
 import { format } from "date-fns";
 import { toast } from "sonner";
 import AddFileButton from "../batch-components/add-file-button";
+import { Badge } from "../ui/badge";
 
 type DesktopTableProps = {
   paginatedNotes: NoteTableType[];
@@ -83,6 +83,7 @@ const DesktopTable = ({
 
   return (
     <Table>
+     
       <TableHeader>
         <TableRow className="items-center text-base font-semibold">
           <TableHead className="text-center w-12">
@@ -96,6 +97,7 @@ const DesktopTable = ({
           </TableHead>
           <TableHead className="text-center">Module</TableHead>
           <TableHead className="text-center">Chapter</TableHead>
+          <TableHead className="text-center">Topics</TableHead> {/* NEW */}
           <TableHead className="text-center">Session</TableHead>
           <TableHead className="text-center">
             <div className="flex items-center justify-center gap-1">
@@ -107,7 +109,6 @@ const DesktopTable = ({
           <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
-
       <TableBody>
         {!isMobile && isCreating && (
           <NewNoteForm
@@ -163,6 +164,25 @@ const DesktopTable = ({
                 </TableCell>
                 <TableCell>{note.module}</TableCell>
                 <TableCell>{note.chapter}</TableCell>
+                <TableCell>
+                  <div className="flex flex-wrap gap-1 justify-center max-w-xs">
+                    {note.topics && note.topics.length > 0 ? (
+                      note.topics.map((topic, idx) => (
+                        <Badge
+                          key={idx}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          {topic}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground text-xs">
+                        No topics
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell>{note.session?.name || "—"}</TableCell>
                 <TableCell>{format(new Date(note.createdAt!), "PP")}</TableCell>
 
@@ -207,7 +227,9 @@ const DesktopTable = ({
                                       (_, linkIndex) => linkIndex !== index
                                     ) || [];
                                   updateNoteLinks(currentIndex, newLinks);
-                                  toast.success("Video link removed successfully");
+                                  toast.success(
+                                    "Video link removed successfully"
+                                  );
                                 }}
                               >
                                 <Trash2 className="size-4 text-destructive" />
@@ -240,7 +262,7 @@ const DesktopTable = ({
                           key={index}
                           className="flex items-center justify-between w-full gap-2 border-b pb-2"
                         >
-                          <div 
+                          <div
                             className="flex items-center gap-2 cursor-pointer"
                             onClick={() => window.open(f.link || f.link)}
                           >

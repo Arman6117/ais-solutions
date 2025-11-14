@@ -319,6 +319,8 @@ export type Batch = {
   courseId: string;
   notes: string[];
   students: string[];
+  createdAt:string
+  updatedAt:string
 };
 
 export type NoteData = {

@@ -27,7 +27,7 @@ type BatchMeetingsProps = {
   courseId: string;
   batch: string;
   mode: "view" | "edit";
-  modules: string[];
+ 
 };
 
 const formatShortDate = (date: Date) => {

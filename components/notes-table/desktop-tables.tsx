@@ -83,7 +83,6 @@ const DesktopTable = ({
 
   return (
     <Table>
-     
       <TableHeader>
         <TableRow className="items-center text-base font-semibold">
           <TableHead className="text-center w-12">

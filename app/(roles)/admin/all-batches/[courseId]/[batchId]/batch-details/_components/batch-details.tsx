@@ -48,6 +48,7 @@ import BatchTypeSelector from "./batch-type-selector";
 import ModulesCard from "@/components/modules-card";
 import StatusCard from "@/components/status-card";
 import { updateBatchById } from "@/actions/admin/batches/update-batch";
+import { deleteBatch } from "@/actions/admin/batches/delete-batch";
 type BatchDetailsProps = {
   batch: Batch;
   dummyModules: string[];
@@ -58,8 +59,7 @@ type BatchDetailsProps = {
 
 const BatchDetails = ({
   batch,
-  
-  dummyModules,
+
   dummyStudents,
   courseId,
 }: BatchDetailsProps) => {
@@ -69,7 +69,6 @@ const BatchDetails = ({
   const defaultMode = searchParams.get("mode") === "edit" ? "edit" : "view";
   const [mode, setMode] = useState<"edit" | "view">(defaultMode);
 
-  
   const [name, setName] = useState(batch.name || "");
   const [description, setDescription] = useState(batch.description || "");
   const [status, setStatus] = useState<"Ongoing" | "Upcoming" | "Completed">(
@@ -80,19 +79,19 @@ const BatchDetails = ({
     batch.modules.map((mod) => {
       return {
         _id: mod.id,
-        name:mod.name
+        name: mod.name,
       };
     })
   );
-  console.log(batchModuleIds)
+  console.log(batchModuleIds);
 
   const [startDate, setStartDate] = useState(batch.startDate || "");
   const [endDate, setEndDate] = useState(batch.endDate || "");
   const [batchMode, setBatchMode] = useState<Mode>(batch.mode);
   const [batchType, setBatchType] = useState<BatchType>(batch.type);
 
-  const [isSmallScreen,setIsSmallScreen] = useState(false);
-  console.log(isSmallScreen)
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  console.log(isSmallScreen);
   const [isLoading, setIsLoading] = useState(false);
 
   const formatDate = (date: string) => format(date, "PP");
@@ -151,7 +150,16 @@ const BatchDetails = ({
   };
 
   const statusColor = getStatusColor(status);
-
+  const handleRemoveBatch = async () => {
+    try {
+      await deleteBatch(batch._id);
+      toast.success("Batch deleted successfully");
+      router.push(`/admin/all-batches`);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
   return (
     <div className="w-full p mb-4 flex flex-col gap-6">
       <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
@@ -416,7 +424,6 @@ const BatchDetails = ({
                 mode={mode}
                 courseId={courseId}
                 batch={batch._id as string}
-                modules={dummyModules}
               />
               <ModulesCard
                 mode={mode}
@@ -437,7 +444,12 @@ const BatchDetails = ({
           courseId={courseId}
           batchId={batch._id as string}
         />
-        <StatusCard name="Batch" />
+        <StatusCard
+        onRemove={handleRemoveBatch}  
+          updatedAt={batch.updatedAt}
+          createdAt={batch.createdAt}
+          name="Batch"
+        />
       </div>
     </div>
   );

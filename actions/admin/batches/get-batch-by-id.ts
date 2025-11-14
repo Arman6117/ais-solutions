@@ -41,6 +41,8 @@ export const getBatchById = async(batchId:string) => {
               status: mod.status,
               numberOfStudent: mod.numberOfStudent,
             })),
+            createdAt:batch.createdAt as string,
+            updatedAt:batch.updatedAt as string,
             courseId: `${batch.courseId}`,
             notes: [] as string[],      
             students: [] as string[],   

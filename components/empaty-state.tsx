@@ -1,6 +1,6 @@
 import React from "react";
-import { BookOpen, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BookOpen } from "lucide-react";
+
 import { ModuleStatus } from "./modules-card";
 
 

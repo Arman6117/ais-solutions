@@ -18,6 +18,7 @@ const noteSchema = new Schema(
     videoLinks: { type: [videoLinkAndFileSchema], required: true, default: [] },
     files: { type: [videoLinkAndFileSchema], required: true, default: [] },
     batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true },
+    createdAt:{ type: Date, default: Date.now },
   }
  
 );

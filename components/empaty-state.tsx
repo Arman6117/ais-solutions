@@ -34,15 +34,14 @@ export default function EmptyState({ filter }: EmptyStateProps) {
         <h3 className="text-lg font-semibold text-gray-700 mb-2">
           {title}
         </h3>
-        <p className="text-gray-500 text-sm mb-6">
+        <p className="text-gray-500 text-sm mb-3">
           {description}
         </p>
 
         {showButton && (
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-            <Plus size={16} className="mr-2" />
-            Add Your First Module
-          </Button>
+          <span className=" ">
+            Add Your First Module By Clicking Edit Button  
+          </span>
         )}
       </div>
     </div>

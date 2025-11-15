@@ -84,9 +84,9 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
   useEffect(() => {
     fetchAvailableModule();
   }, [modules]);
-  // useEffect(() => {
-  //   setModules(propModules);
-  // }, [propModules]);
+  useEffect(() => {
+    setModules(propModules);
+  }, [propModules]);
   const handleStatusChange = (moduleId: string, newStatus: ModuleStatus) => {
     if (editingModuleId === moduleId) {
       setModuleEditData((prev) => ({ ...prev, status: newStatus }));

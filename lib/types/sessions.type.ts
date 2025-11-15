@@ -1,3 +1,5 @@
+export type SessionStatus = 'scheduled' | 'rescheduled' | 'cancelled';
+
 export interface Session {
   _id: string;
   studentId: string[];
@@ -10,15 +12,28 @@ export interface Session {
   time: string;
   notes: string;
   videoLink: string;
+  batchId?: string;
+  
+
+  status: SessionStatus;
+  isDeleted: boolean;
+  deletedAt?: Date | null;
+  originalDate?: string;
+  originalTime?: string;
+  rescheduledAt?: Date | null;
+  cancelledAt?: Date | null;
+  
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateSessionPayload {
   studentId?: string[];
-  batchName: string | undefined;
+  batchName?: string;
   batchId?: string;
   moduleId?: string;
-  module: string;         
-  chapters: string[];     // keep array for multiple subtopics
+  module: string;
+  chapters: string[];
   instructor?: string;
   meetingName: string;
   meetingLink: string;
@@ -29,25 +44,47 @@ export interface CreateSessionPayload {
 export interface UpdateSessionPayload {
   studentId?: string[];
   meetingName?: string;
-  modules?: string;
+  module?: string;  
   chapters?: string[];
   instructor?: string;
   meetingLink?: string;
-  date?: Date;
+  date?: string;  
   time?: string;
+  videoLink?: string;
+  notes?: string[];
 }
 
 export interface ModulesForSession {
-  _id:string,
-  name:string,
-  chapters:[{name:string}]
+  _id: string;
+  name: string;
+  chapters: [{ name: string }];
 }
 
 export interface BatchMeetings {
-  _id:string,
-  meetingName:string,
-  module:string
-  time:string
-  chapters:string[]
-  date:string
+  _id: string;
+  meetingName: string;
+  module: string;
+  time: string;
+  chapters: string[];
+  date: string;
+  
+  
+  status: SessionStatus;
+  isDeleted: boolean;
+  originalDate?: string;
+  originalTime?: string;
+  rescheduledAt?: Date | null;
+  cancelledAt?: Date | null;
 }
+
+export interface SessionWithDisplayInfo extends Session {
+  displayStatus: {
+    status: SessionStatus;
+    message: string;
+    badge: 'scheduled' | 'rescheduled' | 'cancelled';
+    variant: 'default' | 'warning' | 'destructive';
+  };
+}
+
+// Helper type for filtering sessions
+export type SessionFilter = 'all' | 'active' | 'rescheduled' | 'cancelled';

@@ -3,25 +3,17 @@ import { deleteSession } from "@/actions/admin/sessions/delete-session";
 import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { BatchMeetings as BatchMeetingsType } from "@/lib/types/sessions.type";
 import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
-import { AlertTriangle, Calendar, Trash2 } from "lucide-react";
+import {  Calendar } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import MeetingDeleteDialog from "./meeting-delete-dialog";
+import MeetingEditDialog from "./meeting-edit-dialog";
 
 type BatchMeetingsProps = {
   courseId: string;
@@ -111,38 +103,19 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                           </span>
                         )}
                       </div>
+                     <div className="flex gap-2">
 
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button className="rounded-full bg-destructive opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                            <Trash2 className="size-5" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2">
-                              <AlertTriangle className="size-5 text-destructive" />
-                              Confirm Deletion
-                            </DialogTitle>
-                            <DialogDescription>
-                              Are you sure you want to delete this meeting This
-                              action cannot be undone.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter className="flex gap-5 sm:gap-3">
-                            <DialogClose>Cancel</DialogClose>
-                            <DialogClose  asChild>
-                              <Button
-                             
-                                variant="destructive"
-                                onClick={() => handleDelete(meeting._id)}
-                              >
-                                Delete
-                              </Button>
-                            </DialogClose>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                     <MeetingDeleteDialog
+                      onDelete={() => handleDelete(meeting._id!)}
+                      
+                      />
+                     <MeetingEditDialog
+                      
+                      meetingData={meeting}
+                      batchId={batch}
+                      
+                      />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-sm">

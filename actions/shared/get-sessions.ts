@@ -11,7 +11,7 @@ export const getStudentSessions = async (
   try {
     await connectToDB();
 
-    // Step 1: Find batches where the student is enrolled
+ 
     const batches = await Batch.find({ students: studentId }).select("_id").exec();
     const batchIds = batches.map((batch) => batch._id);
 
@@ -19,7 +19,7 @@ export const getStudentSessions = async (
       return { data: [], message: "Student is not enrolled in any batch" };
     }
 
-    // Step 2: Fetch sessions for those batches
+
     const sessions = (await Sessions.find({ batchId: { $in: batchIds } })
       .sort({ date: -1 })
       .exec()) as Session[];

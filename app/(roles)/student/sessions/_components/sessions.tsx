@@ -84,7 +84,7 @@ const Sessions = () => {
       // Filter to only show sessions that have already happened
       const pastSessions = res.data.filter((session) => {
         const isPast = isSessionPast(session.date, session.time);
-        console.log(`Session ${session.title} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}`);
+        console.log(`Session ${session.meetingName} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}`);
         return isPast;
       });
 
@@ -125,7 +125,7 @@ const Sessions = () => {
       const term = searchTerm.toLowerCase();
       sessions = sessions.filter(
         (session) =>
-          session.title.toLowerCase().includes(term) ||
+          session.meetingName.toLowerCase().includes(term) ||
           session.courseName.toLowerCase().includes(term) ||
           session.instructor?.toLowerCase().includes(term)
       );

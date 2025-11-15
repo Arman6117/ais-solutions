@@ -15,7 +15,7 @@ export interface Session {
   module: string;
   chapters: string[];
   instructor?: string;
-  title: string;
+  meetingName: string;
   date: Date;
   time: string;
   notes: Note[] | string[]; // Can be populated Note objects or just ObjectId strings

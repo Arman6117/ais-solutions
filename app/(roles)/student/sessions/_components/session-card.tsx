@@ -83,7 +83,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
         </div>
       </div>
 
-      <h2 className="text-xl font-semibold text-primary">{session.title}</h2>
+    <h2 className="text-xl font-semibold text-primary">{session.meetingName}</h2>
 
       <div className="text-sm text-gray-700 flex items-center gap-2">
         <User2 className="h-4 w-4" />

@@ -27,7 +27,7 @@ import { Badge } from "../ui/badge";
 
 type DesktopTableProps = {
   paginatedNotes: NoteTableType[];
-  selectedRows: Set<number>;
+  selectedRows: Set<string>; // Changed from Set<number>
   handleSelectAllChange: () => void;
   isMobile: boolean;
   isCreating: boolean;
@@ -35,14 +35,13 @@ type DesktopTableProps = {
   createNewNote: (newNote: NoteTableType) => void;
   searchTerm: string;
   startIndex: number;
-  handleRowCheckboxChange: (index: number) => void;
+  handleRowCheckboxChange: (noteId: string) => void; // Changed from index
   mode: "edit" | "view" | "create";
-  updateNoteLinks: (noteIndex: number, newLinks: VideoLinksType[]) => void;
-  updateNoteFiles: (noteIndex: number, newFiles: FilesType[]) => void;
-  handleDelete: (index: number) => void;
+  updateNoteLinks: (noteId: string, newLinks: VideoLinksType[]) => void;
+  updateNoteFiles: (noteId: string, newFiles: FilesType[]) => void;
+  handleDelete: (noteId: string) => void;
   batchId: string;
-  // New props for edit functionality
-  updateNote?: (noteIndex: number, updatedNote: NoteTableType) => void;
+  updateNote?: (noteId: string, updatedNote: NoteTableType) => void;
 };
 
 const DesktopTable = ({
@@ -55,7 +54,6 @@ const DesktopTable = ({
   setIsCreating,
   batchId,
   searchTerm,
-  startIndex,
   handleRowCheckboxChange,
   mode,
   updateNoteLinks,
@@ -63,25 +61,24 @@ const DesktopTable = ({
   updateNote,
   updateNoteFiles,
 }: DesktopTableProps) => {
-  const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
-  const startEditing = (noteIndex: number) => {
-    setEditingNoteIndex(noteIndex);
-    setIsCreating(false); // Close create form if open
+  const startEditing = (noteId: string) => {
+    setEditingNoteId(noteId);
+    setIsCreating(false);
   };
 
   const stopEditing = () => {
-    setEditingNoteIndex(null);
+    setEditingNoteId(null);
   };
 
   const handleUpdateNote = (updatedNote: NoteTableType) => {
-    if (editingNoteIndex !== null && updateNote) {
-      updateNote(editingNoteIndex, updatedNote);
+    if (editingNoteId && updateNote) {
+      updateNote(editingNoteId, updatedNote);
       stopEditing();
     }
   };
 
-  
   return (
     <Table>
       <TableHeader>
@@ -97,7 +94,7 @@ const DesktopTable = ({
           </TableHead>
           <TableHead className="text-center">Module</TableHead>
           <TableHead className="text-center">Chapter</TableHead>
-          <TableHead className="text-center">Topics</TableHead> {/* NEW */}
+          <TableHead className="text-center">Topics</TableHead>
           <TableHead className="text-center">Session</TableHead>
           <TableHead className="text-center">
             <div className="flex items-center justify-center gap-1">
@@ -122,20 +119,19 @@ const DesktopTable = ({
 
         {paginatedNotes.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={8} className="text-center py-8">
+            <TableCell colSpan={9} className="text-center py-8">
               No notes found. {searchTerm && "Try adjusting your search."}
             </TableCell>
           </TableRow>
         ) : (
-          paginatedNotes.map((note, i) => {
-            const currentIndex = startIndex + i;
-            const isCurrentlyEditing = editingNoteIndex === currentIndex;
+          paginatedNotes.map((note) => {
+            const isCurrentlyEditing = editingNoteId === note._id;
+            const isSelected = note._id ? selectedRows.has(note._id) : false;
 
-            // If this note is being edited, show the edit form
             if (isCurrentlyEditing) {
               return (
                 <NewNoteForm
-                  key={currentIndex}
+                  key={note._id}
                   setIsCreating={setIsCreating}
                   createNewNote={createNewNote}
                   isMobile={false}
@@ -148,17 +144,16 @@ const DesktopTable = ({
               );
             }
 
-            // Otherwise show the regular row
             return (
               <TableRow
-                key={currentIndex}
+                key={note._id}
                 className="text-center space-x-4 text-sm font-medium"
               >
                 <TableCell>
                   <Checkbox
-                    checked={selectedRows.has(currentIndex)}
+                    checked={isSelected}
                     onCheckedChange={() =>
-                      handleRowCheckboxChange(currentIndex)
+                      note._id && handleRowCheckboxChange(note._id)
                     }
                   />
                 </TableCell>
@@ -184,7 +179,11 @@ const DesktopTable = ({
                   </div>
                 </TableCell>
                 <TableCell>{note.session?.meetingName || "—"}</TableCell>
-                <TableCell>{format(new Date(note.createdAt!), "PP")}</TableCell>
+                <TableCell>
+                  {note.createdAt
+                    ? format(new Date(note.createdAt), "PP")
+                    : "—"}
+                </TableCell>
 
                 <TableCell className="text-center truncate max-w-44">
                   <div className="flex flex-col items-center gap-4">
@@ -206,30 +205,17 @@ const DesktopTable = ({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="cursor-pointer"
                                 onClick={() => {
-                                  // Handle individual link edit
-                                  toast.info(
-                                    "Edit individual link - feature coming soon"
-                                  );
-                                }}
-                              >
-                                <Pencil className="size-4 text-violet-600" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  // Handle individual link delete
                                   const newLinks =
                                     note.videoLinks?.filter(
                                       (_, linkIndex) => linkIndex !== index
                                     ) || [];
-                                  updateNoteLinks(currentIndex, newLinks);
-                                  toast.success(
-                                    "Video link removed successfully"
-                                  );
+                                  if (note._id) {
+                                    updateNoteLinks(note._id, newLinks);
+                                    toast.success(
+                                      "Video link removed successfully"
+                                    );
+                                  }
                                 }}
                               >
                                 <Trash2 className="size-4 text-destructive" />
@@ -244,7 +230,7 @@ const DesktopTable = ({
                       <AddLinkButton
                         notesLinks={note.videoLinks || []}
                         setNotesLinks={(newLinks) =>
-                          updateNoteLinks(currentIndex, newLinks)
+                          note._id && updateNoteLinks(note._id, newLinks)
                         }
                       />
                     )}
@@ -264,10 +250,12 @@ const DesktopTable = ({
                         >
                           <div
                             className="flex items-center gap-2 cursor-pointer"
-                            onClick={() => window.open(f.link || f.link)}
+                            onClick={() => window.open(f.link)}
                           >
                             <FileIcon className="text-purple-600" />
-                            <span className="truncate max-w-40">{f.label}</span>
+                            <span className="truncate max-w-40">
+                              {f.label}
+                            </span>
                           </div>
                           {mode === "edit" && (
                             <div className="flex gap-1">
@@ -275,25 +263,14 @@ const DesktopTable = ({
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => {
-                                  // Handle individual file edit
-                                  toast.info(
-                                    "Edit individual file - feature coming soon"
-                                  );
-                                }}
-                              >
-                                <Pencil className="size-4 text-violet-600" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  // Handle individual file delete - NOW WORKING!
                                   const newFiles =
                                     note.files?.filter(
                                       (_, fileIndex) => fileIndex !== index
                                     ) || [];
-                                  updateNoteFiles(currentIndex, newFiles);
-                                  toast.success("File removed successfully");
+                                  if (note._id) {
+                                    updateNoteFiles(note._id, newFiles);
+                                    toast.success("File removed successfully");
+                                  }
                                 }}
                               >
                                 <Trash2 className="size-4 text-destructive" />
@@ -307,7 +284,7 @@ const DesktopTable = ({
                       <AddFileButton
                         notesFiles={note.files || []}
                         setNotesFiles={(newFiles) =>
-                          updateNoteFiles(currentIndex, newFiles)
+                          note._id && updateNoteFiles(note._id, newFiles)
                         }
                       />
                     )}
@@ -319,16 +296,18 @@ const DesktopTable = ({
                     <Button
                       size="icon"
                       variant="outline"
-                      onClick={() => startEditing(currentIndex)}
+                      onClick={() => note._id && startEditing(note._id)}
                       title="Edit note"
+                      disabled={!note._id}
                     >
                       <Pencil className="size-4" />
                     </Button>
                     <Button
                       size="icon"
                       variant="outline"
-                      onClick={() => handleDelete(currentIndex)}
+                      onClick={() => note._id && handleDelete(note._id)}
                       title="Delete note"
+                      disabled={!note._id}
                     >
                       <Trash2 className="size-4 text-destructive" />
                     </Button>

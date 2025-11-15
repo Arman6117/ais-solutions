@@ -8,16 +8,17 @@ type SearchAndControlsProps = {
   setSearchTerm: (term: string) => void;
   toggleSortDirection: () => void;
   sortDirection: "asc" | "desc";
-  selectedRows: Set<number>;
+  selectedRows: Set<string>; // Changed from Set<number>
   handleBulkDelete: () => void;
 };
+
 const SearchAndControls = ({
   searchTerm,
   setSearchTerm,
   toggleSortDirection,
   sortDirection,
   selectedRows,
-  handleBulkDelete
+  handleBulkDelete,
 }: SearchAndControlsProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">

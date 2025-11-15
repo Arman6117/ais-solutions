@@ -24,17 +24,15 @@ import { Badge } from "../ui/badge";
 type MobileCardViewProps = {
   startIndex: number;
   index: number;
-  selectedRows: Set<number>;
-  handleRowCheckboxChange: (index: number) => void;
+  selectedRows: Set<string>; // Changed from Set<number>
+  handleRowCheckboxChange: () => void; // Now wrapped, no params needed
   note: NoteTableType;
   mode: "edit" | "view" | "create";
-  updateNoteLinks: (noteIndex: number, newLinks: VideoLinksType[]) => void;
-  updateNoteFiles: (noteIndex: number, newFiles: FilesType[]) => void;
-  handleDelete: (index: number) => void;
+  updateNoteLinks: (newLinks: VideoLinksType[]) => void; // Wrapped, no noteId needed
+  updateNoteFiles: (newFiles: FilesType[]) => void; // Wrapped, no noteId needed
+  handleDelete: () => void; // Wrapped, no noteId needed
   batchId: string;
-  // New props for edit functionality
-  updateNote?: (noteIndex: number, updatedNote: NoteTableType) => void;
-  // Props needed for edit form
+  updateNote?: (updatedNote: NoteTableType) => void; // Wrapped, no noteId needed
   createNewNote: (newNote: NoteTableType) => void;
   setIsCreating: (state: boolean) => void;
 };
@@ -55,11 +53,10 @@ const MobileCardView = ({
   setIsCreating,
 }: MobileCardViewProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const currentIndex = startIndex + index;
 
   const startEditing = () => {
     setIsEditing(true);
-    setIsCreating(false); // Close create form if open
+    setIsCreating(false);
   };
 
   const stopEditing = () => {
@@ -68,12 +65,11 @@ const MobileCardView = ({
 
   const handleUpdateNote = (updatedNote: NoteTableType) => {
     if (updateNote) {
-      updateNote(currentIndex, updatedNote);
+      updateNote(updatedNote);
       stopEditing();
     }
   };
 
-  // If editing, show the form in a card layout
   if (isEditing) {
     return (
       <Card className="mb-4 border-blue-200 bg-blue-50/50">
@@ -84,7 +80,6 @@ const MobileCardView = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* You'll need to create a mobile-friendly version of the form or adapt NewNoteForm */}
             <NewNoteForm
               setIsCreating={setIsCreating}
               createNewNote={createNewNote}
@@ -101,14 +96,16 @@ const MobileCardView = ({
     );
   }
 
-  // Regular card view
+  // Check if this note is selected using note._id
+  const isSelected = note._id ? selectedRows.has(note._id) : false;
+
   return (
-    <Card key={currentIndex} className="mb-4">
+    <Card key={note._id} className="mb-4">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-2">
           <Checkbox
-            checked={selectedRows.has(currentIndex)}
-            onCheckedChange={() => handleRowCheckboxChange(currentIndex)}
+            checked={isSelected}
+            onCheckedChange={handleRowCheckboxChange}
           />
           <CardTitle className="text-sm font-medium">{note.module}</CardTitle>
         </div>
@@ -126,7 +123,7 @@ const MobileCardView = ({
             size="icon"
             variant="outline"
             className="h-8 w-8"
-            onClick={() => handleDelete(currentIndex)}
+            onClick={handleDelete}
             title="Delete note"
           >
             <Trash2 className="size-4 text-destructive" />
@@ -137,6 +134,7 @@ const MobileCardView = ({
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="font-medium">Chapter:</div>
           <div>{note.chapter}</div>
+          
           {note.topics && note.topics.length > 0 && (
             <>
               <div className="font-medium col-span-2 mt-2">Topics:</div>
@@ -187,23 +185,11 @@ const MobileCardView = ({
                           size="icon"
                           className="h-6 w-6"
                           onClick={() => {
-                            toast.info(
-                              "Edit individual link - feature coming soon"
-                            );
-                          }}
-                        >
-                          <Pencil className="size-3 text-violet-600" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => {
                             const newLinks =
                               note.videoLinks?.filter(
                                 (_, linkIndex) => linkIndex !== vIndex
                               ) || [];
-                            updateNoteLinks(currentIndex, newLinks);
+                            updateNoteLinks(newLinks);
                             toast.success("Video link removed successfully");
                           }}
                         >
@@ -217,9 +203,7 @@ const MobileCardView = ({
                   <div className="mt-2">
                     <AddLinkButton
                       notesLinks={note.videoLinks || []}
-                      setNotesLinks={(newLinks) =>
-                        updateNoteLinks(currentIndex, newLinks)
-                      }
+                      setNotesLinks={updateNoteLinks}
                     />
                   </div>
                 )}
@@ -241,7 +225,7 @@ const MobileCardView = ({
                     >
                       <div
                         className="flex items-center gap-2 cursor-pointer flex-1"
-                        onClick={() => window.open(f.link || f.link)}
+                        onClick={() => window.open(f.link)}
                       >
                         <FileIcon className="text-purple-600 flex-shrink-0" />
                         <span className="truncate">{f.label}</span>
@@ -253,23 +237,11 @@ const MobileCardView = ({
                             size="icon"
                             className="h-6 w-6"
                             onClick={() => {
-                              toast.info(
-                                "Edit individual file - feature coming soon"
-                              );
-                            }}
-                          >
-                            <Pencil className="size-3 text-violet-600" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => {
                               const newFiles =
                                 note.files?.filter(
                                   (_, fileIndex) => fileIndex !== fIndex
                                 ) || [];
-                              updateNoteFiles(currentIndex, newFiles);
+                              updateNoteFiles(newFiles);
                               toast.success("File removed successfully");
                             }}
                           >
@@ -284,9 +256,7 @@ const MobileCardView = ({
                   <div className="mt-2">
                     <AddFileButton
                       notesFiles={note.files || []}
-                      setNotesFiles={(newFiles) =>
-                        updateNoteFiles(currentIndex, newFiles)
-                      }
+                      setNotesFiles={updateNoteFiles}
                     />
                   </div>
                 )}
@@ -294,18 +264,12 @@ const MobileCardView = ({
             </>
           )}
 
-          {/* Show Add buttons when no links/files exist but in edit mode */}
           {mode === "edit" &&
             (!note.videoLinks || note.videoLinks.length === 0) && (
               <>
                 <div className="font-medium col-span-2 mt-2">Video Links:</div>
                 <div className="col-span-2">
-                  <AddLinkButton
-                    notesLinks={[]}
-                    setNotesLinks={(newLinks) =>
-                      updateNoteLinks(currentIndex, newLinks)
-                    }
-                  />
+                  <AddLinkButton notesLinks={[]} setNotesLinks={updateNoteLinks} />
                 </div>
               </>
             )}
@@ -314,12 +278,7 @@ const MobileCardView = ({
             <>
               <div className="font-medium col-span-2 mt-2">Files:</div>
               <div className="col-span-2">
-                <AddFileButton
-                  notesFiles={[]}
-                  setNotesFiles={(newFiles) =>
-                    updateNoteFiles(currentIndex, newFiles)
-                  }
-                />
+                <AddFileButton notesFiles={[]} setNotesFiles={updateNoteFiles} />
               </div>
             </>
           )}

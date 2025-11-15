@@ -23,6 +23,8 @@ import {
 } from "@/lib/types/note.type";
 import { createNote } from "@/actions/admin/notes/create-note";
 import { toast } from "sonner";
+import { bulkDeleteNotes, deleteNote } from "@/actions/admin/notes/delete-note";
+import { updateNoteAction } from "@/actions/admin/notes/update-note";
 
 type NotesTableProps = {
   mode: "view" | "edit" | "create";
@@ -39,11 +41,11 @@ const NotesTable = ({
   batchId,
   mode,
   notes,
-  
   isCreating,
   setIsCreating,
 }: NotesTableProps) => {
   const [noteList, setNoteList] = useState<NoteTableType[]>(notes);
+
   useEffect(() => {
     setNoteList(notes);
   }, [notes]);
@@ -52,12 +54,10 @@ const NotesTable = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [moduleFilter, setModuleFilter] = useState("all");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [itemsToDelete, setItemsToDelete] = useState<number[]>([]);
-
-  
+  const [itemsToDelete, setItemsToDelete] = useState<string[]>([]);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -76,34 +76,35 @@ const NotesTable = ({
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
+
   useEffect(() => {
     let result = [...noteList];
-  
+
     if (searchTerm) {
       result = result.filter(
         (note) =>
           note.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
           note.chapter.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          note.topics.some((topic) => 
+          note.topics.some((topic) =>
             topic.toLowerCase().includes(searchTerm.toLowerCase())
-          ) || // NEW: Search in topics
+          ) ||
           (note.files &&
             note.files.some((file) =>
               file.label.toLowerCase().includes(searchTerm.toLowerCase())
             ))
       );
     }
-  
+
     if (moduleFilter !== "all") {
       result = result.filter((note) => note.module === moduleFilter);
     }
-  
+
     result = result.sort((a, b) => {
       const dateA = new Date(a.createdAt ?? new Date()).getTime();
       const dateB = new Date(b.createdAt ?? new Date()).getTime();
       return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
     });
-  
+
     setFilteredNotes(result);
     setCurrentPage(1);
   }, [noteList, notes, searchTerm, sortDirection, moduleFilter]);
@@ -115,39 +116,109 @@ const NotesTable = ({
         toast.error(res.message);
         return;
       }
-      setNoteList([newNote, ...noteList]);
-      toast.success(res.message);
+
+      // Add the note with the _id from the server response
+      if (res.data) {
+        setNoteList([res.data, ...noteList]);
+        toast.success(res.message);
+      }
     } catch (error) {
       console.log(error);
       toast.error("Failed to create note");
     }
   };
 
-  const updateNote = (noteIndex: number, updatedNote: NoteTableType) => {
-    setNoteList((prev) =>
-      prev.map((note, index) => (index === noteIndex ? updatedNote : note))
-    );
-    toast.success("Note updated successfully");
+  const updateNote = async (noteId: string, updatedNote: NoteTableType) => {
+    try {
+      if (!noteId) {
+        toast.error("Note ID not found");
+        return;
+      }
+
+      const res = await updateNoteAction(noteId, updatedNote);
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      setNoteList((prev) =>
+        prev.map((note) =>
+          note._id === noteId ? { ...updatedNote, _id: noteId } : note
+        )
+      );
+
+      toast.success(res.message);
+    } catch (error) {
+      console.error("Error updating note:", error);
+      toast.error("Failed to update note");
+    }
   };
 
-  const updateNoteLinks = (noteIndex: number, newLinks: VideoLinksType[]) => {
-    setNoteList((prev) =>
-      prev.map((note, index) =>
-        index === noteIndex ? { ...note, videoLinks: newLinks } : note
-      )
-    );
+  const updateNoteLinks = async (noteId: string, newLinks: VideoLinksType[]) => {
+    try {
+      const noteToUpdate = noteList.find((n) => n._id === noteId);
+      if (!noteToUpdate) {
+        toast.error("Note not found");
+        return;
+      }
+
+      const res = await updateNoteAction(noteId, {
+        ...noteToUpdate,
+        videoLinks: newLinks,
+      });
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      setNoteList((prev) =>
+        prev.map((note) =>
+          note._id === noteId ? { ...note, videoLinks: newLinks } : note
+        )
+      );
+
+      toast.success("Video links updated");
+    } catch (error) {
+      console.error("Error updating video links:", error);
+      toast.error("Failed to update video links");
+    }
   };
 
-  // NEW: Update note files function (same pattern as updateNoteLinks)
-  const updateNoteFiles = (noteIndex: number, newFiles: FilesType[]) => {
-    setNoteList((prev) =>
-      prev.map((note, index) =>
-        index === noteIndex ? { ...note, files: newFiles } : note
-      )
-    );
+  const updateNoteFiles = async (noteId: string, newFiles: FilesType[]) => {
+    try {
+      const noteToUpdate = noteList.find((n) => n._id === noteId);
+      if (!noteToUpdate) {
+        toast.error("Note not found");
+        return;
+      }
+
+      const res = await updateNoteAction(noteId, {
+        ...noteToUpdate,
+        files: newFiles,
+      });
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      setNoteList((prev) =>
+        prev.map((note) =>
+          note._id === noteId ? { ...note, files: newFiles } : note
+        )
+      );
+
+      toast.success("Files updated");
+    } catch (error) {
+      console.error("Error updating files:", error);
+      toast.error("Failed to update files");
+    }
   };
-  const handleDelete = (index: number) => {
-    setItemsToDelete([index]);
+
+  const handleDelete = (noteId: string) => {
+    setItemsToDelete([noteId]);
     setDeleteDialogOpen(true);
   };
 
@@ -158,13 +229,36 @@ const NotesTable = ({
     }
   };
 
-  const confirmDelete = () => {
-    const newNotes = noteList.filter(
-      (_, index) => !itemsToDelete.includes(index)
-    );
-    setNoteList(newNotes);
-    setSelectedRows(new Set());
-    setDeleteDialogOpen(false);
+  const confirmDelete = async () => {
+    try {
+      const noteIds = itemsToDelete.filter(Boolean);
+
+      if (noteIds.length === 0) {
+        toast.error("No valid notes to delete");
+        return;
+      }
+
+      const res =
+        noteIds.length === 1
+          ? await deleteNote(noteIds[0])
+          : await bulkDeleteNotes(noteIds);
+
+      if (!res.success) {
+        toast.error(res.message);
+        setDeleteDialogOpen(false);
+        return;
+      }
+
+      const newNotes = noteList.filter((note) => !noteIds.includes(note._id!));
+      setNoteList(newNotes);
+      setSelectedRows(new Set());
+      setDeleteDialogOpen(false);
+
+      toast.success(res.message);
+    } catch (error) {
+      console.error("Error deleting notes:", error);
+      toast.error("Failed to delete notes");
+    }
   };
 
   const toggleSortDirection = () => {
@@ -172,19 +266,23 @@ const NotesTable = ({
   };
 
   const handleSelectAllChange = () => {
-    const newSelected = new Set<number>();
     if (selectedRows.size === paginatedNotes.length) {
       setSelectedRows(new Set());
     } else {
-      paginatedNotes.forEach((_, index) => newSelected.add(startIndex + index));
-      setSelectedRows(newSelected);
+      const allIds = new Set(
+        paginatedNotes.map((note) => note._id).filter(Boolean) as string[]
+      );
+      setSelectedRows(allIds);
     }
   };
 
-  const handleRowCheckboxChange = (index: number) => {
+  const handleRowCheckboxChange = (noteId: string) => {
     const newSelected = new Set(selectedRows);
-    if (newSelected.has(index)) newSelected.delete(index);
-    else newSelected.add(index);
+    if (newSelected.has(noteId)) {
+      newSelected.delete(noteId);
+    } else {
+      newSelected.add(noteId);
+    }
     setSelectedRows(newSelected);
   };
 
@@ -209,24 +307,23 @@ const NotesTable = ({
     <MobileCardView
       createNewNote={createNewNote}
       setIsCreating={setIsCreating}
-      handleDelete={handleDelete}
-      handleRowCheckboxChange={handleRowCheckboxChange}
+      handleDelete={() => handleDelete(note._id!)}
+      handleRowCheckboxChange={() => handleRowCheckboxChange(note._id!)}
       index={index}
       mode={mode}
       note={note}
       selectedRows={selectedRows}
       startIndex={startIndex}
-      updateNoteLinks={updateNoteLinks}
-      updateNoteFiles={updateNoteFiles}
+      updateNoteLinks={(newLinks) => updateNoteLinks(note._id!, newLinks)}
+      updateNoteFiles={(newFiles) => updateNoteFiles(note._id!, newFiles)}
       batchId={batchId}
-      updateNote={updateNote}
-      key={index}
+      updateNote={(updatedNote) => updateNote(note._id!, updatedNote)}
+      key={note._id}
     />
   );
 
   return (
     <div className="space-y-4">
-      {/* Filter Controls */}
       <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
         <SearchAndControls
           handleBulkDelete={handleBulkDelete}
@@ -237,7 +334,6 @@ const NotesTable = ({
           toggleSortDirection={toggleSortDirection}
         />
 
-        {/* Module Filter */}
         <div className="w-full md:w-64">
           <Select value={moduleFilter} onValueChange={setModuleFilter}>
             <SelectTrigger>
@@ -255,7 +351,6 @@ const NotesTable = ({
         </div>
       </div>
 
-      {/* Desktop Table */}
       <div className="hidden md:block">
         <DesktopTable
           paginatedNotes={paginatedNotes}
@@ -277,7 +372,6 @@ const NotesTable = ({
         />
       </div>
 
-      {/* Mobile View */}
       {isMobile && (
         <div className="md:hidden">
           {isCreating && (
@@ -304,7 +398,6 @@ const NotesTable = ({
         </div>
       )}
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <NotesTablePagination
           currentPage={currentPage}
@@ -314,7 +407,6 @@ const NotesTable = ({
         />
       )}
 
-      {/* Delete Dialog */}
       <DeleteConfirmationDialog
         confirmDelete={confirmDelete}
         deleteDialogOpen={deleteDialogOpen}

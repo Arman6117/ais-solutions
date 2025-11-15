@@ -77,7 +77,7 @@ export interface PaymentHistory {
   modules: (Types.ObjectId | string)[];
   totalFees?: number;
   notes?: string;
-  mode: 'Cash' | 'Card' | 'UPI' | 'Bank Transfer';
+  mode: 'Cash' | 'Card' | 'UPI' | 'Other';
   dueDate?: Date | string;
   createdAt?: Date | string;
   _id?: Types.ObjectId | string;

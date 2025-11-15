@@ -43,6 +43,7 @@ export const createInvoice = async (data: CreateInvoicePayload) => {
       mode: paymentMode,
       dueDate,
       notes,
+      modules:[]
     };
     invoice.paymentHistory.push(newPayment);
     invoice.amountPaid += amountPaid;

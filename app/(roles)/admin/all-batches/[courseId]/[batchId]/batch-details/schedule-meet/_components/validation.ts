@@ -20,7 +20,6 @@ export function validateForm(formData: FormData): ValidationResult {
     errors.meetingLink = "Meeting link is required";
   } else {
     // Very flexible URL validation - accepts various formats
-    const linkPattern = /^(https?:\/\/|www\.)/i;
     const hasProtocol = /^https?:\/\//i.test(formData.meetingLink);
     const hasWww = /^www\./i.test(formData.meetingLink);
     const hasDomain = /\.(com|org|net|io|app|co|dev|edu|gov|in|xyz|online|meet|zoom|teams)/i.test(formData.meetingLink);

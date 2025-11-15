@@ -95,7 +95,7 @@ export default function ScheduleSection({
               }}
               selected={isMultipleMode ? dates : date}
               maxDates={15}
-              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+              // disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
             />
           </div>
 

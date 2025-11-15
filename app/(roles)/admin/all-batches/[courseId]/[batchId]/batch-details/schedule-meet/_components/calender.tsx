@@ -9,7 +9,8 @@ interface CalendarProps {
   onSelect?: (date: Date | Date[]) => void;
   disabled?: (date: Date) => boolean;
   className?: string;
-  maxDates?: number; // Limit number of dates that can be selected
+  maxDates?: number;
+  disablePastDates?: boolean; // NEW: Optional prop to disable past dates
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -19,15 +20,16 @@ const Calendar: React.FC<CalendarProps> = ({
   disabled,
   className = "",
   maxDates = 15,
+  disablePastDates = false, // NEW: Defaults to false (allows past dates)
 }) => {
   const [viewDate, setViewDate] = useState<Date>(new Date());
 
   const monthNames = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
   ];
 
-  const dayNames = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+  const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
   const getDaysInMonth = (date: Date): number =>
     new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -59,6 +61,25 @@ const Calendar: React.FC<CalendarProps> = ({
     return isSameDay(date, today);
   };
 
+  const isPastDate = (date: Date): boolean => {
+    if (!disablePastDates) return false; // If not disabling past dates, return false
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset to start of day
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+    
+    return compareDate < today;
+  };
+
+  const isDateDisabled = (date: Date): boolean => {
+    // Check custom disabled function first
+    if (disabled?.(date)) return true;
+    
+    // Check if past date should be disabled
+    return isPastDate(date);
+  };
+
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(viewDate);
     newDate.setMonth(newDate.getMonth() + (direction === "prev" ? -1 : 1));
@@ -66,7 +87,7 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handleDateClick = (date: Date) => {
-    if (disabled?.(date)) return;
+    if (isDateDisabled(date)) return;
 
     if (mode === "single") {
       onSelect?.(date);
@@ -102,15 +123,19 @@ const Calendar: React.FC<CalendarProps> = ({
 
     for (let i = firstDay - 1; i >= 0; i--) {
       const date = new Date(prevYear, prevMonth, daysInPrevMonth - i);
-      const isDisabled = disabled?.(date);
+      const dateDisabled = isDateDisabled(date);
 
       days.push(
         <button
           key={`prev-${daysInPrevMonth - i}`}
           type="button"
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 text-gray-400 hover:bg-gray-100 transition-colors"
+          className={`inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 transition-colors ${
+            dateDisabled
+              ? "text-gray-300 cursor-not-allowed"
+              : "text-gray-400 hover:bg-gray-100"
+          }`}
           onClick={() => handleDateClick(date)}
-          disabled={isDisabled}
+          disabled={dateDisabled}
         >
           {daysInPrevMonth - i}
         </button>
@@ -120,7 +145,7 @@ const Calendar: React.FC<CalendarProps> = ({
     // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const isDisabled = disabled?.(date);
+      const dateDisabled = isDateDisabled(date);
       const isDateSelected = isSelected(date);
       const isTodayDate = isToday(date);
 
@@ -133,8 +158,8 @@ const Calendar: React.FC<CalendarProps> = ({
       } else if (isTodayDate) {
         dayClasses +=
           " bg-blue-100 text-blue-800 font-semibold hover:bg-blue-200";
-      } else if (isDisabled) {
-        dayClasses += " text-gray-400 opacity-50 cursor-not-allowed";
+      } else if (dateDisabled) {
+        dayClasses += " text-gray-300 opacity-50 cursor-not-allowed";
       } else {
         dayClasses += " hover:bg-blue-50 hover:text-blue-600";
       }
@@ -145,7 +170,7 @@ const Calendar: React.FC<CalendarProps> = ({
           type="button"
           className={dayClasses}
           onClick={() => handleDateClick(date)}
-          disabled={isDisabled}
+          disabled={dateDisabled}
           aria-selected={isDateSelected}
         >
           {day}
@@ -161,15 +186,19 @@ const Calendar: React.FC<CalendarProps> = ({
 
     for (let day = 1; day <= remainingCells; day++) {
       const date = new Date(nextYear, nextMonth, day);
-      const isDisabled = disabled?.(date);
+      const dateDisabled = isDateDisabled(date);
 
       days.push(
         <button
           key={`next-${day}`}
           type="button"
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 text-gray-400 hover:bg-gray-100 transition-colors"
+          className={`inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 transition-colors ${
+            dateDisabled
+              ? "text-gray-300 cursor-not-allowed"
+              : "text-gray-400 hover:bg-gray-100"
+          }`}
           onClick={() => handleDateClick(date)}
-          disabled={isDisabled}
+          disabled={dateDisabled}
         >
           {day}
         </button>

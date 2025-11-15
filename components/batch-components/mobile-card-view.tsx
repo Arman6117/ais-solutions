@@ -39,9 +39,9 @@ type MobileCardViewProps = {
 
 const MobileCardView = ({
   handleRowCheckboxChange,
-  index,
+
   selectedRows,
-  startIndex,
+
   note,
   mode,
   updateNoteLinks,

@@ -7,20 +7,16 @@ interface CalendarProps {
   mode?: CalendarMode;
   selected?: Date | Date[] | null;
   onSelect?: (date: Date | Date[]) => void;
-  disabled?: (date: Date) => boolean;
   className?: string;
   maxDates?: number;
-  disablePastDates?: boolean; // NEW: Optional prop to disable past dates
 }
 
 const Calendar: React.FC<CalendarProps> = ({
   mode = "single",
   selected,
   onSelect,
-  disabled,
   className = "",
   maxDates = 15,
-  disablePastDates = false, // NEW: Defaults to false (allows past dates)
 }) => {
   const [viewDate, setViewDate] = useState<Date>(new Date());
 
@@ -61,25 +57,6 @@ const Calendar: React.FC<CalendarProps> = ({
     return isSameDay(date, today);
   };
 
-  const isPastDate = (date: Date): boolean => {
-    if (!disablePastDates) return false; // If not disabling past dates, return false
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset to start of day
-    const compareDate = new Date(date);
-    compareDate.setHours(0, 0, 0, 0);
-    
-    return compareDate < today;
-  };
-
-  const isDateDisabled = (date: Date): boolean => {
-    // Check custom disabled function first
-    if (disabled?.(date)) return true;
-    
-    // Check if past date should be disabled
-    return isPastDate(date);
-  };
-
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(viewDate);
     newDate.setMonth(newDate.getMonth() + (direction === "prev" ? -1 : 1));
@@ -87,8 +64,6 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handleDateClick = (date: Date) => {
-    if (isDateDisabled(date)) return;
-
     if (mode === "single") {
       onSelect?.(date);
     } else if (mode === "multiple") {
@@ -96,13 +71,11 @@ const Calendar: React.FC<CalendarProps> = ({
       const isDateSelected = selectedDates.some(d => isSameDay(d, date));
 
       if (isDateSelected) {
-        // Deselect the date
         const newDates = selectedDates.filter(d => !isSameDay(d, date));
         onSelect?.(newDates);
       } else {
-        // Select the date (check max limit)
         if (selectedDates.length >= maxDates) {
-          return; // Max dates reached
+          return;
         }
         onSelect?.([...selectedDates, date]);
       }
@@ -123,19 +96,18 @@ const Calendar: React.FC<CalendarProps> = ({
 
     for (let i = firstDay - 1; i >= 0; i--) {
       const date = new Date(prevYear, prevMonth, daysInPrevMonth - i);
-      const dateDisabled = isDateDisabled(date);
+      const isDateSelected = isSelected(date);
 
       days.push(
         <button
           key={`prev-${daysInPrevMonth - i}`}
           type="button"
           className={`inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 transition-colors ${
-            dateDisabled
-              ? "text-gray-300 cursor-not-allowed"
-              : "text-gray-400 hover:bg-gray-100"
+            isDateSelected
+              ? "bg-blue-600 text-white hover:bg-blue-700 font-semibold"
+              : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           }`}
           onClick={() => handleDateClick(date)}
-          disabled={dateDisabled}
         >
           {daysInPrevMonth - i}
         </button>
@@ -145,7 +117,6 @@ const Calendar: React.FC<CalendarProps> = ({
     // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const dateDisabled = isDateDisabled(date);
       const isDateSelected = isSelected(date);
       const isTodayDate = isToday(date);
 
@@ -158,8 +129,6 @@ const Calendar: React.FC<CalendarProps> = ({
       } else if (isTodayDate) {
         dayClasses +=
           " bg-blue-100 text-blue-800 font-semibold hover:bg-blue-200";
-      } else if (dateDisabled) {
-        dayClasses += " text-gray-300 opacity-50 cursor-not-allowed";
       } else {
         dayClasses += " hover:bg-blue-50 hover:text-blue-600";
       }
@@ -170,7 +139,6 @@ const Calendar: React.FC<CalendarProps> = ({
           type="button"
           className={dayClasses}
           onClick={() => handleDateClick(date)}
-          disabled={dateDisabled}
           aria-selected={isDateSelected}
         >
           {day}
@@ -186,19 +154,18 @@ const Calendar: React.FC<CalendarProps> = ({
 
     for (let day = 1; day <= remainingCells; day++) {
       const date = new Date(nextYear, nextMonth, day);
-      const dateDisabled = isDateDisabled(date);
+      const isDateSelected = isSelected(date);
 
       days.push(
         <button
           key={`next-${day}`}
           type="button"
           className={`inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 transition-colors ${
-            dateDisabled
-              ? "text-gray-300 cursor-not-allowed"
-              : "text-gray-400 hover:bg-gray-100"
+            isDateSelected
+              ? "bg-blue-600 text-white hover:bg-blue-700 font-semibold"
+              : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           }`}
           onClick={() => handleDateClick(date)}
-          disabled={dateDisabled}
         >
           {day}
         </button>
@@ -212,7 +179,6 @@ const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <div className={`p-3 ${className}`}>
-      {/* Calendar Header */}
       <div className="flex justify-between items-center mb-4">
         <button
           type="button"
@@ -235,14 +201,12 @@ const Calendar: React.FC<CalendarProps> = ({
         </button>
       </div>
 
-      {/* Selection Info for Multiple Mode */}
       {mode === "multiple" && (
         <div className="mb-3 text-sm text-gray-600 text-center">
           {selectedDates.length} of {maxDates} dates selected
         </div>
       )}
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map((day) => (
           <div
@@ -254,7 +218,6 @@ const Calendar: React.FC<CalendarProps> = ({
         ))}
       </div>
 
-      {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-1">{renderCalendarDays()}</div>
     </div>
   );

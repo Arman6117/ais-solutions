@@ -267,6 +267,6 @@ export interface InvoiceResponse {
   }
 
 
-  export interface InvoiceDetail {
+  // export interface InvoiceDetail {
 
-  }
+  // }

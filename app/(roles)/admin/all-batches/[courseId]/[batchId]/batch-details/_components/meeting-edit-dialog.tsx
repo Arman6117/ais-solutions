@@ -30,7 +30,7 @@ import ScheduleSection from "../schedule-meet/_components/schedule-section";
 
 type MeetingEditDialogProps = {
   meetingData: BatchMeetings;
-
+   onSave:() => void;
   batchId: string;
 };
 
@@ -47,6 +47,7 @@ interface EditFormData {
 const MeetingEditDialog = ({
   meetingData,
   batchId,
+  onSave
 }: MeetingEditDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -140,6 +141,7 @@ const MeetingEditDialog = ({
       if (res.success) {
         toast.success(res.message);
         setOpen(false);
+        onSave()
       } else {
         toast.error(res.message);
       }

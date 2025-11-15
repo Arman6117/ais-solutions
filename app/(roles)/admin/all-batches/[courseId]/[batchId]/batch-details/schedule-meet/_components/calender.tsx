@@ -4,23 +4,22 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 type CalendarMode = "single" | "multiple" | "range";
 
 interface CalendarProps {
-  mode?: CalendarMode; // if you plan on extending selection (currently unused)
-  selected?: Date | null; // currently only single date is supported
-  onSelect?: (date: Date) => void;
+  mode?: CalendarMode;
+  selected?: Date | Date[] | null;
+  onSelect?: (date: Date | Date[]) => void;
   disabled?: (date: Date) => boolean;
   className?: string;
-  classNames?: Record<string, string>; // extra styling hooks if needed
+  maxDates?: number; // Limit number of dates that can be selected
 }
 
 const Calendar: React.FC<CalendarProps> = ({
- 
+  mode = "single",
   selected,
   onSelect,
   disabled,
   className = "",
-  
+  maxDates = 15,
 }) => {
-  // const [currentDate] = useState<Date>(new Date());
   const [viewDate, setViewDate] = useState<Date>(new Date());
 
   const monthNames = [
@@ -45,6 +44,16 @@ const Calendar: React.FC<CalendarProps> = ({
     );
   };
 
+  const isSelected = (date: Date): boolean => {
+    if (mode === "single") {
+      return isSameDay(date, selected as Date);
+    } else if (mode === "multiple") {
+      const selectedDates = (selected as Date[]) || [];
+      return selectedDates.some(d => isSameDay(d, date));
+    }
+    return false;
+  };
+
   const isToday = (date: Date): boolean => {
     const today = new Date();
     return isSameDay(date, today);
@@ -58,7 +67,25 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const handleDateClick = (date: Date) => {
     if (disabled?.(date)) return;
-    onSelect?.(date);
+
+    if (mode === "single") {
+      onSelect?.(date);
+    } else if (mode === "multiple") {
+      const selectedDates = (selected as Date[]) || [];
+      const isDateSelected = selectedDates.some(d => isSameDay(d, date));
+
+      if (isDateSelected) {
+        // Deselect the date
+        const newDates = selectedDates.filter(d => !isSameDay(d, date));
+        onSelect?.(newDates);
+      } else {
+        // Select the date (check max limit)
+        if (selectedDates.length >= maxDates) {
+          return; // Max dates reached
+        }
+        onSelect?.([...selectedDates, date]);
+      }
+    }
   };
 
   const renderCalendarDays = () => {
@@ -68,7 +95,7 @@ const Calendar: React.FC<CalendarProps> = ({
     const firstDay = getFirstDayOfMonth(viewDate);
     const days: JSX.Element[] = [];
 
-    // previous month trailing days
+    // Previous month trailing days
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
     const daysInPrevMonth = getDaysInMonth(new Date(prevYear, prevMonth));
@@ -90,17 +117,17 @@ const Calendar: React.FC<CalendarProps> = ({
       );
     }
 
-    // current month days
+    // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const isDisabled = disabled?.(date);
-      const isSelected = isSameDay(date, selected ?? null);
+      const isDateSelected = isSelected(date);
       const isTodayDate = isToday(date);
 
       let dayClasses =
         "inline-flex items-center justify-center rounded-md text-sm font-medium h-9 w-9 p-0 transition-colors";
 
-      if (isSelected) {
+      if (isDateSelected) {
         dayClasses +=
           " bg-blue-600 text-white hover:bg-blue-700 focus:bg-blue-600 focus:text-white font-semibold";
       } else if (isTodayDate) {
@@ -119,14 +146,14 @@ const Calendar: React.FC<CalendarProps> = ({
           className={dayClasses}
           onClick={() => handleDateClick(date)}
           disabled={isDisabled}
-          aria-selected={isSelected}
+          aria-selected={isDateSelected}
         >
           {day}
         </button>
       );
     }
 
-    // next month leading days
+    // Next month leading days
     const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
     const remainingCells = totalCells - days.length;
     const nextMonth = month === 11 ? 0 : month + 1;
@@ -152,6 +179,8 @@ const Calendar: React.FC<CalendarProps> = ({
     return days;
   };
 
+  const selectedDates = mode === "multiple" ? (selected as Date[]) || [] : [];
+
   return (
     <div className={`p-3 ${className}`}>
       {/* Calendar Header */}
@@ -176,6 +205,13 @@ const Calendar: React.FC<CalendarProps> = ({
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Selection Info for Multiple Mode */}
+      {mode === "multiple" && (
+        <div className="mb-3 text-sm text-gray-600 text-center">
+          {selectedDates.length} of {maxDates} dates selected
+        </div>
+      )}
 
       {/* Day headers */}
       <div className="grid grid-cols-7 gap-1 mb-2">

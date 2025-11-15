@@ -11,97 +11,9 @@ import {
 import { Batch } from "@/models/batch.model";
 import { Student } from "@/models/student.model";
 import { isValidObjectId } from "mongoose";
-import "@/models/batch.model";
 import { Sessions } from "@/models/sessions.model";
 import { Module } from "@/models/module.model";
 import { Course } from "@/models/course.model";
-export const getStudentBatchName = async (
-  studentId: string,
-  courseId: string
-): Promise<{ success: boolean; message: string; data: string }> => {
-  if (!studentId || !courseId) {
-    return {
-      success: false,
-      message: "No student id or course id provided",
-      data: "",
-    };
-  }
-  if (!isValidObjectId(courseId)) {
-    return {
-      success: false,
-      message: "Invalid student id or course id provided",
-      data: "",
-    };
-  }
-
-  try {
-    await connectToDB();
-    const batch = (await Batch.findOne(
-      {
-        courseId: courseId,
-        students: studentId,
-      },
-      { name: 1, _id: 0 }
-    ).lean()) as unknown as { name: string };
-
-    if (!batch) {
-      return {
-        success: false,
-        message: "No batch found for this student in the course",
-        data: "",
-      };
-    }
-
-    return {
-      data: batch.name,
-      success: true,
-      message: "Fetched batch",
-    };
-  } catch (error) {
-    console.log(error);
-    return { data: "", success: false, message: "Something went wrong" };
-  }
-};
-
-export const getStudentInfo = async (
-  studentId: string
-): Promise<{ success: boolean; message: string; data: StudentInfo | null }> => {
-  if (!studentId) {
-    return {
-      success: false,
-      message: "No student id provided",
-      data: null,
-    };
-  }
-
-  try {
-    await connectToDB();
-    const studentInfo = (await Student.findOne(
-      { _id: studentId },
-      { name: 1, _id: 0, profilePic: 1 }
-    ).exec()) as StudentInfo;
-
-    if (!studentInfo) {
-      return {
-        success: false,
-        message: "No student found",
-        data: null,
-      };
-    }
-    return {
-      data: JSON.parse(JSON.stringify(studentInfo)),
-      message: "Fetched student",
-      success: true,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      success: false,
-      message: "Something went wrong",
-      data: null,
-    };
-  }
-};
 
 export const getStudentDashboard = async (
   studentId: string,
@@ -112,7 +24,6 @@ export const getStudentDashboard = async (
   message: string;
 }> => {
   if (!studentId || !courseId) {
-    console.log(studentId, courseId);
     return {
       success: false,
       message: "No student id or course id provided",
@@ -156,12 +67,26 @@ export const getStudentDashboard = async (
       };
     }
 
+    // Include status fields in the query
     const meetings = (await Sessions.find(
       { batchId: batchInfo._id },
-      { time: 1, module: 1, meetingLink: 1, date: 1, studentId: 1 }
+      { 
+        time: 1, 
+        module: 1, 
+        meetingLink: 1, 
+        date: 1, 
+        studentId: 1,
+        status: 1,              // Add status
+        isDeleted: 1,           // Add isDeleted
+        originalDate: 1,        // Add original date
+        originalTime: 1,        // Add original time
+        rescheduledAt: 1,       // Add reschedule timestamp
+        cancelledAt: 1          // Add cancelled timestamp
+      }
     ).exec()) as MeetingInfo[];
-    const attendedMeetings = meetings.filter((meet) =>
-      meet.studentId?.includes(studentId)
+
+    const attendedMeetings = meetings.filter(
+      (meet) => meet.studentId?.includes(studentId) && meet.status !== "cancelled"
     );
 
     const batchWithModules = (await Batch.findOne(
@@ -180,7 +105,7 @@ export const getStudentDashboard = async (
         instructor: string[];
       }[];
     };
-  
+
     const course = (await Course.findById(new ObjectId(courseId), {
       courseName: 1,
       courseThumbnail: 1,
@@ -207,13 +132,19 @@ export const getStudentDashboard = async (
       },
       lectureCompleted: attendedMeetings.length,
       meetings: meetings.map((meet) => ({
-        _id:meet._id,
+        _id: meet._id,
         batchName: batchInfo.name,
         time: meet.time,
         courseName: course.courseName,
         module: meet.module,
         meetingLink: meet.meetingLink,
         date: meet.date,
+        status: meet.status,
+        isDeleted: meet.isDeleted,
+        originalDate: meet.originalDate,
+        originalTime: meet.originalTime,
+        rescheduledAt: meet.rescheduledAt,
+        cancelledAt: meet.cancelledAt,
       })),
       modules:
         batchWithModules.modules?.map((mod) => ({
@@ -229,7 +160,6 @@ export const getStudentDashboard = async (
         })) || [],
     };
 
-  
     return {
       success: true,
       message: "Dashboard data retrieved successfully",

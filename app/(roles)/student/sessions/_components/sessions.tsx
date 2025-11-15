@@ -22,9 +22,8 @@ import { authClient } from "@/lib/auth-client";
 import { getStudentId } from "@/actions/shared/get-student-id";
 import { getStudentModules } from "@/actions/student/sessions/get-student-modules";
 import { Loader2 } from "lucide-react";
-import { format } from "date-fns";
 
-const ITEMS_PER_PAGE = 5; //TODO: Number of sessions per page change later
+const ITEMS_PER_PAGE = 5;
 
 const Sessions = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,42 +34,36 @@ const Sessions = () => {
   const [filter, setFilter] = useState<"all" | "attended" | "missed">("all");
   const [studentModules, setStudentModules] = useState<string[]>([]);
   const [currentStudentId, setCurrentStudentId] = useState("");
-  
-  const isSessionPast = (sessionDate: string, sessionTime?: string) => {
+
+  // Fixed isSessionPast function
+  const isSessionPast = (sessionDate: Date | string, sessionTime: string) => {
     const currentDateTime = new Date();
     
+    // Create a proper date object
     const sessionDateObj = new Date(sessionDate);
     
-    if (sessionTime) {
-      const [hours, minutes] = sessionTime.includes(':') 
-        ? sessionTime.split(':').map(num => parseInt(num))
-        : [0, 0];
-      
+    // Parse time and set hours/minutes
+    if (sessionTime && sessionTime.includes(':')) {
+      const [hours, minutes] = sessionTime.split(':').map(num => parseInt(num, 10));
       sessionDateObj.setHours(hours, minutes, 0, 0);
     } else {
+      // If no time, assume end of day
       sessionDateObj.setHours(23, 59, 59, 999);
     }
     
     return sessionDateObj < currentDateTime;
   };
-  
-  const isSessionPastDateTime = (sessionDateTime: string | Date) => {
-    const sessionDateTimeObj = new Date(sessionDateTime);
-    const currentDateTime = new Date();
-    
-    return sessionDateTimeObj < currentDateTime;
-  };
-  
+
   useEffect(() => {
     const fetchStudentId = async () => {
       try {
         const session = await authClient.getSession();
-        if(!session.data) return
+        if (!session.data) return;
         const studentId = await getStudentId(session.data.user.email!);
-        if(!studentId) {
-          throw new Error("Login")
+        if (!studentId) {
+          throw new Error("Login");
         }
-        console.log(studentId)
+        console.log("Student ID:", studentId);
         setCurrentStudentId(studentId);
       } catch (error) {
         console.log(error);
@@ -84,29 +77,22 @@ const Sessions = () => {
     try {
       const res = await getStudentSessions(currentStudentId);
       const modules = await getStudentModules(currentStudentId);
-    
+
+      console.log("Fetched sessions:", res.data);
       toast.message(res.message);
-      
-      // Filter to only show sessions that have already happened (considering time)
-      const pastSessions = res.data.filter(session => {
-        // Option 1: If session has separate date and time fields
-        if (session.time) {
-          return isSessionPast(format(session.date, "PP"), session.time);
-        }
-        
-        // // Option 2: If session has a combined datetime field
-        // if (session.datetime) {
-        //   return isSessionPastDateTime(session.datetime);
-        // }
-        
-        // Option 3: If session.date already includes time information
-        return isSessionPastDateTime(session.date);
+
+      // Filter to only show sessions that have already happened
+      const pastSessions = res.data.filter((session) => {
+        const isPast = isSessionPast(session.date, session.time);
+        console.log(`Session ${session.title} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}`);
+        return isPast;
       });
-      
+
+      console.log("Past sessions:", pastSessions);
       setStudentSessions(pastSessions);
       setStudentModules(modules.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error("Something went wrong");
       setStudentSessions([]);
     } finally {
@@ -148,14 +134,26 @@ const Sessions = () => {
     // Sort by date and time
     sessions.sort((a, b) => {
       const dateTimeA = new Date(a.date);
-      const timePartsA = a.time.split(':');
-      dateTimeA.setHours(parseInt(timePartsA[0]), parseInt(timePartsA[1]), 0, 0);
-      
+      const timePartsA = a.time.split(":");
+      dateTimeA.setHours(
+        parseInt(timePartsA[0], 10),
+        parseInt(timePartsA[1], 10),
+        0,
+        0
+      );
+
       const dateTimeB = new Date(b.date);
-      const timePartsB = b.time.split(':');
-      dateTimeB.setHours(parseInt(timePartsB[0]), parseInt(timePartsB[1]), 0, 0);
-      
-      return sortBy === "newest" ? dateTimeB.getTime() - dateTimeA.getTime() : dateTimeA.getTime() - dateTimeB.getTime();
+      const timePartsB = b.time.split(":");
+      dateTimeB.setHours(
+        parseInt(timePartsB[0], 10),
+        parseInt(timePartsB[1], 10),
+        0,
+        0
+      );
+
+      return sortBy === "newest"
+        ? dateTimeB.getTime() - dateTimeA.getTime()
+        : dateTimeA.getTime() - dateTimeB.getTime();
     });
 
     return sessions;
@@ -180,6 +178,7 @@ const Sessions = () => {
     );
   }
 
+
   return (
     <div className="flex flex-col w-full">
       <h1 className="text-5xl font-serif">Sessions History</h1>
@@ -199,24 +198,23 @@ const Sessions = () => {
             <SessionSortSelect setSortBy={setSortBy} sortBy={sortBy} />
           </div>
         </div>
-        
+
         <div className="flex flex-col gap-5 mt-10">
           {paginatedSessions.length > 0 ? (
             paginatedSessions.map((session) => (
-              <SessionCard 
-                attended={session.studentId.includes(currentStudentId)} 
-                studentId={currentStudentId} 
-                key={session._id} 
+              <SessionCard
+                attended={session.studentId.includes(currentStudentId)}
+                studentId={currentStudentId}
+                key={session._id}
                 session={session}
               />
             ))
           ) : (
             <div className="text-center py-10">
               <p className="text-muted-foreground text-lg">
-                {searchTerm || filter !== "all" 
-                  ? "No sessions found matching your criteria." 
-                  : "No completed sessions available yet."
-                }
+                {searchTerm || filter !== "all"
+                  ? "No sessions found matching your criteria."
+                  : "No completed sessions available yet."}
               </p>
             </div>
           )}

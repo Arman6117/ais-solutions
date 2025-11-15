@@ -7,15 +7,24 @@ export interface StudentInfo {
 }
 
 export interface MeetingInfo {
-_id?:string
+  _id?: string;
   batchName: string;
   time: string;
   courseName: string;
   module: string;
   meetingLink: string;
   date: string;
-  studentId?:string[]
+  studentId?: string[];
+  
+  // Add status tracking fields
+  status: "scheduled" | "rescheduled" | "cancelled";
+  isDeleted?: boolean;
+  originalDate?: string;
+  originalTime?: string;
+  rescheduledAt?: Date | null;
+  cancelledAt?: Date | null;
 }
+
 
 export interface ModuleInfo {
   id:string

@@ -37,7 +37,9 @@ export interface FormData {
   selectedSubtopics: string[];
   instructor: string;
   date: Date | undefined;
+  dates: Date[]; // Add this for multiple dates
   time: string;
+  isMultipleMode: boolean; // Add this flag
 }
 
 export interface FormErrors {
@@ -56,7 +58,9 @@ export default function ScheduleMeetingForm() {
     selectedSubtopics: [],
     instructor: "",
     date: new Date(),
+    dates: [], // Initialize empty array
     time: "",
+    isMultipleMode: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -83,25 +87,25 @@ export default function ScheduleMeetingForm() {
     };
     fetchBatches();
   }, [params.courseId]);
-  useEffect(()=> {
-    const fetchModules= async () => {
-      try{
-        const res = await getModulesWithSubtopics(formData.selectedBatchId)
-        if(!res.success) {
-          toast.error(res.message)
-          return
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        const res = await getModulesWithSubtopics(formData.selectedBatchId);
+        if (!res.success) {
+          toast.error(res.message);
+          return;
         }
-        if(res.success) {
-          toast.success(res.message)
+        if (res.success) {
+          toast.success(res.message);
           setModules(res.data);
         }
-      }catch(error) {
-        console.log(error)
-        toast.error("Something went wrong")
+      } catch (error) {
+        console.log(error);
+        toast.error("Something went wrong");
       }
-    }
-    fetchModules()
-  },[formData.selectedBatchId])
+    };
+    fetchModules();
+  }, [formData.selectedBatchId]);
   useEffect(() => {
     const batchIdFromUrl = params.batchId as string;
     if (batchIdFromUrl && batches.find((b) => b._id === batchIdFromUrl)) {
@@ -130,47 +134,66 @@ export default function ScheduleMeetingForm() {
     setIsLoading(true);
 
     try {
-      const payload = {
-        meetingName: formData.meetingName.trim(),
-        meetingLink: formData.meetingLink.trim(),
-        batchId: formData.selectedBatchId,
-        batchName: selectedBatch?.name,
-        module: selectedModule?.name || "",
-        moduleId: formData.selectedModuleId,
-        chapters: formData.selectedSubtopics,
-        instructor: formData.instructor,
-        date: format(formData.date as Date, "yyyy-MM-dd"),
-        time: formData.time,
-        scheduledAt: new Date().toISOString(),
-      };
+      const datesToSchedule = formData.isMultipleMode
+        ? formData.dates
+        : [formData.date as Date];
 
-      const res = await createSession(payload);
-       if(res.success) {
+      // Create sessions for all selected dates
+      const promises = datesToSchedule.map((scheduleDate) => {
+        const payload = {
+          meetingName: formData.meetingName.trim(),
+          meetingLink: formData.meetingLink.trim(),
+          batchId: formData.selectedBatchId,
+          batchName: selectedBatch?.name,
+          module: selectedModule?.name || "",
+          moduleId: formData.selectedModuleId,
+          chapters: formData.selectedSubtopics,
+          instructor: formData.instructor,
+          date: format(scheduleDate, "yyyy-MM-dd"),
+          time: formData.time,
+        };
 
-         // Reset form on success
-         setFormData({
-           meetingName: "",
-           meetingLink: "",
-           selectedBatchId: batches.length > 0 ? batches[0]._id : "",
-           selectedModuleId: "",
-           selectedSubtopics: [],
-           instructor: "",
-           date: new Date(),
-           time: "",
-          });
-          
-          toast.success("Meeting scheduled successfully!");
-        } else {
-          toast.error(res.message.toString())
-        }
+        return createSession(payload);
+      });
+
+      const results = await Promise.all(promises);
+
+      const successCount = results.filter((r) => r.success).length;
+      const failCount = results.length - successCount;
+
+      if (successCount > 0) {
+        toast.success(
+          `${successCount} meeting${successCount > 1 ? "s" : ""} scheduled successfully!`
+        );
+
+        // Reset form
+        setFormData({
+          meetingName: "",
+          meetingLink: "",
+          selectedBatchId: batches.length > 0 ? batches[0]._id : "",
+          selectedModuleId: "",
+          selectedSubtopics: [],
+          instructor: "",
+          date: new Date(),
+          dates: [],
+          time: "",
+          isMultipleMode: false,
+        });
+      }
+
+      if (failCount > 0) {
+        toast.error(
+          `Failed to schedule ${failCount} meeting${failCount > 1 ? "s" : ""}`
+        );
+      }
     } catch (error) {
-      console.error("Error scheduling meeting:", error);
-      toast.error("Failed to schedule meeting. Please try again.");
+      console.error("Error scheduling meetings:", error);
+      toast.error("Failed to schedule meetings. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-4xl mx-auto shadow-xl border-0 bg-white/95 backdrop-blur">
@@ -229,9 +252,14 @@ export default function ScheduleMeetingForm() {
 
           <ScheduleSection
             date={formData.date}
+            dates={formData.dates}
             time={formData.time}
             errors={errors}
             onUpdate={updateFormData}
+            multipleMode={formData.isMultipleMode}
+            onMultipleModeToggle={(enabled) =>
+              updateFormData({ isMultipleMode: enabled })
+            }
           />
         </CardContent>
 

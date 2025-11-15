@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { User2, BookOpenCheck, Layers } from "lucide-react";
+import { User2, BookOpenCheck, FileText } from "lucide-react";
 import SessionMarkAsWatchedButton from "./session-mark-as-watched-button";
 import { toast } from "sonner";
 import SessionCardViewNotesButton from "./session-card-view-notes-button";
@@ -36,14 +36,28 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
       toast.success(res.message);
       router.refresh();
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Extract all topics from notes
+  const allTopics = Array.isArray(session.notes)
+    ? session.notes.reduce<string[]>((acc, note) => {
+        if (typeof note === 'object' && 'topics' in note && Array.isArray(note.topics)) {
+          return [...acc, ...note.topics];
+        }
+        return acc;
+      }, [])
+    : [];
+
+  // Remove duplicates
+  const uniqueTopics = [...new Set(allTopics)];
+
   return (
-    <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5  bg-white space-y-3">
+    <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 bg-white space-y-3">
       <div className="flex sm:flex-row flex-col items-center justify-between">
         <div className="flex sm:flex-row flex-col sm:mb-0 mb-4 items-center gap-4">
           <Badge
@@ -60,13 +74,12 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
             <SessionMarkAsWatchedButton
               loading={isLoading}
               onClick={handleClick}
-
             />
           )}
         </div>
         <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
-          <SessionCardViewNotesButton  sessionId={session._id} />
+          <SessionCardViewNotesButton sessionId={session._id} />
         </div>
       </div>
 
@@ -82,11 +95,26 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
         <span className="font-medium">Module:</span> {session.module}
       </div>
 
-      <div className="text-sm text-gray-700 sm:flex-row flex-col  flex sm:items-center gap-2">
-        <Layers className="h-4 w-4" />
-        {/* <span className="font-medium">Module:</span> {session.modules} */}
-        <span className="font-medium ">Chapter:</span> {session.chapters}
-      </div>
+      {/* ONLY TOPICS - Nothing else */}
+      {uniqueTopics.length > 0 && (
+        <div className="text-sm text-gray-700 flex sm:flex-row flex-col sm:items-start gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            <FileText className="h-4 w-4 text-purple-600" />
+            <span className="font-medium">Topics:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {uniqueTopics.map((topic, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="bg-purple-50 text-purple-700 border border-purple-200"
+              >
+                {topic}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

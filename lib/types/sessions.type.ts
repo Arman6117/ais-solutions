@@ -1,4 +1,12 @@
+// lib/types/sessions.type.ts
+
 export type SessionStatus = 'scheduled' | 'rescheduled' | 'cancelled';
+
+// Simplified Note type - only topics
+export interface Note {
+  _id?: string;
+  topics: string[];
+}
 
 export interface Session {
   _id: string;
@@ -10,11 +18,11 @@ export interface Session {
   title: string;
   date: Date;
   time: string;
-  notes: string;
+  notes: Note[] | string[]; // Can be populated Note objects or just ObjectId strings
   videoLink: string;
   batchId?: string;
   
-
+  // Status tracking fields
   status: SessionStatus;
   isDeleted: boolean;
   deletedAt?: Date | null;
@@ -44,11 +52,11 @@ export interface CreateSessionPayload {
 export interface UpdateSessionPayload {
   studentId?: string[];
   meetingName?: string;
-  module?: string;  
+  module?: string;
   chapters?: string[];
   instructor?: string;
   meetingLink?: string;
-  date?: string;  
+  date?: string;
   time?: string;
   videoLink?: string;
   notes?: string[];
@@ -68,7 +76,6 @@ export interface BatchMeetings {
   chapters: string[];
   date: string;
   
-  
   status: SessionStatus;
   isDeleted: boolean;
   originalDate?: string;
@@ -86,5 +93,4 @@ export interface SessionWithDisplayInfo extends Session {
   };
 }
 
-// Helper type for filtering sessions
 export type SessionFilter = 'all' | 'active' | 'rescheduled' | 'cancelled';

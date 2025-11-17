@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import YouTube from "react-youtube"; // npm install react-youtube
+import YouTube from "react-youtube";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, FileText, PlayCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, BookOpen, Layers } from "lucide-react";
 import { NoteData } from "@/lib/types/types";
-
+import { Badge } from "@/components/ui/badge";
 
 type NoteContentPlayerProps = {
   note: NoteData;
-  sessionId: string; // Not directly used in this component, but good to pass
+  sessionId: string;
 };
 
 const getYouTubeVideoId = (url: string): string | null => {
@@ -21,8 +21,7 @@ const getYouTubeVideoId = (url: string): string | null => {
 
 const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  console.log(note)
-  // Memoize the current video ID
+
   const currentVideoId = useMemo(() => {
     if (note.videoLinks && note.videoLinks.length > 0) {
       return getYouTubeVideoId(note.videoLinks[currentVideoIndex].link);
@@ -38,13 +37,13 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
 
   const handlePrevVideo = useCallback(() => {
     setCurrentVideoIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  }, [note.videoLinks.length]);
+  }, []);
 
   const opts = {
     height: "390",
     width: "640",
     playerVars: {
-      autoplay: 1, // Auto-play the video
+      autoplay: 1,
     },
   };
 
@@ -55,23 +54,14 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Left Section: Video Player */}
       <div className="flex-1 min-w-0">
-        <h1 className="text-3xl font-bold mb-4 text-neutral-800">{note.session.meetingName}</h1>
-        {note.topics.length > 0 ? (
-          note.topics.map((topic, index) => (
-            <span
-              key={index}
-              className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full mr-2 mb-2"
-            >
-              {topic}
-            </span>
-          ))
-        ) : null}
+        <h1 className="text-3xl font-bold mb-4 text-neutral-800">
+          {note.session.meetingName}
+        </h1>
 
-
+        {/* Video Player */}
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl aspect-video w-full">
           {currentVideoId ? (
             <YouTube
-              
               videoId={currentVideoId}
               opts={{ ...opts, width: "100%", height: "100%" }}
               className="w-full h-full"
@@ -83,6 +73,7 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
           )}
         </div>
 
+        {/* Video Navigation */}
         {hasMultipleVideos && (
           <div className="flex justify-between items-center mt-4">
             <Button
@@ -91,10 +82,10 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
               variant="outline"
               className="gap-2"
             >
-              <ChevronLeft size={18} /> Previous Video
+              <ChevronLeft size={18} /> Previous
             </Button>
             <span className="text-sm text-muted-foreground">
-              {note.videoLinks[currentVideoIndex]?.label || `Video ${currentVideoIndex + 1}`}
+              Video {currentVideoIndex + 1} of {note.videoLinks.length}
             </span>
             <Button
               onClick={handleNextVideo}
@@ -102,42 +93,95 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
               variant="outline"
               className="gap-2"
             >
-              Next Video <ChevronRight size={18} />
+              Next <ChevronRight size={18} />
             </Button>
           </div>
         )}
       </div>
 
-      {/* Right Section: Video List / Files Tab */}
+      {/* Right Section: Video Cards / Files Tab */}
       <div className="lg:w-96 flex-shrink-0">
         <Tabs defaultValue="videos" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="videos" className="gap-2">
-              <PlayCircle size={18} /> Videos ({note.videoLinks?.length || 0})
+              <BookOpen size={18} /> Videos ({note.videoLinks?.length || 0})
             </TabsTrigger>
             <TabsTrigger value="files" disabled={!hasFiles} className="gap-2">
               <FileText size={18} /> Files ({note.files?.length || 0})
             </TabsTrigger>
           </TabsList>
 
+          {/* Videos Tab - Show Module/Chapter/Topics Cards */}
           <TabsContent value="videos" className="mt-4">
-            <h3 className="text-xl font-semibold mb-3">Note Videos</h3>
+            <h3 className="text-xl font-semibold mb-3">Video Content</h3>
             {note.videoLinks && note.videoLinks.length > 0 ? (
               <div className="space-y-3">
                 {note.videoLinks.map((video, index) => (
                   <div
-                    key={video._id || index}
-                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                    key={index}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       index === currentVideoIndex
-                        ? "bg-primary-foreground border-primary"
-                        : "hover:bg-accent"
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
                     }`}
                     onClick={() => setCurrentVideoIndex(index)}
                   >
-                    <p className="font-medium">
-                      {index + 1}. {video.label}
-                    </p>
-                    <p className="text-sm text-muted-foreground truncate">{video.link}</p>
+                    {/* Video Number */}
+                    <div className="flex items-center gap-2 mb-3">
+                     
+                      {index === currentVideoIndex && (
+                        <Badge className="bg-blue-600">Now Playing</Badge>
+                      )}
+                    </div>
+
+                    {/* Module */}
+                    <div className="mb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Layers size={16} className="text-purple-600" />
+                        <span className="text-xs font-medium text-gray-600 uppercase">
+                          Module
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {note.module}
+                      </p>
+                    </div>
+
+                    {/* Chapter */}
+                    <div className="mb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <BookOpen size={16} className="text-blue-600" />
+                        <span className="text-xs font-medium text-gray-600 uppercase">
+                          Chapter
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {note.chapter}
+                      </p>
+                    </div>
+
+                    {/* Topics */}
+                    {note.topics && note.topics.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <FileText size={16} className="text-green-600" />
+                          <span className="text-xs font-medium text-gray-600 uppercase">
+                            Topics Covered
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {note.topics.map((topic, idx) => (
+                            <Badge
+                              key={idx}
+                              variant="secondary"
+                              className="text-xs bg-green-100 text-green-800 border-green-200"
+                            >
+                              {topic}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -146,6 +190,7 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
             )}
           </TabsContent>
 
+          {/* Files Tab */}
           <TabsContent value="files" className="mt-4">
             <h3 className="text-xl font-semibold mb-3">Associated Files</h3>
             {hasFiles ? (
@@ -161,15 +206,18 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
                     <FileText size={20} className="text-primary" />
                     <div className="flex-1">
                       <p className="font-medium">{file.label}</p>
-                      <p className="text-sm text-muted-foreground truncate">{file.link}</p>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {file.link}
+                      </p>
                     </div>
-                    {/* Optionally add a download icon */}
                     <ChevronRight size={18} className="text-muted-foreground" />
                   </a>
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No files associated with this note.</p>
+              <p className="text-muted-foreground">
+                No files associated with this note.
+              </p>
             )}
           </TabsContent>
         </Tabs>

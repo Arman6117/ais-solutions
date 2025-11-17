@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { User2, BookOpenCheck, FileText } from "lucide-react";
+import { User2, BookOpenCheck, FileText, NotebookPen } from "lucide-react";
 import SessionMarkAsWatchedButton from "./session-mark-as-watched-button";
 import { toast } from "sonner";
 import SessionCardViewNotesButton from "./session-card-view-notes-button";
@@ -86,16 +86,37 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
     <h2 className="text-xl font-semibold text-primary">{session.meetingName}</h2>
 
       <div className="text-sm text-gray-700 flex items-center gap-2">
-        <User2 className="h-4 w-4" />
+        <User2 className="h-4 w-4 text-blue-600" />
         <span className="font-medium">Instructor:</span> {session.instructor}
       </div>
 
       <div className="text-sm text-gray-700 flex items-center gap-2">
-        <BookOpenCheck className="h-4 w-4" />
+        <BookOpenCheck className="h-4 w-4 text-green-600" />
         <span className="font-medium">Module:</span> {session.module}
       </div>
+      {session.chapters && session.chapters.length > 0 && (
+      
+          <div className="text-sm text-gray-700 flex sm:flex-row flex-col sm:items-start gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            <NotebookPen className="h-4 w-4 text-pink-600" />
+            <span className="font-medium">Chapter:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {session.chapters.map((chapter, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="bg-purple-50 text-pink-700 border border-purple-200"
+              >
+                {chapter}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+      
 
-      {/* ONLY TOPICS - Nothing else */}
+      
       {uniqueTopics.length > 0 && (
         <div className="text-sm text-gray-700 flex sm:flex-row flex-col sm:items-start gap-2">
           <div className="flex items-center gap-2 shrink-0">

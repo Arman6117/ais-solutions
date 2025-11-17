@@ -35,19 +35,19 @@ const Sessions = () => {
   const [studentModules, setStudentModules] = useState<string[]>([]);
   const [currentStudentId, setCurrentStudentId] = useState("");
 
-  // Fixed isSessionPast function
+  
   const isSessionPast = (sessionDate: Date | string, sessionTime: string) => {
     const currentDateTime = new Date();
     
-    // Create a proper date object
+    
     const sessionDateObj = new Date(sessionDate);
     
-    // Parse time and set hours/minutes
+    
     if (sessionTime && sessionTime.includes(':')) {
       const [hours, minutes] = sessionTime.split(':').map(num => parseInt(num, 10));
       sessionDateObj.setHours(hours, minutes, 0, 0);
     } else {
-      // If no time, assume end of day
+      
       sessionDateObj.setHours(23, 59, 59, 999);
     }
     
@@ -63,7 +63,7 @@ const Sessions = () => {
         if (!studentId) {
           throw new Error("Login");
         }
-        console.log("Student ID:", studentId);
+        
         setCurrentStudentId(studentId);
       } catch (error) {
         console.log(error);

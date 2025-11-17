@@ -36,7 +36,7 @@ const WatchPageComponent = ({
   useEffect(() => {
     fetchNotes();
   }, []);
-  // console.log(notesData)
+  console.log(notesData)
   return (
     <div className="container mx-auto py-8">
       {notesData.length === 0 && (

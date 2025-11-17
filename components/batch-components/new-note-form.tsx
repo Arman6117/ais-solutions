@@ -308,7 +308,7 @@ const NewNoteForm = ({
         <div className="flex flex-col gap-2">
           {videoLinks.map((videoLink, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
-              <span className="truncate max-w-32">{videoLink.label}</span>
+              <span className="truncate max-w-32">{videoLink.link}</span>
               <Button
                 variant="ghost"
                 size="icon"

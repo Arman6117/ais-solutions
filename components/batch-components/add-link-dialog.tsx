@@ -15,22 +15,22 @@ type AddLinkDialogProps = {
   createLink?: () => void;
 };
 const AddLinkDialog = ({
-  label = "",
+ 
   link = "",
-  setLinkLabel,
+  
   setLink,
   onAddLink,
   createLink,
 }:AddLinkDialogProps) => {
   const handleSave = () => {
-    if (!label.trim() || !link.trim()) {
-      toast.error("Please enter both label and link");
+    if ( !link.trim()) {
+      toast.error("Please enter   link");
       return;
     }
 
 
     if (onAddLink) {
-      onAddLink(label, link);
+      onAddLink(link, link);
     }
 
     
@@ -42,24 +42,14 @@ const AddLinkDialog = ({
     toast.success("Link added");
 
 
-    if (setLinkLabel && setLink) {
-      setLinkLabel("");
+    if (  setLink) {
       setLink("");
     }
   };
 
   return (
     <div className="flex flex-col gap-7 py-4">
-      <div className="flex flex-col gap-2">
-        <Label className="text-lg">Label</Label>
-        <Input
-          className="focus-visible:ring-0"
-          placeholder="Enter label..."
-          required
-          value={label}
-          onChange={(e) => setLinkLabel && setLinkLabel(e.target.value)}
-        />
-      </div>
+     
       <div className="flex flex-col gap-2">
         <Label className="text-lg">Link</Label>
         <Input

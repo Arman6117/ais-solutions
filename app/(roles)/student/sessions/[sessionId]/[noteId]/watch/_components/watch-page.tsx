@@ -1,4 +1,4 @@
-"use client"; // Make the page a client component for easy testing
+"use client";
 
 import { NoteData } from "@/lib/types/types";
 import React, { useEffect, useState } from "react";
@@ -6,19 +6,21 @@ import NoteContentPlayer from "./note-content-player";
 import { toast } from "sonner";
 import { getNotesById } from "@/actions/admin/notes/get-notes";
 import { AlertTriangle } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 
-// ----------------------------------------------------
-
-// This is a temporary component for testing the UI
 const WatchPageComponent = ({
-  // noteId,
   sessionId,
 }: {
-  // noteId: string;
   sessionId: string;
 }) => {
   const [notesData, setNotesData] = useState<NoteData[]>([]);
-  // We don't need to fetch data, just use the dummy object
+
   const fetchNotes = async () => {
     try {
       const res = await getNotesById(sessionId);
@@ -33,10 +35,13 @@ const WatchPageComponent = ({
       toast.error("Something went wrong");
     }
   };
+
   useEffect(() => {
     fetchNotes();
   }, []);
-  console.log(notesData)
+
+  console.log(notesData);
+
   return (
     <div className="container mx-auto py-8">
       {notesData.length === 0 && (
@@ -47,15 +52,44 @@ const WatchPageComponent = ({
           </h2>
         </div>
       )}
-      <div className="flex flex-col gap-10">
-        {notesData.map((note) => (
-          <div key={note._id} className="w-full flex flex-col gap-7">
-            <NoteContentPlayer
-             
-              note={note}
-              sessionId={sessionId}
-            />
-            <hr className="border-t border-2 border-gray-300" />
+
+      <div className="flex flex-col gap-7">
+        {notesData.map((note, index) => (
+          <div key={note._id}>
+            <Accordion 
+              type="single" 
+              collapsible 
+              className="w-full"
+              defaultValue={index === 0 ? "item-0" : undefined} // Open first item
+            >
+              <AccordionItem value={`item-${index}`} className="border rounded-lg">
+                <AccordionTrigger className="hover:no-underline px-6 py-4">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-gray-700">Topics:</span>
+                    {note.topics && note.topics.length > 0 ? (
+                      note.topics.map((topic, idx) => (
+                        <Badge
+                          key={idx}
+                          variant="secondary"
+                          className="bg-blue-100 text-blue-800"
+                        >
+                          {topic}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-gray-500 italic text-sm">No topics</span>
+                    )}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <NoteContentPlayer note={note} sessionId={sessionId} />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {index < notesData.length - 1 && (
+              <hr className="border-t-2 border-gray-300 my-7" />
+            )}
           </div>
         ))}
       </div>

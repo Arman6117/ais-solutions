@@ -43,7 +43,7 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
     height: "390",
     width: "640",
     playerVars: {
-      autoplay: 1,
+      autoplay: 0,
     },
   };
 
@@ -62,6 +62,7 @@ const NoteContentPlayer = ({ note }: NoteContentPlayerProps) => {
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl aspect-video w-full">
           {currentVideoId ? (
             <YouTube
+            
               videoId={currentVideoId}
               opts={{ ...opts, width: "100%", height: "100%" }}
               className="w-full h-full"

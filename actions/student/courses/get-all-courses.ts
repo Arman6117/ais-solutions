@@ -9,7 +9,7 @@ export const getAllCourses = async (): Promise<{ data: CourseCards[] }> => {
     await connectToDB();
     const courses = (await Course.find({})
       .select(
-        "_id courseThumbnail courseName courseDescription coursePrice courseOfferPrice modules courseLevel rating courseStartDate courseEndDate courseMode createdAt"
+        "_id courseThumbnail syllabusLink courseName courseDescription coursePrice courseOfferPrice modules courseLevel rating courseStartDate courseEndDate courseMode createdAt"
       )
       .exec()) as CourseCards[];
 

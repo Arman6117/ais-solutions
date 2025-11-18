@@ -1,13 +1,27 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  LogIn,
+  ArrowLeft,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,7 +36,7 @@ const StudentLoginForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       const updated = { ...errors };
       delete updated[field];
@@ -49,7 +63,7 @@ const StudentLoginForm = () => {
         if (res.error) setErrors(res.error);
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       toast.error("Something went wrong.");
     } finally {
       setIsSubmitting(false);
@@ -59,7 +73,10 @@ const StudentLoginForm = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <Link href="/auth/login" className="mb-6 flex gap-2 text-purple-600 font-medium">
+        <Link
+          href="/auth/login"
+          className="mb-6 flex gap-2 text-purple-600 font-medium"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Role Selection
         </Link>
@@ -73,7 +90,9 @@ const StudentLoginForm = () => {
               Student Login
             </h1>
           </div>
-          <p className="text-gray-600">Enter your credentials to access your dashboard</p>
+          <p className="text-gray-600">
+            Enter your credentials to access your dashboard
+          </p>
         </div>
 
         <Card>
@@ -98,13 +117,15 @@ const StudentLoginForm = () => {
                 <Input
                   id="email"
                   type="email"
-                  value={formData.email}
+                  value={formData.email.toLowerCase()}
                   onChange={(e) => handleChange("email", e.target.value)}
                   className="pl-10"
                   placeholder="Enter your email"
                 />
               </div>
-              {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email}</p>
+              )}
             </div>
 
             {/* Password */}
@@ -125,22 +146,31 @@ const StudentLoginForm = () => {
                   variant="ghost"
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(prev => !prev)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
-              {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password}</p>
+              )}
             </div>
 
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold"
-              size="lg"
-            >
-              {isSubmitting ? 'Logging in...' : 'Login'}
-            </Button>
+            <div className="flex items-center flex-col justify-center gap-4">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold"
+                size="lg"
+              >
+                {isSubmitting ? "Logging in..." : "Login"}
+              </Button>
+              <Link href={'/auth/forgot-password'}  >Forgot Password?</Link>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -78,7 +78,7 @@ export default function ModuleSelectionSection({
             className="w-full border-gray-300"
           />
           <p className="text-xs text-gray-500 mt-1">
-            If left empty, module will be saved as "Not Mentioned"
+            If left empty, module will be saved as Not Mentioned
           </p>
         </div>
       )}

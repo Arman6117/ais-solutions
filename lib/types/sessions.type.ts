@@ -75,7 +75,7 @@ export interface BatchMeetings {
   time: string;
   chapters: string[];
   date: string;
-  
+  instructor: string;
   status: SessionStatus;
   isDeleted: boolean;
   originalDate?: string;

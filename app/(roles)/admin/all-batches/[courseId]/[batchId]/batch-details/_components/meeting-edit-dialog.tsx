@@ -25,6 +25,7 @@ import ModuleSelectionSection from "../schedule-meet/_components/module-selectio
 import SubtopicsSelectionSection from "../schedule-meet/_components/subtopic-selection-section";
 import InstructorSelectionSection from "../schedule-meet/_components/instructor-selection-section";
 import ScheduleSection from "../schedule-meet/_components/schedule-section";
+import { instructors } from "../schedule-meet/_components/data/mockdata";
 
 // import { instructors } from "./data/mockdata";
 
@@ -224,7 +225,7 @@ const MeetingEditDialog = ({
 
             <InstructorSelectionSection
               instructor={formData.instructor}
-              instructors={[]}
+              instructors={instructors}
               errors={errors}
               onUpdate={updateFormData}
             />

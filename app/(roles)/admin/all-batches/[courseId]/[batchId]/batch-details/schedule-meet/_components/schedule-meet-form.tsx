@@ -34,12 +34,13 @@ export interface FormData {
   meetingLink: string;
   selectedBatchId: string;
   selectedModuleId: string;
+  customModuleName: string;
   selectedSubtopics: string[];
   instructor: string;
   date: Date | undefined;
-  dates: Date[]; // Add this for multiple dates
+  dates: Date[];
   time: string;
-  isMultipleMode: boolean; // Add this flag
+  isMultipleMode: boolean;
 }
 
 export interface FormErrors {
@@ -55,10 +56,11 @@ export default function ScheduleMeetingForm() {
     meetingLink: "",
     selectedBatchId: "",
     selectedModuleId: "",
+    customModuleName: "",
     selectedSubtopics: [],
     instructor: "",
     date: new Date(),
-    dates: [], // Initialize empty array
+    dates: [],
     time: "",
     isMultipleMode: false,
   });
@@ -67,6 +69,7 @@ export default function ScheduleMeetingForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [batches, setBatches] = useState<BatchesIdsNames[]>([]);
   const [modules, setModules] = useState<ModulesForSession[]>([]);
+
   useEffect(() => {
     const fetchBatches = async () => {
       try {
@@ -87,9 +90,12 @@ export default function ScheduleMeetingForm() {
     };
     fetchBatches();
   }, [params.courseId]);
+
   useEffect(() => {
     const fetchModules = async () => {
       try {
+        if (!formData.selectedBatchId) return;
+        
         const res = await getModulesWithSubtopics(formData.selectedBatchId);
         if (!res.success) {
           toast.error(res.message);
@@ -106,6 +112,7 @@ export default function ScheduleMeetingForm() {
     };
     fetchModules();
   }, [formData.selectedBatchId]);
+
   useEffect(() => {
     const batchIdFromUrl = params.batchId as string;
     if (batchIdFromUrl && batches.find((b) => b._id === batchIdFromUrl)) {
@@ -138,15 +145,22 @@ export default function ScheduleMeetingForm() {
         ? formData.dates
         : [formData.date as Date];
 
-      // Create sessions for all selected dates
+      // Determine module name
+      let moduleName: string;
+      if (formData.selectedModuleId === "other") {
+        moduleName = formData.customModuleName?.trim() || "Not Mentioned";
+      } else {
+        moduleName = selectedModule?.name || "Not Mentioned";
+      }
+
       const promises = datesToSchedule.map((scheduleDate) => {
         const payload = {
           meetingName: formData.meetingName.trim(),
           meetingLink: formData.meetingLink.trim(),
           batchId: formData.selectedBatchId,
           batchName: selectedBatch?.name,
-          module: selectedModule?.name || "",
-          moduleId: formData.selectedModuleId,
+          module: moduleName,
+          moduleId: formData.selectedModuleId === "other" ? "custom" : formData.selectedModuleId,
           chapters: formData.selectedSubtopics,
           instructor: formData.instructor,
           date: format(scheduleDate, "yyyy-MM-dd"),
@@ -172,6 +186,7 @@ export default function ScheduleMeetingForm() {
           meetingLink: "",
           selectedBatchId: batches.length > 0 ? batches[0]._id : "",
           selectedModuleId: "",
+          customModuleName: "",
           selectedSubtopics: [],
           instructor: "",
           date: new Date(),
@@ -226,15 +241,16 @@ export default function ScheduleMeetingForm() {
             selectedModuleId={formData.selectedModuleId}
             modules={modules}
             errors={errors}
-            onUpdate={(moduleId: string) => {
+            onUpdate={(moduleId: string, customModuleName?: string) => {
               updateFormData({
                 selectedModuleId: moduleId,
+                customModuleName: customModuleName || "",
                 selectedSubtopics: [],
               });
             }}
           />
 
-          {selectedModule && (
+          {(selectedModule || formData.selectedModuleId === "other") && (
             <SubtopicsSelectionSection
               selectedModule={selectedModule}
               selectedSubtopics={formData.selectedSubtopics}

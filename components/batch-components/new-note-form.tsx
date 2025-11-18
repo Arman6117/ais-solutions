@@ -217,25 +217,26 @@ const NewNoteForm = ({
       <TableCell className="text-center">
         <Checkbox disabled />
       </TableCell>
-
       <TableCell>
         <ModuleSelector
           modules={batchModule.map((module) => module.name)}
           selectedModule={moduleName}
           onChange={(val) => {
             setModuleName(val);
-            if (isEditing && editNote) {
+            if (!isEditing) {
+              setChapterName("");
+            } else if (editNote) {
               const newModuleChapters = moduleChapterMap[val] || [];
-              if (!newModuleChapters.includes(chapterName)) {
+              if (
+                newModuleChapters.length > 0 &&
+                !newModuleChapters.includes(chapterName)
+              ) {
                 setChapterName("");
               }
-            } else {
-              setChapterName("");
             }
           }}
         />
       </TableCell>
-
       <TableCell>
         <ChapterSelector
           chapters={availableChapters}
@@ -243,8 +244,6 @@ const NewNoteForm = ({
           onChange={setChapterName}
         />
       </TableCell>
-
-    
       <TableCell className="max-w-xs">
         <TopicsInput
           topics={topics}
@@ -252,7 +251,6 @@ const NewNoteForm = ({
           placeholder="Add topics..."
         />
       </TableCell>
-
       <TableCell>
         <div className="flex flex-col gap-2 max-w-40">
           {selectedSession ? (
@@ -278,7 +276,6 @@ const NewNoteForm = ({
           />
         </div>
       </TableCell>
-
       <TableCell>
         <Popover>
           <PopoverTrigger asChild>
@@ -303,7 +300,6 @@ const NewNoteForm = ({
           </PopoverContent>
         </Popover>
       </TableCell>
-
       <TableCell>
         <div className="flex flex-col gap-2">
           {videoLinks.map((videoLink, index) => (
@@ -341,7 +337,6 @@ const NewNoteForm = ({
           </Dialog>
         </div>
       </TableCell>
-
       <TableCell>
         <div className="flex flex-col gap-2">
           {files.map((file, index) => (
@@ -366,7 +361,6 @@ const NewNoteForm = ({
           />
         </div>
       </TableCell>
-
       <TableCell>
         <div className="flex gap-2 justify-center">
           <Button variant="ghost" onClick={handleCancel}>

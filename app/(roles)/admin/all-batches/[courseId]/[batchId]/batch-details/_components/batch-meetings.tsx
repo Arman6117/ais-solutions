@@ -95,14 +95,17 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
   };
 
   const groupMeetingsByDate = (meetings: BatchMeetingsType[]) => {
-    const grouped = meetings.reduce((acc, meeting) => {
-      const dateKey = format(new Date(meeting.date), "yyyy-MM-dd");
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(meeting);
-      return acc;
-    }, {} as Record<string, BatchMeetingsType[]>);
+    const grouped = meetings.reduce(
+      (acc, meeting) => {
+        const dateKey = format(new Date(meeting.date), "yyyy-MM-dd");
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(meeting);
+        return acc;
+      },
+      {} as Record<string, BatchMeetingsType[]>
+    );
 
     return Object.entries(grouped).sort(
       ([a], [b]) => new Date(b).getTime() - new Date(a).getTime()
@@ -111,7 +114,7 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
 
   const groupedMeetings = groupMeetingsByDate(meetings);
   const hasMeetings = meetings.length > 0;
-  console.log(meetings)
+
   return (
     <Card className="border shadow-md">
       <CardHeader className="pb-3 bg-gray-50 border-b">
@@ -168,8 +171,8 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                     meeting.status === "cancelled"
                                       ? "bg-red-400"
                                       : meeting.status === "rescheduled"
-                                      ? "bg-yellow-400"
-                                      : "bg-violet-500"
+                                        ? "bg-yellow-400"
+                                        : "bg-violet-500"
                                   )}
                                 ></div>
                                 <div className="flex-1">
@@ -177,7 +180,6 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                     <h3 className="font-bold text-gray-800 text-base">
                                       {meeting.meetingName}
                                     </h3>
-                                    {/* Status Badge */}
                                     {getStatusBadge(meeting.status)}
                                   </div>
 
@@ -203,7 +205,7 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                 </div>
                               </div>
 
-                              {/* Edit and Delete buttons - hide for cancelled meetings */}
+                              {/* Edit and Delete buttons */}
                               {meeting.status !== "cancelled" && (
                                 <div className="flex gap-1">
                                   <MeetingEditDialog
@@ -218,6 +220,7 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                               )}
                             </div>
 
+                            {/* Meeting Details Grid */}
                             <div className="grid grid-cols-2 gap-3 text-sm pl-3">
                               <div>
                                 <p className="text-gray-500 text-xs font-medium">
@@ -236,15 +239,24 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                   {meeting.time}
                                 </p>
                               </div>
+                              <div>
+                                <p className="text-gray-500 text-xs font-medium">
+                                  Instructor
+                                </p>
+                                <p className="font-medium text-gray-800 flex items-center gap-1">
+                                  <span className="text-violet-600">👨‍🏫</span>
+                                  {meeting.instructor || "Not Assigned"}
+                                </p>
+                              </div>
                               {meeting.chapters &&
                                 meeting.chapters.length > 0 && (
-                                  <div className="col-span-2">
+                                  <div>
                                     <p className="text-gray-500 text-xs font-medium mb-1">
                                       Topics
                                     </p>
                                     <div className="flex flex-wrap gap-1">
                                       {meeting.chapters
-                                        .slice(0, 3)
+                                        .slice(0, 2)
                                         .map((chapter, idx) => (
                                           <span
                                             key={idx}
@@ -253,9 +265,9 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                             {chapter}
                                           </span>
                                         ))}
-                                      {meeting.chapters.length > 3 && (
+                                      {meeting.chapters.length > 2 && (
                                         <span className="text-xs text-gray-500">
-                                          +{meeting.chapters.length - 3} more
+                                          +{meeting.chapters.length - 2} more
                                         </span>
                                       )}
                                     </div>

@@ -27,7 +27,7 @@ export const getAllMeetingsByBatchId = async (
       .select(
         "_id meetingName module time date chapters " +
         "status isDeleted originalDate originalTime " +
-        "rescheduledAt cancelledAt deletedAt"
+        "rescheduledAt cancelledAt instructor deletedAt"
       )
       .sort({ date: 1, time: 1 }) 
       .exec()) as BatchMeetings[];

@@ -32,25 +32,24 @@ const Sessions = () => {
   const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<"all" | "attended" | "missed">("all");
+  const [moduleFilter, setModuleFilter] = useState<string>("all");
   const [studentModules, setStudentModules] = useState<string[]>([]);
   const [currentStudentId, setCurrentStudentId] = useState("");
 
-  
   const isSessionPast = (sessionDate: Date | string, sessionTime: string) => {
     const currentDateTime = new Date();
-    
-    
+
     const sessionDateObj = new Date(sessionDate);
-    
-    
-    if (sessionTime && sessionTime.includes(':')) {
-      const [hours, minutes] = sessionTime.split(':').map(num => parseInt(num, 10));
+
+    if (sessionTime && sessionTime.includes(":")) {
+      const [hours, minutes] = sessionTime
+        .split(":")
+        .map((num) => parseInt(num, 10));
       sessionDateObj.setHours(hours, minutes, 0, 0);
     } else {
-      
       sessionDateObj.setHours(23, 59, 59, 999);
     }
-    
+
     return sessionDateObj < currentDateTime;
   };
 
@@ -63,7 +62,7 @@ const Sessions = () => {
         if (!studentId) {
           throw new Error("Login");
         }
-        
+
         setCurrentStudentId(studentId);
       } catch (error) {
         console.log(error);
@@ -78,17 +77,17 @@ const Sessions = () => {
       const res = await getStudentSessions(currentStudentId);
       const modules = await getStudentModules(currentStudentId);
 
-      console.log("Fetched sessions:", res.data);
       toast.message(res.message);
 
       // Filter to only show sessions that have already happened
       const pastSessions = res.data.filter((session) => {
         const isPast = isSessionPast(session.date, session.time);
-        console.log(`Session ${session.meetingName} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}`);
+        console.log(
+          `Session ${session.meetingName} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}`
+        );
         return isPast;
       });
 
-      console.log("Past sessions:", pastSessions);
       setStudentSessions(pastSessions);
       setStudentModules(modules.data);
     } catch (error) {
@@ -120,14 +119,23 @@ const Sessions = () => {
       );
     }
 
-    // Filter by search term
+    // Filter by module
+    if (moduleFilter !== "all") {
+      sessions = sessions.filter((session) => session.module === moduleFilter);
+    }
+
+    // Filter by search term with null/undefined checks
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       sessions = sessions.filter(
         (session) =>
-          session.meetingName.toLowerCase().includes(term) ||
-          session.courseName.toLowerCase().includes(term) ||
-          session.instructor?.toLowerCase().includes(term)
+          session.meetingName?.toLowerCase().includes(term) ||
+          session.courseName?.toLowerCase().includes(term) ||
+          session.module?.toLowerCase().includes(term) ||
+          session.instructor?.toLowerCase().includes(term) ||
+          session.chapters?.some((chapter) =>
+            chapter.toLowerCase().includes(term)
+          )
       );
     }
 
@@ -157,7 +165,14 @@ const Sessions = () => {
     });
 
     return sessions;
-  }, [filter, searchTerm, sortBy, studentSessions, currentStudentId]);
+  }, [
+    filter,
+    moduleFilter,
+    searchTerm,
+    sortBy,
+    studentSessions,
+    currentStudentId,
+  ]);
 
   const totalPages = Math.ceil(filteredSessions.length / ITEMS_PER_PAGE);
   const paginatedSessions = filteredSessions.slice(
@@ -165,10 +180,10 @@ const Sessions = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  // Reset to first page when filters change
+  
   useEffect(() => {
     setCurrentPage(1);
-  }, [filter, searchTerm, sortBy]);
+  }, [filter, moduleFilter, searchTerm, sortBy]);
 
   if (isLoading) {
     return (
@@ -177,7 +192,6 @@ const Sessions = () => {
       </div>
     );
   }
-
 
   return (
     <div className="flex flex-col w-full">
@@ -193,7 +207,11 @@ const Sessions = () => {
           <div className="flex gap-3 flex-wrap">
             <SessionFilterSelect filter={filter} setFilter={setFilter} />
             <React.Suspense fallback={null}>
-              <SessionModuleFilterSelect moduleFilter={studentModules} />
+              <SessionModuleFilterSelect
+                moduleFilter={studentModules}
+                selectedModule={moduleFilter}
+                setModuleFilter={setModuleFilter}
+              />
             </React.Suspense>
             <SessionSortSelect setSortBy={setSortBy} sortBy={sortBy} />
           </div>
@@ -212,7 +230,7 @@ const Sessions = () => {
           ) : (
             <div className="text-center py-10">
               <p className="text-muted-foreground text-lg">
-                {searchTerm || filter !== "all"
+                {searchTerm || filter !== "all" || moduleFilter !== "all"
                   ? "No sessions found matching your criteria."
                   : "No completed sessions available yet."}
               </p>

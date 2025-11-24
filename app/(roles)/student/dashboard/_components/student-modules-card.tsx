@@ -7,7 +7,7 @@ import React, { useMemo } from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import StudentModulesMeetingDialog from "./student-modules-meeting-dialog";
 import { ModuleInfo } from "@/lib/types/student-dashboard.type";
-import { formatDate } from "date-fns";
+import { formatDate, isValid } from "date-fns";
 
 type StudentModulesCardProps = {
   module: ModuleInfo;
@@ -38,6 +38,29 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
   const showDateRange = useMemo(() => {
     return status === "Upcoming" && module.startDate && module.endDate;
   }, [status, module.startDate, module.endDate]);
+
+  // Safe date parsing helper
+  const formatSafeDate = (dateString: string | undefined) => {
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      if (isValid(date)) {
+        return formatDate(date, "MMM dd");
+      }
+      return null;
+    } catch (error) {
+      console.error("Invalid date:", dateString, error);
+      return null;
+    }
+  };
+
+  const formattedStartDate = useMemo(() => {
+    return formatSafeDate(module.startDate);
+  }, [module.startDate]);
+
+  const formattedEndDate = useMemo(() => {
+    return formatSafeDate(module.endDate);
+  }, [module.endDate]);
 
   return (
     <StudentModulesMeetingDialog
@@ -107,22 +130,21 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
           </div>
 
           {/* Date Range (Upcoming only) */}
-          {showDateRange && (
+          {showDateRange && formattedStartDate && formattedEndDate && (
             <div className="flex items-center gap-3 text-xs text-gray-500 pt-1">
               <div className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-blue-600" />
-                <span>{formatDate(new Date(module.startDate!), "MMM dd")}</span>
+                <span>{formattedStartDate}</span>
               </div>
               <span className="text-gray-400">→</span>
               <div className="flex items-center gap-1">
                 <CalendarCheck className="w-3.5 h-3.5 text-green-600" />
-                <span>{formatDate(new Date(module.endDate!), "MMM dd")}</span>
+                <span>{formattedEndDate}</span>
               </div>
             </div>
           )}
         </div>
 
-        {/* Arrow Indicator */}
         <ChevronRight
           className={cn(
             "w-5 h-5 text-gray-400 group-hover:text-primary-bg group-hover:translate-x-1 transition-all flex-shrink-0",

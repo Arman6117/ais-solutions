@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { FileTextIcon, PlayCircle } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 

@@ -78,7 +78,6 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
     }
   };
 
-  // Extract all topics from notes
   const allTopics = Array.isArray(session.notes)
     ? session.notes.reduce<string[]>((acc, note) => {
         if (

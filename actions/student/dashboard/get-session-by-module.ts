@@ -92,6 +92,7 @@ export async function getSessionsByModule(
       updatedAt: new Date(session.updatedAt),
     }));
 
+    console.log(formattedSessions)
     return {
       success: true,
       message: `Found ${formattedSessions.length} session(s) for ${moduleName}`,

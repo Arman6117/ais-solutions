@@ -58,7 +58,7 @@ const StudentModulesMeetingDialog = ({
       try {
         // Call the getSessionsByModule function with moduleName and batchId
         const res = await getSessionsByModule(moduleName, batchId);
-
+        
         if (res.success) {
           setSessions(res.data);
           if (res.data.length === 0) {

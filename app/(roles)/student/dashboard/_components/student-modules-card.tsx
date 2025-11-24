@@ -62,7 +62,6 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
     return formatSafeDate(module.endDate);
   }, [module.endDate]);
 
-  console.log(module)
   return (
     <StudentModulesMeetingDialog
       moduleName={module.name}

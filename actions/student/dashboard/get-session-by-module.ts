@@ -4,7 +4,7 @@
 import { connectToDB } from "@/lib/db";
 import { Session } from "@/lib/types/sessions.type";
 import { Sessions } from "@/models/sessions.model";
-
+import "@/models/notes.model";
 type GetSessionsByModuleResponse = {
   success: boolean;
   message: string;
@@ -92,7 +92,7 @@ export async function getSessionsByModule(
       updatedAt: new Date(session.updatedAt),
     }));
 
-    console.log(formattedSessions)
+ 
     return {
       success: true,
       message: `Found ${formattedSessions.length} session(s) for ${moduleName}`,

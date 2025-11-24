@@ -87,7 +87,7 @@ const StudentModulesMeetingDialog = ({
       >
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[80vh]">
+      <DialogContent className="max-w-5xl w-full overflow-hidden max-h-[80vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {moduleName} - Session History
@@ -102,8 +102,8 @@ const StudentModulesMeetingDialog = ({
             <Loader2 className="w-8 h-8 animate-spin text-primary-bg" />
           </div>
         ) : (
-          <ScrollArea className="max-h-[500px] overflow-hidden pr-4">
-            <div className="flex flex-col gap-4">
+          <ScrollArea className="w-full max-h-[400px] pr-4">
+            <div className="flex flex-col gap-4 h-full ">
               {sessions.length > 0 ? (
                 sessions.map((session) => (
                   <SessionCard

@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { format } from "date-fns";
+import React, { useState, useMemo } from "react";
+import { format, isValid } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { User2, BookOpenCheck, FileText, NotebookPen } from "lucide-react";
 import SessionMarkAsWatchedButton from "./session-mark-as-watched-button";
@@ -19,9 +19,44 @@ type SessionCardProps = {
 const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const sessionDateTime = new Date(`${session.date}T${session.time}:00`);
-  const formattedDate = format(sessionDateTime, "dd MMM yyyy");
-  const formattedTime = format(sessionDateTime, "hh:mm a");
+
+  
+  const { formattedDate, formattedTime } = useMemo(() => {
+    try {
+      let dateObj: Date;
+      
+      if (session.date instanceof Date) {
+        dateObj = new Date(session.date);
+      } else if (typeof session.date === 'string') {
+        dateObj = new Date(`${session.date}T${session.time || '00:00'}:00`);
+      } else {
+        
+        dateObj = new Date(session.date);
+      }
+
+      if (!isValid(dateObj)) {
+        console.error("Invalid date for session:", session._id, session.date);
+        return {
+          formattedDate: "Invalid date",
+          formattedTime: session.time || "Invalid time",
+        };
+      }
+
+      return {
+        formattedDate: format(dateObj, "dd MMM yyyy"),
+        formattedTime: format(dateObj, "hh:mm a"),
+      };
+    } catch (error) {
+      console.error("Error formatting session date/time:", error, {
+        date: session.date,
+        time: session.time,
+      });
+      return {
+        formattedDate: "Date error",
+        formattedTime: session.time || "Time error",
+      };
+    }
+  }, [session.date, session.time, session._id]);
 
   const handleClick = async () => {
     setIsLoading(true);
@@ -46,14 +81,17 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   // Extract all topics from notes
   const allTopics = Array.isArray(session.notes)
     ? session.notes.reduce<string[]>((acc, note) => {
-        if (typeof note === 'object' && 'topics' in note && Array.isArray(note.topics)) {
+        if (
+          typeof note === "object" &&
+          "topics" in note &&
+          Array.isArray(note.topics)
+        ) {
           return [...acc, ...note.topics];
         }
         return acc;
       }, [])
     : [];
 
-  // Remove duplicates
   const uniqueTopics = [...new Set(allTopics)];
 
   return (
@@ -83,20 +121,24 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
         </div>
       </div>
 
-    <h2 className="text-xl font-semibold text-primary">{session.meetingName}</h2>
+      <h2 className="text-xl font-semibold text-primary">
+        {session.meetingName}
+      </h2>
 
-      <div className="text-sm text-gray-700 flex items-center gap-2">
-        <User2 className="h-4 w-4 text-blue-600" />
-        <span className="font-medium">Instructor:</span> {session.instructor}
-      </div>
+      {session.instructor && (
+        <div className="text-sm text-gray-700 flex items-center gap-2">
+          <User2 className="h-4 w-4 text-blue-600" />
+          <span className="font-medium">Instructor:</span> {session.instructor}
+        </div>
+      )}
 
       <div className="text-sm text-gray-700 flex items-center gap-2">
         <BookOpenCheck className="h-4 w-4 text-green-600" />
         <span className="font-medium">Module:</span> {session.module}
       </div>
+
       {session.chapters && session.chapters.length > 0 && (
-      
-          <div className="text-sm text-gray-700 flex sm:flex-row flex-col sm:items-start gap-2">
+        <div className="text-sm text-gray-700 flex sm:flex-row flex-col sm:items-start gap-2">
           <div className="flex items-center gap-2 shrink-0">
             <NotebookPen className="h-4 w-4 text-pink-600" />
             <span className="font-medium">Chapter:</span>
@@ -114,9 +156,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
           </div>
         </div>
       )}
-      
 
-      
       {uniqueTopics.length > 0 && (
         <div className="text-sm text-gray-700 flex sm:flex-row flex-col sm:items-start gap-2">
           <div className="flex items-center gap-2 shrink-0">

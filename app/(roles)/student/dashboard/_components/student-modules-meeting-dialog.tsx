@@ -102,7 +102,7 @@ const StudentModulesMeetingDialog = ({
             <Loader2 className="w-8 h-8 animate-spin text-primary-bg" />
           </div>
         ) : (
-          <ScrollArea className="max-h-[500px] pr-4">
+          <ScrollArea className="max-h-[500px] overflow-hidden pr-4">
             <div className="flex flex-col gap-4">
               {sessions.length > 0 ? (
                 sessions.map((session) => (

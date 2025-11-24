@@ -12,7 +12,7 @@ import { ModuleProp } from "./student-batches";
 import { ModuleInfo } from "@/lib/types/student-dashboard.type";
 
 const StudentModulesTab = ({module}:ModuleProp) => {
- //TODO:Fetch modules using selected course
+ 
   const [filteredModules, setFilteredModules] =
     useState<ModuleInfo[]>(module);
   const [search, setSearch] = useState("");

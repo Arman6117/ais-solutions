@@ -56,8 +56,8 @@ export const getStudentDashboard = async (
         courseId: courseId,
         students: studentId,
       },
-      { name: 1, groupLink: 1 }
-    ).exec()) as BatchInfo;
+      { name: 1, groupLink: 1, _id: 1 }
+    ).exec()) as BatchInfo & { _id: string };
 
     if (!batchInfo) {
       return {
@@ -70,23 +70,24 @@ export const getStudentDashboard = async (
     // Include status fields in the query
     const meetings = (await Sessions.find(
       { batchId: batchInfo._id },
-      { 
-        time: 1, 
-        module: 1, 
-        meetingLink: 1, 
-        date: 1, 
+      {
+        time: 1,
+        module: 1,
+        meetingLink: 1,
+        date: 1,
         studentId: 1,
-        status: 1,              // Add status
-        isDeleted: 1,           // Add isDeleted
-        originalDate: 1,        // Add original date
-        originalTime: 1,        // Add original time
-        rescheduledAt: 1,       // Add reschedule timestamp
-        cancelledAt: 1          // Add cancelled timestamp
+        status: 1,
+        isDeleted: 1,
+        originalDate: 1,
+        originalTime: 1,
+        rescheduledAt: 1,
+        cancelledAt: 1,
       }
     ).exec()) as MeetingInfo[];
 
     const attendedMeetings = meetings.filter(
-      (meet) => meet.studentId?.includes(studentId) && meet.status !== "cancelled"
+      (meet) =>
+        meet.studentId?.includes(studentId) && meet.status !== "cancelled"
     );
 
     const batchWithModules = (await Batch.findOne(
@@ -119,10 +120,17 @@ export const getStudentDashboard = async (
       };
     }
 
-    const modules = (await Module.find(
+    // Get all modules for this batch to count chapters
+    const modules = await Module.find(
       { batchId: batchInfo._id },
-      { chapters: 1 }
-    ).exec()) as string[];
+      { _id: 1, name: 1, chapters: 1 }
+    ).exec();
+
+    // Create a map of module name to chapter count
+    const moduleChapterMap = new Map();
+    modules.forEach((mod) => {
+      moduleChapterMap.set(mod.name, mod.chapters?.length || 0);
+    });
 
     const formattedData: StudentDashboard = {
       student: studentInfo,
@@ -151,12 +159,13 @@ export const getStudentDashboard = async (
           id: mod.id,
           courseName: course.courseName,
           name: mod.name,
-          noOfChap: modules.length,
+          noOfChap: moduleChapterMap.get(mod.name) || 0,
           thumbnail: course.courseThumbnail || "",
           status: mod.status,
           startDate: mod.startDate,
           endDate: mod.endDate,
           instructor: mod.instructor.map((inst) => inst),
+          batchId: batchInfo._id.toString(), // ADD BATCH ID HERE
         })) || [],
     };
 

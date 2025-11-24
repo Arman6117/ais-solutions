@@ -32,6 +32,7 @@ const SessionModuleFilterSelect = ({
             {module}
           </SelectItem>
         ))}
+         <SelectItem value="other">Other/Not Mentioned</SelectItem>
       </SelectContent>
     </Select>
   );

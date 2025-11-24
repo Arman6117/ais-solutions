@@ -37,6 +37,7 @@ export interface ModuleInfo {
   startDate?:string
   endDate?:string
   instructor:string[]
+  batchId:string
 }
 
 export interface ModuleSessionHistory {

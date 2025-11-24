@@ -107,8 +107,8 @@ const Sessions = () => {
 
   const filteredSessions = useMemo(() => {
     let sessions = [...studentSessions];
-
-    // Filter by attendance status
+  
+    
     if (filter === "attended") {
       sessions = sessions.filter((session) =>
         session.studentId.includes(currentStudentId)
@@ -118,13 +118,20 @@ const Sessions = () => {
         (session) => !session.studentId.includes(currentStudentId)
       );
     }
-
-    // Filter by module
-    if (moduleFilter !== "all") {
+  
+    
+    if (moduleFilter === "other") {
+      sessions = sessions.filter(
+        (session) =>
+          !studentModules.includes(session.module || "") ||
+          session.module === "Not Mentioned" ||
+          !session.module 
+      );
+    } else if (moduleFilter !== "all") {
       sessions = sessions.filter((session) => session.module === moduleFilter);
     }
-
-    // Filter by search term with null/undefined checks
+  
+    
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       sessions = sessions.filter(
@@ -138,7 +145,7 @@ const Sessions = () => {
           )
       );
     }
-
+  
     // Sort by date and time
     sessions.sort((a, b) => {
       const dateTimeA = new Date(a.date);
@@ -149,7 +156,6 @@ const Sessions = () => {
         0,
         0
       );
-
       const dateTimeB = new Date(b.date);
       const timePartsB = b.time.split(":");
       dateTimeB.setHours(
@@ -158,12 +164,11 @@ const Sessions = () => {
         0,
         0
       );
-
       return sortBy === "newest"
         ? dateTimeB.getTime() - dateTimeA.getTime()
         : dateTimeA.getTime() - dateTimeB.getTime();
     });
-
+  
     return sessions;
   }, [
     filter,
@@ -172,8 +177,9 @@ const Sessions = () => {
     sortBy,
     studentSessions,
     currentStudentId,
+    studentModules, // ADD this as dependency!
   ]);
-
+  
   const totalPages = Math.ceil(filteredSessions.length / ITEMS_PER_PAGE);
   const paginatedSessions = filteredSessions.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,

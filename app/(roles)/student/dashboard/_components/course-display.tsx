@@ -107,7 +107,7 @@ const CoursesDisplay = async ({ userEmail, courseId }: CoursesDisplayProps) => {
             lectureCompleted={lectureCompleted}
           />
         </div>
-        <StudentBatches module={modules}/>
+        <StudentBatches  module={modules}/>
       </div>
     </div>
   );

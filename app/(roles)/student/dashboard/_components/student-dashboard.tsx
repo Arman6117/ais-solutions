@@ -21,7 +21,7 @@ const StudentDashboard = async ({courseId}:{courseId:string}) => {
 
   return (
     <div className="flex flex-col  h-full py-1 gap-4">
-      {/* This component renders immediately */}
+     
       <Greetings>{session.user.name.split(" ")[0]}</Greetings>
 
       {/* Suspense will show the skeleton while CoursesDisplay is fetching data */}

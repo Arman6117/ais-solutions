@@ -93,6 +93,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
 
   const uniqueTopics = [...new Set(allTopics)];
 
+  console.log(session)
   return (
     <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 bg-white space-y-3">
       <div className="flex sm:flex-row flex-col items-center justify-between">

@@ -159,7 +159,7 @@ const NewNoteForm = ({
       const res = await getBatchesByCourse(courseId);
       if (res.success && Array.isArray(res.data)) {
         // Filter out current batch
-        setAvailableBatches(res.data.filter((b: any) => b._id !== batchId));
+        setAvailableBatches(res.data.filter((b: {_id:string}) => b._id !== batchId));
       }
     } catch (error) {
       console.error("Failed to fetch batches", error);

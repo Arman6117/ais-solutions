@@ -98,7 +98,7 @@ export const ApproveRequestDialog = ({
       setLoading(false);
     }
   };
-
+console.log(selectedSalesPerson)
   useEffect(() => {
     if (open && requestId) {
       fetchPendingRequestToApprove();

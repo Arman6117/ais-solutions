@@ -62,6 +62,7 @@ export interface CourseDetails {
   courseMode: Mode;
   createdAt: Date;
   numberOfStudents: number;
+  studentsEnrolled:string[]
 }
 
 // Assuming 'Mode' is defined elsewhere, for example:

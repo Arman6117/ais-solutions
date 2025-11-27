@@ -18,13 +18,12 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 
-import { AlertTriangle, Calendar, CircleCheckBig, Pyramid } from "lucide-react";
+import { AlertTriangle, Calendar, Pyramid } from "lucide-react";
 // import StudentCourseReviews from "./student-course-reviews";
 import { CourseDetails } from "@/lib/types/course.type";
 import { format } from "date-fns";
 import { getStudentId } from "@/actions/shared/get-student-id";
 import { auth } from "@/lib/auth";
-import { getStudentModules } from "@/actions/student/sessions/get-student-modules";
 import { headers } from "next/headers";
 
 type StudentCourseDetailsProps = {
@@ -49,7 +48,15 @@ const StudentCourseDetails = async ({
     headers: await headers(),
   });
 
-  const studentId = await getStudentId(session?.user.email!);
+
+  if (!session?.user?.email) {
+    console.error("No user session found");
+    return; 
+  }
+  
+  const studentId = await getStudentId(session.user.email);
+  
+ 
 
 
   return (
@@ -158,7 +165,7 @@ const StudentCourseDetails = async ({
                 {course.studentsEnrolled.includes(studentId!) && (
                   <Badge className="bg-amber-500">
                     You are already enrolled in the course select only modules
-                    you haven't  purchase
+                    you have&apos;t  purchase
                   </Badge>
                 )}
               </DialogContent>

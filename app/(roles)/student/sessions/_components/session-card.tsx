@@ -2,7 +2,14 @@
 import React, { useState, useMemo } from "react";
 import { format, isValid } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { User2, BookOpenCheck, FileText, NotebookPen } from "lucide-react";
+import {
+  User2,
+  BookOpenCheck,
+  FileText,
+  NotebookPen,
+  Lock,
+  Check,
+} from "lucide-react";
 import SessionMarkAsWatchedButton from "./session-mark-as-watched-button";
 import { toast } from "sonner";
 import SessionCardViewNotesButton from "./session-card-view-notes-button";
@@ -20,17 +27,15 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  
   const { formattedDate, formattedTime } = useMemo(() => {
     try {
       let dateObj: Date;
-      
+
       if (session.date instanceof Date) {
         dateObj = new Date(session.date);
-      } else if (typeof session.date === 'string') {
-        dateObj = new Date(`${session.date}T${session.time || '00:00'}:00`);
+      } else if (typeof session.date === "string") {
+        dateObj = new Date(`${session.date}T${session.time || "00:00"}:00`);
       } else {
-        
         dateObj = new Date(session.date);
       }
 
@@ -93,9 +98,14 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
 
   const uniqueTopics = [...new Set(allTopics)];
 
-  console.log(session)
   return (
-    <div className="w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 bg-white space-y-3">
+    <div
+      className={`w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 space-y-3 ${
+        session.isPurchasedModule === false
+          ? "bg-gray-50 border-gray-300"
+          : "bg-white"
+      }`}
+    >
       <div className="flex sm:flex-row flex-col items-center justify-between">
         <div className="flex sm:flex-row flex-col sm:mb-0 mb-4 items-center gap-4">
           <Badge
@@ -108,7 +118,28 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
           >
             {attended ? "Attended" : "Missed"}
           </Badge>
-          {!attended && (
+
+          {/* Purchase Status Badge */}
+          {session.isPurchasedModule === false && (
+            <Badge
+              variant="outline"
+              className="text-xs px-3 py-1 bg-orange-50 text-orange-700 border-orange-300 flex items-center gap-1"
+            >
+              <Lock className="h-3 w-3" />
+              Not Purchased
+            </Badge>
+          )}
+          {session.isPurchasedModule === true && (
+            <Badge
+              variant="outline"
+              className="text-xs px-3 py-1 bg-blue-50 text-blue-700 border-blue-300 flex items-center gap-1"
+            >
+              <Check className="h-3 w-3" />
+              Purchased
+            </Badge>
+          )}
+
+          {!attended && session.isPurchasedModule && (
             <SessionMarkAsWatchedButton
               loading={isLoading}
               onClick={handleClick}
@@ -117,7 +148,9 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
         </div>
         <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
-          <SessionCardViewNotesButton sessionId={session._id} />
+          {session.isPurchasedModule && (
+            <SessionCardViewNotesButton sessionId={session._id} />
+          )}
         </div>
       </div>
 
@@ -135,6 +168,9 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
       <div className="text-sm text-gray-700 flex items-center gap-2">
         <BookOpenCheck className="h-4 w-4 text-green-600" />
         <span className="font-medium">Module:</span> {session.module}
+        {session.isPurchasedModule === false && (
+          <span className="text-xs text-orange-600 ml-2">(Preview Only)</span>
+        )}
       </div>
 
       {session.chapters && session.chapters.length > 0 && (

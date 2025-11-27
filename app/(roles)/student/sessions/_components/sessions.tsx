@@ -5,7 +5,7 @@ import SessionFilterSelect from "./session-filter-select";
 import SessionSortSelect from "./session-sort-select";
 
 import { Input } from "@/components/ui/input";
-import SessionCard from "./session-card";
+
 import {
   Pagination,
   PaginationContent,
@@ -22,6 +22,7 @@ import { authClient } from "@/lib/auth-client";
 import { getStudentId } from "@/actions/shared/get-student-id";
 import { getStudentModules } from "@/actions/student/sessions/get-student-modules";
 import { Loader2 } from "lucide-react";
+import SessionCard from "./session-card";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -83,7 +84,7 @@ const Sessions = () => {
       const pastSessions = res.data.filter((session) => {
         const isPast = isSessionPast(session.date, session.time);
         console.log(
-          `Session ${session.meetingName} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}`
+          `Session ${session.meetingName} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}, Is Purchased: ${session.isPurchasedModule}`
         );
         return isPast;
       });
@@ -107,8 +108,8 @@ const Sessions = () => {
 
   const filteredSessions = useMemo(() => {
     let sessions = [...studentSessions];
-  
-    
+
+    // Filter by attendance status
     if (filter === "attended") {
       sessions = sessions.filter((session) =>
         session.studentId.includes(currentStudentId)
@@ -118,20 +119,20 @@ const Sessions = () => {
         (session) => !session.studentId.includes(currentStudentId)
       );
     }
-  
-    
-    if (moduleFilter === "other") {
-      sessions = sessions.filter(
-        (session) =>
-          !studentModules.includes(session.module || "") ||
-          session.module === "Not Mentioned" ||
-          !session.module 
-      );
+
+    // Filter by module - UPDATED LOGIC
+    if (moduleFilter === "purchased") {
+      // Show only purchased modules
+      sessions = sessions.filter((session) => session.isPurchasedModule === true);
+    } else if (moduleFilter === "other") {
+      // Show only non-purchased modules
+      sessions = sessions.filter((session) => session.isPurchasedModule === false);
     } else if (moduleFilter !== "all") {
+      // Filter by specific module name
       sessions = sessions.filter((session) => session.module === moduleFilter);
     }
-  
-    
+
+    // Search filter
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       sessions = sessions.filter(
@@ -145,7 +146,7 @@ const Sessions = () => {
           )
       );
     }
-  
+
     // Sort by date and time
     sessions.sort((a, b) => {
       const dateTimeA = new Date(a.date);
@@ -168,7 +169,7 @@ const Sessions = () => {
         ? dateTimeB.getTime() - dateTimeA.getTime()
         : dateTimeA.getTime() - dateTimeB.getTime();
     });
-  
+
     return sessions;
   }, [
     filter,
@@ -177,16 +178,15 @@ const Sessions = () => {
     sortBy,
     studentSessions,
     currentStudentId,
-    studentModules, // ADD this as dependency!
+    studentModules,
   ]);
-  
+
   const totalPages = Math.ceil(filteredSessions.length / ITEMS_PER_PAGE);
   const paginatedSessions = filteredSessions.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
-  
   useEffect(() => {
     setCurrentPage(1);
   }, [filter, moduleFilter, searchTerm, sortBy]);

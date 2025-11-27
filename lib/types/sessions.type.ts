@@ -30,7 +30,7 @@ export interface Session {
   originalTime?: string;
   rescheduledAt?: Date | null;
   cancelledAt?: Date | null;
-  
+  isPurchasedModule?:boolean
   createdAt: Date;
   updatedAt: Date;
 }

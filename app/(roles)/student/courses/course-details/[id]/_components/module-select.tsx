@@ -21,28 +21,41 @@ type ModuleSelectProps = {
   courseOfferPrice: number;
 };
 
-const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPrice }: ModuleSelectProps) => {
+const ModuleSelect = ({
+  modules,
+  courseId,
+  discount,
+  coursePrice,
+  courseOfferPrice,
+}: ModuleSelectProps) => {
   const [selectedModules, setSelectedModules] = useState<Module[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const toggleModule = (module: Module) => {
     setSelectedModules((prev) =>
-      prev.some(m => m._id === module._id)
+      prev.some((m) => m._id === module._id)
         ? prev.filter((m) => m._id !== module._id)
         : [...prev, module]
     );
   };
 
-  const totalModulesPrice = selectedModules.reduce((sum, m) => sum + m.price, 0);
-  const allModulesSelected = selectedModules.length === modules.length && modules.length > 0;
-  
+  const totalModulesPrice = selectedModules.reduce(
+    (sum, m) => sum + m.price,
+    0
+  );
+  const allModulesSelected =
+    selectedModules.length === modules.length && modules.length > 0;
+
   // Use database prices when all modules are selected, otherwise calculate from selected modules
   const shouldUseCoursePricing = allModulesSelected;
-  const finalPrice = shouldUseCoursePricing 
-    ? (discount > 0 ? courseOfferPrice : coursePrice)
+  const finalPrice = shouldUseCoursePricing
+    ? discount > 0
+      ? courseOfferPrice
+      : coursePrice
     : totalModulesPrice;
 
   const handleSendRequest = async () => {
+    setIsLoading(true);
     try {
       const session = await authClient.getSession();
       if (!session?.data?.user.email) {
@@ -55,10 +68,10 @@ const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPri
         return;
       }
 
-      setIsLoading(true);
-      
+
+
       const studentId = await getStudentId(session.data.user.email);
-      
+
       if (!studentId) {
         toast.error("Student not found");
         return;
@@ -73,7 +86,7 @@ const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPri
       };
 
       const res = await createApproveRequest(requestDoc);
-      
+
       if (!res.success) {
         console.error("Request failed:", res);
         toast.error(res.message.toString());
@@ -96,9 +109,9 @@ const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPri
           <Checkbox
             id={`module-${module._id}`}
             onCheckedChange={() => toggleModule(module)}
-            checked={selectedModules.some(m => m._id === module._id)}
+            checked={selectedModules.some((m) => m._id === module._id)}
           />
-          <label 
+          <label
             htmlFor={`module-${module._id}`}
             className="flex justify-between w-full cursor-pointer"
           >
@@ -107,7 +120,7 @@ const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPri
           </label>
         </div>
       ))}
-      
+
       {selectedModules.length > 0 && (
         <div className="border-t pt-4">
           <div className="flex justify-between w-full items-center">
@@ -133,10 +146,12 @@ const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPri
                 )}
               </div>
             ) : (
-              <span className="text-lg font-semibold">₹{totalModulesPrice}</span>
+              <span className="text-lg font-semibold">
+                ₹{totalModulesPrice}
+              </span>
             )}
           </div>
-          
+
           {!allModulesSelected && discount > 0 && (
             <p className="text-sm text-muted-foreground mt-2">
               Select all modules to get course pricing with {discount}% discount
@@ -144,7 +159,7 @@ const ModuleSelect = ({ modules, courseId, discount, coursePrice, courseOfferPri
           )}
         </div>
       )}
-      
+
       <Button
         className="border-primary-bg cursor-pointer text-primary-bg hover:text-primary-bg hover:bg-primary-bg/10"
         variant="outline"

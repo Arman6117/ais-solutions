@@ -17,6 +17,7 @@ export const getStudentId = async (email: string): Promise<string | null> => {
       return null;
     }
 
+
     return student._id.toString(); // ✅ safe now
   } catch (error) {
     console.error("Error fetching student ID:", error);

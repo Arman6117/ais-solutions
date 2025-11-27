@@ -1,9 +1,8 @@
 export interface StudentInfo {
-  _id?:string
+  _id?: string;
   name: string;
   email: string;
   profilePic: string;
- 
 }
 
 export interface MeetingInfo {
@@ -15,29 +14,36 @@ export interface MeetingInfo {
   meetingLink: string;
   date: string;
   studentId?: string[];
-  
-  // Add status tracking fields
+
+  // Status tracking fields
   status: "scheduled" | "rescheduled" | "cancelled";
   isDeleted?: boolean;
   originalDate?: string;
   originalTime?: string;
   rescheduledAt?: Date | null;
   cancelledAt?: Date | null;
+
+  // NEW: Access control fields
+  isPurchasedModule?: boolean;
+  accessLevel?: "full" | "preview";
 }
 
-
 export interface ModuleInfo {
-  id:string
+  id: string;
   name: string;
   courseName: string;
   noOfChap: number;
- chapters?:string[]
+  chapters?: string[];
   thumbnail: string;
   status: "Upcoming" | "Ongoing" | "Completed";
-  startDate?:string
-  endDate?:string
-  instructor:string[]
-  batchId:string
+  startDate?: string;
+  endDate?: string;
+  instructor: string[];
+  batchId: string;
+
+  // NEW: Access control fields
+  isPurchased?: boolean;
+  accessLevel?: "full" | "preview" | undefined;
 }
 
 export interface ModuleSessionHistory {
@@ -49,11 +55,12 @@ export interface ModuleSessionHistory {
   date: string;
   time: string;
 }
+
 export interface BatchInfo {
   name: string;
-  _id?:string
+  _id?: string;
   groupLink: string;
-  courseId?:string
+  courseId?: string;
 }
 
 export interface StudentDashboard {

@@ -18,17 +18,21 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 
-import { AlertTriangle, Calendar, Pyramid } from "lucide-react";
+import { AlertTriangle, Calendar, CircleCheckBig, Pyramid } from "lucide-react";
 // import StudentCourseReviews from "./student-course-reviews";
 import { CourseDetails } from "@/lib/types/course.type";
 import { format } from "date-fns";
+import { getStudentId } from "@/actions/shared/get-student-id";
+import { auth } from "@/lib/auth";
+import { getStudentModules } from "@/actions/student/sessions/get-student-modules";
+import { headers } from "next/headers";
 
 type StudentCourseDetailsProps = {
   course: CourseDetails | undefined;
   message?: string;
 };
 
-const StudentCourseDetails = ({
+const StudentCourseDetails = async ({
   course,
   message,
 }: StudentCourseDetailsProps) => {
@@ -40,6 +44,13 @@ const StudentCourseDetails = ({
       </div>
     );
   }
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const studentId = await getStudentId(session?.user.email!);
+
 
   return (
     <div className="flex flex-col w-full relative">
@@ -136,18 +147,25 @@ const StudentCourseDetails = ({
                     Only modules you want to purchase
                   </DialogDescription>
                 </DialogHeader>
-                <ModuleSelect
-                  modules={course.modules}
-                  courseId={course._id}
-                  discount={course.courseDiscount}
-                  coursePrice={course.coursePrice}
-                  courseOfferPrice={course.courseOfferPrice}
-                />
+                
+                  <ModuleSelect
+                    modules={course.modules}
+                    courseId={course._id}
+                    discount={course.courseDiscount}
+                    coursePrice={course.coursePrice}
+                    courseOfferPrice={course.courseOfferPrice}
+                  />
+                {course.studentsEnrolled.includes(studentId!) && (
+                  <Badge className="bg-amber-500">
+                    You are already enrolled in the course select only modules
+                    you haven't  purchase
+                  </Badge>
+                )}
               </DialogContent>
             </Dialog>
           </CardContent>
         </Card>
-       
+
         {/* <StudentCourseReviews className="flex md:hidden" isEnrolled={false} /> */}
       </div>
     </div>

@@ -10,6 +10,27 @@ import { Module } from "@/models/module.model";
 import { PendingRequest } from "@/models/pending-request.model";
 import mongoose from "mongoose";
 
+interface StudentCourse {
+  courseId: mongoose.Types.ObjectId;
+  moduleId?: mongoose.Types.ObjectId[];
+  isApproved: boolean;
+  appliedAt?: Date;
+  approvedAt?: Date | null;
+}
+
+interface StudentBatch {
+  batchId: mongoose.Types.ObjectId;
+  mode: string;
+  enrolledAt: Date;
+}
+
+interface IStudent {
+  _id: string;
+  email: string;
+  courses?: StudentCourse[];
+  batches?: StudentBatch[];
+}
+
 export const approvePendingRequest = async (
   requestId: string,
   payload: ApprovePendingRequestPayload
@@ -31,44 +52,60 @@ export const approvePendingRequest = async (
   try {
     await connectToDB();
 
-    // --- All initial validations remain the same ---
+    // Validations
     if (!requestId || !email || !courseId || !batch || !modules.length) {
       return { success: false, message: "Missing required fields" };
     }
+
     const pendingRequest = await PendingRequest.findById(requestId);
     if (!pendingRequest) {
       return { success: false, message: "Pending request not found" };
     }
-    const student = await Student.findOne({ email }).select("_id courses").exec();
+
+    const student = await Student.findOne({ email })
+      .select("_id courses batches")
+      .lean<IStudent>()
+      .exec();
+
     if (!student) {
       return { success: false, message: "Student not found" };
     }
+
     const studentId = student._id;
 
-    const existingCourseEntry = student.courses?.find(
-      (c: any) => c.courseId.toString() === courseId && !c.isApproved
+    // Convert modules to ObjectIds
+    const moduleObjectIds = modules.map((id) => new mongoose.Types.ObjectId(id));
+
+    // Check if student already has an approved course entry
+    const approvedCourse = student.courses?.find(
+      (c: StudentCourse) =>
+        c.courseId.toString() === courseId && c.isApproved === true
     );
-    if (!existingCourseEntry) {
-      return {
-        success: false,
-        message: "Student has not applied for this course or is already approved.",
-      };
-    }
 
-    // --- All other validations (course, batch, payment logic) remain the same ---
+    // Validate course and batch exist
     const [courseExists, batchExists] = await Promise.all([
-        Course.findById(courseId).select("_id"),
-        Batch.findById(batch).select("_id")
+      Course.findById(courseId).select("_id"),
+      Batch.findById(batch).select("_id"),
     ]);
+
     if (!courseExists || !batchExists) {
-        return { success: false, message: "Course or Batch not found" };
+      return { success: false, message: "Course or Batch not found" };
     }
+
     const remainingFee = Math.max(0, totalFees - amountPaid);
-    // (Add your other payment validation logic here)
 
+    console.log({
+      Payload: payload,
+      "Calculated Remaining Fee": remainingFee,
+      "Is Additional Purchase": !!approvedCourse,
+    });
 
-    console.log({"Payload":payload, "Calculated Remaining Fee":remainingFee});  
-    // Create the invoice first (no changes here)
+    // Check if student is already enrolled in this batch
+    const isAlreadyInBatch =
+      student.batches?.some((b: StudentBatch) => b.batchId.toString() === batch) ??
+      false;
+
+    // Create invoice
     const paymentHistory =
       amountPaid > 0
         ? [
@@ -78,7 +115,9 @@ export const approvePendingRequest = async (
               modules: modules,
               totalFees: totalFees,
               dueDate: status !== "Paid" ? dueDate : undefined,
-              notes: "Initial payment during course approval",
+              notes: approvedCourse
+                ? "Payment for additional modules"
+                : "Initial payment during course approval",
               mode: mode,
             },
           ]
@@ -106,53 +145,84 @@ export const approvePendingRequest = async (
     });
     await invoice.save();
 
+    // Update student based on whether it's first-time or additional purchase
+    if (approvedCourse) {
+      // Student already has approved course - add new modules to existing entry
+      await Student.findOneAndUpdate(
+        {
+          _id: studentId,
+          "courses.courseId": new mongoose.Types.ObjectId(courseId),
+          "courses.isApproved": true,
+        },
+        {
+          $addToSet: {
+            "courses.$.moduleId": { $each: moduleObjectIds },
+            invoices: invoice._id,
+          },
+        }
+      );
 
-    // *** MODIFIED STUDENT UPDATE LOGIC ***
-    await Student.findByIdAndUpdate(
-      studentId,
-      {
-        // Use $set with arrayFilters to target the specific course entry
+      console.log("✅ Added modules to existing approved course");
+    } else {
+      // First-time approval - update the pending course entry
+      const updateDoc: {
+        $set: Record<string, unknown>;
+        $addToSet: Record<string, unknown>;
+      } = {
         $set: {
           "courses.$[elem].isApproved": true,
           "courses.$[elem].approvedAt": new Date(),
-          "courses.$[elem].moduleId": modules, // Update modules if needed
+          "courses.$[elem].moduleId": moduleObjectIds,
           feeStatus: status.toLowerCase(),
         },
-        // Add the new invoice and batch
         $addToSet: {
           invoices: invoice._id,
         },
-        $push: {
-            batches: { 
-              batchId: batch, 
-              mode: batchMode.toLowerCase(),
-              enrolledAt: new Date() 
-            },
-        },
-      },
-      {
-        // Define the filter to find the correct course in the array
+      };
+
+      await Student.findByIdAndUpdate(studentId, updateDoc, {
         arrayFilters: [
           {
             "elem.courseId": new mongoose.Types.ObjectId(courseId),
-            "elem.isApproved": false, // Ensure we only update unapproved entries
+            "elem.isApproved": false,
           },
         ],
-      }
-    );
+      });
 
-    // --- All subsequent updates (Course, Batch, Module, PendingRequest deletion) remain the same ---
-    await Course.findByIdAndUpdate(courseId, { 
-      $addToSet: { studentsEnrolled: studentId },
-      $inc: { numberOfStudents: 1 }
-    });
-    await Batch.findByIdAndUpdate(batch, { 
-      $addToSet: { students: studentId },
-    });
-    await Module.updateMany(
-        { _id: { $in: modules } },
+      console.log("✅ Approved course for first time");
+    }
+
+    // Only add batch if not already enrolled
+    if (!isAlreadyInBatch) {
+      await Student.findByIdAndUpdate(studentId, {
+        $push: {
+          batches: {
+            batchId: new mongoose.Types.ObjectId(batch),
+            mode: batchMode.toLowerCase(),
+            enrolledAt: new Date(),
+          },
+        },
+      });
+
+      console.log("✅ Added student to batch");
+    }
+
+    // Update related collections
+    await Promise.all([
+      Course.findByIdAndUpdate(courseId, {
+        $addToSet: { studentsEnrolled: studentId },
+        $inc: { numberOfStudents: approvedCourse ? 0 : 1 }, // Only increment for first-time
+      }),
+      Batch.findByIdAndUpdate(batch, {
+        $addToSet: { students: studentId },
+      }),
+      Module.updateMany(
+        { _id: { $in: moduleObjectIds } },
         { $addToSet: { students: studentId } }
-    );
+      ),
+    ]);
+
+    // Delete pending request
     await PendingRequest.findByIdAndDelete(requestId);
 
     return {
@@ -161,7 +231,6 @@ export const approvePendingRequest = async (
     };
   } catch (error) {
     console.error("Failed to approve pending request:", error);
-    // (Your existing error handling logic)
     return {
       success: false,
       message: "Something went wrong while processing the request.",

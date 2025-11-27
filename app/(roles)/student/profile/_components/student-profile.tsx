@@ -71,7 +71,7 @@ const StudentProfile = () => {
  
   const totalFees = studentData?.invoices
     .map((invoice) => {
-      return invoice.courseDetails.reduce(
+      return invoice.courseDetails?.reduce(
         (total, course) => total + (course.totalFees || 0),
         0
       );
@@ -80,7 +80,7 @@ const StudentProfile = () => {
 
   const amountPaid = studentData?.invoices
     .map((invoice) => {
-      return invoice.courseDetails.reduce(
+      return invoice.courseDetails?.reduce(
         (paid, course) => paid + (course.amountPaid || 0),
         0
       );

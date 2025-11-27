@@ -8,14 +8,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronDown, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
 import { AllPendingRequests } from "@/lib/types/pending-request.type";
 import { getAllPendingRequests } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
-
-
 
 const PendingRequestDropdown = () => {
   const [allPendingRequests, setAllPendingRequests] = useState<
@@ -30,7 +29,7 @@ const PendingRequestDropdown = () => {
         return;
       }
       setAllPendingRequests(res.data);
-      toast.success("Pending requests fetched successfully");
+      // toast.success("Pending requests fetched successfully");
     } catch (error) {
       toast.error("An error occurred while fetching pending requests");
       console.error("Error fetching pending requests:", error);
@@ -44,8 +43,9 @@ const PendingRequestDropdown = () => {
   const [selectedRequestId, setSelectedRequestId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleApproveClick = (req: string) => {
-    setSelectedRequestId(req);
+  const handleApproveClick = (e: React.MouseEvent, reqId: string) => {
+    e.stopPropagation(); // Prevent dropdown from closing immediately if needed or default behavior
+    setSelectedRequestId(reqId);
     setIsDialogOpen(true);
   };
 
@@ -55,11 +55,11 @@ const PendingRequestDropdown = () => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="justify-between relative">
+          <Button variant="outline" className="justify-between relative gap-2">
             <span>Pending Requests</span>
             <div className="flex items-center gap-2">
               {pendingCount > 0 && (
-                <Badge className="text-xs p-2 bg-primary-bg  size-5">
+                <Badge className="text-xs px-1.5 bg-primary-bg min-w-[20px] h-5 flex items-center justify-center rounded-full">
                   {pendingCount}
                 </Badge>
               )}
@@ -68,34 +68,54 @@ const PendingRequestDropdown = () => {
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-[320px]">
+        <DropdownMenuContent className="w-[320px] p-0" align="end">
           {allPendingRequests.length > 0 ? (
             <>
-              {/* Optional: Show count at the top of dropdown */}
-              <div className="px-3 py-2 text-xs text-muted-foreground border-b">
+              <div className="px-4 py-3 text-sm font-medium text-muted-foreground border-b bg-gray-50/50">
                 {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}
               </div>
-              {allPendingRequests.map((req) => (
-                <DropdownMenuItem
-                  key={req._id}
-                  className="flex flex-col items-start p-3 gap-2"
-                >
-                  <div className="w-full">
-                    <p className="text-sm font-medium">{req.studentName}</p>
-                    <p className="text-xs text-muted-foreground">{req.email}</p>
-                    <p className="text-sm">{req.courseName}</p>
-                  </div>
-                  <Button onClick={() => handleApproveClick(req._id)}>Approve</Button>
-                </DropdownMenuItem>
-              ))}
+              
+              {/* ScrollArea added here */}
+              <ScrollArea className="h-[300px]">
+                <div className="p-1">
+                  {allPendingRequests.map((req) => (
+                    <DropdownMenuItem
+                      key={req._id}
+                      className="flex flex-col items-start p-3 gap-3 mb-1 cursor-default focus:bg-transparent"
+                    >
+                      <div className="w-full space-y-1">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <User className="h-3.5 w-3.5 text-muted-foreground" />
+                            {req.studentName}
+                          </p>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-5">{req.email}</p>
+                        <div className="pl-5 pt-1">
+                          <Badge variant="secondary" className="text-[10px] font-normal">
+                            {req.courseName}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        size="sm" 
+                        className="w-full mt-1 h-8 text-xs bg-primary-bg hover:bg-primary-bg/90"
+                        onClick={(e) => handleApproveClick(e, req._id)}
+                      >
+                        Review & Approve
+                      </Button>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </ScrollArea>
             </>
           ) : (
-            <DropdownMenuItem
-              disabled
-              className="text-muted-foreground text-sm"
-            >
-              No pending requests
-            </DropdownMenuItem>
+            <div className="p-8 text-center">
+              <p className="text-muted-foreground text-sm">
+                No pending requests
+              </p>
+            </div>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

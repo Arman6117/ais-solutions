@@ -5,7 +5,14 @@ import { TableCell, TableRow } from "../ui/table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
-import { Calendar as CalendarIcon, X, Plus, Save } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  X,
+  Plus,
+  Save,
+  ChevronsUpDown,
+  Check,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
@@ -14,7 +21,7 @@ import AddFileDialog from "./add-file-dialog";
 import SelectSessionDialog from "./select-sessioin-dialog";
 import ModuleSelector from "./module-selector";
 import ChapterSelector from "./chapter-selector";
-import TopicsInput from "./topics-input"; // NEW IMPORT
+import TopicsInput from "./topics-input";
 import {
   Dialog,
   DialogContent,
@@ -32,24 +39,40 @@ import { ModulesForSession } from "@/lib/types/sessions.type";
 import { getModulesWithSubtopics } from "@/actions/shared/get-modules-with-subtopics";
 import { toast } from "sonner";
 import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
+import { getBatchesByCourse } from "@/actions/admin/batches/get-batches-by-course";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 
 const NewNoteForm = ({
   setIsCreating,
   createNewNote,
   batchId,
+  courseId,
   isEditing = false,
   setIsEditing,
   editNote,
   updateNote,
 }: {
   setIsCreating: (state: boolean) => void;
-  createNewNote: (newNote: NoteTableType) => void;
+  createNewNote: (
+    newNote: NoteTableType,
+    additionalBatchIds?: string[]
+  ) => void;
   isMobile: boolean;
   batchId: string;
+  courseId?: string;
   isEditing?: boolean;
   setIsEditing?: (state: boolean) => void;
   editNote?: NoteTableType;
-  updateNote?: (updatedNote: NoteTableType) => void;
+  updateNote?: (
+    updatedNote: NoteTableType,
+    additionalBatchIds?: string[]
+  ) => void;
 }) => {
   const [batchModule, setBatchModule] = useState<ModulesForSession[]>([]);
   const [batchSession, setBatchSession] = useState<NoteTableSessionType[]>([]);
@@ -59,7 +82,6 @@ const NewNoteForm = ({
   const [chapterName, setChapterName] = useState(
     isEditing && editNote ? editNote.chapter || "" : ""
   );
-  // NEW: Topics state
   const [topics, setTopics] = useState<string[]>(
     isEditing && editNote ? editNote.topics || [] : []
   );
@@ -82,6 +104,13 @@ const NewNoteForm = ({
     useState<NoteTableSessionType | null>(
       isEditing && editNote ? editNote.session || null : null
     );
+
+  // Batch selection state
+  const [availableBatches, setAvailableBatches] = useState<
+    { _id: string; name: string }[]
+  >([]);
+  const [selectedBatchIds, setSelectedBatchIds] = useState<string[]>([]);
+  const [openBatchSelect, setOpenBatchSelect] = useState(false);
 
   const fetchModules = async () => {
     try {
@@ -114,6 +143,7 @@ const NewNoteForm = ({
         time: session.time,
         chapter: session.chapters,
         module: session.module,
+        instructor: session.instructor,
       }));
 
       setBatchSession(sessions);
@@ -123,9 +153,23 @@ const NewNoteForm = ({
     }
   };
 
+  const fetchOtherBatches = async () => {
+    if (!courseId) return;
+    try {
+      const res = await getBatchesByCourse(courseId);
+      if (res.success && Array.isArray(res.data)) {
+        // Filter out current batch
+        setAvailableBatches(res.data.filter((b: any) => b._id !== batchId));
+      }
+    } catch (error) {
+      console.error("Failed to fetch batches", error);
+    }
+  };
+
   useEffect(() => {
     fetchModules();
     fetchSessions();
+    fetchOtherBatches();
   }, []);
 
   const handleSave = () => {
@@ -134,21 +178,19 @@ const NewNoteForm = ({
       return;
     }
 
-    //const formattedDate = format(date, "yyyy-MM-dd");
-
     if (isEditing && editNote && updateNote) {
       const updatedNote = {
         ...editNote,
         module: moduleName,
         chapter: chapterName,
-        topics: topics, // NEW: Include topics
+        topics: topics,
         createdAt: date,
         videoLinks,
         files,
         session: selectedSession,
       };
 
-      updateNote(updatedNote);
+      updateNote(updatedNote, selectedBatchIds);
       if (setIsEditing) {
         setIsEditing(false);
       }
@@ -157,16 +199,15 @@ const NewNoteForm = ({
       const newNote = {
         module: moduleName,
         chapter: chapterName,
-        topics: topics, // NEW: Include topics
+        topics: topics,
         createdAt: date,
         videoLinks,
         files,
         session: selectedSession,
       };
 
-      createNewNote(newNote);
+      createNewNote(newNote, selectedBatchIds);
       setIsCreating(false);
-      toast.success("Note created successfully");
     }
   };
 
@@ -218,24 +259,77 @@ const NewNoteForm = ({
         <Checkbox disabled />
       </TableCell>
       <TableCell>
-        <ModuleSelector
-          modules={batchModule.map((module) => module.name)}
-          selectedModule={moduleName}
-          onChange={(val) => {
-            setModuleName(val);
-            if (!isEditing) {
-              setChapterName("");
-            } else if (editNote) {
-              const newModuleChapters = moduleChapterMap[val] || [];
-              if (
-                newModuleChapters.length > 0 &&
-                !newModuleChapters.includes(chapterName)
-              ) {
+        <div className="flex flex-col gap-2">
+          <ModuleSelector
+            modules={batchModule.map((module) => module.name)}
+            selectedModule={moduleName}
+            onChange={(val) => {
+              setModuleName(val);
+              if (!isEditing) {
                 setChapterName("");
+              } else if (editNote) {
+                const newModuleChapters = moduleChapterMap[val] || [];
+                if (
+                  newModuleChapters.length > 0 &&
+                  !newModuleChapters.includes(chapterName)
+                ) {
+                  setChapterName("");
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+          {/* Batch Selector - Modified to show when editing too */}
+          {availableBatches.length > 0 && (
+            <Popover open={openBatchSelect} onOpenChange={setOpenBatchSelect}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openBatchSelect}
+                  className="w-full justify-between text-xs h-8"
+                >
+                  {selectedBatchIds.length > 0
+                    ? `${selectedBatchIds.length} extra batches`
+                    : isEditing
+                    ? "Copy to other batches"
+                    : "Add to other batches"}
+                  <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search batch..." />
+                  <CommandEmpty>No batch found.</CommandEmpty>
+                  <CommandGroup>
+                    {availableBatches.map((batch) => (
+                      <CommandItem
+                        key={batch._id}
+                        value={batch.name}
+                        onSelect={() => {
+                          setSelectedBatchIds((prev) =>
+                            prev.includes(batch._id)
+                              ? prev.filter((id) => id !== batch._id)
+                              : [...prev, batch._id]
+                          );
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            selectedBatchIds.includes(batch._id)
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                        {batch.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
       </TableCell>
       <TableCell>
         <ChapterSelector
@@ -257,7 +351,7 @@ const NewNoteForm = ({
             <div className="text-sm space-y-1">
               <p className="font-medium">{selectedSession.meetingName}</p>
               <p className="text-xs text-muted-foreground">
-                {format(selectedSession.date, "MMM dd, yyyy")}
+                {format(new Date(selectedSession.date), "MMM dd, yyyy")}
               </p>
               <p className="text-xs text-muted-foreground">
                 Module: {selectedSession.module}

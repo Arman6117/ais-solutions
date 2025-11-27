@@ -33,6 +33,7 @@ type NotesTableProps = {
   batchId: string;
   isCreating: boolean;
   setIsCreating: (state: boolean) => void;
+  courseId: string;
 };
 
 const ITEMS_PER_PAGE = 5;
@@ -43,6 +44,7 @@ const NotesTable = ({
   notes,
   isCreating,
   setIsCreating,
+  courseId,
 }: NotesTableProps) => {
   const [noteList, setNoteList] = useState<NoteTableType[]>(notes);
 
@@ -109,9 +111,12 @@ const NotesTable = ({
     setCurrentPage(1);
   }, [noteList, notes, searchTerm, sortDirection, moduleFilter]);
 
-  const createNewNote = async (newNote: NoteTableType) => {
+  const createNewNote = async (
+    newNote: NoteTableType,
+    additionalBatchIds: string[] = []
+  ) => {
     try {
-      const res = await createNote(batchId!, newNote);
+      const res = await createNote(batchId!, newNote, additionalBatchIds);
       if (!res.success) {
         toast.error(res.message);
         return;
@@ -128,14 +133,22 @@ const NotesTable = ({
     }
   };
 
-  const updateNote = async (noteId: string, updatedNote: NoteTableType) => {
+  const updateNote = async (
+    noteId: string,
+    updatedNote: NoteTableType,
+    additionalBatchIds?: string[]
+  ) => {
     try {
       if (!noteId) {
         toast.error("Note ID not found");
         return;
       }
 
-      const res = await updateNoteAction(noteId, updatedNote);
+      const res = await updateNoteAction(
+        noteId,
+        updatedNote,
+        additionalBatchIds
+      );
 
       if (!res.success) {
         toast.error(res.message);
@@ -155,7 +168,10 @@ const NotesTable = ({
     }
   };
 
-  const updateNoteLinks = async (noteId: string, newLinks: VideoLinksType[]) => {
+  const updateNoteLinks = async (
+    noteId: string,
+    newLinks: VideoLinksType[]
+  ) => {
     try {
       const noteToUpdate = noteList.find((n) => n._id === noteId);
       if (!noteToUpdate) {
@@ -353,6 +369,7 @@ const NotesTable = ({
 
       <div className="hidden md:block">
         <DesktopTable
+          courseId={courseId}
           paginatedNotes={paginatedNotes}
           selectedRows={selectedRows}
           handleSelectAllChange={handleSelectAllChange}
@@ -378,6 +395,7 @@ const NotesTable = ({
             <Card className="mb-4">
               <CardContent className="pt-4">
                 <NewNoteForm
+                  courseId={courseId}
                   setIsCreating={setIsCreating}
                   createNewNote={createNewNote}
                   isMobile={true}

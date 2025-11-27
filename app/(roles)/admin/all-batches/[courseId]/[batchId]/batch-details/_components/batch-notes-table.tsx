@@ -17,8 +17,9 @@ type BatchNotesTable = {
 type BatchNotesTableProps = {
   mode: "view" | "edit" | "create";
   batchId: string;
+  courseId:string
 };
-const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
+const BatchNotesTable = ({ batchId, mode,courseId }: BatchNotesTableProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [notes, setNotes] = useState<NoteTableType[]>([]);
@@ -26,7 +27,7 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
   const fetchNotes = async () => {
     try {
       const res = await getNotesTable(batchId);
-      console.log(res)
+   
       if (!res.success) {
         toast.error(res.message);
         return;
@@ -74,6 +75,7 @@ const BatchNotesTable = ({ batchId, mode }: BatchNotesTableProps) => {
           notes={notes}
           role="admin"
           mode={mode}
+          courseId={courseId}
           batchId={batchId}
           isCreating={isCreating}
           setIsCreating={setIsCreating}

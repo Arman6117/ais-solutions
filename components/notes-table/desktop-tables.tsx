@@ -41,11 +41,13 @@ type DesktopTableProps = {
   updateNoteFiles: (noteId: string, newFiles: FilesType[]) => void;
   handleDelete: (noteId: string) => void;
   batchId: string;
-  updateNote?: (noteId: string, updatedNote: NoteTableType) => void;
+  updateNote?: (noteId: string, updatedNote: NoteTableType,additionalBatchIds?: string[]) => void;
+  courseId: string; 
 };
 
 const DesktopTable = ({
   paginatedNotes,
+  courseId,
   selectedRows,
   handleSelectAllChange,
   isCreating,
@@ -72,9 +74,9 @@ const DesktopTable = ({
     setEditingNoteId(null);
   };
 
-  const handleUpdateNote = (updatedNote: NoteTableType) => {
+  const handleUpdateNote = (updatedNote: NoteTableType,additionalBatchIds?: string[]) => {
     if (editingNoteId && updateNote) {
-      updateNote(editingNoteId, updatedNote);
+      updateNote(editingNoteId, updatedNote,additionalBatchIds);
       stopEditing();
     }
   };
@@ -114,6 +116,7 @@ const DesktopTable = ({
             isMobile={false}
             batchId={batchId}
             isEditing={false}
+            courseId={courseId}
           />
         )}
 
@@ -139,6 +142,7 @@ const DesktopTable = ({
                   isEditing={true}
                   setIsEditing={stopEditing}
                   editNote={note}
+                  courseId={courseId}
                   updateNote={handleUpdateNote}
                 />
               );

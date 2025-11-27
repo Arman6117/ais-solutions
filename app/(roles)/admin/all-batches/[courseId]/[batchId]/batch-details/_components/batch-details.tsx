@@ -437,7 +437,7 @@ const BatchDetails = ({
         </div>
       </div>
       <div className="w-full">
-        <BatchNotesTable mode={mode} batchId={batch._id} />
+        <BatchNotesTable courseId={courseId} mode={mode} batchId={batch._id} />
         <BatchStudentTable
           mode={mode}
           dummyStudents={dummyStudents!}

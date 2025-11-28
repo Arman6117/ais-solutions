@@ -40,7 +40,7 @@ export const registerStudent = async (formData: FormData) => {
     const studentId = await getNextStudentId();
     await Student.create({
       _id: studentId,
-      email,
+      email: email.toLowerCase(),
       phone,
       gender,
       profilePic: profileUrl?.url || "",

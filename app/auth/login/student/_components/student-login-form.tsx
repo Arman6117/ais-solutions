@@ -50,7 +50,7 @@ const StudentLoginForm = () => {
 
     try {
       const data = new FormData();
-      data.append("email", formData.email);
+      data.append("email", formData.email.toLowerCase());
       data.append("password", formData.password);
 
       const res = await loginStudent(data);

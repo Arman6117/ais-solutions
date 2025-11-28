@@ -28,7 +28,7 @@ export const registerStudent = async (formData: FormData) => {
         : null;
 
     const auth = await authClient.signUp.email({
-      email: email,
+      email: email.toLowerCase(),
       password: password,
       name: name,
       image: profileUrl?.url || "",

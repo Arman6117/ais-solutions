@@ -21,10 +21,9 @@ const InvoiceTable = () => {
 
   const fetchInvoices = async() => {
     try {
-      console.log("Function called")
+      
      const res=  await getInvoiceTable();
-     console.log("Fetched Invoices:")
-     console.log(res)
+     
      setInvoicesData(res.data)
     } catch (error) {
       console.log(error);
@@ -34,7 +33,7 @@ const InvoiceTable = () => {
     fetchInvoices()
   },[])
 
-  console.log({"Invoices data: ": invoicesData})
+
   const filteredInvoices = useMemo(() => {
     return invoicesData.filter((invoice) => {
       if (statusFilter !== "all" && invoice.status !== statusFilter)
@@ -112,8 +111,11 @@ const InvoiceTable = () => {
     {
       id: "createdAt",
       header: "Date",
-      accessor: (row: InvoiceTableType) =>
-        format(row.createdAt,"PP")
+      accessor: (row: InvoiceTableType) =>{
+        if (!row.createdAt) return "N/A"; 
+        
+      return format(new Date(row.createdAt), "PP");
+      }
     },
   ];
 

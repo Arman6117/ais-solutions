@@ -5,14 +5,23 @@ import { getInvoiceById } from "@/actions/admin/invoices/get-invoices";
 type InvoiceDetailsPageProps = {
   params: Promise<{ id: string }>;
 };
-const InvoiceDetailsPage =async ({params}:InvoiceDetailsPageProps) => {
-const id = (await params).id
-const res = await getInvoiceById(id)
-console.log(res.data)
-console.log(id)
-  return <>
-  <InvoiceDetails/>
-  </>;
+
+const InvoiceDetailsPage = async ({ params }: InvoiceDetailsPageProps) => {
+  const id = (await params).id;
+  const res = await getInvoiceById(id);
+
+  if (!res.success || !res.data) {
+    return <div>Invoice not found</div>;
+  }
+
+  console.log(res.data)
+
+  return (
+    <>
+      {/* Pass the fetched data directly to the client component */}
+      <InvoiceDetails data={res.data} />
+    </>
+  );
 };
 
 export default InvoiceDetailsPage;

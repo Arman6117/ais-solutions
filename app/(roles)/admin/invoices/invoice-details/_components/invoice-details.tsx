@@ -1,72 +1,109 @@
-'use client'
-import React, { useState } from 'react';
-import { 
- 
-  Mail, 
-
-  CreditCard, 
-  Smartphone, 
+"use client";
+import React, { useState } from "react";
+import {
+  Mail,
+  CreditCard,
+  Smartphone,
   Banknote,
   Clock,
   BookOpen,
   Users,
   Monitor,
   Wifi,
-
   User,
   Phone,
   IndianRupee,
   CalendarDays,
   Receipt,
-  
-  Building
-} from 'lucide-react';
+  Building,
+} from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import CreateInvoiceDialog from './create-invoice-dialog';
-import { CourseInvoice, Invoice, Mode, PaymentMode, Student } from '@/lib/types/types';
-import { mockStudentData } from '@/lib/static';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+// import CreateInvoiceDialog from "./create-invoice-dialog";
 
-// Type definitions
-interface BatchTypeIconProps {
-    type: Mode;
-  }
-  
-  interface PaymentMethodIconProps {
-    method: PaymentMode;
-  }
-  
-  interface StudentInfoCardProps {
-    student: Student;
-  }
-  
-  interface CourseCardProps {
-    course: CourseInvoice;
-  }
-  
-  interface FeeSummaryCardProps {
-    courses: CourseInvoice[];
-  }
-  
-  interface InvoiceTimelineCardProps {
-    invoices: Invoice[];
-  }
+// --- TYPES BASED ON SERVER RESPONSE ---
 
-// Mock data
+interface APIModule {
+  _id?: string;
+  name: string;
+  amount?: number;
+  price?: number;
+  status?: string;
+}
 
+interface APICourse {
+  courseName: string;
+  courseMode: string;
+  batchName: string;
+  modules: APIModule[];
+  totalFees: number;
+  amountPaid: number;
+  remainingFees: number;
+  dueDate: string | Date | null;
+  status: string;
+  paymentProgress: string;
+}
 
-const BatchTypeIcon: React.FC<BatchTypeIconProps> = ({ type }) => {
-  const config = {
-    online: { icon: Monitor, color: "bg-blue-100 text-blue-700", label: "Online" },
-    hybrid: { icon: Wifi, color: "bg-purple-100 text-purple-700", label: "Hybrid" },
-    offline: { icon: Building, color: "bg-green-100 text-green-700", label: "Offline" }
+interface APIPaymentHistory {
+  amount: number;
+  courseName: string;
+  modules: string | string[];
+  paymentDate: string | Date;
+  dueDate: string | Date | null;
+  notes: string | null;
+  mode: string;
+}
+
+interface InvoiceData {
+  student: {
+    name: string;
+    email: string;
+    phone: string;
   };
-  
-  const { icon: Icon, color, label } = config[type] || config.offline;
+  summary: {
+    totalFees: number;
+    amountPaid: number;
+    remainingFees: number;
+    paymentProgress: string;
+  };
+  courses: APICourse[];
+  paymentHistory: APIPaymentHistory[];
+}
+
+// --- HELPER COMPONENTS ---
+
+const BatchTypeIcon = ({ type }: { type: string }) => {
+  const normalizedType = type.toLowerCase();
+  const config = {
+    online: {
+      icon: Monitor,
+      color: "bg-blue-100 text-blue-700",
+      label: "Online",
+    },
+    hybrid: {
+      icon: Wifi,
+      color: "bg-purple-100 text-purple-700",
+      label: "Hybrid",
+    },
+    offline: {
+      icon: Building,
+      color: "bg-green-100 text-green-700",
+      label: "Offline",
+    },
+  };
+
+  const { icon: Icon, color, label } =
+    config[normalizedType as keyof typeof config] || config.offline;
   return (
     <Badge variant="secondary" className={`${color} font-medium`}>
       <Icon className="w-3 h-3 mr-1" />
@@ -75,47 +112,62 @@ const BatchTypeIcon: React.FC<BatchTypeIconProps> = ({ type }) => {
   );
 };
 
-const PaymentMethodIcon: React.FC<PaymentMethodIconProps> = ({ method }) => {
-  const config = {
-    upi: { icon: Smartphone, color: "text-orange-600" },
-    card: { icon: CreditCard, color: "text-blue-600" },
-    cash: { icon: Banknote, color: "text-green-600" },
-    other: { icon: Receipt, color: "text-gray-600" }
-  };
-  
-  const { icon: Icon, color } = config[method] || config.other;
+const PaymentMethodIcon = ({ method }: { method: string }) => {
+  const normalizedMethod = method.toLowerCase();
+  let Icon = Receipt;
+  let color = "text-gray-600";
+
+  if (normalizedMethod.includes("upi")) {
+    Icon = Smartphone;
+    color = "text-orange-600";
+  } else if (normalizedMethod.includes("card")) {
+    Icon = CreditCard;
+    color = "text-blue-600";
+  } else if (normalizedMethod.includes("cash")) {
+    Icon = Banknote;
+    color = "text-green-600";
+  }
+
   return <Icon className={`w-4 h-4 ${color}`} />;
 };
 
-const StudentInfoCard: React.FC<StudentInfoCardProps> = ({ student }) => (
-  <Card className="mb-6">
+// --- MAIN CARD COMPONENTS ---
+
+const StudentInfoCard = ({ student }: { student: InvoiceData["student"] }) => (
+  <Card className="mb-6 shadow-sm">
     <CardHeader className="pb-4">
-      <CardTitle className="flex items-center gap-2">
+      <CardTitle className="flex items-center gap-2 text-lg">
         <User className="w-5 h-5" />
         Student Information
       </CardTitle>
     </CardHeader>
     <CardContent>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-muted-foreground">Full Name</Label>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Full Name
+          </Label>
           <div className="flex items-center gap-2">
-            <User className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{student.name}</span>
+            <User className="w-4 h-4 text-gray-500" />
+            <span className="font-semibold text-gray-900">{student.name}</span>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-muted-foreground">Email Address</Label>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Email Address
+          </Label>
           <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{student.email}</span>
+            <Mail className="w-4 h-4 text-gray-500" />
+            <span className="font-medium text-gray-900">{student.email}</span>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-muted-foreground">Phone Number</Label>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Phone Number
+          </Label>
           <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{student.phone}</span>
+            <Phone className="w-4 h-4 text-gray-500" />
+            <span className="font-medium text-gray-900">{student.phone}</span>
           </div>
         </div>
       </div>
@@ -123,122 +175,58 @@ const StudentInfoCard: React.FC<StudentInfoCardProps> = ({ student }) => (
   </Card>
 );
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
-  const progressPercentage = (course.paidFees / course.totalFees) * 100;
-  
+const FeeSummaryCard = ({ summary }: { summary: InvoiceData["summary"] }) => {
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-slate-950 text-white border-0 shadow-lg">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
-            {course.name}
-          </CardTitle>
-          <BatchTypeIcon type={course.batchType} />
-        </div>
-        <CardDescription className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
-            {course.batch}
-          </span>
-          {course.nextDueDate && (
-            <span className="flex items-center gap-1 text-orange-600">
-              <Clock className="w-4 h-4" />
-              Due: {new Date(course.nextDueDate).toLocaleDateString()}
-            </span>
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Payment Progress</Label>
-            <span className="text-sm text-muted-foreground">{progressPercentage.toFixed(1)}%</span>
-          </div>
-          <Progress value={progressPercentage} className="h-2" />
-        </div>
-        
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Modules</Label>
-          <div className="grid gap-2">
-            {course.modules.map((module) => (
-              <div key={module.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
-                <div className="flex items-center gap-3">
-                  {/* {module.paid ? (
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-orange-600" />
-                  )} */}
-                  <span className="font-medium">{module.name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">₹{module.price.toLocaleString()}</span>
-                  {/* <Badge variant={module.paid ? "default" : "secondary"} className={module.paid ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
-                    {module.paid ? 'Paid' : 'Pending'}
-                  </Badge> */}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 p-4 rounded-lg bg-muted/50">
-          <div className="text-center space-y-1">
-            <Label className="text-xs text-muted-foreground">Total Fees</Label>
-            <div className="font-bold text-lg">₹{course.totalFees.toLocaleString()}</div>
-          </div>
-          <div className="text-center space-y-1">
-            <Label className="text-xs text-muted-foreground">Paid Amount</Label>
-            <div className="font-bold text-lg text-green-600">₹{course.paidFees.toLocaleString()}</div>
-          </div>
-          <div className="text-center space-y-1">
-            <Label className="text-xs text-muted-foreground">Remaining</Label>
-            <div className="font-bold text-lg text-orange-600">₹{course.remainingFees.toLocaleString()}</div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const FeeSummaryCard: React.FC<FeeSummaryCardProps> = ({ courses }) => {
-  const totalFees = courses.reduce((sum, course) => sum + course.totalFees, 0);
-  const paidFees = courses.reduce((sum, course) => sum + course.paidFees, 0);
-  const remainingFees = courses.reduce((sum, course) => sum + course.remainingFees, 0);
-  const overallProgress = (paidFees / totalFees) * 100;
-
-  return (
-    <Card className="mb-6 bg-gradient-to-r from-slate-900 to-slate-800 text-white border-0">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-white">
           <IndianRupee className="w-5 h-5" />
           Overall Fee Summary
         </CardTitle>
-        <CardDescription className="text-slate-300">
+        <CardDescription className="text-slate-400">
           Complete financial overview across all enrolled courses
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-slate-300">Payment Progress</Label>
-            <span className="text-sm text-slate-300">{overallProgress.toFixed(1)}%</span>
+            <Label className="text-sm font-medium text-slate-300">
+              Payment Progress
+            </Label>
+            <span className="text-sm text-slate-300">
+              {summary.paymentProgress}%
+            </span>
           </div>
-          <Progress value={overallProgress} className="h-2 bg-slate-700" />
+          <Progress
+            value={parseFloat(summary.paymentProgress)}
+            className="h-2 bg-slate-800 [&>div]:bg-white"
+          />
         </div>
-        
-        <div className="flex gap-6 items-center justify-between">
-          <div className="flex flex-col items-center space-y-2">
-            <Label className="text-sm text-slate-300">Total Fees</Label>
-            <div className="text-2xl font-bold">₹{totalFees.toLocaleString()}</div>
+
+        <div className="flex gap-6 items-center justify-between pt-2">
+          <div className="flex flex-col items-center space-y-1">
+            <Label className="text-xs text-slate-400 uppercase">
+              Total Fees
+            </Label>
+            <div className="text-2xl font-bold">
+              ₹{summary.totalFees.toLocaleString()}
+            </div>
           </div>
-          <div className="text-center space-y-2">
-            <Label className="text-sm text-slate-300">Amount Paid</Label>
-            <div className="text-2xl font-bold text-green-400">₹{paidFees.toLocaleString()}</div>
+          <div className="flex flex-col items-center space-y-1">
+            <Label className="text-xs text-slate-400 uppercase">
+              Amount Paid
+            </Label>
+            <div className="text-2xl font-bold text-green-400">
+              ₹{summary.amountPaid.toLocaleString()}
+            </div>
           </div>
-          <div className="text-center space-y-2">
-            <Label className="text-sm text-slate-300">Outstanding</Label>
-            <div className="text-2xl font-bold text-orange-400">₹{remainingFees.toLocaleString()}</div>
+          <div className="flex flex-col items-center space-y-1">
+            <Label className="text-xs text-slate-400 uppercase">
+              Outstanding
+            </Label>
+            <div className="text-2xl font-bold text-orange-400">
+              ₹{summary.remainingFees.toLocaleString()}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -246,10 +234,114 @@ const FeeSummaryCard: React.FC<FeeSummaryCardProps> = ({ courses }) => {
   );
 };
 
-const InvoiceTimelineCard = ({ invoices }:InvoiceTimelineCardProps) => (
-  <Card className="mb-6">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center gap-2">
+const CourseCard = ({ course }: { course: APICourse }) => {
+  return (
+    <Card className="mb-6 shadow-sm h-full flex flex-col">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between mb-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <BookOpen className="w-5 h-5 text-primary" />
+            {course.courseName}
+          </CardTitle>
+          <BatchTypeIcon type={course.courseMode} />
+        </div>
+        <div className="flex items-center justify-between text-sm">
+          <span className="flex items-center gap-1 text-muted-foreground">
+            <Users className="w-4 h-4" />
+            {course.batchName}
+          </span>
+          {course.dueDate && (
+            <span className="flex items-center gap-1 text-orange-600 bg-orange-50 px-2 py-0.5 rounded text-xs font-medium">
+              <Clock className="w-3 h-3" />
+              Due: {new Date(course.dueDate).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6 flex-1 flex flex-col">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium">Payment Progress</Label>
+            <span className="text-sm text-muted-foreground">
+              {course.paymentProgress}%
+            </span>
+          </div>
+          <Progress
+            value={parseFloat(course.paymentProgress)}
+            className="h-2"
+          />
+        </div>
+
+        <div className="space-y-3 flex-1">
+          <Label className="text-xs font-semibold uppercase text-muted-foreground">
+            Modules
+          </Label>
+          <div className="grid gap-2">
+            {course.modules && course.modules.length > 0 ? (
+              course.modules.map((module, idx) => (
+                <div
+                  key={module._id || idx}
+                  className="flex items-center justify-between p-3 rounded-lg border bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium text-sm text-slate-700">
+                      {module.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm">
+                      ₹{(module.amount || module.price || 0).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-sm text-muted-foreground italic">
+                No specific modules listed
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 p-4 rounded-xl bg-slate-50 border mt-auto">
+          <div className="text-center space-y-1">
+            <Label className="text-[10px] uppercase text-muted-foreground font-bold">
+              Total
+            </Label>
+            <div className="font-bold text-lg text-slate-900">
+              ₹{course.totalFees.toLocaleString()}
+            </div>
+          </div>
+          <div className="text-center space-y-1">
+            <Label className="text-[10px] uppercase text-muted-foreground font-bold">
+              Paid
+            </Label>
+            <div className="font-bold text-lg text-green-600">
+              ₹{course.amountPaid.toLocaleString()}
+            </div>
+          </div>
+          <div className="text-center space-y-1">
+            <Label className="text-[10px] uppercase text-muted-foreground font-bold">
+              Remaining
+            </Label>
+            <div className="font-bold text-lg text-orange-600">
+              ₹{course.remainingFees.toLocaleString()}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const InvoiceTimelineCard = ({
+  history,
+}: {
+  history: APIPaymentHistory[];
+}) => (
+  <Card className="mb-6 shadow-sm">
+    <CardHeader className="pb-4 border-b">
+      <CardTitle className="flex items-center gap-2 text-lg">
         <Receipt className="w-5 h-5" />
         Payment History
       </CardTitle>
@@ -257,104 +349,126 @@ const InvoiceTimelineCard = ({ invoices }:InvoiceTimelineCardProps) => (
         Complete timeline of all invoice payments and transactions
       </CardDescription>
     </CardHeader>
-    <CardContent>
-      <div className="space-y-4">
-        {invoices.map((invoice, index) => (
-          <div key={invoice.id}>
-            <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-              <div className="flex-shrink-0 w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                <PaymentMethodIcon method={invoice.paymentMethod} />
-              </div>
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-lg">₹{invoice.amount.toLocaleString()}</div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CalendarDays className="w-4 h-4" />
-                    {new Date(invoice.date).toLocaleDateString()}
-                  </div>
+    <CardContent className="pt-6">
+      <div className="space-y-6">
+        {history.length > 0 ? (
+          history.map((payment, index) => (
+            <div key={index} className="relative pl-6 last:pb-0">
+              {index !== history.length - 1 && (
+                <div className="absolute left-[11px] top-8 bottom-[-24px] w-px bg-slate-200"></div>
+              )}
+
+              <div className="flex items-start gap-4">
+                <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-white border-2 border-green-500 flex items-center justify-center z-10">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 </div>
-                <div className="space-y-1">
-                  <div className="font-medium text-sm">{invoice.course}</div>
-                  <div className="text-sm text-muted-foreground">Modules: {invoice.module}</div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="capitalize">
-                    <PaymentMethodIcon method={invoice.paymentMethod} />
-                    <span className="ml-1">{invoice.paymentMethod}</span>
-                  </Badge>
-                  {invoice.notes && (
-                    <div className="text-xs text-muted-foreground italic max-w-xs">
-                      {invoice.notes}
+
+                <div className="flex-1 bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <div className="font-bold text-xl text-slate-900">
+                      ₹{payment.amount.toLocaleString()}
                     </div>
-                  )}
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-slate-50 px-2 py-1 rounded">
+                      <CalendarDays className="w-4 h-4" />
+                      {new Date(payment.paymentDate).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="font-semibold text-sm text-slate-800">
+                      {payment.courseName}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <span className="font-medium">Modules: </span>
+                      {Array.isArray(payment.modules)
+                        ? payment.modules.join(", ")
+                        : payment.modules}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t">
+                    <Badge
+                      variant="outline"
+                      className="capitalize gap-1 pl-1 pr-2"
+                    >
+                      <PaymentMethodIcon method={payment.mode} />
+                      {payment.mode}
+                    </Badge>
+                    {payment.notes && (
+                      <div className="text-xs text-muted-foreground italic">
+                        {payment.notes}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-            {index < invoices.length - 1 && <Separator className="my-4" />}
+          ))
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            No payment history found.
           </div>
-        ))}
+        )}
       </div>
     </CardContent>
   </Card>
 );
 
+interface InvoiceDetailsProps {
+  data: InvoiceData;
+}
 
-const InvoiceDetails = () => {
-  const [studentData, setStudentData] = useState<Student>(mockStudentData);
+const InvoiceDetails = ({ data }: InvoiceDetailsProps) => {
+  // Ideally, you would re-fetch data or use server actions to update
+  const [currentData, setCurrentData] = useState<InvoiceData>(data);
 
-  const handleCreateInvoice = (invoice: Invoice): void => {
-    setStudentData(prev => ({
-      ...prev,
-      invoiceHistory: [invoice, ...prev.invoiceHistory]
-    }));
+  const handleCreateInvoice = (invoice: InvoiceData) => {
+    setCurrentData(invoice);
+    console.log("New invoice created", invoice);
   };
 
-  // const handleSendEmail = (): void => {
-  //   alert('Invoice email sent successfully!');
-  // };
 
-  // const handleDownloadPDF = (): void => {
-  //   alert('Invoice PDF downloaded!');
-  // };
+  if (!data) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen flex justify-center max-w-full  bg-background p-6">
-      <div className="max-w-7xl  mx-auto">
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen flex justify-center w-full bg-slate-50/50 p-4 md:p-6">
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Invoice Details</h1>
+            <Button variant={'ghost'} size={'icon'} onClick={()=> handleCreateInvoice(currentData)} className="opacity-0 h-0 w-0">s</Button>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Invoice Details
+            </h1>
             <p className="text-muted-foreground mt-1">
               Manage student payments and generate invoices
             </p>
           </div>
           <div className="flex gap-3">
-            {/* <Button variant="outline" onClick={handleSendEmail}>
-              <Mail className="w-4 h-4 mr-2" />
-              Send Email
-            </Button>
-            <Button variant="outline" onClick={handleDownloadPDF}>
-              <Download className="w-4 h-4 mr-2" />
-              Download PDF
-            </Button> */}
-            <CreateInvoiceDialog
-
-              student={studentData}
+            {/* <CreateInvoiceDialog
+              student={currentData as any}
               onSubmit={handleCreateInvoice}
-            />
+            /> */}
           </div>
         </div>
 
         <div className="space-y-6">
-          <StudentInfoCard student={studentData} />
-          <FeeSummaryCard courses={studentData.courses} />
-          
+          <StudentInfoCard student={currentData.student} />
+          <FeeSummaryCard summary={currentData.summary} />
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {studentData.courses.map(course => (
-              <CourseCard key={course.id} course={course} />
+            {currentData.courses.map((course, idx) => (
+              <CourseCard key={idx} course={course} />
             ))}
           </div>
 
-          <InvoiceTimelineCard invoices={studentData.invoiceHistory} />
+          <InvoiceTimelineCard history={currentData.paymentHistory} />
         </div>
       </div>
     </div>

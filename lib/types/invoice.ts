@@ -1,14 +1,18 @@
+// lib/types/types.ts
 
-
-// export interface CourseInfo {
-//     _id:string
-//     courseName: string;
-//     courseMode: string;
-//   }
-  
 import { Types } from 'mongoose';
 
-// Module information from batch
+// ==========================================
+// 1. CORE ENTITY TYPES (Student, Course, Batch)
+// ==========================================
+
+// Basic Course Info (used inside Batch)
+export interface CourseInfo {
+  _id: Types.ObjectId | string;
+  courseName: string;
+}
+
+// Module Info (used inside Batch)
 export interface ModuleInfo {
   id: {
     _id: Types.ObjectId | string;
@@ -17,13 +21,7 @@ export interface ModuleInfo {
   };
 }
 
-// Course information with ObjectId reference
-export interface CourseInfo {
-  _id: Types.ObjectId | string;
-  courseName: string;
-}
-
-// Populated batch information
+// Populated Batch (used inside Student)
 export interface PopulatedBatch {
   _id: Types.ObjectId | string;
   name: string;
@@ -31,7 +29,7 @@ export interface PopulatedBatch {
   modules: ModuleInfo[];
 }
 
-// Batch info in student document
+// Batch Info Structure (as stored in Student document)
 export interface BatchInfo {
   batchId: PopulatedBatch;
   mode: 'online' | 'offline' | 'hybrid';
@@ -39,7 +37,7 @@ export interface BatchInfo {
   _id: Types.ObjectId | string;
 }
 
-// Student course enrollment
+// Student Course Structure
 export interface StudentCourse {
   courseId: Types.ObjectId | string;
   moduleId: (Types.ObjectId | string)[];
@@ -48,7 +46,7 @@ export interface StudentCourse {
   _id: Types.ObjectId | string;
 }
 
-// Student interface with populated data
+// THE MAIN STUDENT TYPE
 export interface Student {
   _id: string;
   name: string;
@@ -56,9 +54,15 @@ export interface Student {
   phone: string;
   courses: StudentCourse[];
   batches: BatchInfo[];
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
-// Course details in invoice
+// ==========================================
+// 2. INVOICE DOCUMENT TYPES (Database Schema)
+// ==========================================
+
+// Course details inside an Invoice document
 export interface CourseDetails {
   courseId: Types.ObjectId | string;
   modules: (Types.ObjectId | string)[];
@@ -70,7 +74,7 @@ export interface CourseDetails {
   dueDate?: Date | string;
 }
 
-// Payment history entry
+// Payment history entry inside an Invoice document
 export interface PaymentHistory {
   amount: number;
   courseName: string;
@@ -83,7 +87,7 @@ export interface PaymentHistory {
   _id?: Types.ObjectId | string;
 }
 
-// Base invoice document
+// Base Invoice Document Interface
 export interface InvoiceDocBase {
   _id: Types.ObjectId | string;
   studentId: Types.ObjectId | string;
@@ -94,179 +98,97 @@ export interface InvoiceDocBase {
   paymentHistory: PaymentHistory[];
   status: 'Paid' | 'Pending' | 'Due' | 'Overdue';
   createdAt?: Date | string;
+  updatedAt?: Date | string;
   __v?: number;
 }
 
-// Invoice with populated student
+// Invoice Document with Populated Student
 export interface InvoiceDocPopulated extends Omit<InvoiceDocBase, 'studentId'> {
   studentId: Student;
 }
 
-// Formatted response types
+// ==========================================
+// 3. API RESPONSE TYPES (Frontend Consumption)
+// ==========================================
+
+// Formatted Module for Frontend
 export interface FormattedModule {
   name: string;
   price: number;
+  amount?: number;
+  status?: string;
 }
 
+// Formatted Course for Frontend
 export interface FormattedCourse {
   courseName: string;
-  courseMode: string;
+  courseMode: "offline" | "hybrid" | "online";
   batchName: string;
   modules: FormattedModule[];
   totalFees: number;
   amountPaid: number;
   remainingFees: number;
-  dueDate: Date | string | null;
+  dueDate: string  | null;
   status: string;
   paymentProgress: string;
 }
 
+// Formatted Payment for Frontend
 export interface FormattedPayment {
   amount: number;
   courseName: string;
-  modules: string;
+  modules: string | string[];
   paymentDate: Date | string;
   dueDate: Date | string | null;
   notes: string | null;
   mode: string;
 }
 
-export interface InvoiceResponse {
-  success: boolean;
-  message?: string;
-  data?: {
-    student: {
-      name: string;
-      email: string;
-      phone: string;
-    };
-    summary: {
-      totalFees: number;
-      amountPaid: number;
-      remainingFees: number;
-      paymentProgress: string;
-    };
-    courses: FormattedCourse[];
-    paymentHistory: FormattedPayment[];
-  };
-}
-
-  
-  /*
-   _id: 'AIS1',
-    name: 'Arman Patel',
-    email: 'armanp384@gmail.com',
-    phone: '7058801089',
-    batches: [
-      {
-        batchId: {
-          _id: '68f7d7240fb1f5a29f5180d9',
-          name: 'Batch 001',
-          modules: [
-            {
-              id: '68f7d5870fb1f5a29f5180ae',
-              name: 'Use State',
-              startDate: '',
-              endDate: '',
-              instructor: [ '' ],
-              status: 'Upcoming',
-              numberOfStudent: 0
-            }
-          ],
-          courseId: {
-            _id: '68f7d6900fb1f5a29f5180c3',
-            courseName: 'React'
-          }
-        },
-        mode: 'offline',
-        enrolledAt: '2025-11-12T14:49:48.126Z',
-        _id: '69149e8cb64e0314a83e9898'
-      }
-    ],
-    courses: [
-      {
-        courseId: {
-          _id: '68f7d6900fb1f5a29f5180c3',
-          courseName: 'React',
-          courseMode: 'online'
-        },
-        moduleId: [ '68f7d5870fb1f5a29f5180ae' ],
-        approvedAt: '2025-11-12T14:49:48.126Z',
-        isApproved: true,
-        _id: '69149a2eff197296d7e340c8'
-      }
-    ]
-  }
-
-  */
-  // export interface StudentCourse {
-  //   courseId: CourseInfo;
-  // }
-  
-  export interface Student {
-    _id: string;
+// Main Data Object for Invoice Details Page
+export interface InvoiceData {
+  student: {
     name: string;
     email: string;
     phone: string;
-    courses: StudentCourse[];
-    batches: BatchInfo[];
-  }
-  
-  // export interface CourseDetails {
-  //   courseId: string;
-  //   modules: { name: string }[];
-  //   totalFees: number;
-  //   amountPaid: number;
-  //   remainingFees: number;
-  //   dueDate?: string;
-  //   status: "Due" | "Paid" | "Overdue";
-  //   mode: "offline" | "online" | "hybrid";
-  // }
-  
-  // export interface PaymentHistory {
-  //   amount: number;
-  //   courseName: string;
-  //   // modules: string[];
-  //   dueDate?: string;
-  //   notes?: string;
-  //   mode: "UPI" | "Cash" | "Card" | "Other";
-  // }
-  
-  // export interface InvoiceDoc {
-  //   _id: string;
-  //   studentId: Student;
-  //   totalFees: number;
-  //   amountPaid: number;
-  //   remainingFees: number;
-  //   courseDetails: CourseDetails[];
-  //   paymentHistory: PaymentHistory[];
-  //   status: "Due" | "Paid" | "Overdue";
-  // }
-  
-  export interface CreateInvoicePayload {
-    invoiceID:string,
-    courseName:string,
-    courseId:string
-    amountPaid:number,
-    paymentMode:     "UPI" | "Cash" | "Card" | "Other";
-    dueDate?:string
-    notes?:string
-  }
+  };
+  summary: {
+    totalFees: number;
+    amountPaid: number;
+    remainingFees: number;
+    paymentProgress: string;
+  };
+  courses: FormattedCourse[];
+  paymentHistory: FormattedPayment[];
+}
 
+// Standard API Response Wrapper
+export interface InvoiceResponse {
+  success: boolean;
+  message?: string;
+  data?: InvoiceData;
+}
 
-  export interface InvoiceTable {
-    studentName:string,
-    email:string,
-    course:string[],
-    amountPaid:number,
-    totalFees:number,
-    mode:"UPI" | "Cash" | "Card" | "Other",
-    status:"Due" | "Paid" | "Partially Paid" | "Overdue"
-    createdAt:string
+// ==========================================
+// 4. FORM & COMPONENT PROPS
+// ==========================================
 
-  }
+export interface CreateInvoicePayload {
+  invoiceID: string;
+  courseName: string;
+  courseId: string;
+  amountPaid: number;
+  paymentMode: "UPI" | "Cash" | "Card" | "Other";
+  dueDate?: string;
+  notes?: string;
+}
 
-
-  // export interface InvoiceDetail {
-
-  // }
+export interface InvoiceTable {
+  studentName: string;
+  email: string;
+  course: string[];
+  amountPaid: number;
+  totalFees: number;
+  mode: "UPI" | "Cash" | "Card" | "Other";
+  status: "Due" | "Paid" | "Partially Paid" | "Overdue";
+  createdAt: string;
+}

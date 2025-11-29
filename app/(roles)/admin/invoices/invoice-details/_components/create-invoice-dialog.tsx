@@ -133,7 +133,7 @@ const CreateInvoiceDialog = ({
                   {student.courses
                     .filter((c) => c.remainingFees > 0)
                     .map((course) => (
-                      <SelectItem key={course.id} value={course.id.toString()}>
+                      <SelectItem key={course.id} value={"s"}>
                         {course.name} - Remaining: ₹
                         {course.remainingFees.toLocaleString()}
                       </SelectItem>

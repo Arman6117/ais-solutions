@@ -14,7 +14,7 @@ import { getStudentId } from "@/actions/shared/get-student-id";
 
 type CoursesDisplayProps = {
   userEmail: string;
-  courseId: string;
+  courseId: string ;
 };
 export const revalidate = 60;
 const CoursesDisplay = async ({ userEmail, courseId }: CoursesDisplayProps) => {

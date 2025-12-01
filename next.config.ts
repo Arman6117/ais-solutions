@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       new URL("https://placehold.co/**"),
       { protocol: "https", hostname: "images.unsplash.com", port: "" },
       { protocol: "https", hostname: "res.cloudinary.com", port: "" },
+      { protocol: "https", hostname: "ui-avatars.com", port: "" },
     ],
     dangerouslyAllowSVG: true,
   },

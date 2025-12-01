@@ -3,11 +3,13 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -20,237 +22,361 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Invoice, PaymentMode, Student } from "@/lib/types/types";
-import { DialogTitle } from "@radix-ui/react-dialog";
-import { AlertCircle, Plus } from "lucide-react";
+import { InvoiceData, CreateInvoicePayload } from "@/lib/types/invoice";
+import { AlertCircle, Plus, Loader2 } from "lucide-react";
 import { useState } from "react";
-interface InvoiceFormData {
-  courseId: string;
-  moduleIds: number[];
-  amount: string;
-  paymentMethod: string;
-  dueDate: string;
-  notes: string;
-}
+import { toast } from "sonner";
+import { createInvoice } from "@/actions/admin/invoices/create-invoice";
+
 interface CreateInvoiceDialogProps {
-  student: Student;
-  onSubmit: (invoice: Invoice) => void;
+  invoiceData: InvoiceData;
+  invoiceId: string;
+  onInvoiceCreated?: () => void;
 }
+
 const CreateInvoiceDialog = ({
-  student,
-  onSubmit,
+  invoiceData,
+  invoiceId,
+  onInvoiceCreated,
 }: CreateInvoiceDialogProps) => {
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState<InvoiceFormData>({
-    courseId: "",
-    moduleIds: [],
-    amount: "",
-    paymentMethod: "",
-    dueDate: "",
-    notes: "",
-  });
+  const [loading, setLoading] = useState(false);
 
-  const selectedCourse = student.courses.find(
-    (c) => c.id === parseInt(formData.courseId)
+  // Form State
+  const [selectedCourseIndex, setSelectedCourseIndex] = useState<string>("");
+  const [selectedModuleIndices, setSelectedModuleIndices] = useState<number[]>([]);
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const student = invoiceData.student;
+
+  // Get the selected course
+  const selectedCourse =
+    selectedCourseIndex !== "" ? invoiceData.courses[parseInt(selectedCourseIndex)] : null;
+
+  // Get unpaid modules (modules where remaining fees exist for this course)
+  // Since we calculate overall course fees, we need to track which modules still have balance
+  // For simplicity, we'll show all modules and let admin decide which ones this payment covers
+  const availableModules = selectedCourse ? selectedCourse.modules : [];
+
+  // Get selected modules
+  const selectedModules = selectedModuleIndices.map((idx) => availableModules[idx]);
+
+  // Calculate total of selected modules
+  const selectedModulesTotal = selectedModules.reduce(
+    (sum, module) => sum + (module.price || 0),
+    0
   );
-  // const unpaidModules = selectedCourse ? selectedCourse.modules.filter(m => !m.paid) : [];
-  // const selectedModules = unpaidModules.filter(m => formData.moduleIds.includes(m.id));
-  // const maxAmount = selectedModules.reduce((sum, m) => sum + m.price, 0);
-  const remainingAfterPayment = 20000 - (parseFloat(formData.amount) || 0);
 
-  const handleSubmit = (): void => {
-    if (!formData.courseId || !formData.amount || !formData.paymentMethod) {
-      alert("Please fill all required fields");
+  // Current remaining for the course
+  const currentRemaining = selectedCourse ? selectedCourse.remainingFees : 0;
+
+  // Amount entered
+  const amountNum = parseFloat(amount) || 0;
+
+  // Remaining after payment
+  const remainingAfterPayment = Math.max(0, currentRemaining - amountNum);
+
+  // Handle module selection
+  const handleModuleToggle = (moduleIndex: number) => {
+    setSelectedModuleIndices((prev) =>
+      prev.includes(moduleIndex)
+        ? prev.filter((idx) => idx !== moduleIndex)
+        : [...prev, moduleIndex]
+    );
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setSelectedCourseIndex("");
+    setSelectedModuleIndices([]);
+    setAmount("");
+    setPaymentMethod("");
+    setDueDate("");
+    setNotes("");
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedCourse || !amount || !paymentMethod) {
+      toast.error("Please fill all required fields");
       return;
     }
 
-    const invoice: Invoice = {
-      id: Date.now(),
-      date: new Date().toISOString().split("T")[0],
-      amount: parseFloat(formData.amount),
-      course: selectedCourse!.name,
-      // module: selectedModules.map(m => m.name).join(', '),
-      paymentMethod: formData.paymentMethod as PaymentMode,
-      notes: formData.notes,
-      dueDate: formData.dueDate,
-    };
+    if (amountNum > currentRemaining) {
+      toast.error("Amount cannot exceed remaining fees");
+      return;
+    }
 
-    onSubmit(invoice);
-    setFormData({
-      courseId: "",
-      moduleIds: [],
-      amount: "",
-      paymentMethod: "",
-      dueDate: "",
-      notes: "",
-    });
-    setOpen(false);
+    if (amountNum <= 0) {
+      toast.error("Amount must be greater than 0");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const payload: CreateInvoicePayload = {
+        invoiceID: invoiceId,
+        courseName: selectedCourse.courseName,
+        courseId: selectedCourse.courseId, // Ensure this exists in FormattedCourse type
+        amountPaid: amountNum,
+        paymentMode: paymentMethod as "UPI" | "Cash" | "Card" | "Other",
+        dueDate: dueDate || undefined,
+        notes: notes || undefined,
+      };
+
+      const result = await createInvoice(payload);
+
+      if (result.success) {
+        toast.success("Payment recorded successfully!");
+        setOpen(false);
+        resetForm();
+
+        if (onInvoiceCreated) {
+          onInvoiceCreated();
+        }
+      } else {
+        toast.error(result.message || "Failed to record payment");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-purple-600 hover:bg-purple-700">
+        <Button className="bg-purple-600 hover:bg-purple-700 text-white">
           <Plus className="w-4 h-4 mr-2" />
-          Create New Invoice
+          Add Payment
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Invoice</DialogTitle>
+          <DialogTitle>Record New Payment</DialogTitle>
           <DialogDescription>
-            Generate a new invoice for student fee payment
+            Add a payment entry for a course with outstanding fees
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
-          <Card>
+          {/* Student Info Card */}
+          <Card className="bg-slate-50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm">Student Information</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-600">
+                Student Details
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-sm space-y-1">
-                <div className="font-medium">{student.name}</div>
-                <div className="text-muted-foreground">{student.email}</div>
-                <div className="text-muted-foreground">{student.phone}</div>
+                <div className="font-semibold text-slate-900">{student.name}</div>
+                <div className="text-slate-600">{student.email}</div>
+                <div className="text-slate-600">{student.phone}</div>
               </div>
             </CardContent>
           </Card>
 
           <div className="space-y-4">
+            {/* Course Selection */}
             <div className="space-y-2">
               <Label htmlFor="course">Select Course *</Label>
               <Select
-                value={formData.courseId}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, courseId: value, moduleIds: [] })
-                }
+                value={selectedCourseIndex}
+                onValueChange={(value) => {
+                  setSelectedCourseIndex(value);
+                  setSelectedModuleIndices([]); // Reset module selection when course changes
+                  setAmount(""); // Reset amount
+                }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a course" />
+                  <SelectValue placeholder="Choose a course to pay for" />
                 </SelectTrigger>
                 <SelectContent>
-                  {student.courses
-                    .filter((c) => c.remainingFees > 0)
-                    .map((course) => (
-                      <SelectItem key={course.id} value={"s"}>
-                        {course.name} - Remaining: ₹
-                        {course.remainingFees.toLocaleString()}
+                  {invoiceData.courses
+                    .map((course, index) => ({ course, index }))
+                    .filter(({ course }) => course.remainingFees > 0)
+                    .map(({ course, index }) => (
+                      <SelectItem key={index} value={index.toString()}>
+                        <div className="flex justify-between w-full gap-4">
+                          <span>{course.courseName}</span>
+                          <span className="text-orange-600 font-medium">
+                            Due: ₹{course.remainingFees.toLocaleString()}
+                          </span>
+                        </div>
                       </SelectItem>
                     ))}
                 </SelectContent>
               </Select>
+              {invoiceData.courses.every((c) => c.remainingFees === 0) && (
+                <p className="text-sm text-green-600 mt-1">
+                  All courses are fully paid!
+                </p>
+              )}
             </div>
 
-            {/* {selectedCourse && unpaidModules.length > 0 && (
-                <div className="space-y-3">
-                  <Label>Select Modules</Label>
-                  <div className="grid gap-3 max-h-32 overflow-y-auto p-3 border rounded-lg">
-                    {unpaidModules.map(module => (
-                      <div key={module.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`module-${module.id}`}
-                          checked={formData.moduleIds.includes(module.id)}
-                          onCheckedChange={(checked) => handleModuleSelection(module.id, checked as boolean)}
-                        />
-                        <Label htmlFor={`module-${module.id}`} className="text-sm font-normal flex-1">
-                          {module.name} - ₹{module.price.toLocaleString()}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
+            {/* Module Selection (Optional - for reference) */}
+            {selectedCourse && availableModules.length > 0 && (
+              <div className="space-y-3">
+                <Label>Modules in this Course (for reference)</Label>
+                <div className="grid gap-3 max-h-40 overflow-y-auto p-3 border rounded-lg bg-slate-50">
+                  {availableModules.map((module, idx) => (
+                    <div key={idx} className="flex items-start space-x-3">
+                      <Checkbox
+                        id={`module-${idx}`}
+                        checked={selectedModuleIndices.includes(idx)}
+                        onCheckedChange={() => handleModuleToggle(idx)}
+                      />
+                      <Label
+                        htmlFor={`module-${idx}`}
+                        className="text-sm font-normal flex-1 cursor-pointer"
+                      >
+                        <div className="flex justify-between">
+                          <span>{module.name}</span>
+                          <span className="font-semibold text-slate-700">
+                            ₹{(module.price || 0).toLocaleString()}
+                          </span>
+                        </div>
+                      </Label>
+                    </div>
+                  ))}
                 </div>
-              )} */}
+                {selectedModules.length > 0 && (
+                  <div className="text-sm text-slate-600 bg-blue-50 p-2 rounded border border-blue-200">
+                    Selected modules total: ₹{selectedModulesTotal.toLocaleString()}
+                  </div>
+                )}
+              </div>
+            )}
 
+            {/* Amount Input */}
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount Paid *</Label>
+              <Label htmlFor="amount">Amount Paid (₹) *</Label>
               <Input
                 id="amount"
                 type="number"
-                value={formData.amount}
-                onChange={(e) =>
-                  setFormData({ ...formData, amount: e.target.value })
-                }
-                //   max={maxAmount}
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
                 min="1"
-                placeholder="Enter amount"
+                max={currentRemaining}
+                placeholder="Enter payment amount"
+                disabled={!selectedCourse}
               />
-              {/* {maxAmount > 0 && (
-                  <div className="text-sm text-muted-foreground">
-                    Maximum amount for selected modules: ₹{maxAmount.toLocaleString()}
-                  </div>
-                )} */}
+              {selectedCourse && (
+                <p className="text-xs text-slate-500">
+                  Maximum payable: ₹{currentRemaining.toLocaleString()}
+                </p>
+              )}
             </div>
 
-            {formData.amount && remainingAfterPayment > 0 && (
-              <Alert>
+            {/* Balance Alert */}
+            {selectedCourse && amount && amountNum > 0 && (
+              <Alert
+                className={
+                  amountNum > currentRemaining
+                    ? "bg-red-50 border-red-200 text-red-800"
+                    : "bg-blue-50 border-blue-200 text-blue-800"
+                }
+              >
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Remaining balance after payment: ₹
-                  {remainingAfterPayment.toLocaleString()}
+                  {amountNum > currentRemaining ? (
+                    <span className="font-semibold">
+                      Amount exceeds remaining fees!
+                    </span>
+                  ) : (
+                    <>
+                      New balance: ₹{currentRemaining.toLocaleString()} - ₹
+                      {amountNum.toLocaleString()} ={" "}
+                      <strong>₹{remainingAfterPayment.toLocaleString()}</strong>
+                    </>
+                  )}
                 </AlertDescription>
               </Alert>
             )}
 
+            {/* Payment Method */}
             <div className="space-y-2">
               <Label htmlFor="paymentMethod">Payment Method *</Label>
-              <Select
-                value={formData.paymentMethod}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, paymentMethod: value })
-                }
-              >
+              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select payment method" />
+                  <SelectValue placeholder="Select payment mode" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Cash</SelectItem>
-                  <SelectItem value="upi">UPI</SelectItem>
-                  <SelectItem value="card">Card</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="Cash">Cash</SelectItem>
+                  <SelectItem value="UPI">UPI</SelectItem>
+                  <SelectItem value="Card">Card</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Due Date (Only if remaining > 0 after payment) */}
             {remainingAfterPayment > 0 && (
               <div className="space-y-2">
-                <Label htmlFor="dueDate">Due Date</Label>
+                <Label htmlFor="dueDate">Next Due Date (Optional)</Label>
                 <Input
                   id="dueDate"
                   type="date"
-                  value={formData.dueDate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, dueDate: e.target.value })
-                  }
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
                 />
               </div>
             )}
 
+            {/* Notes */}
             <div className="space-y-2">
               <Label htmlFor="notes">Notes (Optional)</Label>
               <Textarea
                 id="notes"
-                value={formData.notes}
-                onChange={(e) =>
-                  setFormData({ ...formData, notes: e.target.value })
-                }
-                placeholder="Add any additional notes..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Transaction ID, reference number, or other details..."
                 rows={3}
               />
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-4 border-t">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                resetForm();
+              }}
               className="flex-1"
+              disabled={loading}
             >
               Cancel
             </Button>
-            <Button type="button" onClick={handleSubmit} className="flex-1">
-              Create Invoice
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              className="flex-1 bg-purple-600 hover:bg-purple-700"
+              disabled={
+                loading ||
+                !selectedCourse ||
+                !amount ||
+                !paymentMethod ||
+                amountNum > currentRemaining ||
+                amountNum <= 0
+              }
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Record Payment"
+              )}
             </Button>
           </div>
         </div>

@@ -27,7 +27,7 @@ const paymentHistorySchema = new Schema({
   amount: { type: Number, required: true },
   courseName: { type: String, required: true },
   modules: [{ type: Schema.Types.ObjectId, required: true, ref:"Module" }],
-  totalFees: { type: Number, required: true },
+  totalFees: { type: Number },
   dueDate: { type: String },
   notes: { type: String },
   mode: {

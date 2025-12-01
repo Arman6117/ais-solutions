@@ -14,12 +14,11 @@ const InvoiceDetailsPage = async ({ params }: InvoiceDetailsPageProps) => {
     return <div>Invoice not found</div>;
   }
 
-  console.log(res.data)
 
   return (
     <>
       {/* Pass the fetched data directly to the client component */}
-      <InvoiceDetails data={res.data} />
+      <InvoiceDetails data={res.data} invoiceId={id} />
     </>
   );
 };

@@ -121,6 +121,7 @@ export interface FormattedModule {
 
 // Formatted Course for Frontend
 export interface FormattedCourse {
+  courseId:string
   courseName: string;
   courseMode: "offline" | "hybrid" | "online";
   batchName: string;

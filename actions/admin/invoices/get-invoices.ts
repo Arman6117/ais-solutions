@@ -2,7 +2,7 @@
 
 import { connectToDB } from "@/lib/db";
 import { Invoice } from "@/models/invoice.model";
-import { Types, isValidObjectId } from "mongoose";
+import {  isValidObjectId } from "mongoose";
 import { ObjectId } from "mongodb";
 import {
   InvoiceResponse,
@@ -10,6 +10,10 @@ import {
   FormattedCourse,
   FormattedPayment,
   Student as StudentType,
+  BatchInfo,
+  PaymentHistory,
+  CourseDetails,
+  ModuleInfo,
 } from "@/lib/types/invoice"; // Ensure this path matches where you saved the types file
 
 // Import models to ensure schemas are registered
@@ -48,7 +52,6 @@ export const getInvoiceTable = async () => {
   }
 };
 
-
 export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
   try {
     if (!id) return { success: false, message: "Invoice ID is required" };
@@ -57,7 +60,7 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
 
     await connectToDB();
 
-    // 1. Fetch the specific requested invoice (to get student details mostly)
+    // 1. Fetch Invoice with deep population
     const currentInvoice = (await Invoice.findById(new ObjectId(id))
       .populate({
         path: "studentId",
@@ -68,7 +71,6 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
           populate: [
             { path: "courseId", select: "courseName" },
             { path: "modules.id", select: "name price" },
-            { path: "modules", select: "name price" },
           ],
         },
       })
@@ -78,52 +80,41 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
       return { success: false, message: "Invoice not found" };
     }
 
-    const student = currentInvoice.studentId;
+    const student: StudentType = currentInvoice.studentId;
     if (!student) {
       return { success: false, message: "Student data not properly populated" };
     }
 
-    // --- NEW STEP: FETCH ALL INVOICES FOR THIS STUDENT ---
-    const allStudentInvoices = await Invoice.find({ studentId: student._id })
+    
+    const allStudentInvoices = (await Invoice.find({ studentId: student._id })
       .select("paymentHistory")
-      .lean();
+      .lean()) as unknown as Pick<InvoiceDocPopulated, "paymentHistory">[];
 
-    // 2. Initialize Overall Summary Variables
+    // 3. Initialize Overall Summary Variables
     let overallTotalFees = 0;
     let overallAmountPaid = 0;
 
-    // 3. Format courses with Dynamic Calculation (Logic kept same as previous correct version)
-    const formattedCourses = student.batches
-      ?.map((batchEntry) => {
+    // 4. Format courses with Dynamic Calculation
+    const formattedCourses: FormattedCourse[] = (student.batches || [])
+      .map((batchEntry: BatchInfo): FormattedCourse | null => {
         const batch = batchEntry.batchId;
         if (!batch || !batch.courseId) return null;
 
-        const courseIdStr =
-          typeof batch.courseId._id === "string"
-            ? batch.courseId._id
-            : batch.courseId._id.toString();
+        const courseIdStr = batch.courseId._id.toString();
 
-        // Use currentInvoice to find course details (assuming current invoice has course links)
-        // Note: If courseDetails are spread across multiple invoices, we might need logic to merge them.
-        // For now, assuming currentInvoice holds the master record or at least the link.
         const invoiceCourseDetails = currentInvoice.courseDetails.find(
-          (cd) => cd.courseId.toString() === courseIdStr
+          (cd: CourseDetails) => cd.courseId.toString() === courseIdStr
         );
 
         if (!invoiceCourseDetails) return null;
 
-        const invoiceModuleIds = invoiceCourseDetails.modules.map((id) =>
-          id.toString()
-        );
-
         let calculatedCourseTotal = 0;
 
         const displayedModules = (batch.modules || [])
-          .map((m) => {
-            const moduleData = (m as any).id && (m as any).id.name ? (m as any).id : m;
+          .map((m: ModuleInfo) => {
+            const moduleData = m.id;
             if (!moduleData || !moduleData._id) return null;
 
-            // Include ALL modules in the batch
             const price = moduleData.price || 0;
             calculatedCourseTotal += price;
 
@@ -132,14 +123,15 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
               price: price,
             };
           })
-          .filter((item): item is { name: string; price: number } => Boolean(item));
+          .filter(
+            (item): item is { name: string; price: number } => Boolean(item)
+          );
 
         const currentAmountPaid = invoiceCourseDetails.amountPaid || 0;
         const currentRemaining = Math.max(
           0,
           calculatedCourseTotal - currentAmountPaid
         );
-
         const courseProgress =
           calculatedCourseTotal > 0
             ? ((currentAmountPaid / calculatedCourseTotal) * 100).toFixed(1)
@@ -149,6 +141,7 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
         overallAmountPaid += currentAmountPaid;
 
         return {
+          courseId: courseIdStr, // ✅ Plain string
           courseName: batch.courseId.courseName || "Unknown Course",
           courseMode: batchEntry.mode || "N/A",
           batchName: batch.name || "N/A",
@@ -163,46 +156,38 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
           paymentProgress: courseProgress,
         };
       })
-      .filter((item): item is FormattedCourse => Boolean(item));
+      .filter((course): course is FormattedCourse => Boolean(course));
 
-    // 4. Format Payment History (AGGREGATED FROM ALL INVOICES)
-    let allPayments: any[] = [];
-    
-    // Combine payments from all invoices found for this student
-    allStudentInvoices.forEach((inv: any) => {
-        if (inv.paymentHistory && Array.isArray(inv.paymentHistory)) {
-            allPayments = [...allPayments, ...inv.paymentHistory];
-        }
+    // 5. Aggregate and Format Payment History from ALL invoices
+    let allPayments: PaymentHistory[] = [];
+    allStudentInvoices.forEach((inv) => {
+      if (inv.paymentHistory && Array.isArray(inv.paymentHistory)) {
+        allPayments = [...allPayments, ...inv.paymentHistory];
+      }
     });
 
-    // Sort payments by date (newest first)
+    // Sort by date (newest first)
     allPayments.sort((a, b) => {
-        const dateA = new Date(a.createdAt || a.date).getTime();
-        const dateB = new Date(b.createdAt || b.date).getTime();
-        return dateB - dateA;
+      const dateA = new Date(a.createdAt || 0).getTime();
+      const dateB = new Date(b.createdAt || 0).getTime();
+      return dateB - dateA;
     });
 
     const formattedPayments: FormattedPayment[] = allPayments.map(
-      (payment) => {
+      (payment: PaymentHistory) => {
         const paymentModuleNames: string[] = [];
-
         if (payment.modules && payment.modules.length > 0) {
-          student.batches?.forEach((batchEntry) => {
-            const batch = batchEntry.batchId;
-            if (batch && batch.modules) {
-              batch.modules.forEach((m) => {
-                const moduleData = (m as any).id && (m as any).id.name ? (m as any).id : m;
-                if (
-                  moduleData &&
-                  payment.modules.some(
-                    (pModId: any) =>
-                      pModId.toString() === moduleData._id.toString()
-                  )
-                ) {
-                  paymentModuleNames.push(moduleData.name);
-                }
-              });
-            }
+          student.batches?.forEach((batchEntry: BatchInfo) => {
+            batchEntry.batchId?.modules?.forEach((m: ModuleInfo) => {
+              if (
+                m.id &&
+                payment.modules.some(
+                  (pModId) => pModId.toString() === m.id._id.toString()
+                )
+              ) {
+                paymentModuleNames.push(m.id.name);
+              }
+            });
           });
         }
 
@@ -212,7 +197,7 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
           modules:
             paymentModuleNames.length > 0
               ? paymentModuleNames.join(" + ")
-              : "Course Payment", // Fallback if specific modules aren't tracked
+              : "Course Payment",
           paymentDate: payment.createdAt
             ? new Date(payment.createdAt).toISOString()
             : new Date().toISOString(),
@@ -225,7 +210,7 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
       }
     );
 
-    // 5. Calculate Overall Summary
+    // 6. Calculate Final Overall Summary
     const overallRemaining = Math.max(0, overallTotalFees - overallAmountPaid);
     const overallProgress =
       overallTotalFees > 0
@@ -246,7 +231,7 @@ export const getInvoiceById = async (id: string): Promise<InvoiceResponse> => {
           remainingFees: overallRemaining,
           paymentProgress: overallProgress,
         },
-        courses: formattedCourses || [],
+        courses: formattedCourses,
         paymentHistory: formattedPayments,
       },
     };

@@ -14,24 +14,27 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 
 const StudentProfile = () => {
   const [data, setData] = useState<StudentData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Set initial loading to true
+
   const fetchStudentInfo = async () => {
-    setLoading(true);
     try {
       const session = await authClient.getSession();
       if (!session) {
+        setLoading(false);
         return;
       }
 
       const userEmail = session.data?.user?.email;
       if (!userEmail) {
         toast.error("User email not found");
+        setLoading(false);
         return;
       }
 
       const studentId = await getStudentId(userEmail);
       if (!studentId) {
         toast.error("Student ID not found");
+        setLoading(false);
         return;
       }
 
@@ -61,39 +64,46 @@ const StudentProfile = () => {
     handleImageUpload,
   } = useStudentProfile(data);
 
+  // 1. Return Loading state EARLY
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full w-full">
+      <div className="flex items-center justify-center h-full w-full min-h-[50vh]">
         <Loader2 className="text-primary-bg h-7 w-7 animate-spin" />
       </div>
     );
   }
- 
-  const totalFees = studentData?.invoices
-    .map((invoice) => {
-      return invoice.courseDetails?.reduce(
-        (total, course) => total + (course.totalFees || 0),
-        0
-      );
-    })
-    .reduce((sum, current) => sum + current, 0);
 
-  const amountPaid = studentData?.invoices
-    .map((invoice) => {
-      return invoice.courseDetails?.reduce(
-        (paid, course) => paid + (course.amountPaid || 0),
+  // 2. Return Error state if no data
+  if (!studentData) {
+    return (
+      <div className="flex flex-col gap-4 items-center justify-center h-full w-full min-h-[50vh]">
+        <AlertTriangle className="text-primary-bg h-7 w-7 " />
+        <h1>Something went wrong or No Profile Found</h1>
+      </div>
+    );
+  }
+
+  // 3. Safely Calculate Fees (Now guaranteed that studentData exists)
+  const totalFees = (studentData.invoices || [])
+    .reduce((acc, invoice) => {
+      // Guard against undefined invoice or courseDetails
+      const invoiceTotal = (invoice?.courseDetails || []).reduce(
+        (total, course) => total + (course?.totalFees || 0),
         0
       );
-    })
-    .reduce((sum, current) => sum + current, 0);
-    if (!studentData) {
-      return (
-        <div className="flex flex-col gap-4 items-center justify-center h-full w-full">
-          <AlertTriangle className="text-primary-bg h-7 w-7 " />
-          <h1>Something went wrong</h1>
-        </div>
+      return acc + invoiceTotal;
+    }, 0);
+
+  const amountPaid = (studentData.invoices || [])
+    .reduce((acc, invoice) => {
+      // Guard against undefined invoice or courseDetails
+      const invoicePaid = (invoice?.courseDetails || []).reduce(
+        (paid, course) => paid + (course?.amountPaid || 0),
+        0
       );
-    }
+      return acc + invoicePaid;
+    }, 0);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-8">
@@ -109,12 +119,12 @@ const StudentProfile = () => {
         />
         <StatsSection studentData={studentData} />
         <PaymentProgress
-          totalFees={totalFees || 0}
-          paidFees={amountPaid || 0}
+          totalFees={totalFees}
+          paidFees={amountPaid}
         />
         <CoursesSection
-          invoices={studentData.invoices}
-          courses={studentData?.courses || []}
+          invoices={studentData.invoices || []}
+          courses={studentData.courses || []}
         />
       </div>
     </div>

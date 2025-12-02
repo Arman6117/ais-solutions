@@ -11,7 +11,7 @@ interface CoursesSectionProps {
   invoices: Invoices[];
 }
 
-const CoursesSection = ({ courses, invoices }: CoursesSectionProps) => {
+const CoursesSection = ({ courses = [], invoices = [] }: CoursesSectionProps) => {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center gap-4">
@@ -33,13 +33,19 @@ const CoursesSection = ({ courses, invoices }: CoursesSectionProps) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         {courses.map((course, idx) => {
-          const relatedCourse = invoices.filter(
-            (invoice) =>
-              invoice.courseDetails[0].courseId == course.courseId._id
-          );
+          // 1. Safety: Find related invoice safely
+          const relatedInvoice = invoices.find((invoice) => {
+             // Check if invoice and courseDetails exist before accessing index 0
+             const details = invoice?.courseDetails?.[0];
+             return details?.courseId === course.courseId._id;
+          });
 
-          const amountPaid = relatedCourse[0].courseDetails[0].amountPaid || 0;
-          const totalFee = relatedCourse[0].courseDetails[0].totalFees || 0;
+          // 2. Safety: Extract amounts with fallbacks
+          // If no related invoice is found, default to 0
+          const courseDetails = relatedInvoice?.courseDetails?.[0];
+          const amountPaid = courseDetails?.amountPaid || 0;
+          const totalFee = courseDetails?.totalFees || 0;
+
           return (
             <EnrolledCourseCard
               amountPaid={amountPaid}

@@ -20,7 +20,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
     new Date(course.courseEndDate),
     { addSuffix: false } // removes "in" or "ago"
   );
-
+console.log(course)
   return (
     <Link href={`/student/courses/course-details/${course._id}`}>
       <Card className="shadow-none p-0 hover:bg-accent transition-colors">

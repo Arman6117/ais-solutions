@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+
 import {
   Dialog,
   DialogContent,
@@ -9,143 +9,113 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import {
-  Building2,
-  Laptop,
-  Phone,
-  Users,
-  ShieldCheck,
-  HelpCircle,
-  MessageCircle,
-  BookOpen,
-  FileText,
-  Briefcase,
-  Wrench,
-  Globe,
-} from "lucide-react";
-import { useSupportDepartmentStore } from "@/store/use-support-deparment-store";
+import { Plus, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-const ICONS = [
-  { label: "Building", value: "Building2", icon: <Building2 className="size-4" /> },
-  { label: "Laptop", value: "Laptop", icon: <Laptop className="size-4" /> },
-  { label: "Phone", value: "Phone", icon: <Phone className="size-4" /> },
-  { label: "Users", value: "Users", icon: <Users className="size-4" /> },
-  { label: "Shield", value: "ShieldCheck", icon: <ShieldCheck className="size-4" /> },
-  { label: "Help", value: "HelpCircle", icon: <HelpCircle className="size-4" /> },
-  { label: "Chat", value: "MessageCircle", icon: <MessageCircle className="size-4" /> },
-  { label: "Docs", value: "FileText", icon: <FileText className="size-4" /> },
-  { label: "Knowledge", value: "BookOpen", icon: <BookOpen className="size-4" /> },
-  { label: "HR", value: "Briefcase", icon: <Briefcase className="size-4" /> },
-  { label: "Support", value: "Wrench", icon: <Wrench className="size-4" /> },
-  { label: "Web", value: "Globe", icon: <Globe className="size-4" /> },
+import { useRouter } from "next/navigation";
+import { CreateDepartmentPayload } from "@/lib/types/support.type";
+import { createSupportDepartment } from "@/actions/admin/support/create-support-department";
+
+// Predefined pools for random assignment
+const ICON_KEYS = [
+  "Building2", "Laptop", "Phone", "Users", "ShieldCheck", 
+  "HelpCircle", "MessageCircle", "FileText", "BookOpen", 
+  "Briefcase", "Wrench", "Globe"
 ];
 
-const COLORS = [
-  { name: "Blue", value: "from-blue-500 to-blue-700" },
-  { name: "Purple", value: "from-purple-500 to-purple-700" },
-  { name: "Green", value: "from-green-500 to-green-700" },
-  { name: "Teal", value: "from-teal-500 to-teal-700" },
-  { name: "Orange", value: "from-orange-500 to-orange-700" },
-  { name: "Pink", value: "from-pink-500 to-pink-700" },
+const COLOR_CLASSES = [
+  "bg-gradient-to-br from-blue-500 to-blue-700",
+  "bg-gradient-to-br from-purple-500 to-purple-700",
+  "bg-gradient-to-br from-green-500 to-green-700",
+  "bg-gradient-to-br from-teal-500 to-teal-700",
+  "bg-gradient-to-br from-orange-500 to-orange-700",
+  "bg-gradient-to-br from-pink-500 to-pink-700",
+  "bg-gradient-to-br from-indigo-500 to-indigo-700",
+  "bg-gradient-to-br from-rose-500 to-rose-700",
 ];
 
 const CreateSupportDepartmentModal = () => {
   const [open, setOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState("");
-  const [icon, setIcon] = useState("");
-  const [color, setColor] = useState("");
-  const {addDepartment} = useSupportDepartmentStore()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  
+  const handleSubmit = async () => {
+    if (!departmentName.trim()) {
+        toast.warning("Please enter a department name.");
+        return;
+    }
+    
+    setIsLoading(true);
 
-  const handleSubmit = () => {
-    const payload = {
-       id: uuidv4(),
-       name:departmentName,
-      icon,
-      color,
+    // Randomly assign visual identity
+    const randomIcon = ICON_KEYS[Math.floor(Math.random() * ICON_KEYS.length)];
+    const randomColor = COLOR_CLASSES[Math.floor(Math.random() * COLOR_CLASSES.length)];
+
+    const payload: CreateDepartmentPayload = {
+      name: departmentName,
+      icon: randomIcon,
+      color: randomColor,
     };
-   addDepartment(payload)
-    console.log("Creating Support Department:", payload);
-    // 🔗 Send to backend or update state
-    setOpen(false);
-    setDepartmentName("");
-    setIcon("");
-    setColor("");
+    
+    // Call the server action
+    const result = await createSupportDepartment(payload);
+
+    if (result.success) {
+      toast.success(result.message);
+      router.refresh(); // Refresh server components to show the new data
+      setOpen(false);
+      setDepartmentName("");
+    } else {
+      toast.error(result.message);
+    }
+
+    setIsLoading(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-primary-bg">+ Create Support Department</Button>
+        <Button className="bg-primary hover:bg-primary/90 text-white shadow-sm">
+          <Plus className="w-4 h-4 mr-2" />
+          Create Department
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create New Department</DialogTitle>
+          <DialogDescription>
+            Add a new support team. We&apos;ll automatically assign a unique icon and theme.
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 py-4">
-          {/* Department Name */}
-          <div>
-            <Label>Department Name</Label>
+        <div className="py-6">
+          <div className="space-y-2">
+            <Label htmlFor="dept-name">Department Name</Label>
             <Input
+              id="dept-name"
               value={departmentName}
               onChange={(e) => setDepartmentName(e.target.value)}
-              placeholder="e.g., Back Office"
+              placeholder="e.g., Customer Success"
+              className="col-span-3"
+              autoFocus
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             />
-          </div>
-
-          {/* Icon Selection */}
-          <div>
-            <Label>Choose Icon</Label>
-            <Select onValueChange={(val) => setIcon(val)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select icon" />
-              </SelectTrigger>
-              <SelectContent>
-                {ICONS.map((ic) => (
-                 <SelectItem key={ic.value} value={ic.value}>
-                    <div className="flex items-center gap-2">
-                      {ic.icon}
-                      {ic.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Color Selection */}
-          <div>
-            <Label>Choose Color</Label>
-            <Select onValueChange={setColor}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select color" />
-              </SelectTrigger>
-              <SelectContent>
-                {COLORS.map((col) => (
-                  <SelectItem key={col.value} value={col.value}>
-                    <div className={`w-4 h-4 rounded-full bg-gradient-to-br ${col.value} mr-2 inline-block`} />
-                    {col.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         </div>
 
         <DialogFooter>
-          <Button onClick={handleSubmit} className="bg-primary-bg ml-auto">
-            Create
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={!departmentName.trim() || isLoading}>
+            {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            Create Department
           </Button>
         </DialogFooter>
       </DialogContent>

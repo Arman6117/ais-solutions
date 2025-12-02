@@ -1,233 +1,178 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
-import { MdContactSupport, MdSend, MdCheck } from "react-icons/md";
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { MdContactSupport, MdEmail, MdPhone, MdAccessTime } from "react-icons/md";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getSupportDepartments } from "@/actions/admin/support/get-support-data";
+import { Building2, Loader2 } from "lucide-react";
+import { ICON_COMPONENTS } from "@/lib/utils";
 
-interface FormData {
+// Define types for local state based on what we expect from the server
+type SupportMember = {
+  _id: string;
   name: string;
+  designation: string;
   email: string;
-  subject: string;
+  contact: string;
+  availableTime: string;
+};
 
-  message: string;
-}
-
-interface FormErrors {
-  [key: string]: string;
-}
+type Department = {
+  _id: string;
+  name: string;
+  icon: string;
+  color: string;
+  members: SupportMember[];
+};
 
 const ContactSupportButton: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    subject: "",
+  const [open, setOpen] = useState(false);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [errors, setErrors] = useState<FormErrors>({});
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+  useEffect(() => {
+    if (open && departments.length === 0) {
+      const fetchData = async () => {
+        setLoading(true);
+        const result = await getSupportDepartments();
+        if (result.success && result.data) {
+          setDepartments(result.data); // Cast if types slightly mismatch strict checks
+        }
+        setLoading(false);
+      };
+      fetchData();
     }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
-
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-    if (formData.message.trim().length < 10)
-      newErrors.message = "Message must be at least 10 characters long";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setIsSubmitting(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-
-        message: "",
-      });
-    }, 3000);
-  };
-
-  if (isSubmitted) {
-    return (
-      <Dialog>
-        <DialogTrigger asChild className="fixed z-30 bottom-10 right-16">
-          <Button className="size-10 rounded-full cursor-pointer">
-            <MdContactSupport className="size-8" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <MdCheck className="w-8 h-8 text-green-600" />
-            </div>
-            <DialogTitle className="text-xl font-semibold text-green-700 mb-2">
-              Message Sent Successfully!
-            </DialogTitle>
-            <p className="text-gray-600">
-             {` Thank you for contacting us. We'll get back to you.`}
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  }, [open, departments.length]);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild className="fixed z-30 sm:bottom-10 bottom-20 right-5 sm:right-16">
-        <Button className="size-10 rounded-full cursor-pointer">
-          <MdContactSupport className="size-8" />
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild className="fixed z-30 bottom-10 right-5 sm:right-16">
+        <Button className=" h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-transform hover:scale-105">
+          <MdContactSupport className="size-full" />
+          <span className="sr-only">Contact Support</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      
+      <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-4 border-b">
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <MdContactSupport className="w-5 h-5" />
-            Contact Support
+            <MdContactSupport className="w-6 h-6 text-primary" />
+            Support Team
           </DialogTitle>
+          <DialogDescription>
+            Find the right person to help you with your query.
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Name and Email Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("name", e.target.value)
-                }
-                placeholder="Your full name"
-                className={errors.name ? "border-red-500" : ""}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("email", e.target.value)
-                }
-                placeholder="your.email@example.com"
-                className={errors.email ? "border-red-500" : ""}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-64 gap-2 text-muted-foreground">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p>Loading support contacts...</p>
           </div>
-
-          {/* Subject */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="subject">Subject *</Label>
-            <Input
-              id="subject"
-              value={formData.subject}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleInputChange("subject", e.target.value)
-              }
-              placeholder="Brief description of your issue"
-              className={errors.subject ? "border-red-500" : ""}
-            />
-            {errors.subject && (
-              <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
-            )}
+        ) : departments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64 gap-2 text-muted-foreground">
+            <Building2 className="h-10 w-10 opacity-20" />
+            <p>No support teams found.</p>
           </div>
+        ) : (
+          <div className="flex-1 overflow-hidden">
+            <Tabs defaultValue={departments[0]?._id} className="h-full flex flex-col">
+              <div className="px-6 py-2 bg-slate-50/50 border-b">
+                <ScrollArea className="w-full" >
+                  <TabsList className="bg-transparent p-0 h-auto gap-2 w-full justify-start">
+                    {departments.map((dept) => {
+                      const Icon = ICON_COMPONENTS[dept.icon] || Building2;
+                      return (
+                        <TabsTrigger
+                          key={dept._id}
+                          value={dept._id}
+                          className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary border border-transparent data-[state=active]:border-primary/20 rounded-full px-4 py-2 h-auto gap-2"
+                        >
+                          <Icon className="w-4 h-4" />
+                          {dept.name}
+                        </TabsTrigger>
+                      );
+                    })}
+                  </TabsList>
+                </ScrollArea>
+              </div>
 
-          {/* Inquiry Type and Priority Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+              {departments.map((dept) => (
+                <TabsContent key={dept._id} value={dept._id} className="flex-1 p-0 m-0 overflow-hidden">
+                  <ScrollArea className="h-full max-h-[50vh] p-6 pt-4">
+                    {dept.members.length > 0 ? (
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {dept.members.map((member) => (
+                          <div
+                            key={member._id}
+                            className="flex flex-col p-4 rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start gap-3 mb-3">
+                              <Avatar className="h-10 w-10 border">
+                                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.name}`} />
+                                <AvatarFallback>{member.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-sm truncate">{member.name}</h4>
+                                <Badge variant="secondary" className="text-[10px] font-normal h-5 px-1.5 mt-0.5">
+                                  {member.designation}
+                                </Badge>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2 text-sm text-muted-foreground mt-auto">
+                              <a 
+                                href={`mailto:${member.email}`}
+                                className="flex items-center gap-2 hover:text-primary transition-colors p-1.5 -ml-1.5 rounded-md hover:bg-slate-50"
+                              >
+                                <div className="bg-blue-50 text-blue-600 p-1 rounded-full">
+                                  <MdEmail className="w-3.5 h-3.5" />
+                                </div>
+                                <span className="truncate">{member.email}</span>
+                              </a>
+                              
+                              <a 
+                                href={`tel:${member.contact}`}
+                                className="flex items-center gap-2 hover:text-primary transition-colors p-1.5 -ml-1.5 rounded-md hover:bg-slate-50"
+                              >
+                                <div className="bg-green-50 text-green-600 p-1 rounded-full">
+                                  <MdPhone className="w-3.5 h-3.5" />
+                                </div>
+                                <span className="truncate">{member.contact}</span>
+                              </a>
 
-          {/* Message */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="message">Message *</Label>
-            <Textarea
-              id="message"
-              value={formData.message}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                handleInputChange("message", e.target.value)
-              }
-              placeholder="Please describe your issue in detail..."
-              rows={4}
-              className={errors.message ? "border-red-500" : ""}
-            />
-            <div className="flex justify-between items-center mt-1">
-              {errors.message && (
-                <p className="text-red-500 text-sm">{errors.message}</p>
-              )}
-              <p className="text-gray-500 text-sm ml-auto">
-                {formData.message.length}/500
-              </p>
-            </div>
+                              <div className="flex items-center gap-2 p-1.5 -ml-1.5">
+                                <div className="bg-amber-50 text-amber-600 p-1 rounded-full">
+                                  <MdAccessTime className="w-3.5 h-3.5" />
+                                </div>
+                                <span className="truncate">{member.availableTime}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-40 text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+                        <p className="text-sm">No support members in this team yet.</p>
+                      </div>
+                    )}
+                  </ScrollArea>
+                </TabsContent>
+              ))}
+            </Tabs>
           </div>
-
-          {/* Response Time Info */}
-
-          {/* Submit Button */}
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                Sending...
-              </>
-            ) : (
-              <>
-                <MdSend className="w-4 h-4 mr-2" />
-                Send Message
-              </>
-            )}
-          </Button>
-        </form>
+        )}
       </DialogContent>
     </Dialog>
   );

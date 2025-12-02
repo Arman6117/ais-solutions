@@ -82,6 +82,7 @@ const AllCourses = () => {
     (currentPage - 1) * COURSES_PER_PAGE,
     currentPage * COURSES_PER_PAGE
   );
+  console.log("paginatedCourses", paginatedCourses);
 
   return (
     <div className="flex flex-col w-full">

@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 
 // 1. Create a Loading Component for Suspense
 const ProfileLoading = () => (
-  <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+  <div className="min-h-screen w-screen bg-slate-50 flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
       <Loader2 className="h-10 w-10 animate-spin text-purple-600" />
       <p className="text-slate-500 font-medium">Loading Profile...</p>
@@ -17,7 +17,6 @@ const ProfileLoading = () => (
   </div>
 );
 
-// 2. Create the Async Component that fetches data
 async function ProfileFetcher() {
   const session = await auth.api.getSession({
     headers: await headers(),

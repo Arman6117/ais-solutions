@@ -40,7 +40,7 @@ const WatchPageComponent = ({
     fetchNotes();
   }, []);
 
-  console.log(notesData);
+ 
 
   return (
     <div className="container mx-auto py-8">

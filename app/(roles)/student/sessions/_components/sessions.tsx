@@ -1,11 +1,8 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-
 import SessionFilterSelect from "./session-filter-select";
 import SessionSortSelect from "./session-sort-select";
-
 import { Input } from "@/components/ui/input";
-
 import {
   Pagination,
   PaginationContent,
@@ -14,98 +11,30 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import SessionModuleFilterSelect from "./session-module-filter-select";
-import { getStudentSessions } from "@/actions/shared/get-sessions";
-
-import { toast } from "sonner";
 import { Session } from "@/lib/types/sessions.type";
-import { authClient } from "@/lib/auth-client";
-import { getStudentId } from "@/actions/shared/get-student-id";
-import { getStudentModules } from "@/actions/student/sessions/get-student-modules";
-import { Loader2 } from "lucide-react";
 import SessionCard from "./session-card";
 
 const ITEMS_PER_PAGE = 5;
 
-const Sessions = () => {
+type SessionsProps = {
+  initialSessions: Session[];
+  initialModules: string[];
+  studentId: string;
+};
+
+const Sessions = ({ initialSessions, initialModules, studentId }: SessionsProps) => {
+  // Initialize state with Server Data
+  const [studentSessions] = useState<Session[]>(initialSessions);
+  const [studentModules] = useState<string[]>(initialModules);
+  const [currentStudentId] = useState<string>(studentId);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [studentSessions, setStudentSessions] = useState<Session[]>([]);
   const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<"all" | "attended" | "missed">("all");
   const [moduleFilter, setModuleFilter] = useState<string>("all");
-  const [studentModules, setStudentModules] = useState<string[]>([]);
-  const [currentStudentId, setCurrentStudentId] = useState("");
 
-  const isSessionPast = (sessionDate: Date | string, sessionTime: string) => {
-    const currentDateTime = new Date();
-
-    const sessionDateObj = new Date(sessionDate);
-
-    if (sessionTime && sessionTime.includes(":")) {
-      const [hours, minutes] = sessionTime
-        .split(":")
-        .map((num) => parseInt(num, 10));
-      sessionDateObj.setHours(hours, minutes, 0, 0);
-    } else {
-      sessionDateObj.setHours(23, 59, 59, 999);
-    }
-
-    return sessionDateObj < currentDateTime;
-  };
-
-  useEffect(() => {
-    const fetchStudentId = async () => {
-      try {
-        const session = await authClient.getSession();
-        if (!session.data) return;
-        const studentId = await getStudentId(session.data.user.email!);
-        if (!studentId) {
-          throw new Error("Login");
-        }
-
-        setCurrentStudentId(studentId);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchStudentId();
-  }, []);
-
-  const fetchAllSessionsAndModules = async () => {
-    setIsLoading(true);
-    try {
-      const res = await getStudentSessions(currentStudentId);
-      const modules = await getStudentModules(currentStudentId);
-
-      toast.message(res.message);
-
-      // Filter to only show sessions that have already happened
-      const pastSessions = res.data.filter((session) => {
-        const isPast = isSessionPast(session.date, session.time);
-        console.log(
-          `Session ${session.meetingName} - Date: ${session.date}, Time: ${session.time}, Is Past: ${isPast}, Is Purchased: ${session.isPurchasedModule}`
-        );
-        return isPast;
-      });
-
-      setStudentSessions(pastSessions);
-      setStudentModules(modules.data);
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
-      setStudentSessions([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (currentStudentId) {
-      fetchAllSessionsAndModules();
-    }
-  }, [currentStudentId]);
-
+  // Filter Logic
   const filteredSessions = useMemo(() => {
     let sessions = [...studentSessions];
 
@@ -120,15 +49,12 @@ const Sessions = () => {
       );
     }
 
-    // Filter by module - UPDATED LOGIC
+    // Filter by module
     if (moduleFilter === "purchased") {
-      // Show only purchased modules
       sessions = sessions.filter((session) => session.isPurchasedModule === true);
     } else if (moduleFilter === "other") {
-      // Show only non-purchased modules
       sessions = sessions.filter((session) => session.isPurchasedModule === false);
     } else if (moduleFilter !== "all") {
-      // Filter by specific module name
       sessions = sessions.filter((session) => session.module === moduleFilter);
     }
 
@@ -178,7 +104,6 @@ const Sessions = () => {
     sortBy,
     studentSessions,
     currentStudentId,
-    studentModules,
   ]);
 
   const totalPages = Math.ceil(filteredSessions.length / ITEMS_PER_PAGE);
@@ -187,17 +112,10 @@ const Sessions = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
+  // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filter, moduleFilter, searchTerm, sortBy]);
-
-  if (isLoading) {
-    return (
-      <div className="flex w-screen h-screen items-center justify-center">
-        <Loader2 className="text-primary-bg animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col w-full">

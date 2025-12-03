@@ -23,7 +23,6 @@ import {
   Batch,
   BatchType,
   DummyInstructors,
-  DummyStudent,
   Mode,
   Modules,
 } from "@/lib/types/types";
@@ -53,14 +52,14 @@ type BatchDetailsProps = {
   batch: Batch;
   dummyModules: string[];
   dummyInstructors: DummyInstructors[];
-  dummyStudents: DummyStudent[] | undefined;
+  
   courseId: string;
 };
 
 const BatchDetails = ({
   batch,
 
-  dummyStudents,
+  
   courseId,
 }: BatchDetailsProps) => {
   const router = useRouter();
@@ -440,7 +439,7 @@ const BatchDetails = ({
         <BatchNotesTable courseId={courseId} mode={mode} batchId={batch._id} />
         <BatchStudentTable
           mode={mode}
-          dummyStudents={dummyStudents!}
+          
           courseId={courseId}
           batchId={batch._id as string}
         />

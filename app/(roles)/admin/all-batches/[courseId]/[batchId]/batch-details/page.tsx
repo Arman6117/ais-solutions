@@ -1,4 +1,4 @@
-import {  batchModules, dummyInstructors, dummyStudents } from "@/lib/static";
+import {  batchModules, dummyInstructors } from "@/lib/static";
 import React from "react";
 import BatchDetails from "./_components/batch-details";
 import { getBatchById } from "@/actions/admin/batches/get-batch-by-id";
@@ -12,7 +12,6 @@ const BatchDetailsPage = async ({
   const id = (await params).batchId;
   const courseId = (await params).courseId;
   const  res = await getBatchById(id);
-  const students = dummyStudents.filter((stud) => stud.batchId === id);
  
   if(!res.success) {
     return (
@@ -26,7 +25,7 @@ const BatchDetailsPage = async ({
         batch={res.data!}
         dummyInstructors={dummyInstructors}
         dummyModules={batchModules}
-        dummyStudents={students}
+      
         courseId={courseId}
       />
     </main>

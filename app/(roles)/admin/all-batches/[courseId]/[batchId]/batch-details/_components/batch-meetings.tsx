@@ -1,4 +1,5 @@
 "use client";
+
 import { deleteSession } from "@/actions/admin/sessions/delete-session";
 import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
 import { Button } from "@/components/ui/button";
@@ -10,10 +11,11 @@ import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import MeetingDeleteDialog from "./meeting-delete-dialog";
 import MeetingEditDialog from "./meeting-edit-dialog";
+import MeetingFilters from "./meeting-filters"; // Import the new component
 
 type BatchMeetingsProps = {
   courseId: string;
@@ -61,6 +63,13 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
   const [meetings, setMeetings] = useState<BatchMeetingsType[]>([]);
   const formattedToday = format(today, "EEEE PP");
 
+  // Filter State
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "all",
+    sortOrder: "desc" as "asc" | "desc",
+  });
+
   const fetchMeetings = async () => {
     try {
       const res = await getAllMeetingsByBatchId(batch);
@@ -94,6 +103,31 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
     }
   };
 
+  // Apply Filters and Sorting
+  const filteredMeetings = useMemo(() => {
+    let result = [...meetings];
+
+    // 1. Search Filter
+    if (filters.search) {
+      const query = filters.search.toLowerCase();
+      result = result.filter(
+        (m) =>
+          m.meetingName.toLowerCase().includes(query) ||
+          m.module.toLowerCase().includes(query) ||
+          (m.instructor && m.instructor.toLowerCase().includes(query))
+      );
+    }
+
+    // 2. Status Filter
+    if (filters.status !== "all") {
+      result = result.filter((m) => m.status === filters.status);
+    }
+
+    // 3. Sorting happens automatically in groupMeetingsByDate via object keys sort, 
+    // but we need to control the Grouping Sort Order.
+    return result;
+  }, [meetings, filters]);
+
   const groupMeetingsByDate = (meetings: BatchMeetingsType[]) => {
     const grouped = meetings.reduce(
       (acc, meeting) => {
@@ -107,21 +141,30 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
       {} as Record<string, BatchMeetingsType[]>
     );
 
-    return Object.entries(grouped).sort(
-      ([a], [b]) => new Date(b).getTime() - new Date(a).getTime()
-    );
+    return Object.entries(grouped).sort(([dateA], [dateB]) => {
+      const timeA = new Date(dateA).getTime();
+      const timeB = new Date(dateB).getTime();
+      return filters.sortOrder === "asc" ? timeA - timeB : timeB - timeA;
+    });
   };
 
-  const groupedMeetings = groupMeetingsByDate(meetings);
-  const hasMeetings = meetings.length > 0;
+  const groupedMeetings = groupMeetingsByDate(filteredMeetings);
+  const hasMeetings = filteredMeetings.length > 0;
 
   return (
     <Card className="border shadow-md">
       <CardHeader className="pb-3 bg-gray-50 border-b">
-        <CardTitle className="text-xl">Meetings Schedule</CardTitle>
+        <div className="flex justify-between items-center">
+           <CardTitle className="text-xl">Meetings Schedule</CardTitle>
+           <div className="text-sm text-gray-500 font-medium">{meetings.length} Total</div>
+        </div>
         <div className="text-sm text-gray-500">{formattedToday}</div>
       </CardHeader>
+      
       <CardContent className="p-4">
+        {/* Filter Component */}
+        <MeetingFilters onFilterChange={setFilters} />
+
         <div className="space-y-4">
           {hasMeetings ? (
             <ScrollArea className="h-96 w-full pr-4">
@@ -171,8 +214,8 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                     meeting.status === "cancelled"
                                       ? "bg-red-400"
                                       : meeting.status === "rescheduled"
-                                        ? "bg-yellow-400"
-                                        : "bg-violet-500"
+                                      ? "bg-yellow-400"
+                                      : "bg-violet-500"
                                   )}
                                 ></div>
                                 <div className="flex-1">
@@ -288,11 +331,13 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
               </div>
               <div className="text-center">
                 <p className="font-medium text-gray-600">
-                  No meetings scheduled
+                  {filters.search || filters.status !== "all" ? "No meetings match your filters" : "No meetings scheduled"}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Click the button below to schedule your first meeting
-                </p>
+                {!(filters.search || filters.status !== "all") && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Click the button below to schedule your first meeting
+                    </p>
+                )}
               </div>
             </div>
           )}

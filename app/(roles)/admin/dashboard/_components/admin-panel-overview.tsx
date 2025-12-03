@@ -3,7 +3,7 @@
 import React from "react";
 import AdminOverviewCard from "./admin-overview-card";
 import Greetings from "@/components/greetings";
-import NotificationPanel from "./notification-panel";
+// import NotificationPanel from "./notification-panel";
 import QuickActionPanel from "./quick-action-panel";
 import GlobalSearchBar from "./global-search-bar";
 import AdminSignOutButton from "./admin-sign-out";
@@ -22,7 +22,7 @@ const AdminPanelOverview = ({ stats }: { stats: Stats }) => {
     <div className="w-[90%] flex flex-col gap-10">
       <div className="flex items-center gap-4">
         <Greetings>Admin</Greetings>
-        <NotificationPanel />
+        {/* <NotificationPanel /> */}
         <QuickActionPanel />
         <AdminSignOutButton />
       </div>

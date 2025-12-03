@@ -27,6 +27,11 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // FIX: Determine purchase status. 
+  // Default to true if undefined, because access is controlled by the parent Module Dialog.
+  // Only treat as false if explicitly false.
+  const hasAccess = session.isPurchasedModule !== false;
+
   const { formattedDate, formattedTime } = useMemo(() => {
     try {
       let dateObj: Date;
@@ -101,7 +106,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
   return (
     <div
       className={`w-full border rounded-xl shadow-sm hover:shadow-lg transition-shadow p-5 space-y-3 ${
-        session.isPurchasedModule === false
+        !hasAccess
           ? "bg-gray-50 border-gray-300"
           : "bg-white"
       }`}
@@ -120,7 +125,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
           </Badge>
 
           {/* Purchase Status Badge */}
-          {session.isPurchasedModule === false && (
+          {!hasAccess && (
             <Badge
               variant="outline"
               className="text-xs px-3 py-1 bg-orange-50 text-orange-700 border-orange-300 flex items-center gap-1"
@@ -129,7 +134,8 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
               Not Purchased
             </Badge>
           )}
-          {session.isPurchasedModule === true && (
+          {/* Only show Purchased badge if explicitly true, or implied */}
+          {hasAccess && (
             <Badge
               variant="outline"
               className="text-xs px-3 py-1 bg-blue-50 text-blue-700 border-blue-300 flex items-center gap-1"
@@ -139,7 +145,8 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
             </Badge>
           )}
 
-          {!attended && session.isPurchasedModule && (
+          {/* FIX: Use the calculated hasAccess variable */}
+          {!attended && hasAccess && (
             <SessionMarkAsWatchedButton
               loading={isLoading}
               onClick={handleClick}
@@ -148,7 +155,8 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
         </div>
         <div className="text-sm flex gap-3 flex-col items-center text-muted-foreground">
           {formattedDate} • {formattedTime}
-          {session.isPurchasedModule && (
+          {/* FIX: Use the calculated hasAccess variable */}
+          {hasAccess && (
             <SessionCardViewNotesButton sessionId={session._id} />
           )}
         </div>
@@ -168,7 +176,7 @@ const SessionCard = ({ session, attended, studentId }: SessionCardProps) => {
       <div className="text-sm text-gray-700 flex items-center gap-2">
         <BookOpenCheck className="h-4 w-4 text-green-600" />
         <span className="font-medium">Module:</span> {session.module}
-        {session.isPurchasedModule === false && (
+        {!hasAccess && (
           <span className="text-xs text-orange-600 ml-2">(Preview Only)</span>
         )}
       </div>

@@ -1,16 +1,17 @@
 // components/profile/ProfileHeader.tsx
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit3, Save, X, Phone, Camera, Mail } from "lucide-react";
 import { EditableData } from "@/lib/types/student-profile.type";
 import ProfileDetail from "./profile-detail";
 import { StudentData } from "@/lib/types/student";
+import Image from "next/image";
 
 type ProfileHeaderProps = {
-  studentData: StudentData ;
+  studentData: StudentData;
   isEditing: boolean;
   editData: EditableData;
   onEditToggle: () => void;
@@ -19,6 +20,7 @@ type ProfileHeaderProps = {
   onImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEditDataChange: (field: keyof EditableData, value: string) => void;
 };
+
 const ProfileHeader = ({
   studentData,
   isEditing,
@@ -30,34 +32,49 @@ const ProfileHeader = ({
   onEditDataChange,
 }: ProfileHeaderProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imgError, setImgError] = useState(false);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
 
+  const profileImageSrc = studentData.profilePic;
+
   return (
     <Card className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 border-0 shadow-2xl">
+      {/* Decorative backgrounds */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-48 translate-x-48"></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-32 -translate-x-32"></div>
 
       <CardContent className="relative p-6 md:p-8 lg:p-12">
         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+          {/* Avatar Section */}
           <div className="relative group">
-            <Avatar className="size-28 md:size-36 border-4 border-white/30 shadow-2xl">
-              <AvatarImage
-                src={studentData.profilePic}
-                alt="Profile"
-                className="group-hover:scale-110  object-cover transition-transform duration-500"
-              />
-              <AvatarFallback className="bg-white text-purple-600 text-2xl font-bold">
-                {studentData.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+            <Avatar className="size-28 md:size-36 border-4 border-white/30 shadow-2xl relative overflow-hidden">
+              {profileImageSrc && !imgError ? (
+                <Image
+                  src={profileImageSrc}
+                  alt="Profile"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  priority
+                  sizes="(max-width: 768px) 112px, 144px" // size-28 is 7rem(112px), size-36 is 9rem(144px)
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <AvatarFallback className="bg-white text-purple-600 text-2xl font-bold h-full w-full flex items-center justify-center">
+                  {studentData.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2)}
+                </AvatarFallback>
+              )}
             </Avatar>
+
             <Button
               onClick={handleImageClick}
               size="icon"
@@ -74,6 +91,7 @@ const ProfileHeader = ({
             />
           </div>
 
+          {/* Info Section */}
           <div className="flex-1 text-center lg:text-left text-white space-y-6">
             <div className="flex flex-col md:flex-row md:justify-center lg:justify-start items-center gap-4">
               {isEditing ? (
@@ -81,7 +99,7 @@ const ProfileHeader = ({
                   type="text"
                   value={editData.name}
                   onChange={(e) => onEditDataChange("name", e.target.value)}
-                  className="text-2xl md:text-4xl font-bold bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder-white/70 focus:ring-white/50 focus:bg-white/25 transition-all duration-300 h-auto py-2 md:py-3"
+                  className="text-2xl md:text-4xl font-bold bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder-white/70 focus:ring-white/50 focus:bg-white/25 transition-all duration-300 h-auto py-2 md:py-3 text-center md:text-left"
                 />
               ) : (
                 <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
@@ -101,7 +119,7 @@ const ProfileHeader = ({
                     <Button
                       onClick={onCancel}
                       variant="outline"
-                      className="border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300"
+                      className="border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300 hover:text-white"
                     >
                       <X className="w-4 h-4 mr-2" /> Cancel
                     </Button>
@@ -117,7 +135,7 @@ const ProfileHeader = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
               <ProfileDetail
                 icon={<Mail />}
                 label="Email Address"

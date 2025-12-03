@@ -1,57 +1,34 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { useStudentProfile } from "@/hooks/use-student-profile";
 import ProfileHeader from "./profile-header";
 import StatsSection from "./stats-section";
-import PaymentProgress from "./payment-progress";
-import CoursesSection from "./course-section";
-import { authClient } from "@/lib/auth-client";
-import { getStudentId } from "@/actions/shared/get-student-id";
-import { getStudentProfile } from "@/actions/student/profile/get-student-profile";
 import { StudentData } from "@/lib/types/student";
-import { toast } from "sonner";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
-const StudentProfile = () => {
-  const [data, setData] = useState<StudentData | null>(null);
-  const [loading, setLoading] = useState(true); // Set initial loading to true
 
-  const fetchStudentInfo = async () => {
-    try {
-      const session = await authClient.getSession();
-      if (!session) {
-        setLoading(false);
-        return;
-      }
 
-      const userEmail = session.data?.user?.email;
-      if (!userEmail) {
-        toast.error("User email not found");
-        setLoading(false);
-        return;
-      }
+const PaymentProgress = dynamic(() => import("./payment-progress"), {
+  loading: () => (
+    <div className="w-full h-32 bg-white/50 rounded-xl animate-pulse border border-slate-200" />
+  ),
+});
 
-      const studentId = await getStudentId(userEmail);
-      if (!studentId) {
-        toast.error("Student ID not found");
-        setLoading(false);
-        return;
-      }
+const CoursesSection = dynamic(() => import("./course-section"), {
+  loading: () => (
+    <div className="w-full h-64 bg-white/50 rounded-xl animate-pulse border border-slate-200" />
+  ),
+});
 
-      const res = await getStudentProfile(studentId);
-      setData(res.data);
-      toast.message(res.message);
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+type StudentProfileProps = {
+  stdData: StudentData | null;
+};
 
-  useEffect(() => {
-    fetchStudentInfo();
-  }, []);
+const StudentProfile = ({ stdData }: StudentProfileProps) => {
+  // Initialize state directly from the server prop
+  const [data] = useState<StudentData | null>(stdData);
 
   const {
     studentData,
@@ -64,49 +41,38 @@ const StudentProfile = () => {
     handleImageUpload,
   } = useStudentProfile(data);
 
-  // 1. Return Loading state EARLY
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full w-full min-h-[50vh]">
-        <Loader2 className="text-primary-bg h-7 w-7 animate-spin" />
-      </div>
-    );
-  }
-
-  // 2. Return Error state if no data
   if (!studentData) {
     return (
       <div className="flex flex-col gap-4 items-center justify-center h-full w-full min-h-[50vh]">
-        <AlertTriangle className="text-primary-bg h-7 w-7 " />
-        <h1>Something went wrong or No Profile Found</h1>
+        <AlertTriangle className="text-purple-600 h-10 w-10 opacity-50" />
+        <h2 className="text-lg font-semibold text-slate-700">Profile Not Found</h2>
+        <p className="text-slate-500">We couldn&apos;t retrieve the student data.</p>
       </div>
     );
   }
 
-  // 3. Safely Calculate Fees (Now guaranteed that studentData exists)
-  const totalFees = (studentData.invoices || [])
-    .reduce((acc, invoice) => {
-      // Guard against undefined invoice or courseDetails
-      const invoiceTotal = (invoice?.courseDetails || []).reduce(
-        (total, course) => total + (course?.totalFees || 0),
-        0
-      );
-      return acc + invoiceTotal;
-    }, 0);
+  // Safely Calculate Fees
+  const totalFees = (studentData.invoices || []).reduce((acc, invoice) => {
+    const invoiceTotal = (invoice?.courseDetails || []).reduce(
+      (total, course) => total + (course?.totalFees || 0),
+      0
+    );
+    return acc + invoiceTotal;
+  }, 0);
 
-  const amountPaid = (studentData.invoices || [])
-    .reduce((acc, invoice) => {
-      // Guard against undefined invoice or courseDetails
-      const invoicePaid = (invoice?.courseDetails || []).reduce(
-        (paid, course) => paid + (course?.amountPaid || 0),
-        0
-      );
-      return acc + invoicePaid;
-    }, 0);
+  const amountPaid = (studentData.invoices || []).reduce((acc, invoice) => {
+    const invoicePaid = (invoice?.courseDetails || []).reduce(
+      (paid, course) => paid + (course?.amountPaid || 0),
+      0
+    );
+    return acc + invoicePaid;
+  }, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 animate-in fade-in duration-500">
       <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-8">
+        
+        {/* Critical Content: Loaded Immediately */}
         <ProfileHeader
           studentData={studentData}
           isEditing={isEditing}
@@ -117,11 +83,12 @@ const StudentProfile = () => {
           onImageUpload={handleImageUpload}
           onEditDataChange={handleEditDataChange}
         />
+        
         <StatsSection studentData={studentData} />
-        <PaymentProgress
-          totalFees={totalFees}
-          paidFees={amountPaid}
-        />
+        
+        {/* Non-Critical Content: Loaded Lazily */}
+        <PaymentProgress totalFees={totalFees} paidFees={amountPaid} />
+        
         <CoursesSection
           invoices={studentData.invoices || []}
           courses={studentData.courses || []}

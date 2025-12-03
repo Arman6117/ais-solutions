@@ -1,66 +1,68 @@
-import React from "react";
+"use client"; // Can be server component if no interaction, but keeping client for flexibility
 
+import React from "react";
 import AdminOverviewCard from "./admin-overview-card";
 import Greetings from "@/components/greetings";
-
 import NotificationPanel from "./notification-panel";
 import QuickActionPanel from "./quick-action-panel";
 import GlobalSearchBar from "./global-search-bar";
 import AdminSignOutButton from "./admin-sign-out";
-import { getAdminDashboardStats } from "@/actions/admin/get-admin-dashboard-stats";
 
-const AdminPanelOverview = async () => {
-  const { totalStudents } = await getAdminDashboardStats();
+type Stats = {
+  totalStudents: number;
+  totalModules: number;
+  totalBatches: number;
+  activeBatches: number;
+  totalRevenue: number;
+  pendingFees: number;
+};
+
+const AdminPanelOverview = ({ stats }: { stats: Stats }) => {
   return (
     <div className="w-[90%] flex flex-col gap-10">
-      <div className="flex  items-center gap-4">
+      <div className="flex items-center gap-4">
         <Greetings>Admin</Greetings>
         <NotificationPanel />
         <QuickActionPanel />
         <AdminSignOutButton />
       </div>
       <GlobalSearchBar />
-      <div className="flex gap-10 md:flex-row flex-col items-center ">
-        {/*//TODO:Make dynamic */}
+      
+      <div className="flex gap-10 md:flex-row flex-col items-center">
         <AdminOverviewCard
-          value={totalStudents}
+          value={stats.totalStudents.toString()}
           label="TOTAL STUDENTS"
-          // icon={<Users size={20} />}
           variant="students"
         />
         <AdminOverviewCard
-          value="42"
-          label="TOTAL Modules"
-          // icon={<BookOpen size={20} />}
+          value={stats.totalModules.toString()}
+          label="TOTAL MODULES"
           variant="courses"
         />
       </div>
-      <div className="flex  drop-shadow-xl drop-shadow-indigo-600/10  gap-10 md:flex-row flex-col items-center ">
+      
+      <div className="flex drop-shadow-xl drop-shadow-indigo-600/10 gap-10 md:flex-row flex-col items-center">
         <AdminOverviewCard
-          value="300"
+          value={stats.totalBatches.toString()}
           label="TOTAL BATCHES"
-          // icon={<RiArtboardLine size={20} />}
           variant="batches"
         />
         <AdminOverviewCard
-          value="100"
-          label="Active Batches"
-          // icon={<FaChalkboardTeacher size={20} />}
+          value={stats.activeBatches.toString()}
+          label="ACTIVE BATCHES"
           variant="activeBatches"
         />
-        {/*//TODO:Make dynamic */}
       </div>
-      <div className="flex  drop-shadow-xl drop-shadow-indigo-600/10  gap-10 md:flex-row flex-col items-center ">
+      
+      <div className="flex drop-shadow-xl drop-shadow-indigo-600/10 gap-10 md:flex-row flex-col items-center">
         <AdminOverviewCard
-          value="₹30000"
-          label="Total Revenue"
-          // icon={<FaChalkboardTeacher size={20} />}
+          value={`₹${stats.totalRevenue.toLocaleString()}`}
+          label="TOTAL REVENUE"
           variant="revenue"
         />
         <AdminOverviewCard
-          value="₹10000"
-          label="Pending Fees"
-          // icon={<FaChalkboardTeacher size={20} />}
+          value={`₹${stats.pendingFees.toLocaleString()}`}
+          label="PENDING FEES"
           variant="pendingFees"
         />
       </div>

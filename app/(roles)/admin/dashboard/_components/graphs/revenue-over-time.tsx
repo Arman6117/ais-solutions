@@ -13,83 +13,80 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { parseISO, format } from "date-fns";
 import GraphFilters from "./graph-filters";
-
-
-type RevenueData = {
-  date: string;
-  amount: number;
-};
+import { getRevenueData } from "@/actions/admin/dashboard/get-graph-data"; // Import action
+import { Loader2 } from "lucide-react";
 
 type ChartDataItem = {
   label: string;
   amount: number;
 };
 
-const dummyData: RevenueData[] = [
-  { date: "2025-01-12", amount: 10000 },
-  { date: "2025-01-30", amount: 5000 },
-  { date: "2025-02-10", amount: 15000 },
-  { date: "2025-03-05", amount: 7000 },
-  { date: "2025-04-18", amount: 12000 },
-  { date: "2025-05-02", amount: 18000 },
-  { date: "2025-06-15", amount: 20000 },
-];
-
 export default function RevenueOverTimeChart() {
-  const [year, setYear] = useState("2025");
+  // Default to current year
+  const [year, setYear] = useState(new Date().getFullYear().toString());
   const [month, setMonth] = useState("All");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  
   const [data, setData] = useState<ChartDataItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const resetFilters = () => {
-    setYear("2025");
+    setYear(new Date().getFullYear().toString());
     setMonth("All");
     setStartDate("");
     setEndDate("");
   };
 
   useEffect(() => {
-    const filtered = dummyData.filter((item) => {
-      const itemDate = parseISO(item.date);
-      const itemYear = format(itemDate, "yyyy");
-      const itemMonth = format(itemDate, "MM");
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // 1. Call Server Action
+        const rawData = await getRevenueData(year, month, startDate, endDate);
 
-      const matchesYear = itemYear === year;
-      const matchesMonth = month === "All" || itemMonth === month;
-      const matchesStart = !startDate || itemDate >= parseISO(startDate);
-      const matchesEnd = !endDate || itemDate <= parseISO(endDate);
+        // 2. Process Data
+        const grouped: Record<string, number> = {};
+        
+        rawData.forEach((item) => {
+          const label =
+            month === "All"
+              ? format(parseISO(item.date), "MMM") // Group by Month (Jan, Feb)
+              : format(parseISO(item.date), "dd MMM"); // Group by Day (01 Jan)
+              
+          grouped[label] = (grouped[label] || 0) + item.amount;
+        });
 
-      return matchesYear && matchesMonth && matchesStart && matchesEnd;
-    });
+        const chartData = Object.entries(grouped).map(([label, amount]) => ({
+          label,
+          amount,
+        }));
 
-    const grouped: Record<string, number> = {};
-    filtered.forEach((item) => {
-      const label =
-        month === "All"
-          ? format(parseISO(item.date), "MMM")
-          : format(parseISO(item.date), "dd MMM");
-      grouped[label] = (grouped[label] || 0) + item.amount;
-    });
+        // 3. Sort Data
+        chartData.sort((a, b) => {
+           if (month === "All") {
+              const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return months.indexOf(a.label) - months.indexOf(b.label);
+           }
+           return parseInt(a.label) - parseInt(b.label);
+        });
 
-    const chartData = Object.entries(grouped).map(([label, amount]) => ({
-      label,
-      amount,
-    }));
+        setData(chartData);
+      } catch (error) {
+        console.error("Failed to fetch revenue data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    chartData.sort(
-      (a, b) =>
-        new Date(`01 ${a.label} ${year}`).getTime() -
-        new Date(`01 ${b.label} ${year}`).getTime()
-    );
-
-    setData(chartData);
+    fetchData();
   }, [year, month, startDate, endDate]);
 
   return (
     <Card className="w-full shadow ring ring-[#10b981]/30 shadow-[#10b981]/20">
-      <CardHeader className="flex flex-col sm: justify-between sm:items-center gap-4">
+      <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <CardTitle className="text-2xl">Revenue Over Time</CardTitle>
+        
         <GraphFilters
           year={year}
           setYear={setYear}
@@ -103,8 +100,14 @@ export default function RevenueOverTimeChart() {
         />
       </CardHeader>
 
-      <CardContent className="h-[400px] w-full">
-        {data.length === 0 ? (
+      <CardContent className="h-[400px] w-full relative">
+        {loading && (
+            <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-bg" />
+            </div>
+        )}
+
+        {!loading && data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
             No revenue data found for selected filters.
           </div>
@@ -114,7 +117,7 @@ export default function RevenueOverTimeChart() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" />
               <YAxis />
-              <Tooltip formatter={(value: number) => `₹${value}`} />
+              <Tooltip formatter={(value: number) => `₹${value.toLocaleString()}`} />
               <Line
                 type="monotone"
                 dataKey="amount"

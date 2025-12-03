@@ -10,91 +10,84 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { parseISO, format } from "date-fns";
-
 import GraphFilters from "./graph-filters";
-
-
-
-type RawDataItem = {
-  date: string;
-  students: number;
-};
+import { getNewStudentRegistrations } from "@/actions/admin/dashboard/get-graph-data"; // Import the action
+import { Loader2 } from "lucide-react";
 
 type ChartDataItem = {
   label: string;
   students: number;
 };
 
-const dummyData: RawDataItem[] = [
-  { date: "2025-01-12", students: 12 },
-  { date: "2025-01-28", students: 28 },
-  { date: "2025-02-10", students: 40 },
-  { date: "2025-03-15", students: 50 },
-  { date: "2025-03-30", students: 70 },
-  { date: "2025-04-05", students: 30 },
-  { date: "2025-05-08", students: 25 },
-  { date: "2025-06-01", students: 35 },
-  { date: "2025-06-15", students: 40 },
-];
-
 export default function NewStudentRegistrationsChart() {
-  const [year, setYear] = useState("2025");
+  // Default to current year
+  const [year, setYear] = useState(new Date().getFullYear().toString());
   const [month, setMonth] = useState("All");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  
   const [data, setData] = useState<ChartDataItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const resetFilters = () => {
-    setYear("2025");
+    setYear(new Date().getFullYear().toString());
     setMonth("All");
     setStartDate("");
     setEndDate("");
   };
 
   useEffect(() => {
-    const filtered = dummyData.filter((item) => {
-      const itemDate = parseISO(item.date);
-      const itemYear = format(itemDate, "yyyy");
-      const itemMonth = format(itemDate, "MM");
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // 1. Call Server Action
+        const rawData = await getNewStudentRegistrations(year, month, startDate, endDate);
+        
+        // 2. Process Data for Chart
+        const grouped: Record<string, number> = {};
+        
+        rawData.forEach((item) => {
+          // If Month is "All", group by Month Name (Jan, Feb)
+          // If specific Month is selected, group by Day (01 Jan, 02 Jan)
+          const label =
+            month === "All"
+              ? format(parseISO(item.date), "MMM")
+              : format(parseISO(item.date), "dd MMM");
+              
+          grouped[label] = (grouped[label] || 0) + 1;
+        });
 
-      const matchesYear = itemYear === year;
-      const matchesMonth = month === "All" || itemMonth === month;
-      const matchesStart = !startDate || itemDate >= parseISO(startDate);
-      const matchesEnd = !endDate || itemDate <= parseISO(endDate);
+        const chartData = Object.entries(grouped).map(([label, students]) => ({
+          label,
+          students,
+        }));
 
-      return matchesYear && matchesMonth && matchesStart && matchesEnd;
-    });
+        // 3. Sort Data chronologically
+        chartData.sort((a, b) => {
+           if (month === "All") {
+              const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return months.indexOf(a.label) - months.indexOf(b.label);
+           }
+           // If grouped by day (e.g. "01 Jan"), simple string/date sort works or parseInt the day
+           return parseInt(a.label) - parseInt(b.label);
+        });
 
-    const grouped: Record<string, number> = {};
-    filtered.forEach((item) => {
-      const label =
-        month === "All"
-          ? format(parseISO(item.date), "MMM")
-          : format(parseISO(item.date), "dd MMM");
-      grouped[label] = (grouped[label] || 0) + item.students;
-    });
+        setData(chartData);
+      } catch (error) {
+        console.error("Failed to fetch graph data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const chartData = Object.entries(grouped).map(([label, students]) => ({
-      label,
-      students,
-    }));
-
-    // Sort labels (basic sort based on date)
-    chartData.sort(
-      (a, b) =>
-        new Date(`01 ${a.label} ${year}`).getTime() -
-        new Date(`01 ${b.label} ${year}`).getTime()
-    );
-
-    setData(chartData);
+    fetchData();
   }, [year, month, startDate, endDate]);
 
   return (
     <Card className="w-full ring ring-[#6366f1]/30 shadow-[#6366f1]/20">
-      <CardHeader className="flex flex-col sm: justify-between sm:items-center gap-4">
+      <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <CardTitle className="text-2xl">New Student Registrations</CardTitle>
 
         <GraphFilters
@@ -110,8 +103,14 @@ export default function NewStudentRegistrationsChart() {
         />
       </CardHeader>
 
-      <CardContent className="h-[400px] w-full">
-        {data.length === 0 ? (
+      <CardContent className="h-[400px] w-full relative">
+        {loading && (
+            <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-bg" />
+            </div>
+        )}
+
+        {!loading && data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
             No student registrations found for selected filters.
           </div>
@@ -120,7 +119,7 @@ export default function NewStudentRegistrationsChart() {
             <AreaChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" />
-              <YAxis />
+              <YAxis allowDecimals={false} />
               <Tooltip />
               <Area
                 type="monotone"

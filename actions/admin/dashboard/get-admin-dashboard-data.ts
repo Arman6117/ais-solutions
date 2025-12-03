@@ -7,7 +7,7 @@ import { Module } from "@/models/module.model";
 import { Sessions } from "@/models/sessions.model";
 import { Student } from "@/models/student.model";
 import { addDays, format } from "date-fns";
-
+import "@/models/course.model"; 
 export async function getDashboardData() {
   try {
     await connectToDB();

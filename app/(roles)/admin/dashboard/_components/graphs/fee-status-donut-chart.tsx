@@ -1,103 +1,94 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import GraphFilters from "./graph-filters";
 import chroma from "chroma-js";
-type FeeRecord = {
-  course: string;
-  batch: string;
-  status: "Paid" | "Partially Paid" | "Unpaid";
+import { getFeeStatusData, getFilterOptions } from "@/actions/admin/dashboard/get-graph-data"; // Import Actions
+import { Loader2 } from "lucide-react";
+
+type ChartData = {
+  status: string;
   count: number;
 };
-
-const rawData: FeeRecord[] = [
-  { course: "DSA", batch: "Jan Batch", status: "Paid", count: 20 },
-  { course: "DSA", batch: "Jan Batch", status: "Partially Paid", count: 5 },
-
-  { course: "DSA", batch: "Feb Batch", status: "Paid", count: 10 },
-  { course: "DSA", batch: "Feb Batch", status: "Paid", count: 2 },
-
-  { course: "Fullstack", batch: "March Web Dev", status: "Paid", count: 15 },
-  {
-    course: "Fullstack",
-    batch: "March Web Dev",
-    status: "Partially Paid",
-    count: 8,
-  },
-  {
-    course: "Fullstack",
-    batch: "March Web Dev",
-    status: "Partially Paid",
-    count: 5,
-  },
-
-  { course: "Python", batch: "React Pro", status: "Paid", count: 7 },
-  { course: "Python", batch: "React Pro", status: "Partially Paid", count: 2 },
-];
 
 export default function FeeStatusDonutChart() {
   const [course, setCourse] = useState("All");
   const [batch, setBatch] = useState("All");
-  const filteredData = rawData.filter((item) => {
-    return (
-      (course === "All" || item.course === course) &&
-      (batch === "All" || item.batch === batch)
-    );
-  });
+  const [data, setData] = useState<ChartData[]>([]);
+  const [loading, setLoading] = useState(false);
+  
+  const [courseOptions, setCourseOptions] = useState<string[]>([]);
+  const [batchOptions, setBatchOptions] = useState<string[]>([]);
 
-  const groupedData: Record<string, number> = {};
-  filteredData.forEach((item) => {
-    groupedData[item.status] = (groupedData[item.status] || 0) + item.count;
-  });
-  const data = Object.entries(groupedData).map(([status, count]) => ({
-    status,
-    count,
-  }));
-  const total = data.reduce((sum, item) => sum + item.count, 0);
+  // 1. Fetch Filter Options (Courses/Batches)
+  useEffect(() => {
+    const fetchOpts = async () => {
+        const opts = await getFilterOptions();
+        setCourseOptions(opts.courses);
+        setBatchOptions(opts.batches);
+    };
+    fetchOpts();
+  }, []);
+
+  // 2. Fetch Graph Data
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await getFeeStatusData(course, batch);
+        setData(res);
+      } catch (error) {
+        console.error("Error fetching fee data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [course, batch]);
+
   const resetFilters = () => {
     setCourse("All");
     setBatch("All");
   };
 
-  const uniqueCourses = data.map((item) => item.status);
-  const colorScale = chroma
-    .scale("Set3")
-    .mode("lch")
-    .colors(uniqueCourses.length);
+  const total = data.reduce((sum, item) => sum + item.count, 0);
+  
+  const uniqueStatuses = data.map((item) => item.status);
+  const colorScale = chroma.scale("Set3").mode("lch").colors(Math.max(uniqueStatuses.length, 1));
   const statusColorMap: Record<string, string> = {};
-  uniqueCourses.forEach((course, i) => {
-    statusColorMap[course] = colorScale[i];
+  uniqueStatuses.forEach((status, i) => {
+    statusColorMap[status] = colorScale[i];
   });
+
   return (
-    <Card className="md:w-1/2 ring ring-[#eab308]/30 shadow-[#eab308]/20">
+    <Card className="md:w-1/2 w-full ring ring-[#eab308]/30 shadow-[#eab308]/20">
       <CardHeader className="flex flex-col items-center gap-4">
-        <CardTitle className="text-2xl text-center">
-          Fee Collection Status
-        </CardTitle>
+        <CardTitle className="text-2xl text-center">Fee Collection Status</CardTitle>
         <GraphFilters
           course={course}
           setCourse={setCourse}
           batch={batch}
           setBatch={setBatch}
           resetFilters={resetFilters}
-          courseOptions={["DSA", "Fullstack", "Python"]}
-          batchOptions={[
-            "Jan Batch",
-            "Feb Batch",
-            "March Web Dev",
-            "React Pro",
-          ]}
+          courseOptions={courseOptions}
+          batchOptions={batchOptions}
         />
       </CardHeader>
 
-      <CardContent className="h-[350px] w-full flex flex-col items-center justify-center">
-        {total === 0 ? (
+      <CardContent className="h-[350px] w-full flex flex-col items-center justify-center relative">
+        {loading && (
+            <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-bg" />
+            </div>
+        )}
+
+        {!loading && total === 0 ? (
           <div className="text-muted-foreground text-sm">
             No fee data available for the selected filters.
           </div>
-        ) : (
+        ) : !loading && (
           <>
             <div className="relative w-full h-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -116,29 +107,23 @@ export default function FeeStatusDonutChart() {
                     labelLine={true}
                   >
                     {data.map((entry) => (
-                      <Cell
-                        key={entry.status}
-                        fill={statusColorMap[entry.status]}
-                      />
+                      <Cell key={entry.status} fill={statusColorMap[entry.status]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => `${value} students`} />
+                  <Tooltip formatter={(value: number) => `${value} invoices`} />
                 </PieChart>
               </ResponsiveContainer>
 
               {/* Center total text */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center text-sm font-medium text-muted-foreground">
-                  <div className="text-xl font-semibold text-black">
-                    {total}
-                  </div>
-                  <div className="text-xs">Total Students</div>
+                  <div className="text-xl font-semibold text-black">{total}</div>
+                  <div className="text-xs">Total Invoices</div>
                 </div>
               </div>
             </div>
 
-            {/* Custom Legend */}
-            <div className="flex gap-4 mt-6 text-sm">
+            <div className="flex gap-4 mt-6 text-sm flex-wrap justify-center">
               {data.map((item) => (
                 <div key={item.status} className="flex items-center gap-2">
                   <div

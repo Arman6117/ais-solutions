@@ -5,92 +5,84 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import GraphFilters from "./graph-filters";
 import chroma from "chroma-js";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { getStudentDistributionData } from "@/actions/admin/dashboard/get-graph-data"; // Import Action
+import { Loader2 } from "lucide-react";
 
-// 🔹 Simulated backend data
-const rawData = [
-  { course: "DSA", batch: "Jan Batch", studentCount: 20 },
-  { course: "DSA", batch: "Feb Batch", studentCount: 15 },
-  { course: "Fullstack", batch: "March Web Dev", studentCount: 25 },
-  { course: "Fullstack", batch: "React Pro", studentCount: 10 },
-  { course: "Python", batch: "React Pro", studentCount: 12 },
-  { course: "AI ML", batch: "React Pro", studentCount: 7 },
-  { course: "Cyber Security", batch: "React Pro", studentCount: 9 },
-  { course: "Cloud DevOps", batch: "React Pro", studentCount: 11 },
-  { course: "Blockchain", batch: "React Pro", studentCount: 4 },
-];
+type DistData = {
+  course: string;
+  batch: string;
+  studentCount: number;
+};
 
-const StudentDistributionPieChart = () => {
+export default function StudentDistributionPieChart() {
+  const [rawData, setRawData] = useState<DistData[]>([]);
   const [course, setCourse] = useState("All");
   const [batch, setBatch] = useState("All");
+  const [loading, setLoading] = useState(true);
 
-  // 🔄 Dynamically calculate available filter options
-  const courseOptions = [
-    ...Array.from(
-      new Set(
-        rawData
-          .filter((d) => batch === "All" || d.batch === batch)
-          .map((d) => d.course)
-      )
-    ),
-  ];
-
-  const batchOptions = [
-    ...Array.from(
-      new Set(
-        rawData
-          .filter((d) => course === "All" || d.course === course)
-          .map((d) => d.batch)
-      )
-    ),
-  ];
-
-  // ⚠️ Reset invalid selections if needed
+  // 1. Fetch Data Once
   useEffect(() => {
-    if (course !== "All" && !courseOptions.includes(course)) {
-      setCourse("All");
-    }
-    if (batch !== "All" && !batchOptions.includes(batch)) {
-      setBatch("All");
-    }
-  }, [courseOptions, batchOptions]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await getStudentDistributionData();
+        setRawData(data);
+      } catch (error) {
+        console.error("Error fetching distribution:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  // 🔍 Filter and group data
+  // 2. Calculate Options Client-Side (since we have all data)
+  const courseOptions = Array.from(
+    new Set(rawData.filter((d) => batch === "All" || d.batch === batch).map((d) => d.course))
+  );
+
+  const batchOptions = Array.from(
+    new Set(rawData.filter((d) => course === "All" || d.course === course).map((d) => d.batch))
+  );
+
+  // Reset invalid filters
+  useEffect(() => {
+    if (course !== "All" && !courseOptions.includes(course)) setCourse("All");
+    if (batch !== "All" && !batchOptions.includes(batch)) setBatch("All");
+  }, [courseOptions, batchOptions, course, batch]);
+
+  // 3. Filter Data
   const filtered = rawData.filter(
     (item) =>
       (course === "All" || item.course === course) &&
       (batch === "All" || item.batch === batch)
   );
 
+  // 4. Group Data
   const groupedData: Record<string, number> = {};
   filtered.forEach((item) => {
-    groupedData[item.course] =
-      (groupedData[item.course] || 0) + item.studentCount;
+    groupedData[item.course] = (groupedData[item.course] || 0) + item.studentCount;
   });
 
-  const chartData = Object.entries(groupedData).map(([course, count]) => ({
-    course,
+  const chartData = Object.entries(groupedData).map(([courseName, count]) => ({
+    course: courseName,
     count,
   }));
 
   const total = chartData.reduce((sum, item) => sum + item.count, 0);
 
-  // 🎨 Generate dynamic color mapping
+  // Colors
   const uniqueCourses = chartData.map((item) => item.course);
-  const colorScale = chroma
-    .scale("Set3")
-    .mode("lch")
-    .colors(uniqueCourses.length);
+  const colorScale = chroma.scale("Set3").mode("lch").colors(Math.max(uniqueCourses.length, 1));
   const courseColorMap: Record<string, string> = {};
-  uniqueCourses.forEach((course, i) => {
-    courseColorMap[course] = colorScale[i];
+  uniqueCourses.forEach((c, i) => {
+    courseColorMap[c] = colorScale[i];
   });
 
   return (
-    <Card className="md:w-1/2 ring ring-[#aaa1df]/30 shadow-[#aaa1df">
+    <Card className="md:w-1/2 w-full ring ring-[#aaa1df]/30 shadow-[#aaa1df]">
       <CardHeader className="flex flex-col items-center gap-4">
-        <CardTitle className="text-2xl text-center">
-          Student Distribution
-        </CardTitle>
+        <CardTitle className="text-2xl text-center">Student Distribution</CardTitle>
         <GraphFilters
           batch={batch}
           setBatch={setBatch}
@@ -101,12 +93,18 @@ const StudentDistributionPieChart = () => {
         />
       </CardHeader>
 
-      <CardContent className="h-[350px] w-full flex flex-col items-center justify-center">
-        {total === 0 ? (
+      <CardContent className="h-[350px] w-full flex flex-col items-center justify-center relative">
+        {loading && (
+            <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-bg" />
+            </div>
+        )}
+
+        {!loading && total === 0 ? (
           <div className="text-muted-foreground text-sm">
             No student data available for the selected filters.
           </div>
-        ) : (
+        ) : !loading && (
           <>
             <div className="relative h-auto w-full">
               <ResponsiveContainer width="100%" height={250}>
@@ -124,28 +122,21 @@ const StudentDistributionPieChart = () => {
                     }
                   >
                     {chartData.map((entry) => (
-                      <Cell
-                        key={entry.course}
-                        fill={courseColorMap[entry.course]}
-                      />
+                      <Cell key={entry.course} fill={courseColorMap[entry.course]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value: number) => `${value} students`} />
                 </PieChart>
               </ResponsiveContainer>
 
-              {/* Center Total */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center text-sm font-medium text-muted-foreground">
-                  <div className="text-xl font-semibold text-black">
-                    {total}
-                  </div>
+                  <div className="text-xl font-semibold text-black">{total}</div>
                   <div className="text-xs">Total Students</div>
                 </div>
               </div>
             </div>
 
-            {/* 🧭 Legend */}
             <div className="flex gap-4 mt-4 text-sm flex-wrap justify-center">
               {chartData.map((item) => (
                 <div key={item.course} className="flex items-center gap-2">
@@ -162,6 +153,4 @@ const StudentDistributionPieChart = () => {
       </CardContent>
     </Card>
   );
-};
-
-export default StudentDistributionPieChart;
+}

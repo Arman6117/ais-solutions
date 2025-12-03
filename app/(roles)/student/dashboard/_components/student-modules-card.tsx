@@ -18,6 +18,10 @@ type StudentModulesCardProps = {
 const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
   // Determine access: default to true if field is missing
   const hasAccess = module.isPurchased !== false;
+  
+  // NEW: Define interaction logic. 
+  // User can only click if they have access AND the module is not "Upcoming".
+  const isInteractive = hasAccess && status !== "Upcoming";
 
   const statusStyle = useMemo(() => {
     return getStatusColor(module.status);
@@ -65,14 +69,17 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
     return formatSafeDate(module.endDate);
   }, [module.endDate]);
 
-  // Card Content Component to avoid code duplication
-  const CardContent = () => (
+  const cardContent = (
     <div
       className={cn(
         "group relative flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200",
-        hasAccess ? "cursor-pointer hover:shadow-lg hover:border-primary-bg bg-white" : "cursor-not-allowed opacity-80 bg-gray-50 border-gray-200",
+        // UPDATED: Use isInteractive for hover states
+        isInteractive 
+          ? "cursor-pointer hover:shadow-lg hover:border-primary-bg bg-white" 
+          : "cursor-not-allowed opacity-80 bg-gray-50 border-gray-200",
         hasAccess && statusStyle.border,
-        status === "Upcoming" && "cursor-not-allowed opacity-60"
+        // Keep specific opacity for upcoming to differentiate from locked
+        status === "Upcoming" && "opacity-70 bg-gray-50/50" 
       )}
     >
       {/* Thumbnail */}
@@ -81,7 +88,7 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
           alt={`${module.name} thumbnail`}
           className={cn(
             "object-cover transition-transform duration-300",
-            hasAccess && "group-hover:scale-105",
+            isInteractive && "group-hover:scale-105", // Only scale if interactive
             !hasAccess && "grayscale"
           )}
           src={module.thumbnail || "https://placehold.co/80x80"}
@@ -111,7 +118,7 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
         <div className="flex items-start justify-between gap-2">
           <h3 className={cn(
             "font-semibold text-base sm:text-lg line-clamp-1 transition-colors",
-            hasAccess ? "text-gray-800 group-hover:text-primary-bg" : "text-gray-500"
+            isInteractive ? "text-gray-800 group-hover:text-primary-bg" : "text-gray-500"
           )}>
             {module.name}
           </h3>
@@ -162,31 +169,28 @@ const StudentModulesCard = ({ module, status }: StudentModulesCardProps) => {
         )}
       </div>
 
-      {hasAccess && (
+      {isInteractive && (
         <ChevronRight
-          className={cn(
-            "w-5 h-5 text-gray-400 group-hover:text-primary-bg group-hover:translate-x-1 transition-all flex-shrink-0",
-            status === "Upcoming" && "opacity-50"
-          )}
+          className="w-5 h-5 text-gray-400 group-hover:text-primary-bg group-hover:translate-x-1 transition-all flex-shrink-0"
         />
       )}
     </div>
   );
 
-  // If user has access, wrap in Dialog trigger. If not, render plain div to prevent clicking.
-  if (hasAccess) {
+  // UPDATED LOGIC: Only wrap in dialog if interactive
+  if (isInteractive) {
     return (
       <StudentModulesMeetingDialog
         moduleName={module.name}
         batchId={module.batchId}
         status={module.status}
       >
-        <CardContent />
+        {cardContent}
       </StudentModulesMeetingDialog>
     );
   }
 
-  return <CardContent />;
+  return cardContent;
 };
 
 export default StudentModulesCard;

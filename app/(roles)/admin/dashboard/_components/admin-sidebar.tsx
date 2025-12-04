@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { adminSidebarLinks } from "@/lib/static";
 import { cn } from "@/lib/utils";
 import { LogOut, X } from "lucide-react";
+import Image from "next/image";
 
 type AdminSidebarProps = {
   isOpen: boolean;
@@ -36,9 +37,18 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
         <div className="flex flex-col h-full items-center py-8">
           {/* Header with Logo and Close button (mobile) */}
           <div className="flex items-center justify-between w-full px-6 md:justify-center md:px-0 mb-16">
-            <div className="text-white font-bold text-2xl">
-            <Link href="/admin/dashboard">Logo</Link>
-            </div>
+            {/* <div className="text-white font-bold text-2xl"> */}
+              <Link href="/admin/dashboard">
+                <Image
+                
+                  src={"/AISLogoWhite.png"}
+                  alt="logo"
+                  className="scale"
+                  width={150}
+                  height={200}
+                />
+              </Link>
+            {/* </div> */}
             <button className="md:hidden text-white/80" onClick={onClose}>
               <X className="h-6 w-6" />
             </button>
@@ -60,7 +70,8 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
                   )}
                 >
                   <Icon className="size-6 flex-shrink-0" />
-                  <span className="md:hidden">{label}</span> {/* Hide label on desktop */}
+                  <span className="md:hidden">{label}</span>{" "}
+                  {/* Hide label on desktop */}
                 </Link>
               );
             })}

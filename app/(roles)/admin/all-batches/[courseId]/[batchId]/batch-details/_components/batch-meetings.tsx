@@ -1,6 +1,9 @@
 "use client";
 
-import { deleteSession } from "@/actions/admin/sessions/delete-session";
+import {
+  deleteSession,
+  permanentlyDeleteSession,
+} from "@/actions/admin/sessions/delete-session";
 import { getAllMeetingsByBatchId } from "@/actions/admin/sessions/get-all-meetings-by-batch-id";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +19,7 @@ import { toast } from "sonner";
 import MeetingDeleteDialog from "./meeting-delete-dialog";
 import MeetingEditDialog from "./meeting-edit-dialog";
 import MeetingFilters from "./meeting-filters"; // Import the new component
+import MeetingPermanentDeleteDialog from "@/components/batch-components/meeting-permanent-delete-prop";
 
 type BatchMeetingsProps = {
   courseId: string;
@@ -103,6 +107,21 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
     }
   };
 
+  const handlePermanentDelete = async (meetingId: string) => {
+    try {
+      const res = await permanentlyDeleteSession(meetingId);
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success("Meeting permanently deleted");
+        fetchMeetings();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
+
   // Apply Filters and Sorting
   const filteredMeetings = useMemo(() => {
     let result = [...meetings];
@@ -123,7 +142,7 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
       result = result.filter((m) => m.status === filters.status);
     }
 
-    // 3. Sorting happens automatically in groupMeetingsByDate via object keys sort, 
+    // 3. Sorting happens automatically in groupMeetingsByDate via object keys sort,
     // but we need to control the Grouping Sort Order.
     return result;
   }, [meetings, filters]);
@@ -155,12 +174,14 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
     <Card className="border shadow-md">
       <CardHeader className="pb-3 bg-gray-50 border-b">
         <div className="flex justify-between items-center">
-           <CardTitle className="text-xl">Meetings Schedule</CardTitle>
-           <div className="text-sm text-gray-500 font-medium">{meetings.length} Total</div>
+          <CardTitle className="text-xl">Meetings Schedule</CardTitle>
+          <div className="text-sm text-gray-500 font-medium">
+            {meetings.length} Total
+          </div>
         </div>
         <div className="text-sm text-gray-500">{formattedToday}</div>
       </CardHeader>
-      
+
       <CardContent className="p-4">
         {/* Filter Component */}
         <MeetingFilters onFilterChange={setFilters} />
@@ -214,8 +235,8 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                     meeting.status === "cancelled"
                                       ? "bg-red-400"
                                       : meeting.status === "rescheduled"
-                                      ? "bg-yellow-400"
-                                      : "bg-violet-500"
+                                        ? "bg-yellow-400"
+                                        : "bg-violet-500"
                                   )}
                                 ></div>
                                 <div className="flex-1">
@@ -249,7 +270,7 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                               </div>
 
                               {/* Edit and Delete buttons */}
-                              {meeting.status !== "cancelled" && (
+                              {meeting.status !== "cancelled" ? (
                                 <div className="flex gap-1">
                                   <MeetingEditDialog
                                     meetingData={meeting}
@@ -260,6 +281,12 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
                                     onDelete={() => handleDelete(meeting._id!)}
                                   />
                                 </div>
+                              ) : (
+                                <MeetingPermanentDeleteDialog
+                                  onDelete={() =>
+                                    handlePermanentDelete(meeting._id!)
+                                  }
+                                />
                               )}
                             </div>
 
@@ -331,12 +358,14 @@ const BatchMeetings = ({ batch, courseId }: BatchMeetingsProps) => {
               </div>
               <div className="text-center">
                 <p className="font-medium text-gray-600">
-                  {filters.search || filters.status !== "all" ? "No meetings match your filters" : "No meetings scheduled"}
+                  {filters.search || filters.status !== "all"
+                    ? "No meetings match your filters"
+                    : "No meetings scheduled"}
                 </p>
                 {!(filters.search || filters.status !== "all") && (
-                    <p className="text-sm text-gray-500 mt-1">
-                      Click the button below to schedule your first meeting
-                    </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Click the button below to schedule your first meeting
+                  </p>
                 )}
               </div>
             </div>

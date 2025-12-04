@@ -20,7 +20,7 @@ export const revalidate = 60;
 const CoursesDisplay = async ({ userEmail, courseId }: CoursesDisplayProps) => {
   const courses = await getStudentCourses(userEmail);
   const studentId = await getStudentId(userEmail);
-  console.log(studentId)
+  
   if (!courses.data || courses.data.length === 0) {
     return (
       <div className="flex w-full h-full items-center justify-center pb-20 sm:pb-0">

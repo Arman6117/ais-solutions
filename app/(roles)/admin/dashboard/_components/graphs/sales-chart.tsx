@@ -15,12 +15,13 @@ import { parseISO, format } from "date-fns";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import GraphFilters from "./graph-filters";
+import { getSalesEnrollmentsGraph } from "@/actions/admin/dashboard/get-sales-person-graph";
+import { Loader2 } from "lucide-react";
 
 // 🔹 Types
 type Enrollment = {
   id: string;
-  student: string;
-  salesPerson: string;
+  salesPerson: string; // Grouping Key
   enrolledOn: string;
 };
 
@@ -29,40 +30,57 @@ type ChartDataItem = {
   [salesPerson: string]: string | number;
 };
 
-// 🔹 Dummy Data
-const dummyEnrollments: Enrollment[] = [
-  { id: "1", student: "Alice", salesPerson: "John", enrolledOn: "2025-01-12" },
-  { id: "2", student: "Bob", salesPerson: "Sara", enrolledOn: "2025-01-30" },
-  { id: "3", student: "Charlie", salesPerson: "John", enrolledOn: "2025-02-10" },
-  { id: "4", student: "David", salesPerson: "Sara", enrolledOn: "2025-03-05" },
-  { id: "5", student: "Eva", salesPerson: "John", enrolledOn: "2025-04-18" },
-  { id: "6", student: "Mike", salesPerson: "John", enrolledOn: "2025-04-20" },
-  { id: "7", student: "Nina", salesPerson: "Sara", enrolledOn: "2025-05-02" },
-  { id: "8", student: "Zara", salesPerson: "Zed", enrolledOn: "2025-06-01" },
-];
-
 export default function SalesOverTimeChart() {
-  const [year, setYear] = useState("2025");
+  const [year, setYear] = useState(new Date().getFullYear().toString());
   const [month, setMonth] = useState("All");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  
+  const [rawData, setRawData] = useState<Enrollment[]>([]);
   const [data, setData] = useState<ChartDataItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 1. Fetch Data on Mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getSalesEnrollmentsGraph();
+        if (res.success) {
+          setRawData(res.data);
+        }
+      } catch (error) {
+        console.error("Failed to load graph data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const resetFilters = () => {
-    setYear("2025");
+    setYear(new Date().getFullYear().toString());
     setMonth("All");
     setStartDate("");
     setEndDate("");
   };
 
+  // 2. Process Data when filters or rawData changes
   useEffect(() => {
-    const filtered = dummyEnrollments.filter((item) => {
+    if (rawData.length === 0) {
+        setData([]);
+        return;
+    }
+
+    const filtered = rawData.filter((item) => {
       const date = parseISO(item.enrolledOn);
       const itemYear = format(date, "yyyy");
-      const itemMonth = format(date, "MM");
+      const itemMonth = format(date, "MM"); // "01", "02"...
 
       const matchesYear = itemYear === year;
-      const matchesMonth = month === "All" || itemMonth === month;
+      // Filter logic: If Month is "All", ignore month check. 
+      // If Month is selected (e.g. "01"), check match.
+      const matchesMonth = month === "All" || itemMonth === month; 
+      
       const matchesStart = !startDate || date >= parseISO(startDate);
       const matchesEnd = !endDate || date <= parseISO(endDate);
 
@@ -72,10 +90,17 @@ export default function SalesOverTimeChart() {
     const grouped: Record<string, Record<string, number>> = {};
 
     filtered.forEach((item) => {
-      const label =
-        month === "All"
-          ? format(parseISO(item.enrolledOn), "MMM")
-          : format(parseISO(item.enrolledOn), "dd MMM");
+      // X-Axis Label: If showing one month, show Days. If showing whole year, show Months.
+      let label = "";
+      const date = parseISO(item.enrolledOn);
+      
+      if (month !== "All") {
+         // Daily view for a specific month
+         label = format(date, "dd MMM"); 
+      } else {
+         // Monthly view for the year
+         label = format(date, "MMM"); 
+      }
 
       if (!grouped[label]) grouped[label] = {};
       grouped[label][item.salesPerson] = (grouped[label][item.salesPerson] || 0) + 1;
@@ -86,25 +111,30 @@ export default function SalesOverTimeChart() {
       ...salesMap,
     }));
 
-    chartData.sort(
-      (a, b) =>
-        new Date(`01 ${a.label} ${year}`).getTime() -
-        new Date(`01 ${b.label} ${year}`).getTime()
-    );
+    // Sort Logic
+    chartData.sort((a, b) => {
+        // Generic sort helper
+        // If labels are "Jan", "Feb" -> convert to date to sort
+        // If labels are "01 Jan", "02 Jan" -> convert to date
+        const dateA = new Date(`${a.label} ${year}`).getTime();
+        const dateB = new Date(`${b.label} ${year}`).getTime();
+        return dateA - dateB;
+    });
 
     setData(chartData);
-  }, [year, month, startDate, endDate]);
+  }, [year, month, startDate, endDate, rawData]);
 
+  // Get unique list of sales persons for dynamic Bar colors
   const allSalesPeople = Array.from(
-    new Set(dummyEnrollments.map((e) => e.salesPerson))
+    new Set(rawData.map((e) => e.salesPerson))
   );
 
-  const colors = ["#10b981", "#3b82f6", "#f97316", "#9333ea", "#ef4444"];
+  const colors = ["#8b5cf6", "#ec4899", "#10b981", "#f59e0b", "#3b82f6", "#6366f1"];
 
   return (
     <Card className="w-full shadow ring ring-primary-bg/30 shadow-primary-bg/40">
-      <CardHeader className="flex flex-col sm:justify-between sm:items-center gap-4">
-        <CardTitle className="text-2xl">Salesperson-wise Enrollments</CardTitle>
+      <CardHeader className="flex flex-col gap-4">
+        <CardTitle className="text-2xl">Salesperson Performance</CardTitle>
         <GraphFilters
           year={year}
           setYear={setYear}
@@ -119,24 +149,34 @@ export default function SalesOverTimeChart() {
       </CardHeader>
 
       <CardContent className="h-[400px] w-full">
-        {data.length === 0 ? (
+        {loading ? (
+            <div className="h-full flex items-center justify-center">
+                <Loader2 className="animate-spin text-violet-600 h-8 w-8" />
+            </div>
+        ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-            No enrollment data found for selected filters.
+            No enrollments found for the selected period.
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="label" stroke="#6b7280" fontSize={12} />
+              <YAxis allowDecimals={false} stroke="#6b7280" fontSize={12} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                itemStyle={{ fontSize: '12px', fontWeight: 500 }}
+              />
               <Legend />
               {allSalesPeople.map((person, idx) => (
                 <Bar
                   key={person}
                   dataKey={person}
-                  stackId="a"
+                  stackId="a" // Stacked bar chart
                   fill={colors[idx % colors.length]}
+                  name={person}
+                  radius={[4, 4, 0, 0]} // Rounded top corners
+                  barSize={40}
                 />
               ))}
             </BarChart>

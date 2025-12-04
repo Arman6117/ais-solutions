@@ -79,7 +79,6 @@ const sendPasswordResetEmail = async (email: string, url: string) => {
 };
 
 export const auth = betterAuth({
-  
   database: prismaAdapter(prisma, {
     provider: "mongodb",
   }),
@@ -88,20 +87,15 @@ export const auth = betterAuth({
     autoSignIn: false,
     enabled: true,
     requireEmailVerification: false,
-    
     async sendResetPassword({ user, url }) {
- 
-      
       await sendPasswordResetEmail(user.email, url);
     },
   },
 
   emailVerification: {
-    sendOnSignUp: false, // Set to true if you want email verification on signup
+    sendOnSignUp: false,
     autoSignInAfterVerification: true,
-    // Optional: Add email verification sender
     async sendVerificationEmail({ user, url }) {
-      // Implement if you need email verification
       console.log("Verification email for:", user.email, url);
     },
   },
@@ -110,57 +104,79 @@ export const auth = betterAuth({
     nextCookies(),
   ],
 
-  // Session configuration
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
 
-  // Account configuration
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["google", "github"], // Add providers you use
+      trustedProviders: ["google", "github"],
     },
   },
 
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       try {
+        // 1. Sign In Check
         if (ctx.path === "/sign-in/email") {
           const { email } = ctx.body as { email: string };
           
           const existingStudent = await prisma.user.findUnique({
-            where: { email },
+            where: { email: email.toLowerCase() }, // Ensure case-insensitive check
           });
 
           if (!existingStudent) {
+            // ERROR: Return a Response object to block execution
             return {
-              success: false,
-              message: "Student not found. Please register first.",
+                response: new Response(
+                    JSON.stringify({ message: "User not found. Please register first." }),
+                    { 
+                        status: 400,
+                        headers: { "Content-Type": "application/json" } 
+                    }
+                )
             };
           }
         }
 
+        // 2. Sign Up Check
         if (ctx.path === "/sign-up/email") {
           const { email } = ctx.body as { email: string };
           
           const existingStudent = await prisma.user.findUnique({
-            where: { email },
+            where: { email: email.toLowerCase() },
           });
 
           if (existingStudent) {
-            return {
-              success: false,
-              message: "Student with this email already exists. Please login.",
+             // ERROR: Return a Response object to block execution
+             return {
+                response: new Response(
+                    JSON.stringify({ message: "User with this email already exists. Please login." }),
+                    { 
+                        status: 400,
+                        headers: { "Content-Type": "application/json" } 
+                    }
+                )
             };
           }
         }
+
+        // SUCCESS: Explicitly return context to continue execution
+        return { context: ctx };
+
       } catch (error) {
         console.error("❌ Auth middleware error:", error);
+        // SERVER ERROR: Return a Response object
         return {
-          success: false,
-          message: "An internal server error occurred.",
+             response: new Response(
+                JSON.stringify({ message: "An internal server error occurred." }),
+                { 
+                    status: 500,
+                    headers: { "Content-Type": "application/json" } 
+                }
+            )
         };
       }
     }),

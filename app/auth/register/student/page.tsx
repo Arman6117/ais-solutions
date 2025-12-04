@@ -1,7 +1,6 @@
 import React from 'react'
 import StudentRegistrationForm from './_components/student-registration-form'
-
-const StudentRegisterPage = () => {
+const StudentRegistrationPage = () => {
   return (
     <>
      <StudentRegistrationForm/>
@@ -9,4 +8,4 @@ const StudentRegisterPage = () => {
   )
 }
 
-export default StudentRegisterPage
+export default StudentRegistrationPage

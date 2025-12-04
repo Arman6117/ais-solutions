@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { ApproveRequestDialog } from "./approve-request-dialog";
 import { AllPendingRequests } from "@/lib/types/pending-request.type";
 import { getAllPendingRequests } from "@/actions/admin/pending-request/get-pending-request";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const PendingRequestDropdown = () => {

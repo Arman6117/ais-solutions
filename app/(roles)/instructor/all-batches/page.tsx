@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getAllBatches } from "@/actions/admin/batches/get-all-batches";
-import AllBatches from "../../admin/all-batches/_components/all-batches";
 import InstructorAllBatches from "./_components/instructor-all-batches";
 
 export const revalidate = 60;

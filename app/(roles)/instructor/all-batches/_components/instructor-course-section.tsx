@@ -1,4 +1,3 @@
-import BatchCard from "@/app/(roles)/admin/all-batches/_components/batch-card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CourseBatch } from "@/lib/types/types";

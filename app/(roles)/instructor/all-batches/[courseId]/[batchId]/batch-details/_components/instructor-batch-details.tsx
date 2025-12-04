@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import InfoWrapper from "@/components/info-wrapper";
 
 import EditInfo from "@/components/edit-info";
-import BatchMeetings from "./instructor-batch-meetings";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

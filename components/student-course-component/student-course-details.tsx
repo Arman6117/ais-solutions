@@ -48,16 +48,12 @@ const StudentCourseDetails = async ({
     headers: await headers(),
   });
 
-
   if (!session?.user?.email) {
     console.error("No user session found");
-    return; 
+    return;
   }
-  
-  const studentId = await getStudentId(session.user.email);
-  
- 
 
+  const studentId = await getStudentId(session.user.email);
 
   return (
     <div className="flex flex-col w-full relative">
@@ -154,18 +150,18 @@ const StudentCourseDetails = async ({
                     Only modules you want to purchase
                   </DialogDescription>
                 </DialogHeader>
-                
-                  <ModuleSelect
-                    modules={course.modules}
-                    courseId={course._id}
-                    discount={course.courseDiscount}
-                    coursePrice={course.coursePrice}
-                    courseOfferPrice={course.courseOfferPrice}
-                  />
-                {course.studentsEnrolled.includes(studentId!) && (
+
+                <ModuleSelect
+                  modules={course.modules}
+                  courseId={course._id}
+                  discount={course.courseDiscount}
+                  coursePrice={course.coursePrice}
+                  courseOfferPrice={course.courseOfferPrice}
+                />
+                {(course.studentsEnrolled || []).includes(studentId!) && (
                   <Badge className="bg-amber-500">
                     You are already enrolled in the course select only modules
-                    you have&apos;t  purchase
+                    you have&apos;t purchase
                   </Badge>
                 )}
               </DialogContent>

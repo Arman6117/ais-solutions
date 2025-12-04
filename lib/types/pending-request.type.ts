@@ -39,6 +39,7 @@ export interface ApprovePendingRequestPayload {
   amountPaid:number
   totalFees:number
   dueDate?:string
+  salesPersonId?: string;
   status:"Due" | "Paid" | "Partially Paid",
   mode:"UPI"| "Cash"| "Card"|"Other" 
   batchMode:Mode

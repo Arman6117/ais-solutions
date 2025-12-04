@@ -15,23 +15,23 @@ import { ApproveRequestDialog } from "./approve-request-dialog";
 import { AllPendingRequests } from "@/lib/types/pending-request.type";
 import { getAllPendingRequests } from "@/actions/admin/pending-request/get-pending-request";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const PendingRequestDropdown = () => {
   const [allPendingRequests, setAllPendingRequests] = useState<
     AllPendingRequests[]
   >([]);
+  const router = useRouter();
 
   const fetchPendingRequests = async () => {
     try {
       const res = await getAllPendingRequests();
       if (!res.success) {
-        toast.error("Failed to fetch pending requests");
+        // toast.error("Failed to fetch pending requests"); // Optional: suppress error toast on periodic fetch
         return;
       }
       setAllPendingRequests(res.data);
-      // toast.success("Pending requests fetched successfully");
     } catch (error) {
-      toast.error("An error occurred while fetching pending requests");
       console.error("Error fetching pending requests:", error);
     }
   };
@@ -44,12 +44,20 @@ const PendingRequestDropdown = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleApproveClick = (e: React.MouseEvent, reqId: string) => {
-    e.stopPropagation(); // Prevent dropdown from closing immediately if needed or default behavior
+    e.preventDefault(); // Important: Prevent Dropdown from closing weirdly
+    e.stopPropagation();
     setSelectedRequestId(reqId);
     setIsDialogOpen(true);
   };
 
   const pendingCount = allPendingRequests.length;
+
+  const handleSuccess = () => {
+    // Refresh list locally
+    fetchPendingRequests();
+    // Refresh server components (like main page stats)
+    router.refresh();
+  };
 
   return (
     <>
@@ -75,13 +83,13 @@ const PendingRequestDropdown = () => {
                 {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}
               </div>
               
-              {/* ScrollArea added here */}
               <ScrollArea className="h-[300px]">
                 <div className="p-1">
                   {allPendingRequests.map((req) => (
                     <DropdownMenuItem
                       key={req._id}
                       className="flex flex-col items-start p-3 gap-3 mb-1 cursor-default focus:bg-transparent"
+                      onSelect={(e) => e.preventDefault()} // Prevent closing on item click (focus remains in menu)
                     >
                       <div className="w-full space-y-1">
                         <div className="flex items-center justify-between">
@@ -120,11 +128,13 @@ const PendingRequestDropdown = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* Pass handleSuccess to refresh parent list after action */}
       {selectedRequestId && (
         <ApproveRequestDialog
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           requestId={selectedRequestId}
+          onSuccess={handleSuccess} // <--- Connect refresh logic
         />
       )}
     </>

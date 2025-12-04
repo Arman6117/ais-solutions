@@ -5,7 +5,7 @@ import { DataTable } from "@/components/data-table";
 import { Column, FilterOption } from "@/lib/types/types";
 import { format } from "date-fns";
 import { BookOpen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PiStarFill } from "react-icons/pi";
 import { toast } from "sonner";
 
@@ -128,7 +128,7 @@ export default function ModulesDataTable() {
     }
   };
 
-  const fetchModules = async () => {
+  const fetchModules = useCallback(async () => {
     try {
       const res = await getAllModulesTable();
       if (res.success) {
@@ -140,7 +140,7 @@ export default function ModulesDataTable() {
     } catch (error) {
       console.log(error);
     }
-  };
+  },[]);
 
   useEffect(() => {
     fetchModules();

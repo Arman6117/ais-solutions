@@ -3,7 +3,7 @@
 import { DataTable } from "@/components/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AddStudentsDialog } from "./add-student-dialog";
 import { getStudentsByBatch } from "@/actions/admin/batches/get-student-by-batch-id";
@@ -58,7 +58,7 @@ const BatchStudentTable = ({
   const [students, setStudents] = useState<StudentRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await getStudentsByBatch(batchId);
@@ -73,13 +73,13 @@ const BatchStudentTable = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  },[batchId]);
 
   useEffect(() => {
     if (batchId) {
       fetchStudents();
     }
-  }, [batchId]);
+  }, [batchId,fetchStudents]);
 
   const handleDelete = async (ids: string[]) => {
     try {

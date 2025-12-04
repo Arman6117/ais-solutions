@@ -25,6 +25,7 @@ import {
 import { useCreateCourseStore } from "@/store/use-create-course-store";
 import CourseLevelSelector from "./course-level-selector";
 import CourseModeSelector from "./course-mode-selector";
+import Image from "next/image";
 
 const CreateCourseBasicInfo = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -52,7 +53,7 @@ const CreateCourseBasicInfo = () => {
         coursePrice - (coursePrice * courseDiscount) / 100
       ),
     });
-  }, [coursePrice, courseDiscount]);
+  }, [coursePrice, courseDiscount,setBasicInfo]);
   useEffect(() => {
     setCourseDuration(
       formatDistance(courseStartDate ?? new Date(), courseEndDate ?? new Date())
@@ -192,7 +193,7 @@ const CreateCourseBasicInfo = () => {
                   className="focus w-64 sm:w-96 transition-all border-black focus-visible:ring-0 focus-visible:border-2 focus-visible:border-primary-bg"
                 />
                 {thumbnailPreview && (
-                  <img
+                  <Image
                     src={thumbnailPreview}
                     alt="Thumbnail Preview"
                     className="w-32 h-32 rounded object-cover border"

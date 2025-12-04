@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -76,7 +76,7 @@ export const ApproveRequestDialog = ({
   const [courseList, setCourseList] = useState<CourseData[]>([]);
   const router = useRouter();
 
-  const fetchPendingRequestToApprove = async () => {
+  const fetchPendingRequestToApprove =useCallback(async () => {
     if (!requestId) return;
 
     setLoading(true);
@@ -108,7 +108,7 @@ export const ApproveRequestDialog = ({
     } finally {
       setLoading(false);
     }
-  };
+  },[requestId]);
 
   useEffect(() => {
     if (open && requestId) {
@@ -128,7 +128,7 @@ export const ApproveRequestDialog = ({
       setCustomTotalPrice("");
       setAmountPaid(0);
     }
-  }, [requestId, open]);
+  }, [requestId, open,fetchPendingRequestToApprove]);
 
   // ... (Other handlers: currentCourse, handleModuleToggle, handleModulePriceChange, autoPrice, totalPrice) ...
   // Copying your existing handlers below for brevity, assuming they are unchanged

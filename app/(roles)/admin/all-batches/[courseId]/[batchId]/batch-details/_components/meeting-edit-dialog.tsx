@@ -83,7 +83,7 @@ const MeetingEditDialog = ({
       };
       fetchModules();
     }
-  }, [open, meetingData._id]);
+  }, [open, meetingData._id,batchId]);
 
   
   useEffect(() => {

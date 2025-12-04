@@ -128,11 +128,11 @@ const InvoiceTable = () => {
 
   const uniqueStatuses = useMemo(() => {
     return Array.from(new Set(invoicesData.map((i) => i.status)));
-  }, []);
+  }, [invoicesData]);
 
   const uniquePaymentModes = useMemo(() => {
     return Array.from(new Set(invoicesData.map((i) => i.paymentMode)));
-  }, []);
+  }, [invoicesData]);
 
   return (
     <DataTable

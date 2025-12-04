@@ -17,6 +17,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 import { Offer } from "@/lib/types/types";
+import Image from "next/image";
 
 type Props = {
   offer: Offer;
@@ -150,7 +151,7 @@ const EditOfferDialog = ({ offer, onSave, children }: Props) => {
             </Tabs>
 
             {edited.image && (
-              <img
+              <Image
                 src={edited.image}
                 alt="Offer preview"
                 className="mt-4 w-full h-48 object-cover rounded-lg border shadow"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BatchModules, Modules } from "@/lib/types/types";
@@ -64,7 +64,7 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
     }
   };
 
-  const fetchAvailableModule = async () => {
+  const fetchAvailableModule = useCallback(async () => {
     try {
       const res = await getAllModulesNames();
 
@@ -79,11 +79,11 @@ const ModulesCard: React.FC<ModulesCardProps> = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  },[modules]);
 
   useEffect(() => {
     fetchAvailableModule();
-  }, [modules]);
+  }, [modules,fetchAvailableModule]);
   useEffect(() => {
     setModules(propModules);
   }, [propModules]);

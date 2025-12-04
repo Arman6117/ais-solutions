@@ -1,6 +1,6 @@
 // components/batch-components/new-note-form.tsx
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { TableCell, TableRow } from "../ui/table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
@@ -112,7 +112,7 @@ const NewNoteForm = ({
   const [selectedBatchIds, setSelectedBatchIds] = useState<string[]>([]);
   const [openBatchSelect, setOpenBatchSelect] = useState(false);
 
-  const fetchModules = async () => {
+  const fetchModules = useCallback(async () => {
     try {
       const res = await getModulesWithSubtopics(batchId);
       if (!res.success) {
@@ -127,9 +127,9 @@ const NewNoteForm = ({
       console.log(error);
       toast.error("Failed to fetch modules");
     }
-  };
+  },[batchId,isEditing]);
 
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       const res = await getAllMeetingsByBatchId(batchId);
       if (!res.success) {
@@ -151,9 +151,9 @@ const NewNoteForm = ({
       console.log(error);
       toast.error("Failed to fetch sessions");
     }
-  };
+  },[batchId]);
 
-  const fetchOtherBatches = async () => {
+  const fetchOtherBatches = useCallback(async () => {
     if (!courseId) return;
     try {
       const res = await getBatchesByCourse(courseId);
@@ -164,13 +164,13 @@ const NewNoteForm = ({
     } catch (error) {
       console.error("Failed to fetch batches", error);
     }
-  };
+  },[courseId,batchId]);
 
   useEffect(() => {
     fetchModules();
     fetchSessions();
     fetchOtherBatches();
-  }, []);
+  }, [fetchModules,fetchSessions,fetchOtherBatches]);
 
   const handleSave = () => {
     if (!moduleName || !chapterName || !date) {

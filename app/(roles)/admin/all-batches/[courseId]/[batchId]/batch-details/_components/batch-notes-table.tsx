@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NoteTableType } from "@/lib/types/note.type";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type BatchNotesTable = {
@@ -24,7 +24,7 @@ const BatchNotesTable = ({ batchId, mode,courseId }: BatchNotesTableProps) => {
   const [mounted, setMounted] = useState(false);
   const [notes, setNotes] = useState<NoteTableType[]>([]);
 
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       const res = await getNotesTable(batchId);
    
@@ -38,11 +38,11 @@ const BatchNotesTable = ({ batchId, mode,courseId }: BatchNotesTableProps) => {
       toast.error("Failed to fetch notes");
       console.log("Error fetching notes:", error);
     }
-  };
+  },[batchId]);
   useEffect(() => {
     fetchNotes();
     setMounted(true);
-  }, []);
+  }, [fetchNotes]);
 
   if (!mounted) return null;
 

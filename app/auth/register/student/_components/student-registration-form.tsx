@@ -41,6 +41,7 @@ import {
   X,
   AlertCircle,
 } from "lucide-react";
+import Image from "next/image";
 
 const StudentRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -176,7 +177,7 @@ const StudentRegistrationForm = () => {
                 <div className="relative">
                   {profilePreview ? (
                     <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-purple-100">
-                      <img
+                      <Image
                         src={profilePreview}
                         alt="preview"
                         className="w-full h-full object-cover"

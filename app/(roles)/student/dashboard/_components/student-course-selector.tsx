@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -24,7 +24,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
       setCoursesData(courses);
@@ -33,7 +33,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  },[courses]);
 
   useEffect(() => {
     fetchCourses();
@@ -73,6 +73,7 @@ const StudentCourseSelector = ({ courses }: StudentCourseSelectorProps) => {
     courses,
     searchParams,
     pathname,
+    coursesData,
     router,
     setSelectedCourse,
   ]);

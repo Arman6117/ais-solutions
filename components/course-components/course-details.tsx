@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -84,7 +84,7 @@ const CourseDetails = ({
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   console.log(isSmallScreen)
-  const fetchModules = async () => {
+  const fetchModules = useCallback(async () => {
     try {
       const res = await getCourseModules(course!._id!);
       if (!res.success) {
@@ -98,10 +98,10 @@ const CourseDetails = ({
       console.error("Error fetching modules:", error);
       toast.error("Something went wrong while fetching modules");
     }
-  };
+  },[course]);
   useEffect(() => {
     fetchModules();
-  }, []);
+  }, [fetchModules]);
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 1024);

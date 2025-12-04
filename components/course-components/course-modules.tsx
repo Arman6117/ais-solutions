@@ -12,7 +12,7 @@ import { CourseModule } from "@/lib/types/course.type";
 import { cn } from "@/lib/utils";
 import { BookOpen, Download } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import AddModuleButton from "../add-module-button";
 import { addModulesToCourse } from "@/actions/admin/course/add-modules-course";
@@ -40,7 +40,7 @@ const CourseModules = ({
 
   const [availableModules, setAvailableModules] = useState<CourseModule[]>([]);
 
-  const fetchAvailableModules = async () => {
+  const fetchAvailableModules = useCallback(async () => {
     try {
       const res = await getAllModulesNames(); // This should return CourseModule[]
       if (res.success && res.data) {
@@ -56,11 +56,11 @@ const CourseModules = ({
       console.error("Failed to fetch available modules:", error);
       toast.error("Could not load modules to add.");
     }
-  };
+  },[modules]);
 
   useEffect(() => {
     fetchAvailableModules();
-  }, []);
+  }, [fetchAvailableModules]);
 
   // --- MODIFIED LOGIC ---
   // This handler now updates the UI state optimistically.

@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import EditOfferDialog from "./edit-offer-dialog";
 import { Offer } from "@/lib/types/types";
+import Image from "next/image";
 
 
 type OfferCardProps = {
@@ -46,7 +47,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   return (
     <div className={`group relative overflow-hidden rounded-xl bg-white shadow-lg border ${!offer.isActive ? "opacity-60" : ""}`}>
       <div className="relative h-48 overflow-hidden">
-        <img
+        <Image
           src={offer.image}
           alt={offer.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

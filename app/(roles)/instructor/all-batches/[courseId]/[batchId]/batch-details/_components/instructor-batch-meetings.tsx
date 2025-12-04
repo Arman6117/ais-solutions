@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 
 type InstructorBatchMeetingsProps = {
@@ -77,7 +77,7 @@ const InstructorBatchMeetings = ({
     sortOrder: "desc" as "asc" | "desc",
   });
 
-  const fetchMeetings = async () => {
+  const fetchMeetings = useCallback(async () => {
     try {
       const res = await getAllMeetingsByBatchId(batch);
       if (!res.success) {
@@ -89,11 +89,11 @@ const InstructorBatchMeetings = ({
       toast.error("Something went wrong");
       console.log(error);
     }
-  };
+  }, [batch]);
 
   useEffect(() => {
     fetchMeetings();
-  }, [batch]);
+  }, [fetchMeetings]);
 
   const handleDelete = async (meetingId: string) => {
     try {

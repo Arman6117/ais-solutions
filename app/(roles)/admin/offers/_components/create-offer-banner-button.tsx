@@ -17,6 +17,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 import { Offer } from "@/lib/types/types";
+import Image from "next/image";
 
 
 
@@ -152,7 +153,7 @@ const CreateOfferBannerButton = () => {
             </Tabs>
 
             {form.image && (
-              <img
+              <Image
                 src={form.image}
                 alt="Preview"
                 className="mt-4 w-full h-48 object-cover rounded border"

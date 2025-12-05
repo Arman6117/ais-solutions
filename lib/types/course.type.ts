@@ -26,6 +26,7 @@ export interface CourseCards {
   courseEndDate: number;
   courseMode: Mode;
   createdAt: Date;
+  syllabusLink: string;
 }
 
 export interface ModuleChapterTopic {

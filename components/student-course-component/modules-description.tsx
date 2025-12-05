@@ -66,7 +66,7 @@ const ModulesDescription = ({
                   <h3 className="text-[16px]  font-medium">
                     Download Module Syllabus
                   </h3>
-                  <Link href={m.syllabusLink}>
+                  <Link href={m.syllabusLink} target="_blank" rel="noreferrer">
                     <Button
                       className="bg-primary-bg rounded-full cursor-pointer"
                       size={"sm"}

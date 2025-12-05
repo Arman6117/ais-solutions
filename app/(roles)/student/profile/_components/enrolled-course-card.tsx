@@ -28,10 +28,10 @@ const EnrolledCourseCard = ({ course,amountPaid,totalFee }: EnrolledCourseCardPr
   const progressPercentage = ((amountPaid || 0) / (totalFee || 1)) * 100;
 
   return (
-    <Link
-      href={`/student/profile/enrolled-courses/${course.courseId._id}`}
-      className="no-underline"
-    >
+    // <Link
+    //   href={`/student/profile/enrolled-courses/${course.courseId._id}`}
+    //   className="no-underline"
+    // >
       <Card className="group relative overflow-hidden border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
         {/* Overlay for unapproved */}
         {!isApproved && (
@@ -106,7 +106,7 @@ const EnrolledCourseCard = ({ course,amountPaid,totalFee }: EnrolledCourseCardPr
           </div>
         </CardContent>
       </Card>
-    </Link>
+    // </Link>
   );
 };
 

@@ -139,7 +139,6 @@ const Calendar: React.FC<CalendarProps> = ({
           type="button"
           className={dayClasses}
           onClick={() => handleDateClick(date)}
-          aria-selected={isDateSelected}
         >
           {day}
         </button>

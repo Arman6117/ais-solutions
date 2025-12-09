@@ -1,6 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { authClient } from "@/lib/auth-client";
 import { LogOut } from "lucide-react";
 
@@ -8,7 +14,6 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 
 const LogOutButton = () => {
- 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogOut = async () => {
@@ -25,10 +30,11 @@ const LogOutButton = () => {
           },
         },
       });
-      
+
       // 2. Manually nuke the cookie (Backup for client-side stickiness)
       // Note: This won't work for HttpOnly cookies but helps clean up client state
-      document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      document.cookie =
+        "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 
       // 3. Show success
       toast.success("Successfully logged out");
@@ -36,7 +42,6 @@ const LogOutButton = () => {
       // 4. The Nuclear Option: Force a full browser reload to the login page
       // This guarantees no stale state remains.
       window.location.href = "/auth/login/student";
-
     } catch (error) {
       console.error("Logout error:", error);
       // Even if error, force redirect because the user WANTS to leave
@@ -47,16 +52,24 @@ const LogOutButton = () => {
   };
 
   return (
-    <Button
-      className="sm:size-10 cursor-pointer group hover:bg-destructive sm:hover:bg-muted-foreground"
-      variant={"ghost"}
-      onClick={handleLogOut}
-      disabled={isLoading}
-    >
-      <LogOut className={`sm:text-white group-hover:text-white sm:size-9 ${isLoading ? 'opacity-50' : ''}`} />
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            className="sm:size-10 cursor-pointer group hover:bg-destructive sm:hover:bg-muted-foreground"
+            variant={"ghost"}
+            onClick={handleLogOut}
+            disabled={isLoading}
+          >
+            <LogOut
+              className={`sm:text-white group-hover:text-white sm:size-9 ${isLoading ? "opacity-50" : ""}`}
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Logout</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
 export default LogOutButton;
-

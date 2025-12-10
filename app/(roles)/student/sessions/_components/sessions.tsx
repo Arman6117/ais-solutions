@@ -53,7 +53,8 @@ const Sessions = ({ initialSessions, initialModules, studentId }: SessionsProps)
     if (moduleFilter === "purchased") {
       sessions = sessions.filter((session) => session.isPurchasedModule === true);
     } else if (moduleFilter === "other") {
-      sessions = sessions.filter((session) => session.isPurchasedModule === false);
+      // ✅ FIX: Check if the session.module is NOT included in the standard studentModules list
+      sessions = sessions.filter((session) => !studentModules.includes(session.module));
     } else if (moduleFilter !== "all") {
       sessions = sessions.filter((session) => session.module === moduleFilter);
     }
@@ -104,6 +105,7 @@ const Sessions = ({ initialSessions, initialModules, studentId }: SessionsProps)
     sortBy,
     studentSessions,
     currentStudentId,
+    studentModules, // ✅ Added studentModules dependency
   ]);
 
   const totalPages = Math.ceil(filteredSessions.length / ITEMS_PER_PAGE);

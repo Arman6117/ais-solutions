@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
@@ -32,10 +31,8 @@ import { getSalesPersons } from "@/actions/admin/sales-person/sales-person-actio
 import { Mode } from "@/lib/types/types";
 import { useRouter } from "next/navigation";
 
-
 const paymentModes = ["Cash", "UPI", "Card"];
 const paymentStatuses = ["Paid", "Partially Paid", "Due"];
-
 
 type Module = {
   _id?: string;
@@ -43,12 +40,10 @@ type Module = {
   price: number;
 };
 
-
 type SalesPerson = {
     _id: string;
     name: string;
 };
-
 
 type ApproveRequestDialogProps = {
   requestId: string;
@@ -56,7 +51,6 @@ type ApproveRequestDialogProps = {
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
 };
-
 
 export const ApproveRequestDialog = ({
   requestId,
@@ -67,7 +61,8 @@ export const ApproveRequestDialog = ({
   const [request, setRequest] = useState<RequestToApprove | null>(null);
   const [loading, setLoading] = useState(false);
   const [declining, setDeclining] = useState(false);
-
+  // New state for approval loading
+  const [approving, setApproving] = useState(false);
 
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedModules, setSelectedModules] = useState<Module[]>([]);
@@ -83,10 +78,8 @@ export const ApproveRequestDialog = ({
   const [courseList, setCourseList] = useState<CourseData[]>([]);
   const router = useRouter();
 
-
-  const fetchPendingRequestToApprove =useCallback(async () => {
+  const fetchPendingRequestToApprove = useCallback(async () => {
     if (!requestId) return;
-
 
     setLoading(true);
     try {
@@ -102,13 +95,11 @@ export const ApproveRequestDialog = ({
       const salesRes = await getSalesPersons();
       if(salesRes.success) setSalesPersonsList(salesRes.data);
 
-
       setRequest(res.data);
       setSelectedCourse(res.data.courseId._id || "");
       setSelectedModules(res.data.modules || []);
       setCustomTotalPrice("");
       setCourseList(courseRes.data);
-
 
       toast.success(res.message);
     } catch (error) {
@@ -119,12 +110,10 @@ export const ApproveRequestDialog = ({
     }
   },[requestId]);
 
-
   useEffect(() => {
     if (open && requestId) {
       fetchPendingRequestToApprove();
     }
-
 
     if (!open) {
       setRequest(null);
@@ -138,15 +127,14 @@ export const ApproveRequestDialog = ({
       setDueDate("");
       setCustomTotalPrice("");
       setAmountPaid(0);
+      setApproving(false); // Reset approving state
     }
-  }, [requestId, open,fetchPendingRequestToApprove]);
-
+  }, [requestId, open, fetchPendingRequestToApprove]);
 
   const currentCourse = useMemo(
     () => courseList.find((c) => c._id === selectedCourse),
     [selectedCourse, courseList]
   );
-
 
   const handleModuleToggle = (mod: Module) => {
     setSelectedModules((prev) => {
@@ -154,7 +142,6 @@ export const ApproveRequestDialog = ({
       return exists ? prev.filter((m) => m.name !== mod.name) : [...prev, mod];
     });
   };
-
 
   const handleModulePriceChange = (name: string, price: string) => {
     setSelectedModules((prev) =>
@@ -164,13 +151,11 @@ export const ApproveRequestDialog = ({
     );
   };
 
-
   const autoPrice = selectedModules.reduce((acc, m) => {
     const modulePrice =
       typeof m.price === "number" ? m.price : parseInt(String(m.price)) || 0;
     return acc + modulePrice;
   }, 0);
-
 
   const totalPrice = useMemo(() => {
     if (customTotalPrice !== "") {
@@ -183,7 +168,6 @@ export const ApproveRequestDialog = ({
     return autoPrice;
   }, [customTotalPrice, request?.finalPrice, autoPrice]);
 
-
   const isFormValid =
     selectedBatch &&
     batchMode &&
@@ -192,13 +176,13 @@ export const ApproveRequestDialog = ({
     paymentStatus &&
     (paymentStatus === "Paid" || dueDate);
 
-
   const approveRequest = async () => {
     if (!request || !currentCourse) {
       toast.error("Required data is missing.");
       return;
     }
 
+    setApproving(true); // Start loading
 
     try {
       const moduleIds = selectedModules
@@ -210,12 +194,11 @@ export const ApproveRequestDialog = ({
         })
         .filter(Boolean) as string[];
 
-
       if (moduleIds.length === 0) {
         toast.error("No modules selected or module IDs not found.");
+        setApproving(false);
         return;
       }
-
 
       const payload: ApprovePendingRequestPayload = {
         email: request.studentId?.email || "",
@@ -233,7 +216,6 @@ export const ApproveRequestDialog = ({
         ...(selectedSalesPerson && selectedSalesPerson !== "none" && { salesPersonId: selectedSalesPerson }),
       };
 
-
       const res = await approvePendingRequest(requestId, payload);
       if (res.success) {
         toast.success(res.message);
@@ -246,9 +228,10 @@ export const ApproveRequestDialog = ({
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
+    } finally {
+      setApproving(false); // Stop loading
     }
   };
-
 
   const handleDeclineRequest = async () => {
     if (!confirm("Are you sure you want to decline this request? This action cannot be undone.")) {
@@ -273,7 +256,6 @@ export const ApproveRequestDialog = ({
     }
   };
 
-
   if (loading || !request) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -287,7 +269,6 @@ export const ApproveRequestDialog = ({
     );
   }
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto select-text">
@@ -297,7 +278,6 @@ export const ApproveRequestDialog = ({
             Assign batch and finalize modules and payment details.
           </DialogDescription>
         </DialogHeader>
-
 
         <div className="space-y-4 text-sm">
           {/* Student Details */}
@@ -311,7 +291,6 @@ export const ApproveRequestDialog = ({
                   <p className="text-gray-900">{request.studentId?.email || "Unknown"}</p>
               </div>
           </div>
-
 
           {/* Sales Person Selector */}
           <div>
@@ -330,7 +309,6 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
-
 
           {/* Course Selector */}
           <div>
@@ -356,7 +334,6 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
-
 
           {/* Selected Modules */}
           <div>
@@ -399,7 +376,6 @@ export const ApproveRequestDialog = ({
             </div>
           </div>
 
-
           {/* Available Modules */}
           <div>
             <p className="font-medium text-gray-700 mb-1 mt-4">
@@ -422,7 +398,6 @@ export const ApproveRequestDialog = ({
             </div>
           </div>
 
-
           {/* Custom Final Price */}
           <div className="mt-2">
             <p className="font-medium text-gray-700 mb-1">
@@ -440,7 +415,6 @@ export const ApproveRequestDialog = ({
             </p>
           </div>
 
-
           {/* Batch selection */}
           <div>
             <p className="font-medium text-gray-700 mb-1">📅 Assign to Batch</p>
@@ -457,7 +431,6 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
-
 
           {/* Batch Mode */}
           <div>
@@ -479,7 +452,6 @@ export const ApproveRequestDialog = ({
             </Select>
           </div>
 
-
           {/* Payment Mode */}
           <div>
             <p className="font-medium text-gray-700 mb-1">💳 Payment Mode</p>
@@ -496,7 +468,6 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
-
 
           {/* Payment Status */}
           <div>
@@ -515,7 +486,6 @@ export const ApproveRequestDialog = ({
             </Select>
           </div>
 
-
           {paymentStatus === "Partially Paid" && (
             <div>
               <p className="font-medium text-gray-700 mb-1">💵 Amount Paid</p>
@@ -531,7 +501,6 @@ export const ApproveRequestDialog = ({
             </div>
           )}
 
-
           {/* Due Date */}
           {paymentStatus !== "Paid" && (
             <div>
@@ -545,12 +514,11 @@ export const ApproveRequestDialog = ({
           )}
         </div>
 
-
         <DialogFooter className="mt-4 flex gap-2">
           <Button
             variant="destructive"
             onClick={handleDeclineRequest}
-            disabled={declining}
+            disabled={declining || approving}
             className="mr-auto"
           >
             {declining ? (
@@ -566,10 +534,17 @@ export const ApproveRequestDialog = ({
             )}
           </Button>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" disabled={approving}>Cancel</Button>
           </DialogClose>
-          <Button disabled={!isFormValid} onClick={approveRequest}>
-            Confirm & Assign Batch
+          <Button disabled={!isFormValid || approving} onClick={approveRequest}>
+            {approving ? (
+              <>
+                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                Approving...
+              </>
+            ) : (
+              "Confirm & Assign Batch"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

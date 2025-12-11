@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
@@ -27,12 +28,14 @@ import { Loader, X } from "lucide-react";
 import { getCourseList } from "@/actions/admin/pending-request/get-data-to-approve-request";
 import { approvePendingRequest } from "@/actions/admin/pending-request/approve-pending-request";
 import { declinePendingRequest } from "@/actions/admin/pending-request/decline-pending-request";
-import { getSalesPersons } from "@/actions/admin/sales-person/sales-person-actions"; // Import sales person action
+import { getSalesPersons } from "@/actions/admin/sales-person/sales-person-actions";
 import { Mode } from "@/lib/types/types";
 import { useRouter } from "next/navigation";
 
+
 const paymentModes = ["Cash", "UPI", "Card"];
 const paymentStatuses = ["Paid", "Partially Paid", "Due"];
+
 
 type Module = {
   _id?: string;
@@ -40,17 +43,20 @@ type Module = {
   price: number;
 };
 
+
 type SalesPerson = {
     _id: string;
     name: string;
 };
 
+
 type ApproveRequestDialogProps = {
   requestId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess?: () => void; 
+  onSuccess?: () => void;
 };
+
 
 export const ApproveRequestDialog = ({
   requestId,
@@ -62,12 +68,13 @@ export const ApproveRequestDialog = ({
   const [loading, setLoading] = useState(false);
   const [declining, setDeclining] = useState(false);
 
+
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedModules, setSelectedModules] = useState<Module[]>([]);
   const [selectedBatch, setSelectedBatch] = useState("");
   const [batchMode, setBatchMode] = useState<Mode>("online");
-  const [selectedSalesPerson, setSelectedSalesPerson] = useState(""); // State for Sales Person
-  const [salesPersonsList, setSalesPersonsList] = useState<SalesPerson[]>([]); // List of Sales Persons
+  const [selectedSalesPerson, setSelectedSalesPerson] = useState("");
+  const [salesPersonsList, setSalesPersonsList] = useState<SalesPerson[]>([]);
   const [paymentMode, setPaymentMode] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -76,8 +83,10 @@ export const ApproveRequestDialog = ({
   const [courseList, setCourseList] = useState<CourseData[]>([]);
   const router = useRouter();
 
+
   const fetchPendingRequestToApprove =useCallback(async () => {
     if (!requestId) return;
+
 
     setLoading(true);
     try {
@@ -87,19 +96,19 @@ export const ApproveRequestDialog = ({
         return;
       }
       
-      // Fetch Courses
       const courseRes = await getCourseList();
       if (!courseRes.success) toast.error(courseRes.message);
       
-      // Fetch Sales Persons
       const salesRes = await getSalesPersons();
       if(salesRes.success) setSalesPersonsList(salesRes.data);
+
 
       setRequest(res.data);
       setSelectedCourse(res.data.courseId._id || "");
       setSelectedModules(res.data.modules || []);
       setCustomTotalPrice("");
       setCourseList(courseRes.data);
+
 
       toast.success(res.message);
     } catch (error) {
@@ -110,10 +119,12 @@ export const ApproveRequestDialog = ({
     }
   },[requestId]);
 
+
   useEffect(() => {
     if (open && requestId) {
       fetchPendingRequestToApprove();
     }
+
 
     if (!open) {
       setRequest(null);
@@ -130,12 +141,12 @@ export const ApproveRequestDialog = ({
     }
   }, [requestId, open,fetchPendingRequestToApprove]);
 
-  // ... (Other handlers: currentCourse, handleModuleToggle, handleModulePriceChange, autoPrice, totalPrice) ...
-  // Copying your existing handlers below for brevity, assuming they are unchanged
+
   const currentCourse = useMemo(
     () => courseList.find((c) => c._id === selectedCourse),
     [selectedCourse, courseList]
   );
+
 
   const handleModuleToggle = (mod: Module) => {
     setSelectedModules((prev) => {
@@ -143,6 +154,7 @@ export const ApproveRequestDialog = ({
       return exists ? prev.filter((m) => m.name !== mod.name) : [...prev, mod];
     });
   };
+
 
   const handleModulePriceChange = (name: string, price: string) => {
     setSelectedModules((prev) =>
@@ -152,11 +164,13 @@ export const ApproveRequestDialog = ({
     );
   };
 
+
   const autoPrice = selectedModules.reduce((acc, m) => {
     const modulePrice =
       typeof m.price === "number" ? m.price : parseInt(String(m.price)) || 0;
     return acc + modulePrice;
   }, 0);
+
 
   const totalPrice = useMemo(() => {
     if (customTotalPrice !== "") {
@@ -169,6 +183,7 @@ export const ApproveRequestDialog = ({
     return autoPrice;
   }, [customTotalPrice, request?.finalPrice, autoPrice]);
 
+
   const isFormValid =
     selectedBatch &&
     batchMode &&
@@ -177,11 +192,13 @@ export const ApproveRequestDialog = ({
     paymentStatus &&
     (paymentStatus === "Paid" || dueDate);
 
+
   const approveRequest = async () => {
     if (!request || !currentCourse) {
       toast.error("Required data is missing.");
       return;
     }
+
 
     try {
       const moduleIds = selectedModules
@@ -193,10 +210,12 @@ export const ApproveRequestDialog = ({
         })
         .filter(Boolean) as string[];
 
+
       if (moduleIds.length === 0) {
         toast.error("No modules selected or module IDs not found.");
         return;
       }
+
 
       const payload: ApprovePendingRequestPayload = {
         email: request.studentId?.email || "",
@@ -210,8 +229,10 @@ export const ApproveRequestDialog = ({
         status: paymentStatus as "Due" | "Paid" | "Partially Paid",
         mode: paymentMode as "UPI" | "Cash" | "Card" | "Other",
         batchMode: batchMode,
-        salesPersonId: selectedSalesPerson || undefined, // Pass the sales person ID
+        // FIX: Conditionally add salesPersonId to avoid casting errors
+        ...(selectedSalesPerson && selectedSalesPerson !== "none" && { salesPersonId: selectedSalesPerson }),
       };
+
 
       const res = await approvePendingRequest(requestId, payload);
       if (res.success) {
@@ -227,6 +248,7 @@ export const ApproveRequestDialog = ({
       toast.error("Something went wrong");
     }
   };
+
 
   const handleDeclineRequest = async () => {
     if (!confirm("Are you sure you want to decline this request? This action cannot be undone.")) {
@@ -251,6 +273,7 @@ export const ApproveRequestDialog = ({
     }
   };
 
+
   if (loading || !request) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -264,6 +287,7 @@ export const ApproveRequestDialog = ({
     );
   }
 
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto select-text">
@@ -274,18 +298,20 @@ export const ApproveRequestDialog = ({
           </DialogDescription>
         </DialogHeader>
 
+
         <div className="space-y-4 text-sm">
           {/* Student Details */}
           <div className="grid grid-cols-2 gap-2">
-             <div>
-                <p className="font-medium text-gray-700">👤 Student Name</p>
-                <p className="text-gray-900">{request.studentId?.name || "Unknown"}</p>
-             </div>
-             <div>
-                <p className="font-medium text-gray-700">📧 Email</p>
-                <p className="text-gray-900">{request.studentId?.email || "Unknown"}</p>
-             </div>
+              <div>
+                  <p className="font-medium text-gray-700">👤 Student Name</p>
+                  <p className="text-gray-900">{request.studentId?.name || "Unknown"}</p>
+              </div>
+              <div>
+                  <p className="font-medium text-gray-700">📧 Email</p>
+                  <p className="text-gray-900">{request.studentId?.email || "Unknown"}</p>
+              </div>
           </div>
+
 
           {/* Sales Person Selector */}
           <div>
@@ -304,6 +330,7 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
+
 
           {/* Course Selector */}
           <div>
@@ -330,7 +357,7 @@ export const ApproveRequestDialog = ({
             </Select>
           </div>
 
-          {/* ... (Module Selection & Custom Price UI remains the same) ... */}
+
           {/* Selected Modules */}
           <div>
             <p className="font-medium text-gray-700 mb-1">
@@ -372,6 +399,7 @@ export const ApproveRequestDialog = ({
             </div>
           </div>
 
+
           {/* Available Modules */}
           <div>
             <p className="font-medium text-gray-700 mb-1 mt-4">
@@ -394,6 +422,7 @@ export const ApproveRequestDialog = ({
             </div>
           </div>
 
+
           {/* Custom Final Price */}
           <div className="mt-2">
             <p className="font-medium text-gray-700 mb-1">
@@ -411,6 +440,7 @@ export const ApproveRequestDialog = ({
             </p>
           </div>
 
+
           {/* Batch selection */}
           <div>
             <p className="font-medium text-gray-700 mb-1">📅 Assign to Batch</p>
@@ -427,6 +457,7 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
+
 
           {/* Batch Mode */}
           <div>
@@ -448,6 +479,7 @@ export const ApproveRequestDialog = ({
             </Select>
           </div>
 
+
           {/* Payment Mode */}
           <div>
             <p className="font-medium text-gray-700 mb-1">💳 Payment Mode</p>
@@ -464,6 +496,7 @@ export const ApproveRequestDialog = ({
               </SelectContent>
             </Select>
           </div>
+
 
           {/* Payment Status */}
           <div>
@@ -482,6 +515,7 @@ export const ApproveRequestDialog = ({
             </Select>
           </div>
 
+
           {paymentStatus === "Partially Paid" && (
             <div>
               <p className="font-medium text-gray-700 mb-1">💵 Amount Paid</p>
@@ -497,6 +531,7 @@ export const ApproveRequestDialog = ({
             </div>
           )}
 
+
           {/* Due Date */}
           {paymentStatus !== "Paid" && (
             <div>
@@ -509,6 +544,7 @@ export const ApproveRequestDialog = ({
             </div>
           )}
         </div>
+
 
         <DialogFooter className="mt-4 flex gap-2">
           <Button

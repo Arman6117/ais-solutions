@@ -101,7 +101,7 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   const [batches] = useState(dummyBatches || []);
   const [modules, setModules] = useState<CourseModule[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(batches)
   const fetchModules = useCallback(async () => {
     if (!course?._id) return;
 

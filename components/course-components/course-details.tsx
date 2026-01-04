@@ -100,7 +100,6 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
 
   const [batches] = useState(dummyBatches || []);
   const [modules, setModules] = useState<CourseModule[]>([]);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchModules = useCallback(async () => {
@@ -125,13 +124,7 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   }, [fetchModules]);
 
   // Resize listener (proper cleanup)
-  useEffect(() => {
-    const handleResize = () => setIsSmallScreen(window.innerWidth < 1024);
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+ 
 
   // Offer price
   useEffect(() => {

@@ -248,7 +248,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
               // Pass handlers
               onCustomNameChange={setCustomModuleName}
               onCustomTopicsChange={setCustomChaptersText}
-              onModuleChange={(moduleId: string) => {
+              onUpdate={(moduleId: string) => {
                 updateFormData({ selectedModuleId: moduleId, selectedSubtopics: [] });
                 // Reset custom fields if user switches module
                 const mod = modules.find(m => m._id === moduleId);

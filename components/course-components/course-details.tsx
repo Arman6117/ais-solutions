@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect,  useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 import CourseSyllabusCard from "@/app/(roles)/admin/courses/course-details/_components/course-syllabus-card";
 
-import { formatDistance, parseISO, isValid } from "date-fns";
+import { formatDistance, isValid, parseISO } from "date-fns";
 import { updateCourse } from "@/actions/admin/course/update-course";
 import CourseModules from "./course-modules";
 import { getCourseModules } from "@/actions/admin/course/get-course-modules";
@@ -46,6 +46,29 @@ type CourseDetailsProps = {
   dummyBatches: DummyBatches[];
   dummyInstructors: DummyInstructors[];
 };
+
+/**
+ * Normalize common non-ISO strings like "2026-1-4" -> "2026-01-04"
+ * because parseISO("1900-1-1") becomes Invalid Date [web:33].
+ */
+function normalizeYmd(input: string) {
+  // supports "YYYY-M-D" and "YYYY-MM-D" etc.
+  const m = input.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!m) return input;
+  const [, y, mo, d] = m;
+  return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+}
+
+function safeParseDate(input: string | null | undefined): Date | null {
+  if (!input) return null;
+
+  // trim, normalize, then parse
+  const cleaned = normalizeYmd(String(input).trim());
+  const date = parseISO(cleaned);
+
+  if (!isValid(date)) return null;
+  return date;
+}
 
 const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   const router = useRouter();
@@ -59,13 +82,11 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
     course?.courseMode
   );
 
-  // Keep as strings because EditCourseDuration likely uses <input type="date" />
   const [startDate, setStartDate] = useState<string>(
     course?.courseStartDate || ""
   );
   const [endDate, setEndDate] = useState<string>(course?.courseEndDate || "");
 
-  // IMPORTANT: don't compute formatDistance() in initial state (can crash on invalid dates)
   const [courseDuration, setCourseDuration] = useState<string>("");
 
   const [description, setDescription] = useState(course?.courseDescription || "");
@@ -73,13 +94,13 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
 
   const [price, setPrice] = useState(course?.coursePrice || 0);
   const [discount, setDiscount] = useState(course?.courseDiscount || 0);
-
   const [offerPrice, setOfferPrice] = useState(
     price - (price * discount) / 100 || 0
   );
 
   const [batches] = useState(dummyBatches || []);
   const [modules, setModules] = useState<CourseModule[]>([]);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchModules = useCallback(async () => {
@@ -103,23 +124,43 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
     fetchModules();
   }, [fetchModules]);
 
-  // Resize listener (fixed cleanup)
- 
+  // Resize listener (proper cleanup)
+  useEffect(() => {
+    const handleResize = () => setIsSmallScreen(window.innerWidth < 1024);
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Offer price
   useEffect(() => {
     setOfferPrice(price - (price * discount) / 100);
   }, [price, discount]);
 
-  // FIX: Safe duration calculation (prevents RangeError)
+  // Duration (fully safe)
   useEffect(() => {
-    const start = startDate ? parseISO(startDate) : null;
-    const end = endDate ? parseISO(endDate) : null;
+    const start = safeParseDate(startDate);
+    const end = safeParseDate(endDate);
 
-    if (!start || !end || !isValid(start) || !isValid(end)) {
-      setCourseDuration(""); // or "—"
+    if (!start || !end) {
+      setCourseDuration("");
       return;
     }
 
-    setCourseDuration(formatDistance(start, end));
+    try {
+      setCourseDuration(formatDistance(start, end));
+    } catch (e) {
+      // date-fns throws RangeError for invalid date inputs [web:2]
+      console.error("formatDistance failed:", {
+        startDate,
+        endDate,
+        parsedStart: start,
+        parsedEnd: end,
+        error: e,
+      });
+      setCourseDuration("");
+    }
   }, [startDate, endDate]);
 
   if (!course) {

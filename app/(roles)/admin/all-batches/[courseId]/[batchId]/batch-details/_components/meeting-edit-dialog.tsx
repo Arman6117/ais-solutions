@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Edit, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Edit } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -58,12 +58,12 @@ const isCustomModuleName = (name?: string) => {
 const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const [modules, setModules] = useState<ModulesForSession[]>([]);
   const [showRescheduleWarning, setShowRescheduleWarning] = useState(false);
-
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // For custom module, admin can type topics manually (1 per line)
+  // Used only for custom module to edit topics easily
   const [customChaptersText, setCustomChaptersText] = useState("");
 
   const [formData, setFormData] = useState<EditFormData>({
@@ -76,10 +76,29 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     time: "",
   });
 
+  // Typed custom module option (NO any)
+  const customModuleOption: ModulesForSession = useMemo(
+    () => ({
+      _id: CUSTOM_MODULE_ID,
+      name: "Other / Custom",
+      chapters: [], // required by your interface
+    }),
+    []
+  );
+
+  const modulesWithCustom = useMemo<ModulesForSession[]>(
+    () => [...modules, customModuleOption],
+    [modules, customModuleOption]
+  );
+
   const isCustomSelected = formData.selectedModuleId === CUSTOM_MODULE_ID;
 
-  // 1) Reset/sync the form whenever dialog opens or meetingData changes
-  // (state initialized from props doesn't auto-update) [web:123]
+  const updateFormData = (updates: Partial<EditFormData>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  };
+
+  // Reset/sync all fields whenever dialog opens for a meeting
+  // (state-from-props doesn't auto update) [web:123]
   useEffect(() => {
     if (!open) return;
 
@@ -91,7 +110,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     setFormData({
       meetingName: meetingData.meetingName || "",
       meetingLink: meetingData.meetingLink || "",
-      selectedModuleId: "", // will be set after modules fetch (or custom)
+      selectedModuleId: "", // will set after modules load, or custom below
       selectedSubtopics: meetingData.chapters || [],
       instructor: meetingData.instructor || "",
       date: meetingData.date ? new Date(meetingData.date) : undefined,
@@ -99,14 +118,18 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     });
   }, [open, meetingData]);
 
-  // 2) Fetch modules when dialog opens
+  // Fetch modules on open
   useEffect(() => {
     if (!open || !meetingData._id) return;
 
     const fetchModules = async () => {
       try {
         const res = await getModulesWithSubtopics(batchId);
-        if (res.success) setModules(res.data);
+        if (res.success) {
+          setModules(res.data);
+        } else {
+          toast.error(res.message);
+        }
       } catch (error) {
         console.error("Error fetching modules:", error);
         toast.error("Failed to load modules");
@@ -116,7 +139,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     fetchModules();
   }, [open, meetingData._id, batchId]);
 
-  // 3) After modules load, select the correct module in dropdown based on saved meetingData.module
+  // Once modules load, set selectedModuleId based on saved meetingData.module
   useEffect(() => {
     if (!open) return;
 
@@ -136,7 +159,25 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     }
   }, [open, modules, meetingData.module]);
 
-  // 4) Reschedule warning (date/time changed)
+  // Compute selected module (normal path)
+  const selectedModule = useMemo(() => {
+    if (isCustomSelected) return undefined;
+    return modules.find((m) => m._id === formData.selectedModuleId);
+  }, [modules, formData.selectedModuleId, isCustomSelected]);
+
+  // When custom textarea changes, sync into selectedSubtopics
+  useEffect(() => {
+    if (!isCustomSelected) return;
+
+    const chapters = customChaptersText
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    setFormData((prev) => ({ ...prev, selectedSubtopics: chapters }));
+  }, [customChaptersText, isCustomSelected]);
+
+  // Reschedule warning
   useEffect(() => {
     const originalDate = meetingData.date
       ? format(new Date(meetingData.date), "yyyy-MM-dd")
@@ -148,27 +189,6 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
 
     setShowRescheduleWarning(isDateChanged || isTimeChanged);
   }, [formData.date, formData.time, meetingData.date, meetingData.time]);
-
-  const updateFormData = (updates: Partial<EditFormData>) => {
-    setFormData((prev) => ({ ...prev, ...updates }));
-  };
-
-  const selectedModule = useMemo(() => {
-    if (isCustomSelected) return undefined;
-    return modules.find((m) => m._id === formData.selectedModuleId);
-  }, [modules, formData.selectedModuleId, isCustomSelected]);
-
-  // 5) When custom topics text changes, keep selectedSubtopics synced
-  useEffect(() => {
-    if (!isCustomSelected) return;
-
-    const chapters = customChaptersText
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    setFormData((prev) => ({ ...prev, selectedSubtopics: chapters }));
-  }, [customChaptersText, isCustomSelected]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -261,13 +281,9 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
               onUpdate={updateFormData}
             />
 
-            {/* Module selection + add custom option */}
             <ModuleSelectionSection
               selectedModuleId={formData.selectedModuleId}
-              modules={[
-                ...modules,
-                { _id: CUSTOM_MODULE_ID, name: "Other / Custom", subtopics: [] } as any,
-              ]}
+              modules={modulesWithCustom}
               errors={errors}
               onUpdate={(moduleId: string) => {
                 updateFormData({
@@ -276,12 +292,11 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
                 });
 
                 if (moduleId === CUSTOM_MODULE_ID) {
-                  setCustomChaptersText(""); // force admin to add topics
+                  setCustomChaptersText("");
                 }
               }}
             />
 
-            {/* Custom topic UI OR normal subtopic UI */}
             {isCustomSelected ? (
               <div className="space-y-2">
                 <Label>Topics (one per line)</Label>
@@ -290,7 +305,9 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
                   onChange={(e) => setCustomChaptersText(e.target.value)}
                   placeholder={`Eg:\nIntroduction\nSetup\nFirst Program`}
                 />
-                {errors.chapters && <p className="text-sm text-red-600">{errors.chapters}</p>}
+                {errors.chapters && (
+                  <p className="text-sm text-red-600">{errors.chapters}</p>
+                )}
               </div>
             ) : (
               selectedModule && (

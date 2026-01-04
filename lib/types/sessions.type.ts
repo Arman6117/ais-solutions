@@ -65,8 +65,9 @@ export interface UpdateSessionPayload {
 export interface ModulesForSession {
   _id: string;
   name: string;
-  chapters: [{ name: string }];
+  chapters: { name: string }[];
 }
+
 
 export interface BatchMeetings {
   _id: string;

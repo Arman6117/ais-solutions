@@ -17,9 +17,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 
 import { BatchMeetings, ModulesForSession } from "@/lib/types/sessions.type";
 import { updateSession } from "@/actions/admin/sessions/update-session";
@@ -56,7 +53,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
   const [showRescheduleWarning, setShowRescheduleWarning] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // --- Custom Inputs State ---
+  // Custom Input State (Managed here, displayed in child)
   const [customChaptersText, setCustomChaptersText] = useState("");
   const [customModuleName, setCustomModuleName] = useState("");
 
@@ -84,48 +81,42 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     fetchModules();
   }, [batchId]);
 
-  // 2. Compute Selected Module Object
+  // 2. Compute Selected Module
   const selectedModule = useMemo(() => {
     return modules.find((m) => m._id === formData.selectedModuleId);
   }, [modules, formData.selectedModuleId]);
 
-  // 3. Check if we are in "Custom/Other" mode
-  const isCustomSelected = selectedModule?.name?.trim().toLowerCase() === "other";
+  // 3. Detect "Other" Selection
+  const isCustomSelected = 
+    formData.selectedModuleId === "other" || 
+    selectedModule?.name?.trim().toLowerCase() === "other";
 
-  // 4. Initialize Form Data when Dialog Opens
+  // 4. Initialize Form Data
   useEffect(() => {
     if (!open) return;
 
     setErrors({});
     setShowRescheduleWarning(false);
     
-    // Pre-fill the custom topics text area
     setCustomChaptersText((meetingData.chapters || []).join("\n"));
-    
-    // Reset custom name initially
     setCustomModuleName("");
 
     let initialModuleId = "";
     const savedModuleName = String(meetingData.module || "").trim();
 
-    // Find module matching saved name
     const exactMatch = modules.find(
       (m) => m.name?.trim().toLowerCase() === savedModuleName.toLowerCase()
     );
 
     if (exactMatch) {
       initialModuleId = exactMatch._id;
-      // If saved module is "Other", fill custom name field with "Other" (or kept blank if preferred)
       if (exactMatch.name.toLowerCase() === "other") {
         setCustomModuleName("Other"); 
       }
     } else if (savedModuleName) {
-      // If saved name is custom (not in list), select "Other" module & fill custom input
       const otherModule = modules.find((m) => m.name?.toLowerCase() === "other");
-      if (otherModule) {
-        initialModuleId = otherModule._id;
-        setCustomModuleName(savedModuleName);
-      }
+      initialModuleId = otherModule ? otherModule._id : "other"; 
+      setCustomModuleName(savedModuleName);
     }
 
     setFormData({
@@ -139,14 +130,14 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     });
   }, [open, meetingData, modules]);
 
-  // 5. Sync Custom Topics Textarea -> FormData
+  // 5. Sync Custom Topics -> FormData
   useEffect(() => {
     if (!isCustomSelected) return;
     const chapters = customChaptersText.split("\n").map((s) => s.trim()).filter(Boolean);
     setFormData((prev) => ({ ...prev, selectedSubtopics: chapters }));
   }, [customChaptersText, isCustomSelected]);
 
-  // 6. Reschedule Warning Logic
+  // 6. Reschedule Warning
   useEffect(() => {
     if (!open) return;
     const originalDate = meetingData.date ? format(new Date(meetingData.date), "yyyy-MM-dd") : "";
@@ -172,7 +163,6 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
         newErrors.chapters = "Please add at least one topic";
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -247,58 +237,36 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
               onUpdate={updateFormData}
             />
 
+            {/* 1. Module Selection (Includes Custom Inputs internally) */}
             <ModuleSelectionSection
               selectedModuleId={formData.selectedModuleId}
               modules={modules}
               errors={errors}
-              onUpdate={(moduleId: string) => {
+              // Pass custom values
+              customModuleName={customModuleName}
+              customChaptersText={customChaptersText}
+              // Pass handlers
+              onCustomNameChange={setCustomModuleName}
+              onCustomTopicsChange={setCustomChaptersText}
+              onModuleChange={(moduleId: string) => {
                 updateFormData({ selectedModuleId: moduleId, selectedSubtopics: [] });
-                // If switching to Other, clear inputs
+                // Reset custom fields if user switches module
                 const mod = modules.find(m => m._id === moduleId);
-                if (mod?.name.toLowerCase() === "other") {
-                  setCustomChaptersText("");
-                  setCustomModuleName("");
+                if (moduleId === "other" || mod?.name.toLowerCase() === "other") {
+                   setCustomChaptersText("");
+                   setCustomModuleName("");
                 }
               }}
             />
 
-            {isCustomSelected ? (
-              <div className="space-y-4 border-l-4 border-blue-500 pl-4 py-4 bg-blue-50/30 rounded-r-md">
-                <div className="space-y-2">
-                  <Label className="text-blue-900 font-semibold">
-                    Custom Module Name <span className="text-red-500">*</span>
-                  </Label>
-                  <Input 
-                    value={customModuleName}
-                    onChange={(e) => setCustomModuleName(e.target.value)}
-                    placeholder="e.g. Advanced System Design"
-                    className="border-blue-200 focus:border-blue-500"
-                  />
-                  {errors.customName && <p className="text-sm text-red-600">{errors.customName}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-blue-900 font-semibold">
-                    Topics (one per line) <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    value={customChaptersText}
-                    onChange={(e) => setCustomChaptersText(e.target.value)}
-                    placeholder={`e.g.\nIntroduction to System Design\nScaling Databases\nLoad Balancing`}
-                    className="min-h-[120px] border-blue-200 focus:border-blue-500 font-mono text-sm"
-                  />
-                  {errors.chapters && <p className="text-sm text-red-600">{errors.chapters}</p>}
-                </div>
-              </div>
-            ) : (
-              selectedModule && (
+            {/* 2. Standard Subtopics (Only show if NOT custom) */}
+            {!isCustomSelected && selectedModule && (
                 <SubtopicsSelectionSection
                   selectedModule={selectedModule}
                   selectedSubtopics={formData.selectedSubtopics}
                   errors={errors}
                   onUpdate={updateFormData}
                 />
-              )
             )}
 
             <InstructorSelectionSection

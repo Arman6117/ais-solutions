@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect,  useState } from "react";
 
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -80,7 +80,6 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
 
   const [batches] = useState(dummyBatches || []);
   const [modules, setModules] = useState<CourseModule[]>([]);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchModules = useCallback(async () => {
@@ -105,17 +104,7 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   }, [fetchModules]);
 
   // Resize listener (fixed cleanup)
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 1024);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+ 
   useEffect(() => {
     setOfferPrice(price - (price * discount) / 100);
   }, [price, discount]);

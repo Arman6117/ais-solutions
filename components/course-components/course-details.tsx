@@ -19,7 +19,7 @@ import {
 } from "./edit-course-components";
 
 import { Separator } from "../ui/separator";
-import CourseStatusCard from "@/components/status-card";
+// import CourseStatusCard from "@/components/status-card";
 
 import {
   ViewCourseDescription,
@@ -340,7 +340,7 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
                 <ViewCourseThumbnail thumbnail={course.courseThumbnail as string} />
               )}
 
-              <CourseStatusCard name="Course" batches={batches} course={course} />
+              {/* <CourseStatusCard name="Course" batches={batches} course={course} /> */}
             </div>
           </CardContent>
         </Card>

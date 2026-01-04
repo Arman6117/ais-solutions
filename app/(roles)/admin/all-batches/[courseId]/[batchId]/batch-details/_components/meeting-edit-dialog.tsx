@@ -63,7 +63,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
   const [showRescheduleWarning, setShowRescheduleWarning] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Used only for custom module to edit topics easily
+  // For custom module editing
   const [customChaptersText, setCustomChaptersText] = useState("");
 
   const [formData, setFormData] = useState<EditFormData>({
@@ -76,12 +76,12 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     time: "",
   });
 
-  // Typed custom module option (NO any)
+  // Define custom module option
   const customModuleOption: ModulesForSession = useMemo(
     () => ({
       _id: CUSTOM_MODULE_ID,
       name: "Other / Custom",
-      chapters: [], // required by your interface
+      chapters: [], // conforming to your type
     }),
     []
   );
@@ -97,118 +97,100 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
-  // Reset/sync all fields whenever dialog opens for a meeting
-  // (state-from-props doesn't auto update) [web:123]
+  // --- 1. Load Modules on Mount (or when batchId changes) ---
   useEffect(() => {
-    if (!open) return;
-
-    setErrors({});
-    setShowRescheduleWarning(false);
-
-    setCustomChaptersText((meetingData.chapters || []).join("\n"));
-
-    setFormData({
-      meetingName: meetingData.meetingName || "",
-      meetingLink: meetingData.meetingLink || "",
-      selectedModuleId: "", // will set after modules load, or custom below
-      selectedSubtopics: meetingData.chapters || [],
-      instructor: meetingData.instructor || "",
-      date: meetingData.date ? new Date(meetingData.date) : undefined,
-      time: meetingData.time || "",
-    });
-  }, [open, meetingData]);
-
-  // Fetch modules on open
-  useEffect(() => {
-    if (!open || !meetingData._id) return;
-
+    if (!batchId) return;
     const fetchModules = async () => {
       try {
         const res = await getModulesWithSubtopics(batchId);
         if (res.success) {
           setModules(res.data);
-        } else {
-          toast.error(res.message);
         }
       } catch (error) {
         console.error("Error fetching modules:", error);
-        toast.error("Failed to load modules");
       }
     };
-
     fetchModules();
-  }, [open, meetingData._id, batchId]);
+  }, [batchId]);
 
-  // Once modules load, set selectedModuleId based on saved meetingData.module
+
+  // --- 2. Sync Form Data when Dialog Opens (KEY FIX) ---
   useEffect(() => {
     if (!open) return;
 
+    // Reset UI states
+    setErrors({});
+    setShowRescheduleWarning(false);
+    setCustomChaptersText((meetingData.chapters || []).join("\n"));
+
+    // Determine initial module ID *synchronously* if possible (or wait for modules)
+    let initialModuleId = "";
+    
     if (isCustomModuleName(meetingData.module)) {
-      setFormData((prev) => ({ ...prev, selectedModuleId: CUSTOM_MODULE_ID }));
-      return;
+      initialModuleId = CUSTOM_MODULE_ID;
+    } else if (modules.length > 0) {
+        // Try to find the module ID from the loaded modules list
+        const matched = modules.find(
+            (m) => m.name?.trim().toLowerCase() === String(meetingData.module || "").trim().toLowerCase()
+        );
+        if (matched?._id) initialModuleId = matched._id;
     }
 
-    const matched = modules.find(
-      (m) =>
-        m.name?.trim().toLowerCase() ===
-        String(meetingData.module || "").trim().toLowerCase()
-    );
+    // Initialize form
+    setFormData({
+      meetingName: meetingData.meetingName || "",
+      meetingLink: meetingData.meetingLink || "",
+      selectedModuleId: initialModuleId, 
+      selectedSubtopics: meetingData.chapters || [],
+      instructor: meetingData.instructor || "",
+      date: meetingData.date ? new Date(meetingData.date) : undefined,
+      time: meetingData.time || "",
+    });
 
-    if (matched?._id) {
-      setFormData((prev) => ({ ...prev, selectedModuleId: matched._id }));
-    }
-  }, [open, modules, meetingData.module]);
+  }, [open, meetingData, modules]); 
+  // Added 'modules' to dependencies so if they load slightly later, the form updates.
 
-  // Compute selected module (normal path)
+
+  // --- 3. Compute Selected Module Object ---
   const selectedModule = useMemo(() => {
     if (isCustomSelected) return undefined;
     return modules.find((m) => m._id === formData.selectedModuleId);
   }, [modules, formData.selectedModuleId, isCustomSelected]);
 
-  // When custom textarea changes, sync into selectedSubtopics
+  // --- 4. Sync Custom Textarea to Form State ---
   useEffect(() => {
     if (!isCustomSelected) return;
-
-    const chapters = customChaptersText
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
+    const chapters = customChaptersText.split("\n").map((s) => s.trim()).filter(Boolean);
     setFormData((prev) => ({ ...prev, selectedSubtopics: chapters }));
   }, [customChaptersText, isCustomSelected]);
 
-  // Reschedule warning
+  // --- 5. Reschedule Warning Logic ---
   useEffect(() => {
-    const originalDate = meetingData.date
-      ? format(new Date(meetingData.date), "yyyy-MM-dd")
-      : "";
+    if (!open) return;
+    const originalDate = meetingData.date ? format(new Date(meetingData.date), "yyyy-MM-dd") : "";
     const newDate = formData.date ? format(formData.date, "yyyy-MM-dd") : "";
-
     const isDateChanged = originalDate !== newDate;
     const isTimeChanged = (meetingData.time || "") !== (formData.time || "");
-
     setShowRescheduleWarning(isDateChanged || isTimeChanged);
-  }, [formData.date, formData.time, meetingData.date, meetingData.time]);
+  }, [formData.date, formData.time, meetingData.date, meetingData.time, open]);
+
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
     if (!formData.meetingName.trim()) newErrors.meetingName = "Meeting name is required";
     if (!formData.date) newErrors.date = "Date is required";
     if (!formData.time) newErrors.time = "Time is required";
-
     if (isCustomSelected && formData.selectedSubtopics.length === 0) {
       newErrors.chapters = "Please add at least one topic (one per line)";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-
     setIsLoading(true);
+
     try {
       const payload = {
         meetingName: formData.meetingName.trim(),
@@ -221,7 +203,6 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
       };
 
       const res = await updateSession(meetingData._id, payload);
-
       if (res.success) {
         toast.success(res.message);
         setOpen(false);
@@ -231,7 +212,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
       }
     } catch (error) {
       console.error("Error updating meeting:", error);
-      toast.error("Failed to update meeting. Please try again.");
+      toast.error("Failed to update meeting.");
     } finally {
       setIsLoading(false);
     }
@@ -248,7 +229,11 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      {/* Adding key={meetingData._id} forces a fresh mount when opening different meetings */}
+      <DialogContent 
+        className="max-w-4xl max-h-[90vh] overflow-y-auto" 
+        key={meetingData._id} 
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Edit Meeting</DialogTitle>
           <DialogDescription>
@@ -260,13 +245,9 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
             <AlertTriangle className="size-5 text-yellow-600 mt-0.5" />
             <div>
-              <p className="font-semibold text-yellow-900">
-                Meeting will be marked as rescheduled
-              </p>
+              <p className="font-semibold text-yellow-900">Meeting will be marked as rescheduled</p>
               <p className="text-sm text-yellow-700 mt-1">
-                All enrolled students will be notified about the date/time change. Original schedule:{" "}
-                {meetingData.date ? format(new Date(meetingData.date), "MMM dd, yyyy") : "—"} at{" "}
-                {meetingData.time || "—"}
+                Original: {meetingData.date ? format(new Date(meetingData.date), "MMM dd, yyyy") : "—"} at {meetingData.time || "—"}
               </p>
             </div>
           </div>
@@ -276,7 +257,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
           <CardContent className="space-y-6 pt-6">
             <MeetingDetailsSection
               meetingName={formData.meetingName}
-              meetingLink={formData.meetingLink || ""} // keep controlled [web:113]
+              meetingLink={formData.meetingLink || ""}
               errors={errors}
               onUpdate={updateFormData}
             />
@@ -286,14 +267,8 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
               modules={modulesWithCustom}
               errors={errors}
               onUpdate={(moduleId: string) => {
-                updateFormData({
-                  selectedModuleId: moduleId,
-                  selectedSubtopics: [],
-                });
-
-                if (moduleId === CUSTOM_MODULE_ID) {
-                  setCustomChaptersText("");
-                }
+                updateFormData({ selectedModuleId: moduleId, selectedSubtopics: [] });
+                if (moduleId === CUSTOM_MODULE_ID) setCustomChaptersText("");
               }}
             />
 
@@ -304,10 +279,9 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
                   value={customChaptersText}
                   onChange={(e) => setCustomChaptersText(e.target.value)}
                   placeholder={`Eg:\nIntroduction\nSetup\nFirst Program`}
+                  className="min-h-[100px]"
                 />
-                {errors.chapters && (
-                  <p className="text-sm text-red-600">{errors.chapters}</p>
-                )}
+                {errors.chapters && <p className="text-sm text-red-600">{errors.chapters}</p>}
               </div>
             ) : (
               selectedModule && (
@@ -321,7 +295,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
             )}
 
             <InstructorSelectionSection
-              instructor={formData.instructor || ""} // keep controlled [web:113]
+              instructor={formData.instructor || ""}
               instructors={instructors}
               errors={errors}
               onUpdate={updateFormData}
@@ -329,33 +303,23 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
 
             <ScheduleSection
               date={formData.date}
-              time={formData.time || ""} // keep controlled [web:113]
+              time={formData.time || ""}
               errors={errors}
               onUpdate={updateFormData}
             />
           </CardContent>
         </Card>
 
-        <DialogFooter className="flex gap-3 sm:gap-3">
+        <DialogFooter className="flex gap-3">
           <DialogClose asChild>
-            <Button variant="outline" disabled={isLoading}>
-              Cancel
-            </Button>
+            <Button variant="outline" disabled={isLoading}>Cancel</Button>
           </DialogClose>
-
           <Button
             onClick={handleSubmit}
             disabled={isLoading}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
+            {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

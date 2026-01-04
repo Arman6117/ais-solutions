@@ -56,7 +56,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
   const [showRescheduleWarning, setShowRescheduleWarning] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Custom inputs
+  // --- Custom Inputs State ---
   const [customChaptersText, setCustomChaptersText] = useState("");
   const [customModuleName, setCustomModuleName] = useState("");
 
@@ -84,12 +84,13 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     fetchModules();
   }, [batchId]);
 
-  // 2. Compute Selected Module
+  // 2. Compute Selected Module Object
   const selectedModule = useMemo(() => {
     return modules.find((m) => m._id === formData.selectedModuleId);
   }, [modules, formData.selectedModuleId]);
 
-  // 3. Check if "Other" is selected (based on DB Name)
+  // 3. Check if we are in "Custom/Other" mode
+  // We check if the selected module from the dropdown has the name "Other"
   const isCustomSelected = selectedModule?.name?.trim().toLowerCase() === "other";
 
   // 4. Initialize Form Data when Dialog Opens
@@ -98,26 +99,30 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
 
     setErrors({});
     setShowRescheduleWarning(false);
+    
+    // --- KEY FIX: Pre-fill the custom topics text area ---
     setCustomChaptersText((meetingData.chapters || []).join("\n"));
-    setCustomModuleName(""); // Reset custom name
+    
+    // Reset custom name
+    setCustomModuleName("");
 
     let initialModuleId = "";
     const savedModuleName = String(meetingData.module || "").trim();
 
-    // Try to find exact match
+    // Find the module that matches the saved name
     const exactMatch = modules.find(
       (m) => m.name?.trim().toLowerCase() === savedModuleName.toLowerCase()
     );
 
     if (exactMatch) {
       initialModuleId = exactMatch._id;
-      // If the exact match IS "Other", we assume user wants to edit the custom name/topics
+      // If the saved module is "Other", populate the custom name field
       if (exactMatch.name.toLowerCase() === "other") {
-        setCustomModuleName("Other"); // Or leave blank if you want them to type
+        setCustomModuleName("Other"); 
       }
     } else if (savedModuleName) {
-      // If saved name exists but NOT in list (e.g. "My Custom Topic"), 
-      // find the "Other" module and select it, then pre-fill the custom name input
+      // If saved name is NOT in the list (e.g. "React Basics"), it's a custom name.
+      // So we select the "Other" module ID, and fill the custom name input.
       const otherModule = modules.find((m) => m.name?.toLowerCase() === "other");
       if (otherModule) {
         initialModuleId = otherModule._id;
@@ -136,14 +141,15 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     });
   }, [open, meetingData, modules]);
 
-  // 5. Sync Custom Chapters Text -> FormData
+  // 5. Sync Custom Topics Textarea -> FormData
+  // Whenever the user types in the textarea, update the main formData
   useEffect(() => {
     if (!isCustomSelected) return;
     const chapters = customChaptersText.split("\n").map((s) => s.trim()).filter(Boolean);
     setFormData((prev) => ({ ...prev, selectedSubtopics: chapters }));
   }, [customChaptersText, isCustomSelected]);
 
-  // 6. Reschedule Warning
+  // 6. Reschedule Warning Logic
   useEffect(() => {
     if (!open) return;
     const originalDate = meetingData.date ? format(new Date(meetingData.date), "yyyy-MM-dd") : "";
@@ -165,6 +171,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
 
     if (isCustomSelected) {
       if (!customModuleName.trim()) newErrors.customName = "Module name is required";
+      // Ensure they added at least one topic in the textarea
       if (formData.selectedSubtopics.length === 0) {
         newErrors.chapters = "Please add at least one topic";
       }
@@ -179,7 +186,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     setIsLoading(true);
 
     try {
-      // If custom (Other) is selected, use the text input. Else use the dropdown name.
+      // If "Other" is selected, use the custom name input. Otherwise use the dropdown name.
       const moduleNameToSend = isCustomSelected 
         ? customModuleName.trim() 
         : selectedModule?.name;
@@ -188,7 +195,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
         meetingName: formData.meetingName.trim(),
         meetingLink: formData.meetingLink.trim() || undefined,
         module: moduleNameToSend,
-        chapters: formData.selectedSubtopics,
+        chapters: formData.selectedSubtopics, // This comes from the textarea if custom
         instructor: formData.instructor.trim() || undefined,
         date: format(formData.date as Date, "yyyy-MM-dd"),
         time: formData.time,
@@ -218,6 +225,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
         </Button>
       </DialogTrigger>
 
+      {/* KEY FIX: Force re-render on new meeting ID */}
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" key={meetingData._id}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Edit Meeting</DialogTitle>
@@ -245,15 +253,14 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
               onUpdate={updateFormData}
             />
 
-            {/* Normal Module Dropdown - Passing REAL modules only */}
+            {/* 1. Module Dropdown */}
             <ModuleSelectionSection
               selectedModuleId={formData.selectedModuleId}
               modules={modules}
               errors={errors}
               onUpdate={(moduleId: string) => {
                 updateFormData({ selectedModuleId: moduleId, selectedSubtopics: [] });
-                
-                // If user selects "Other" manually, clear the custom text fields so they can type
+                // If switching to Other, clear the inputs so they can start fresh
                 const mod = modules.find(m => m._id === moduleId);
                 if (mod?.name.toLowerCase() === "other") {
                   setCustomChaptersText("");
@@ -262,34 +269,40 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
               }}
             />
 
-            {/* If the selected module's name is "Other", show Custom Inputs */}
+            {/* 2. LOGIC: If "Other" is selected -> Show Custom Inputs (Name + Topics) */}
             {isCustomSelected ? (
-              <div className="space-y-4 border-l-2 border-primary-bg pl-4 py-2 bg-gray-50/50 rounded-r-md">
-                 {/* 1. Custom Name Input */}
+              <div className="space-y-4 border-l-4 border-blue-500 pl-4 py-4 bg-blue-50/30 rounded-r-md">
+                 
+                {/* Custom Module Name Input */}
                 <div className="space-y-2">
-                  <Label>Custom Module Name <span className="text-red-500">*</span></Label>
+                  <Label className="text-blue-900 font-semibold">
+                    Custom Module Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input 
                     value={customModuleName}
                     onChange={(e) => setCustomModuleName(e.target.value)}
-                    placeholder="Enter custom module name"
+                    placeholder="e.g. Advanced System Design"
+                    className="border-blue-200 focus:border-blue-500"
                   />
                   {errors.customName && <p className="text-sm text-red-600">{errors.customName}</p>}
                 </div>
 
-                {/* 2. Custom Topics Textarea */}
+                {/* Custom Topics Textarea */}
                 <div className="space-y-2">
-                  <Label>Topics (one per line) <span className="text-red-500">*</span></Label>
+                  <Label className="text-blue-900 font-semibold">
+                    Topics (one per line) <span className="text-red-500">*</span>
+                  </Label>
                   <Textarea
                     value={customChaptersText}
                     onChange={(e) => setCustomChaptersText(e.target.value)}
-                    placeholder={`Eg:\nIntroduction\nSetup\nFirst Program`}
-                    className="min-h-[100px]"
+                    placeholder={`e.g.\nIntroduction to System Design\nScaling Databases\nLoad Balancing`}
+                    className="min-h-[120px] border-blue-200 focus:border-blue-500 font-mono text-sm"
                   />
                   {errors.chapters && <p className="text-sm text-red-600">{errors.chapters}</p>}
                 </div>
               </div>
             ) : (
-              // Normal Subtopics Dropdown
+              // 3. Else -> Show Standard Dropdown
               selectedModule && (
                 <SubtopicsSelectionSection
                   selectedModule={selectedModule}

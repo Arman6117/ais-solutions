@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {  DummyBatches, prCourse } from "@/lib/types/types";
+import { DummyBatches, prCourse } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -14,16 +14,15 @@ const StatusCard = ({
   name,
   createdAt,
   updatedAt,
-  onRemove
+  onRemove,
 }: {
   onRemove?: () => void;
-  createdAt?:string
-  updatedAt?:string
+  createdAt?: string;
+  updatedAt?: string;
   course?: prCourse;
   batches?: DummyBatches[];
   name: string;
 }) => {
-
   return (
     <>
       <Card className="border-0 shadow-md">
@@ -34,11 +33,15 @@ const StatusCard = ({
           <div className={cn("space-y-4")}>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Created</span>
-              <span className="font-medium">{format(createdAt!, "PP")}</span>
+              <span className="font-medium">
+                {format(createdAt || new Date(), "PP")}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Last Updated</span>
-              <span className="font-medium">{format(updatedAt!, "PP")}</span>
+              <span className="font-medium">
+                {format(updatedAt || new Date(), "PP")}
+              </span>
             </div>
             {batches && (
               <div className="flex justify-between items-center">

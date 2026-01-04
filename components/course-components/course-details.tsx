@@ -19,7 +19,7 @@ import {
 } from "./edit-course-components";
 
 import { Separator } from "../ui/separator";
-// import CourseStatusCard from "@/components/status-card";
+import CourseStatusCard from "@/components/status-card";
 
 import {
   ViewCourseDescription,
@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 import { PencilIcon, RefreshCcw, Save, X } from "lucide-react";
 import CourseSyllabusCard from "@/app/(roles)/admin/courses/course-details/_components/course-syllabus-card";
 
-import { formatDistance, isValid, parseISO } from "date-fns";
+import { format, formatDistance, isValid, parseISO } from "date-fns";
 import { updateCourse } from "@/actions/admin/course/update-course";
 import CourseModules from "./course-modules";
 import { getCourseModules } from "@/actions/admin/course/get-course-modules";
@@ -47,12 +47,7 @@ type CourseDetailsProps = {
   dummyInstructors: DummyInstructors[];
 };
 
-/**
- * Normalize common non-ISO strings like "2026-1-4" -> "2026-01-04"
- * because parseISO("1900-1-1") becomes Invalid Date [web:33].
- */
 function normalizeYmd(input: string) {
-  // supports "YYYY-M-D" and "YYYY-MM-D" etc.
   const m = input.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if (!m) return input;
   const [, y, mo, d] = m;
@@ -83,13 +78,17 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   );
 
   const [startDate, setStartDate] = useState<string>(
-    course?.courseStartDate || ""
+    format(course?.courseStartDate || new Date(), "PP") || ""
   );
-  const [endDate, setEndDate] = useState<string>(course?.courseEndDate || "");
+  const [endDate, setEndDate] = useState<string>(
+    format(course?.courseEndDate || new Date(), "PP") || ""
+  );
 
   const [courseDuration, setCourseDuration] = useState<string>("");
 
-  const [description, setDescription] = useState(course?.courseDescription || "");
+  const [description, setDescription] = useState(
+    course?.courseDescription || ""
+  );
   const [syllabusLink, setSyllabusLink] = useState(course?.syllabusLink || "");
 
   const [price, setPrice] = useState(course?.coursePrice || 0);
@@ -101,7 +100,7 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   const [batches] = useState(dummyBatches || []);
   const [modules, setModules] = useState<CourseModule[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  console.log(batches)
+
   const fetchModules = useCallback(async () => {
     if (!course?._id) return;
 
@@ -124,7 +123,6 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
   }, [fetchModules]);
 
   // Resize listener (proper cleanup)
- 
 
   // Offer price
   useEffect(() => {
@@ -161,7 +159,9 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
       <div className="p-8 flex w-full items-center justify-center h-full">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">No Course Selected</h2>
-          <p className="text-muted-foreground">Please select a course to edit</p>
+          <p className="text-muted-foreground">
+            Please select a course to edit
+          </p>
           <Button className="mt-4 bg-primary-bg" onClick={() => router.back()}>
             Go Back
           </Button>
@@ -213,12 +213,17 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
             <div className="flex md:flex-row flex-col items-center justify-between">
               <div>
                 <CardTitle className="text-2xl md:text-3xl font-bold">
-                  {mode === "edit" ? "Edit Course" : <p className="mt-7">View Course Details</p>}
+                  {mode === "edit" ? (
+                    "Edit Course"
+                  ) : (
+                    <p className="mt-7">View Course Details</p>
+                  )}
                 </CardTitle>
 
                 {mode === "edit" ? (
                   <p className="text-muted-foreground mt-1 text-center">
-                    Edit the course details. You can update name, description, price, and more.
+                    Edit the course details. You can update name, description,
+                    price, and more.
                   </p>
                 ) : (
                   <p className="mt-1 ml-1">View the course details below</p>
@@ -277,11 +282,21 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mode === "edit" ? (
                 <>
-                  <EditCourseDiscount discount={discount} setDiscount={setDiscount} />
-                  <EditCourseOfferPrice discount={discount} offerPrice={offerPrice} price={price} />
+                  <EditCourseDiscount
+                    discount={discount}
+                    setDiscount={setDiscount}
+                  />
+                  <EditCourseOfferPrice
+                    discount={discount}
+                    offerPrice={offerPrice}
+                    price={price}
+                  />
                 </>
               ) : (
-                <ViewCourseDiscountAndOfferPrice discount={discount} offerPrice={offerPrice} />
+                <ViewCourseDiscountAndOfferPrice
+                  discount={discount}
+                  offerPrice={offerPrice}
+                />
               )}
             </div>
 
@@ -294,7 +309,10 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
                   setStartDate={setStartDate}
                   setEndDate={setEndDate}
                 />
-                <EditCourseDescription description={description} setDescription={setDescription} />
+                <EditCourseDescription
+                  description={description}
+                  setDescription={setDescription}
+                />
                 <EditCourseMode mode={courseMode!} setMode={setCourseMode} />
               </>
             ) : (
@@ -312,7 +330,9 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
                   <Separator className="my-6" />
                   <div className="flex gap-2">
                     <div className="flex flex-col gap-3">
-                      <h1 className="text-2xl font-bold text-neutral-800">Mode</h1>
+                      <h1 className="text-2xl font-bold text-neutral-800">
+                        Mode
+                      </h1>
                       <p className="md:text-xl border-none focus-visible:border-none focus-visible:ring-0 font-semibold">
                         Hybrid
                       </p>
@@ -328,7 +348,11 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
               mode={mode}
             />
 
-            <CourseModules courseId={course._id} initialModules={modules} mode={mode} />
+            <CourseModules
+              courseId={course._id}
+              initialModules={modules}
+              mode={mode}
+            />
 
             <div className="w-full space-y-6">
               {mode === "edit" ? (
@@ -337,10 +361,12 @@ const CourseDetails = ({ dummyBatches, course }: CourseDetailsProps) => {
                   thumbnail={course.courseThumbnail as string}
                 />
               ) : (
-                <ViewCourseThumbnail thumbnail={course.courseThumbnail as string} />
+                <ViewCourseThumbnail
+                  thumbnail={course.courseThumbnail as string}
+                />
               )}
 
-              {/* <CourseStatusCard name="Course" batches={batches} course={course} /> */}
+              <CourseStatusCard name="Course" batches={batches} course={course} />
             </div>
           </CardContent>
         </Card>

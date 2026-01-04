@@ -71,6 +71,7 @@ export interface ModulesForSession {
 export interface BatchMeetings {
   _id: string;
   meetingName: string;
+  meetingLink: string;
   module: string;
   time: string;
   chapters: string[];

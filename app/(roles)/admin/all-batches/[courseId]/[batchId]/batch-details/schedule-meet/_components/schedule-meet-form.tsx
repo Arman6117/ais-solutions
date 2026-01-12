@@ -74,7 +74,6 @@ export default function ScheduleMeetingForm() {
     const fetchBatches = async () => {
       try {
         const courseId = params.courseId as string;
-
         if (!courseId) return;
         const res = await getBatchesIds(courseId);
         if (res.success) {
@@ -95,7 +94,6 @@ export default function ScheduleMeetingForm() {
     const fetchModules = async () => {
       try {
         if (!formData.selectedBatchId) return;
-        
         const res = await getModulesWithSubtopics(formData.selectedBatchId);
         if (!res.success) {
           toast.error(res.message);
@@ -145,7 +143,6 @@ export default function ScheduleMeetingForm() {
         ? formData.dates
         : [formData.date as Date];
 
-      // Determine module name
       let moduleName: string;
       if (formData.selectedModuleId === "other") {
         moduleName = formData.customModuleName?.trim() || "Not Mentioned";
@@ -180,7 +177,6 @@ export default function ScheduleMeetingForm() {
           `${successCount} meeting${successCount > 1 ? "s" : ""} scheduled successfully!`
         );
 
-        // Reset form
         setFormData({
           meetingName: "",
           meetingLink: "",
@@ -237,19 +233,29 @@ export default function ScheduleMeetingForm() {
             onUpdate={updateFormData}
           />
 
+          {/* UPDATED MODULE SELECTION SECTION USAGE */}
           <ModuleSelectionSection
             selectedModuleId={formData.selectedModuleId}
             modules={modules}
             errors={errors}
-            onUpdate={(moduleId: string, customModuleName?: string) => {
+            
+            // Pass required custom props (even if you don't use them for complex logic here)
+            customModuleName={formData.customModuleName}
+            customChaptersText="" // Empty since we don't want topic input here
+            enableTopicInput={false} // Disable topic input
+            // Handlers
+            onModuleChange={(moduleId: string) => {
               updateFormData({
                 selectedModuleId: moduleId,
-                customModuleName: customModuleName || "",
                 selectedSubtopics: [],
+                customModuleName: "",
               });
             }}
+            onCustomNameChange={(name) => updateFormData({ customModuleName: name })}
+            onCustomTopicsChange={() => {}} // Empty handler = no topic input update
           />
 
+          {/* Subtopics Section (for standard modules) */}
           {(selectedModule || formData.selectedModuleId === "other") && (
             <SubtopicsSelectionSection
               selectedModule={selectedModule}

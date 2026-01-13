@@ -39,6 +39,13 @@ const batchSchema = new Schema(
       enum: ["weekdays", "weekend"],
       required: true,
     },
+    //!New
+    pausedStudents: [
+      {
+        type: String,
+        ref: "Student",
+      },
+    ],
     instructors: [{ type: Schema.Types.ObjectId, ref: "Instructors" }],
     meetings: [{ type: Schema.Types.ObjectId, ref: "Meetings" }],
     modules: { type: [moduleSchema] },

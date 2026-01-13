@@ -48,12 +48,12 @@ interface ISession {
   cancelledAt?: Date;
 }
 
-// Updated IBatch to include optional modules array for typing
 interface IBatch {
   _id: mongoose.Types.ObjectId;
   name: string;
   courseId: mongoose.Types.ObjectId;
   modules?: { id: mongoose.Types.ObjectId }[];
+  pausedStudents?: mongoose.Types.ObjectId[];
 }
 
 export const getStudentSessions = async (
@@ -62,7 +62,6 @@ export const getStudentSessions = async (
   try {
     await connectToDB();
 
-    // 1. Get student's purchased modules
     const student = await Student.findById(studentId)
       .select("courses")
       .lean<IStudent>()
@@ -92,12 +91,9 @@ export const getStudentSessions = async (
         .lean<IModule[]>();
       purchasedModuleNames = purchasedModules.map((mod) => mod.name);
     }
-    console.log("📚 Student's purchased module names:", purchasedModuleNames);
 
-    // 2. Get all batches the student is enrolled in
-    // Use the updated IBatch interface in the generic
     const batches = await Batch.find({ students: studentId })
-      .select("_id name courseId modules.id")
+      .select("_id name courseId modules.id pausedStudents")
       .lean<IBatch[]>()
       .exec();
 
@@ -105,12 +101,9 @@ export const getStudentSessions = async (
       return { data: [], message: "Student is not enrolled in any batch" };
     }
     const batchIds = batches.map((batch) => batch._id);
-    console.log("🎓 Student enrolled in batches:", batchIds.length);
 
-    // 3. Get ALL official module names from the student's batches
     const allOfficialModuleIdsInBatches: mongoose.Types.ObjectId[] = [];
     batches.forEach((batch) => {
-      // Check if batch.modules exists before mapping
       if (batch.modules && Array.isArray(batch.modules)) {
         allOfficialModuleIdsInBatches.push(...batch.modules.map((m) => m.id));
       }
@@ -124,12 +117,7 @@ export const getStudentSessions = async (
     const allOfficialModuleNames = new Set(
       allOfficialModules.map((mod) => mod.name)
     );
-    console.log(
-      "📋 All official modules in student's batches:",
-      allOfficialModuleNames
-    );
 
-    // 4. Fetch ALL sessions from student's batches
     const sessions = await Sessions.find({
       isDeleted: false,
       batchId: { $in: batchIds },
@@ -141,9 +129,7 @@ export const getStudentSessions = async (
     if (!sessions || sessions.length === 0) {
       return { data: [], message: "No sessions available for this student" };
     }
-    console.log("✅ Found sessions across all batches:", sessions.length);
 
-    // 5. Fetch notes
     const sessionIds = sessions.map((session) => session._id);
     const notes = await Notes.find({ session: { $in: sessionIds } })
       .select("session topics")
@@ -160,12 +146,19 @@ export const getStudentSessions = async (
       }
     });
 
-    // 6. Attach topics and determine access level
-    const batchInfoMap = new Map<string, { name: string; courseId: string }>();
+    const batchInfoMap = new Map<
+      string,
+      { name: string; courseId: string; isPaused: boolean }
+    >();
     batches.forEach((batch) => {
+      const isPaused =
+        batch.pausedStudents?.some((id) => id.toString() === studentId) ||
+        false;
+
       batchInfoMap.set(batch._id.toString(), {
         name: batch.name,
         courseId: batch.courseId.toString(),
+        isPaused: isPaused,
       });
     });
 
@@ -176,21 +169,22 @@ export const getStudentSessions = async (
       const batchInfo = batchInfoMap.get(batchId);
       const uniqueTopics = [...new Set(topics)];
 
-      // Core Logic Change
       const isOfficialModule = allOfficialModuleNames.has(session.module);
       let hasAccess = false;
 
-      if (!isOfficialModule) {
-        // Custom module -> Grant full access
-        hasAccess = true;
+      if (batchInfo?.isPaused) {
+        hasAccess = false;
       } else {
-        // Official module -> Check purchase status
-        hasAccess = purchasedModuleNames.includes(session.module);
+        if (!isOfficialModule) {
+          hasAccess = true;
+        } else {
+          hasAccess = purchasedModuleNames.includes(session.module);
+        }
       }
 
       return {
         ...session,
-        _id: session._id.toString(), // Ensure ID is string for frontend
+        _id: session._id.toString(),
         batchId: session.batchId.toString(),
         batchName: batchInfo?.name || "Unknown Batch",
         courseId: batchInfo?.courseId || null,
@@ -205,7 +199,7 @@ export const getStudentSessions = async (
       message: "Fetched successfully",
     };
   } catch (error) {
-    console.error("❌ Error fetching student sessions:", error);
+    console.error("Error fetching student sessions:", error);
     return { data: [], message: "Failed to get student sessions" };
   }
 };

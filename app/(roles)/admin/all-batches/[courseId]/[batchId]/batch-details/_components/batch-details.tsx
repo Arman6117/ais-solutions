@@ -38,6 +38,7 @@ import {
   CheckCircle,
   University,
   Text,
+  Loader2,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
@@ -92,6 +93,7 @@ const BatchDetails = ({
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   console.log(isSmallScreen);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const formatDate = (date: string) => format(date, "PP");
   useEffect(() => {
@@ -150,6 +152,7 @@ const BatchDetails = ({
 
   const statusColor = getStatusColor(status);
   const handleRemoveBatch = async () => {
+    setIsDeleting(true);
     try {
       await deleteBatch(batch._id);
       toast.success("Batch deleted successfully");
@@ -157,10 +160,22 @@ const BatchDetails = ({
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
+      setIsDeleting(false);
     }
   };
   return (
     <div className="w-full p mb-4 flex flex-col gap-6">
+      {isDeleting && (
+        <div className="fixed inset-0 z-[9999] bg-white/50 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-auto transition-all duration-300">
+           <div className="flex flex-col items-center gap-4 p-6 bg-white rounded-lg shadow-xl border">
+              <Loader2 className="h-10 w-10 animate-spin text-red-600" />
+              <div className="text-center">
+                <h3 className="font-semibold text-lg">Deleting Batch...</h3>
+                <p className="text-sm text-muted-foreground">Please wait, do not close this window.</p>
+              </div>
+           </div>
+        </div>
+      )}
       <div className="flex flex-col lg:flex-row gap-6 w-full p-4 mb-4">
         <div className="w-full  flex-grow">
           <Card className="border-0 shadow-md p-0 overflow-hidden">

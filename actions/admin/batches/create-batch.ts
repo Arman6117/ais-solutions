@@ -8,6 +8,7 @@ import { Batch } from "@/models/batch.model";
 import { Course } from "@/models/course.model";
 import { Module } from "@/models/module.model";
 import { ObjectId } from "mongodb";
+import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
 
 type CreateBatchProps = {
@@ -61,6 +62,7 @@ export const createBatch = async (data: CreateBatchProps) => {
       { $addToSet: { batches: createdBatch._id } }, // Prevents duplicates
       { new: true, runValidators: true }
     );
+    revalidatePath("/admin/all-batches");
     return { success: true, message: "Batch created successfully" };
   } catch (error) {
     if (error instanceof ZodError) {

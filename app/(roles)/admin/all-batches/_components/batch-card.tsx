@@ -40,10 +40,10 @@ const BatchCard = ({ batch, courseId }: BatchCardProps) => {
           <span>Type: {batch.type} </span>
         </div>
 
-        <div className="flex items-center text-sm text-gray-600">
+        {/* <div className="flex items-center text-sm text-gray-600">
           <Clock size={16} className="mr-3 text-primary-bg" />
-          <span>Instructor: {batch.instructor}</span>
-        </div>
+          <span>Batch Mode: {batch.instructor}</span>
+        </div> */}
       </div>
 
       <Button className="w-full cursor-pointer bg-primary-bg  " asChild>

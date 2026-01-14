@@ -167,7 +167,7 @@ const BatchStudentTable = ({
         ),
       },
     ],
-    [processingId, batchId]
+    [processingId, batchId, handleToggleAccess]
   );
 
   return (

@@ -7,6 +7,7 @@ import { Student } from "@/models/student.model";
 import { Notes } from "@/models/notes.model";
 import { Sessions } from "@/models/sessions.model";
 import { isValidObjectId } from "mongoose";
+import { revalidatePath } from "next/cache";
 
 export const deleteBatch = async (batchId: string) => {
   try {
@@ -47,7 +48,7 @@ export const deleteBatch = async (batchId: string) => {
     if (!deletedBatch) {
       return { success: false, message: "No batch found to delete" };
     }
-
+    revalidatePath("/admin/all-batches");
     return { success: true, message: "Batch and all references deleted successfully" };
   } catch (error) {
     console.log(error);

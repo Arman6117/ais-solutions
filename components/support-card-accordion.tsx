@@ -11,6 +11,7 @@ import { Users } from "lucide-react";
 import { addSupportMember } from "@/actions/admin/support/support-card-member";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import DeleteDepartmentButton from "@/app/(roles)/admin/support/_components/delete-department-button";
 
 // Type for the data received from the Add Member dialog
 type NewMemberData = {
@@ -19,7 +20,7 @@ type NewMemberData = {
   email: string;
   contact: string;
   availableTime: string;
-  assignedBatches?: (string | number)[]; // Allow mixed ID types from dialog state
+  assignedBatches?: (string | number)[];
 };
 
 type SupportCardAccordionProps = {
@@ -27,9 +28,9 @@ type SupportCardAccordionProps = {
   departmentName: string;
   description?: string;
   icon: React.ReactNode;
-  colorTheme?: string; // Expecting classes like "bg-gradient-to-r from-blue-600 to-blue-800"
+  colorTheme?: string;
   children?: React.ReactNode;
-  memberCount?: number; // Optional: to show count in header
+  memberCount?: number;
 };
 
 const SupportCardAccordion = ({
@@ -37,16 +38,14 @@ const SupportCardAccordion = ({
   departmentName,
   description = "Support Team",
   icon,
-  colorTheme = "bg-slate-800", // Default fallback
+  colorTheme = "bg-slate-800",
   children,
   memberCount,
 }: SupportCardAccordionProps) => {
   const router = useRouter();
 
-  // Explicitly typed handler
   const handleAddMember = async (memberData: NewMemberData) => {
     try {
-      // Ensure we have clean strings for batch IDs
       const cleanAssignedBatches = (memberData.assignedBatches || []).map(
         (id) => (typeof id === "string" ? id : id.toString())
       );
@@ -65,7 +64,7 @@ const SupportCardAccordion = ({
 
       if (result.success) {
         toast.success(result.message);
-        router.refresh(); // Refresh server data
+        router.refresh();
       } else {
         toast.error(result.message);
       }
@@ -101,12 +100,23 @@ const SupportCardAccordion = ({
               </div>
             </div>
 
-            {typeof memberCount === "number" && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border border-white/10">
-                <Users className="w-3.5 h-3.5" />
-                <span>{memberCount} Members</span>
+            <div className="flex items-center gap-3">
+              {/* Member Count Badge */}
+              {typeof memberCount === "number" && (
+                <div className="hidden sm:flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border border-white/10">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>{memberCount} Members</span>
+                </div>
+              )}
+              
+              {/* Delete Department Button */}
+              <div className="z-50" onClick={(e) => e.stopPropagation()}>
+                <DeleteDepartmentButton 
+                  departmentId={departmentId}
+                  departmentName={departmentName}
+                />
               </div>
-            )}
+            </div>
           </div>
 
           {/* Decorative Background Elements */}
@@ -124,9 +134,7 @@ const SupportCardAccordion = ({
             </h4>
             <AddSupportMemberDialog
               triggerLabel="Add Member"
-              // We need to cast or ensure Dialog expects NewMemberData
-              // Since Dialog is generic or flexible, this passes type check if fields align
-              onSubmit={handleAddMember} 
+              onSubmit={handleAddMember}
             />
           </div>
 
@@ -137,7 +145,9 @@ const SupportCardAccordion = ({
           ) : (
             <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400">
               <Users className="w-10 h-10 mb-2 opacity-20" />
-              <p className="text-sm font-medium">No members in this department yet</p>
+              <p className="text-sm font-medium">
+                No members in this department yet
+              </p>
             </div>
           )}
         </AccordionContent>

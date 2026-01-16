@@ -5,9 +5,11 @@ import SupportCard from "@/components/support-card";
 import { ICON_COMPONENTS } from "@/lib/utils";
 import { getSupportDepartments } from "@/actions/admin/support/get-support-data";
 import { ISupportDepartment, SupportMember } from "@/lib/types/support.type";
+import { unstable_noStore as noStore } from "next/cache"; // Import noStore
 
-// This is now a Server Component (removed "use client")
 const SupportCards = async () => {
+  noStore();
+
   // Fetch data directly on the server
   const result = await getSupportDepartments();
   const departments = result.data || [];
@@ -68,7 +70,6 @@ const SupportCards = async () => {
             {members.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-1">
                 {members.map((member: SupportMember) => (
-                  // ... inside SupportCards.tsx map loop
 
                   <SupportCard
                     key={member._id}

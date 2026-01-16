@@ -5,7 +5,6 @@ import {
   MeetingInfo,
   StudentDashboard,
   StudentInfo,
-  // Ensure your types are updated in this file as discussed previously
 } from "@/lib/types/student-dashboard.type";
 import { Batch } from "@/models/batch.model";
 import { Student } from "@/models/student.model";
@@ -47,6 +46,7 @@ interface IBatch {
   name: string;
   groupLink: string;
   modules: IBatchModule[];
+  pausedStudents?: mongoose.Types.ObjectId[]; // Added pausedStudents array
 }
 
 interface IModule {
@@ -123,13 +123,13 @@ export const getStudentDashboard = async (
     );
     console.log("📦 Student's purchased modules:", purchasedModuleIds);
 
-    // 3. Get Batch Info
+    // 3. Get Batch Info (Including pausedStudents)
     const batchInfo = await Batch.findOne(
       {
         courseId: courseId,
         students: studentId,
       },
-      { name: 1, groupLink: 1, _id: 1, modules: 1 }
+      { name: 1, groupLink: 1, _id: 1, modules: 1, pausedStudents: 1 } // Added pausedStudents to projection
     )
       .lean<IBatch>()
       .exec();
@@ -141,6 +141,13 @@ export const getStudentDashboard = async (
         data: null,
       };
     }
+
+    // --- CHECK PAUSE STATUS ---
+    // Check if the current student ID is in the paused list
+    const isStudentPaused =
+      batchInfo.pausedStudents?.some(
+        (pid) => pid.toString() === studentId
+      ) || false;
 
     // 4. Get Course Info
     const course = await Course.findById(courseId, {
@@ -172,12 +179,17 @@ export const getStudentDashboard = async (
       });
     });
 
-    // 6. Prepare Module List (Marking Purchased vs Locked)
+    // 6. Prepare Module List (Marking Purchased vs Locked based on Pause status)
     const studentModules =
       batchInfo.modules?.map((mod) => {
         const modIdStr = mod.id.toString();
-        const isPurchased = purchasedModuleIds.includes(modIdStr);
+        let isPurchased = purchasedModuleIds.includes(modIdStr);
         const moduleData = moduleDataMap.get(modIdStr);
+
+        // Override access if student is paused
+        if (isStudentPaused) {
+          isPurchased = false;
+        }
 
         return {
           id: modIdStr,
@@ -190,7 +202,6 @@ export const getStudentDashboard = async (
           endDate: mod.endDate,
           instructor: mod.instructor,
           batchId: batchInfo._id.toString(),
-          // Access Flags with Explicit Type Casting
           isPurchased: isPurchased,
           accessLevel: (isPurchased ? "full" : "preview") as "full" | "preview",
         };
@@ -224,47 +235,57 @@ export const getStudentDashboard = async (
     );
 
     // 8. Flag Meetings with Access Info
-    // Map module names to IDs to check purchase status
     const moduleNameIdMap = new Map<string, string>();
-    allBatchModules.forEach(m => moduleNameIdMap.set(m.name, m._id.toString()));
+    allBatchModules.forEach((m) =>
+      moduleNameIdMap.set(m.name, m._id.toString())
+    );
 
     const processedMeetings = meetings.map((meet) => {
-        const moduleId = moduleNameIdMap.get(meet.module);
-        let isPurchased = false;
+      const moduleId = moduleNameIdMap.get(meet.module);
+      let isPurchased = false;
 
+      // Logic:
+      // 1. If paused -> NO ACCESS (false)
+      // 2. Else if custom module -> ACCESS (true)
+      // 3. Else if official module -> Check purchase history
+
+      if (isStudentPaused) {
+        isPurchased = false;
+      } else {
         if (moduleId) {
-            // It's an official module, check if purchased
-            isPurchased = purchasedModuleIds.includes(moduleId);
+          // It's an official module, check if purchased
+          isPurchased = purchasedModuleIds.includes(moduleId);
         } else {
-            // It's a custom/other module -> Grant access
-            isPurchased = true; 
+          // It's a custom/other module -> Grant access
+          isPurchased = true;
         }
+      }
 
-        return {
-            _id: meet._id,
-            batchName: batchInfo.name,
-            time: meet.time,
-            courseName: course.courseName,
-            module: meet.module,
-            meetingLink: meet.meetingLink,
-            date: meet.date,
-            status: meet.status,
-            isDeleted: meet.isDeleted,
-            originalDate: meet.originalDate,
-            originalTime: meet.originalTime,
-            rescheduledAt: meet.rescheduledAt,
-            cancelledAt: meet.cancelledAt,
-            // Access Info with Explicit Type Casting
-            isPurchasedModule: isPurchased,
-            accessLevel: (isPurchased ? "full" : "preview") as "full" | "preview",
-        };
+      return {
+        _id: meet._id,
+        batchName: batchInfo.name,
+        time: meet.time,
+        courseName: course.courseName,
+        module: meet.module,
+        meetingLink: meet.meetingLink,
+        date: meet.date,
+        status: meet.status,
+        isDeleted: meet.isDeleted,
+        originalDate: meet.originalDate,
+        originalTime: meet.originalTime,
+        rescheduledAt: meet.rescheduledAt,
+        cancelledAt: meet.cancelledAt,
+        // Access Info
+        isPurchasedModule: isPurchased,
+        accessLevel: (isPurchased ? "full" : "preview") as "full" | "preview",
+      };
     });
 
     const formattedData: StudentDashboard = {
       student: studentInfo,
       batch: {
         name: batchInfo.name,
-        groupLink: batchInfo.groupLink,
+        groupLink: isStudentPaused ? "" : batchInfo.groupLink, // Hide group link if paused
       },
       lectureCompleted: attendedMeetings.length,
       meetings: processedMeetings,

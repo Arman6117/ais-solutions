@@ -1,4 +1,3 @@
-import Greetings from '@/components/greetings';
 import React, { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
@@ -27,7 +26,6 @@ const StudentDashboard = async ({ courseId }: { courseId: string }) => {
     .select("name")
     .lean<{name:string}>();
 
-  const name = studentData?.name || "Student";
 
   return (
     <div className="flex flex-col h-full py-1 gap-4">

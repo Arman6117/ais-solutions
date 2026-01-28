@@ -31,8 +31,9 @@ const StudentDashboard = async ({ courseId }: { courseId: string }) => {
 
   return (
     <div className="flex flex-col h-full py-1 gap-4">
-      <Greetings>{name}</Greetings>
-
+       <h1 className="font-semibold text-[45px] xl:text-7xl">
+        Learn & Grow 🚀
+       </h1>
       {/* Suspense will show the skeleton while CoursesDisplay is fetching data */}
       <Suspense fallback={<DashboardSkeleton />}>
         <CoursesDisplay courseId={courseId} userEmail={session.user.email} />

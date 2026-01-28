@@ -253,6 +253,9 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     }
   );
 
+  console.log(form);
+  console.log(meetingData)
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

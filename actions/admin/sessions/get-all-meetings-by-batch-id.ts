@@ -25,7 +25,7 @@ export const getAllMeetingsByBatchId = async (
      
     })
       .select(
-        "_id meetingName module time date chapters " +
+        "_id meetingName meetingLink module time date chapters " +
         "status isDeleted originalDate originalTime " +
         "rescheduledAt cancelledAt instructor deletedAt"
       )
@@ -66,7 +66,7 @@ export const getAllMeetingsIncludingCancelled = async (
       batchId: new ObjectId(batchId)
     })
       .select(
-        "_id meetingName module time date chapters " +
+        "_id meetingName meetingLink module time date chapters " +
         "status isDeleted originalDate originalTime " +
         "rescheduledAt cancelledAt deletedAt meetingLink instructor"
       )

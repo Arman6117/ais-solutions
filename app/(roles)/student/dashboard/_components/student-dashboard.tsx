@@ -4,9 +4,6 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import DashboardSkeleton from '@/components/skeletons/student-dashboard-skeleton';
 import CoursesDisplay from './course-display';
-import { connectToDB } from '@/lib/db'; // Ensure you import your DB connection
-import { Student } from '@/models/student.model';
-
 export const revalidate = 60;
 
 const StudentDashboard = async ({ courseId }: { courseId: string }) => {
@@ -17,15 +14,9 @@ const StudentDashboard = async ({ courseId }: { courseId: string }) => {
     redirect('/auth/login/student');
   }
 
-  // Fetch Name Logic (Direct Database Call)
-  // You don't need a separate function marked 'use server' here
-  await connectToDB();
   
   // Find student by email directly - it's more efficient than getting ID first
-  const studentData = await Student.findOne({ email: session.user.email })
-    .select("name")
-    .lean<{name:string}>();
-
+ 
 
   return (
     <div className="flex flex-col h-full py-1 gap-4">

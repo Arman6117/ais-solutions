@@ -1,11 +1,8 @@
-
-
 import {
   User,
   Phone,
   Mail,
   Calendar,
- 
   BookOpen,
   Tag,
   School,
@@ -39,16 +36,12 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
           <h2 className="text-2xl font-bold mb-2">No Student Selected</h2>
           <p className="text-muted-foreground">Please select a Student</p>
           <Link href="/admin/students">
-          <Button className="mt-4 bg-primary-bg" >
-            Go Back
-          </Button>
+            <Button className="mt-4 bg-primary-bg">Go Back</Button>
           </Link>
         </div>
       </div>
     );
   }
-
-
 
   const remainingFees = student.invoices
     .map((invoice) => {
@@ -65,8 +58,6 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
       0
     );
   });
- 
-
 
   return (
     <Card className="w-full h-full flex flex-col p-0">
@@ -88,7 +79,6 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <Tag size={14} className="mr-1" />
                 ID: {student._id}
               </span>
-            
             </div>
           </div>
         </div>
@@ -147,40 +137,35 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
                 <CardContent className="p-4">
                   <h1 className="text-sm  text-gray-500">Batch Name</h1>
                   <div className="flex gap-5">
-
-                  {student.batches.map((batch) => (
-                    <Badge key={batch.batchId._id} className="font-medium">{batch.batchId.name}</Badge>
-                  ))}
+                    {student.batches.map((batch) => (
+                      <Badge key={batch.batchId._id} className="font-medium">
+                        {batch.batchId.name}
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            <div>
-              <h3 className="text-lg font-medium mb-3 flex items-center">
-                <Layers className="w-5 h-5 mr-2 text-indigo-600" />
-                Modules
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {student.batches.map((batch) => {
-                  return batch.batchId.modules.map((module) => (
-                    <Card key={module.name} className="hover:shadow-lg p-0">
-                      <CardContent className=" flex flex-col p-0 ">
-                        <div className="w-full bg-primary-bg p-3 rounded-md">
-                          <span className="text-white font-semibold">
-                            {batch.batchId.name}
-                          </span>
-                        </div>
-                        <div className="p-3">
-                          <span className="font-medium">{module.name}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ));
-                })}
-              </div>
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {student.courses.flatMap((course) =>
+                course.courseId.modules.map((module) => (
+                  <Card key={module.name} className="hover:shadow-lg p-0">
+                    <CardContent className="flex flex-col p-0">
+                      <div className="w-full bg-primary-bg p-3 rounded-md">
+                        <span className="text-white font-semibold">
+                          {course.courseId.courseName}
+                        </span>
+                      </div>
 
+                      <div className="p-3">
+                        <span className="font-medium">{module.name}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
             <div>
               <h3 className="text-lg font-medium mb-3 flex items-center">
                 <BookOpen className="w-5 h-5 mr-2 text-indigo-600" />

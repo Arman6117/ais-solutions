@@ -28,7 +28,8 @@ courseId: {
   courseThumbnail:string
   courseMode:"online" | "offline" | "hybrid"
   studentsEnrolled:string[]
-  courseLevel:"beginner"| "intermediate"| "advanced"
+  courseLevel:"beginner"| "intermediate"| "advanced",
+  modules:{name:string}[]
 }
   totalFees:number,
   dueDate:string,

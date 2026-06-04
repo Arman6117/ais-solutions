@@ -29,7 +29,7 @@ type StudentDetailsProps = {
 };
 
 const StudentDetails = ({ student }: StudentDetailsProps) => {
-  console.log(student)
+  // console.log(student)
   if (!student) {
     return (
       <div className="p-8 flex w-full items-center justify-center h-full">

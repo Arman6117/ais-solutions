@@ -7,7 +7,7 @@ import {
   Tag,
   School,
   CircleDollarSign,
-  Layers,
+  
   Link,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";

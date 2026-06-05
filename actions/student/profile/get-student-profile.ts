@@ -21,11 +21,11 @@ export const getStudentProfile = async (
         {
           path: "courses.courseId",
           select:
-            "courseName studentsEnrolled courseLevel courseMode courseStartDate courseEndDate courseThumbnail modules",
-          populate: {
-            path: "modules",
-            select: "name",
-          }
+            "courseName studentsEnrolled courseLevel courseMode courseStartDate courseEndDate courseThumbnail modules"
+        },
+        {
+          path: "courses.moduleId",
+          select: "name",
         },
         {
           path: "batches.batchId",

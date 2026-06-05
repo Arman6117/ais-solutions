@@ -29,8 +29,8 @@ courseId: {
   courseMode:"online" | "offline" | "hybrid"
   studentsEnrolled:string[]
   courseLevel:"beginner"| "intermediate"| "advanced",
-  modules:{name:string}[]
 }
+moduleId:{name:string}[]
   totalFees:number,
   dueDate:string,
   amountPaid:number,

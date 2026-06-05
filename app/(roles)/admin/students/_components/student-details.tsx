@@ -60,6 +60,7 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
     );
   });
 
+  console.log(student)
   return (
     <Card className="w-full h-full flex flex-col p-0">
       <CardHeader className="bg-indigo-600 text-white rounded-t-lg space-y-0 p-4">
@@ -150,7 +151,7 @@ const StudentDetails = ({ student }: StudentDetailsProps) => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {student.courses.flatMap((course) =>
-                course.courseId.modules.map((module) => (
+                course.moduleId.map((module) => (
                   <Card key={module.name} className="hover:shadow-lg p-0">
                     <CardContent className="flex flex-col p-0">
                       <div className="w-full bg-primary-bg p-3 rounded-md">

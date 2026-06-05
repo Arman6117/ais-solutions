@@ -84,6 +84,7 @@ export const ApproveRequestDialog = ({
     setLoading(true);
     try {
       const res = await getPendingRequestById(requestId);
+      
       if (!res.success || !res.data) {
         toast.error(res.message);
         return;

@@ -87,7 +87,7 @@ export const getPendingRequestById = async (
         },
       ])
       .exec()) as RequestToApprove;
-
+ console.log(request)
     return {
       data: JSON.parse(JSON.stringify(request)),
       message: "Request to approve fetched",

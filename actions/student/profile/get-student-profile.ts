@@ -42,7 +42,7 @@ export const getStudentProfile = async (
       return { data: null, message: "No student found" };
     }
 
-    console.log("Fetched student profile:", JSON.parse(JSON.stringify(student)));
+    console.log("Fetched student profile:", JSON.parse(JSON.stringify(student)))
     return {
       data: JSON.parse(JSON.stringify(student)),
       message: "Student profile fetched successfully",

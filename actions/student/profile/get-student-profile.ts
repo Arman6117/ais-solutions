@@ -6,6 +6,7 @@ import { Student } from "@/models/student.model";
 import "@/models/batch.model";
 import "@/models/course.model";
 import "@/models/invoice.model";
+import "@/models/module.model";
 
 export const getStudentProfile = async (
   studentId: string
@@ -21,6 +22,10 @@ export const getStudentProfile = async (
           path: "courses.courseId",
           select:
             "courseName studentsEnrolled courseLevel courseMode courseStartDate courseEndDate courseThumbnail modules",
+          populate: {
+            path: "modules",
+            select: "name",
+          }
         },
         {
           path: "batches.batchId",

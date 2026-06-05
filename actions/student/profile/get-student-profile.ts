@@ -42,8 +42,11 @@ export const getStudentProfile = async (
       return { data: null, message: "No student found" };
     }
 
-    console.log("Fetched student profile:", JSON.parse(JSON.stringify(student)))
-    return {
+    student.courses.forEach((course) => {
+      console.log("Course:", course.courseId);
+      console.log("Modules:", course.moduleId);
+    });
+        return {
       data: JSON.parse(JSON.stringify(student)),
       message: "Student profile fetched successfully",
     };

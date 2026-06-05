@@ -75,7 +75,7 @@ export const approvePendingRequest = async (
 
     const studentId = student._id;
     const moduleObjectIds = modules.map((id) => new mongoose.Types.ObjectId(id));
-
+   console.log(modules)
     // ... (Existing Invoice Creation Logic) ...
     const remainingFee = Math.max(0, totalFees - amountPaid);
     const paymentHistory = amountPaid > 0 ? [{ /* ... */ }] : []; // (Simplify for brevity, keep your original logic)

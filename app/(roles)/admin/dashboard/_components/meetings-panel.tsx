@@ -45,7 +45,6 @@ const MeetingsPanel = () => {
         meeting.id === id ? { ...meeting, status: newStatus } : meeting
       )
     );
-    console.log(`Notify students: Meeting ${id} is now ${newStatus}`);
     // 🔗 Add API call here if needed
   };
 

@@ -7,7 +7,6 @@ const CreateBatchPage = async () => {
   const courses = await getCourses();
 
  
-console.log(courses)
   return <CreateBatch courses={courses} />;
 };
 

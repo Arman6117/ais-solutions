@@ -14,7 +14,6 @@ const CourseSyllabusCard = ({
   setSyllabusLink,
   syllabusLink,
 }: CourseSyllabusCardProps) => {
-  console.log(syllabusLink)
   return (
     <Card className="border-0 shadow-md">
       <CardHeader className="flex flex-row items-center justify-between pb-3 bg-gray-50 border-b">

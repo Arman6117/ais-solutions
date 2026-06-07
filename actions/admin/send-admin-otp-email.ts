@@ -3,17 +3,10 @@ import { Resend } from "resend";
 import jwt from "jsonwebtoken";
 
 import { cookies } from "next/headers";
-import { AdminOTPEmail } from "@/components/email-templates";
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!;
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!;
 const resend = new Resend(process.env.RESEND_API_KEY!);
-console.group("Resend Config");
-console.log(
-  "Resend API Key:",
-  process.env.RESEND_API_KEY ? "Loaded" : "Not Loaded"
-);
-console.log("Admin Email:", ADMIN_EMAIL ? ADMIN_EMAIL : "Not Set");
-console.groupEnd();
+
 
 export const sendAdminOTPEmail = async (email: string) => {
   if (email !== ADMIN_EMAIL) {
@@ -38,7 +31,6 @@ export const sendAdminOTPEmail = async (email: string) => {
     text: "This is a test email",
   });
   
-  console.log(mail);
   if (mail.error) {
     return { success: false, message: "Failed to send OTP" };
   }

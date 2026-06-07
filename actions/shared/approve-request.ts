@@ -40,7 +40,6 @@ export const createApproveRequest = async (data: CreatePendingRequest) => {
       };
     }
 
-    console.log("📦 Module IDs being saved:", moduleObjectIds);
 
     // Check if student exists
     const student = await Student.findById(data.studentId)
@@ -131,7 +130,6 @@ export const createApproveRequest = async (data: CreatePendingRequest) => {
           { new: true }
         );
 
-        console.log("✅ Updated course with modules:", updateResult?.courses);
 
         // Update existing pending request
         const existingPendingRequest = await PendingRequest.findOne({
@@ -182,7 +180,6 @@ export const createApproveRequest = async (data: CreatePendingRequest) => {
         { new: true }
       );
 
-      console.log("✅ Created course with modules:", updateResult?.courses);
     }
 
     const pendingRequestDoc = {

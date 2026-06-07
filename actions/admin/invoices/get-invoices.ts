@@ -26,7 +26,6 @@ export const getInvoiceTable = async () => {
   try {
     await connectToDB();
 
-    console.log("Function called");
     const invoices = await Invoice.find({})
       .select(
         "_id studentId createdAt totalFees amountPaid status paymentHistory"

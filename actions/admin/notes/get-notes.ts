@@ -62,7 +62,6 @@ export const getNotesById = async (
         select: "meetingName", // The field to select from the referenced Session model
       })
       .exec()) as NoteData[];
-      console.log(JSON.parse(JSON.stringify(notes)))
       return {data:JSON.parse(JSON.stringify(notes)),success:true, message:"Note fetched"}
     } catch (error) {
       console.log(error)

@@ -47,7 +47,6 @@ const CreateCourseButton = () => {
         courseThumbnail: courseThumbnail as File,
       
       };
-      console.log(data)
 
       const res = await createCourse(data);
       if (!res.success) {

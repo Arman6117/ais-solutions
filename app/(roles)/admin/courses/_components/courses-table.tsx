@@ -30,7 +30,6 @@ const CoursesTable = () => {
     fetchCourses();
   }, []);
 
-  console.log(deleting);
 
   if (loading && course.length === 0) {
     return (

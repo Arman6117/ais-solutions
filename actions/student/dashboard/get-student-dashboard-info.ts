@@ -121,7 +121,6 @@ export const getStudentDashboard = async (
     const purchasedModuleIds = (studentCourse.moduleId || []).map((id) =>
       id.toString()
     );
-    console.log("📦 Student's purchased modules:", purchasedModuleIds);
 
     // 3. Get Batch Info (Including pausedStudents)
     const batchInfo = await Batch.findOne(
@@ -207,7 +206,6 @@ export const getStudentDashboard = async (
         };
       }) || [];
 
-    console.log("✅ Total modules in dashboard:", studentModules.length);
 
     // 7. Get All Meetings
     const meetings = await Sessions.find(

@@ -74,7 +74,7 @@ console.log(isSmallScreen)
     //TODO: Handle saving logic here
     setIsLoading(true);
     setTimeout(() => {
-      // console.log({ name, description, price, instructors, batches });
+      // ({ name, description, price, instructors, batches });
       setIsLoading(false);
       toast.success("Changes saved successfully!");
     }, 800);

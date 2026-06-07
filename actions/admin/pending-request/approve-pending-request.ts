@@ -75,10 +75,8 @@ export const approvePendingRequest = async (
 
     const studentId = student._id;
     const moduleObjectIds = modules.map((id) => new mongoose.Types.ObjectId(id));
-   console.log(modules)
     // ... (Existing Invoice Creation Logic) ...
     const remainingFee = Math.max(0, totalFees - amountPaid);
-    const paymentHistory = amountPaid > 0 ? [{ /* ... */ }] : []; // (Simplify for brevity, keep your original logic)
 
     // Re-create invoice logic from your provided code
     const invoice = new Invoice({
@@ -167,7 +165,6 @@ export const approvePendingRequest = async (
             // $push: { enrolledStudents: { studentId, enrolledAt: new Date() } }
             // Based on your previous schema request, it was an array of ObjectIds.
         });
-        console.log("✅ Updated Sales Person record");
     }
 
     // Delete pending request

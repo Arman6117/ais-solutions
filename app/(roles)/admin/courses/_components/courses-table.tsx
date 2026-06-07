@@ -30,7 +30,7 @@ const CoursesTable = () => {
     fetchCourses();
   }, []);
 
-
+console.log(deleting)
   if (loading && course.length === 0) {
     return (
       <div className="flex items-center justify-center h-fit mt-[30%] w-full">

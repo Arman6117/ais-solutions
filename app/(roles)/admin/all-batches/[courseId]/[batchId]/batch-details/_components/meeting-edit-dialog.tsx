@@ -75,6 +75,7 @@ function useMeetingEditForm(
 
   // 1. Fetch Modules
   useEffect(() => {
+    console.log(batchId, open)
     if (!batchId || !open) return;
     getModulesWithSubtopics(batchId)
       .then((res) => res.success && setModules(res.data))

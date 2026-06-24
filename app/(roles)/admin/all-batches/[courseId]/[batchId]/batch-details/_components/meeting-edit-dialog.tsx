@@ -254,7 +254,7 @@ const MeetingEditDialog = ({ meetingData, batchId, onSave }: MeetingEditDialogPr
     }
   );
 
-
+console.log("Meeting details from form: ",form)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

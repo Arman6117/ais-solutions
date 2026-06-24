@@ -83,6 +83,7 @@ function useMeetingEditForm(
 
   // 2. Initialize Form when Dialog Opens
   useEffect(() => {
+    console.log(modules)
     if (!open || modules.length === 0) return;
 
     // Logic to determine if the saved module is "Custom" or "Existing"
